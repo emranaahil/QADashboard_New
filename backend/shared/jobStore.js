@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { v4: uuidv4, validate: validateUuid } = require('uuid');
+const { uuidv4, validateUuid } = require('./uuidUtils');
 const { normalizeUrl } = require('./urlSecurity');
 const { getModule } = require('./moduleRegistry');
 const { deriveModelId } = require('./modelUtils');
