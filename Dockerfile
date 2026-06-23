@@ -4,9 +4,10 @@ FROM mcr.microsoft.com/playwright:v1.40.0-jammy
 
 WORKDIR /app
 
-# Production dependencies only
+# Skip postinstall in Docker — Chromium is pre-installed in the Playwright image
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 # Application source (API + Express-served frontend)
 COPY backend ./backend
@@ -16,7 +17,6 @@ COPY scripts ./scripts
 ENV NODE_ENV=production
 ENV PORT=10000
 ENV STORAGE_ROOT=/app/data
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 ENV PLAYWRIGHT_CHROMIUM_SANDBOX=false
 

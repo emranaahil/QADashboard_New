@@ -7,6 +7,7 @@ const crawlerService = require('../keyword-check/crawlerService');
 const reportService = require('../keyword-check/reportService');
 const stateService = require('../keyword-check/stateService');
 const errorCheckService = require('../error-check/errorCheckService');
+const { normalizeUrl } = require('../shared/urlSecurity');
 
 // Start a new scan
 router.post('/scan/start', async (req, res) => {
@@ -31,17 +32,11 @@ router.post('/scan/start', async (req, res) => {
             return res.status(400).json({ error: 'At least one keyword is required' });
         }
 
-        // Clean and validate URL
-        let cleanUrl = url.trim();
-        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-            cleanUrl = 'https://' + cleanUrl;
-        }
-
-        // Validate URL format
+        let cleanUrl;
         try {
-            new URL(cleanUrl);
+            cleanUrl = normalizeUrl(url);
         } catch (e) {
-            return res.status(400).json({ error: 'Invalid URL format' });
+            return res.status(400).json({ error: e.message });
         }
 
         // Clean keywords
@@ -201,10 +196,11 @@ router.post('/check-broken-pages', async (req, res) => {
             return res.status(400).json({ error: 'URL is required' });
         }
 
-        // Basic validation - clean URL
-        let cleanUrl = url.trim();
-        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-            cleanUrl = 'https://' + cleanUrl;
+        let cleanUrl;
+        try {
+            cleanUrl = normalizeUrl(url);
+        } catch (e) {
+            return res.status(400).json({ error: e.message });
         }
 
         const options = {

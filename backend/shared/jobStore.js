@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { v4: uuidv4, validate: validateUuid } = require('uuid');
+const { normalizeUrl } = require('./urlSecurity');
 const { getModule } = require('./moduleRegistry');
 const { deriveModelId } = require('./modelUtils');
 const { moduleJobsDir } = require('./storagePaths');
@@ -62,16 +63,7 @@ function validateJobId(jobId) {
 }
 
 function validateUrl(url) {
-  if (!url || typeof url !== 'string') throw new Error('URL is required');
-  let clean = url.trim();
-  if (!/^https?:\/\//i.test(clean)) clean = `https://${clean}`;
-  try {
-    new URL(clean);
-  } catch {
-    throw new Error('Invalid URL format');
-  }
-  if (clean.endsWith('/') && clean.length > 8) clean = clean.slice(0, -1);
-  return clean;
+  return normalizeUrl(url);
 }
 
 async function ensureJobsDir(moduleId) {
