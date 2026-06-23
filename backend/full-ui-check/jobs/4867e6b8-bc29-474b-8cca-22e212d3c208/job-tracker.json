@@ -1,0 +1,24 @@
+{
+  "runId": "4867e6b8-bc29-474b-8cca-22e212d3c208",
+  "completed": 2,
+  "pending": 0,
+  "failed": [],
+  "lastProcessedUrl": "https://example.com/domains/example",
+  "runs": {
+    "4867e6b8-bc29-474b-8cca-22e212d3c208": {
+      "runId": "4867e6b8-bc29-474b-8cca-22e212d3c208",
+      "lastProcessedUrl": "https://example.com/domains/example",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-22T13:09:16.329Z",
+        "started": "2026-06-22T13:09:18.469Z",
+        "finished": "2026-06-22T13:09:36.926Z"
+      },
+      "completed": 2,
+      "pending": 0,
+      "failed": []
+    }
+  }
+}

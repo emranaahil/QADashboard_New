@@ -1,0 +1,23 @@
+---
+pid: 11792
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "cd \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node -e \"require('./backend/server'); console.log('Server module loads OK')\""
+started_at: 2026-06-22T06:02:29.329Z
+running_for_ms: 31455001 
+---
+Server module loads OK
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+::1 - - [22/Jun/2026:06:03:02 +0000] "GET /api/health HTTP/1.1" 200 77 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+Starting crawl for 89f92e5f-964f-4650-b592-053c2db8c6f0: https://example.com
+::1 - - [22/Jun/2026:06:03:38 +0000] "POST /api/scan/start HTTP/1.1" 200 157 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+Batch 1: Processing 1 URLs
+Launching new browser instance...
+Batch 1 complete. Total: 1, Matches: 1
+Crawl complete for 89f92e5f-964f-4650-b592-053c2db8c6f0. Processed 1 URLs, found 1 matches.
+Starting error content check for https://example.com (max: 3, delay: 200ms, depth: 1)
+Processing 1/3: https://example.com/ (depth 0) - Queue: 0, Discovered: 1
+::1 - - [22/Jun/2026:06:03:55 +0000] "GET /api/scan/89f92e5f-964f-4650-b592-053c2db8c6f0/status HTTP/1.1" 200 320 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:06:03:56 +0000] "POST /api/check-broken-pages HTTP/1.1" 200 151 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:06:04:01 +0000] "GET /api/scan/89f92e5f-964f-4650-b592-053c2db8c6f0/report HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"

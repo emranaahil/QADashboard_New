@@ -1,0 +1,41 @@
+{
+  "id": "546e8b07-ef28-4b08-8db2-dae03576f18d",
+  "url": "https://google.com",
+  "keywords": [
+    "sdf"
+  ],
+  "status": "failed",
+  "startedAt": "2026-06-19T18:49:03.435Z",
+  "completedAt": null,
+  "stats": {
+    "urlsDiscovered": 15,
+    "urlsProcessed": 6,
+    "matchesFound": 0,
+    "currentBatch": 3,
+    "totalBatches": 2
+  },
+  "matches": [],
+  "error": "Scan interrupted — server restarted",
+  "recentUrls": [
+    "https://google.com",
+    "https://google.com/advanced_search?hl=en-IN&authuser=0",
+    "https://google.com/intl/en/ads",
+    "https://google.com/intl/en/about.html",
+    "https://google.com/intl/en/policies/privacy",
+    "https://google.com/intl/en/policies/terms",
+    "https://google.com/advanced_search?hl=en-IN&authuser=0",
+    "https://google.com/intl/en/ads",
+    "https://google.com/intl/en/about.html",
+    "https://google.com/intl/en/policies/privacy",
+    "https://google.com/intl/en/policies/terms",
+    "https://google.com/webhp?tab=ww",
+    "https://google.com/preferences?hl=en-IN",
+    "https://google.com/url?q=https://support.google.com/websearch/%3Fp%3Dws_results_help%26hl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwi1nceN_JOVAxVvTGcHHe41BzYQ8KwCCAI&usg=AOvVaw3QtEL8ZW7H-0avN5RdU8pt",
+    "https://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwi1nceN_JOVAxVvTGcHHe41BzYQ8awCCAM&usg=AOvVaw1U0txucDUA9cdunNdWkQdI",
+    "https://google.com/url?q=https://policies.google.com/terms%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwi1nceN_JOVAxVvTGcHHe41BzYQ8qwCCAQ&usg=AOvVaw2Vc8UDNjG38gglFhkSnYex",
+    "https://google.com/accessibility?utm_source=about.google&utm_medium=referral&utm_campaign=footer",
+    "http://google.com/?utm_source=about.google&utm_medium=referral&utm_campaign=global-footer",
+    "https://google.com/",
+    "https://google.com/?hl=en"
+  ]
+}

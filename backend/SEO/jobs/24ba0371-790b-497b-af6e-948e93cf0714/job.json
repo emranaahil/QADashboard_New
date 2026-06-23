@@ -1,0 +1,21 @@
+{
+  "id": "24ba0371-790b-497b-af6e-948e93cf0714",
+  "moduleId": "seo",
+  "modelId": "example.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://example.com",
+  "options": {
+    "mode": "single"
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-22T12:45:48.094Z",
+  "startedAt": "2026-06-22T12:45:48.104Z",
+  "completedAt": "2026-06-22T12:45:53.456Z",
+  "durationMs": 5352,
+  "reportPath": "jobs/24ba0371-790b-497b-af6e-948e93cf0714/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": []
+}

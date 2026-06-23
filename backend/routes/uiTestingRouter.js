@@ -1,0 +1,52 @@
+const express = require('express');
+const uiTestingHistoryService = require('../shared/services/uiTestingHistoryService');
+const historyService = require('../shared/services/historyService');
+
+const router = express.Router();
+
+router.get('/history', async (req, res) => {
+  try {
+    const type = req.query.type;
+    if (!type) {
+      return res.status(400).json({
+        error: 'TYPE_REQUIRED',
+        message: 'Query parameter "type" is required (single-page or full-website)'
+      });
+    }
+
+    const result = await uiTestingHistoryService.listUiTestingHistory({
+      type,
+      q: req.query.q,
+      limit: req.query.limit
+    });
+
+    res.json(result);
+  } catch (err) {
+    const status = err.code === 'INVALID_TYPE' ? 400 : 500;
+    res.status(status).json({
+      error: err.code || 'HISTORY_FAILED',
+      message: err.message
+    });
+  }
+});
+
+router.delete('/history/:jobId', async (req, res) => {
+  try {
+    const type = req.query.type;
+    if (!type) {
+      return res.status(400).json({
+        error: 'TYPE_REQUIRED',
+        message: 'Query parameter "type" is required'
+      });
+    }
+
+    const testType = uiTestingHistoryService.normalizeTestType(type);
+    const moduleId = uiTestingHistoryService.TYPE_TO_MODULE[testType];
+    const result = await historyService.deleteHistoryEntry(moduleId, req.params.jobId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: 'DELETE_FAILED', message: err.message });
+  }
+});
+
+module.exports = router;

@@ -1,0 +1,20 @@
+---
+pid: 47616
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "cd \"D:\\Project\\qaiachatbot\\Keyword Finder\"; npm run dev"
+started_at: 2026-06-22T14:46:09.136Z
+running_for_ms: 65008    
+---
+
+> website-keyword-auditor@1.0.0 dev
+> nodemon backend/server.js
+
+[nodemon] 3.1.14
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node backend/server.js`
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+::1 - - [22/Jun/2026:14:46:18 +0000] "GET /api/health HTTP/1.1" 200 78 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"

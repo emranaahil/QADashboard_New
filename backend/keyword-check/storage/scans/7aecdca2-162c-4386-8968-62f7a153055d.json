@@ -1,0 +1,136 @@
+{
+  "id": "7aecdca2-162c-4386-8968-62f7a153055d",
+  "url": "https://google.com",
+  "keywords": [
+    "Gmail",
+    "Youtube",
+    "Hotmail"
+  ],
+  "status": "completed",
+  "startedAt": "2026-06-19T08:57:12.931Z",
+  "completedAt": "2026-06-19T09:10:41.719Z",
+  "stats": {
+    "urlsDiscovered": 299,
+    "urlsProcessed": 299,
+    "matchesFound": 23,
+    "currentBatch": 10,
+    "totalBatches": 10
+  },
+  "matches": [
+    {
+      "url": "https://google.com/intl/en/ads",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "https://google.com/intl/en/policies/privacy",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/intl/en/policies/privacy",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "https://google.com/intl/en/policies/terms",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/url?q=https://support.google.com/websearch/%3Fp%3Dws_results_help%26hl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjg9dXq95KVAxXJSGwGHcOuE8AQ8KwCCAI&usg=AOvVaw2uBirFAH8XVLPxvYJIxbez",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjg9dXq95KVAxXJSGwGHcOuE8AQ8awCCAM&usg=AOvVaw3ullK8zu7E8KBq6y-_IEHv",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjg9dXq95KVAxXJSGwGHcOuE8AQ8awCCAM&usg=AOvVaw3ullK8zu7E8KBq6y-_IEHv",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "https://google.com/url?q=https://policies.google.com/terms%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjg9dXq95KVAxXJSGwGHcOuE8AQ8qwCCAQ&usg=AOvVaw0PDYdWFAIe7Wgk7vGbtib0",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/accessibility?utm_source=about.google&utm_medium=referral&utm_campaign=footer",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "https://google.com/url?q=https://support.google.com/websearch/%3Fp%3Dws_results_help%26hl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjTreD895KVAxXvSmwGHWbVDm0Q8KwCCAg&usg=AOvVaw0MmM_wLryYu3B8aQRYuA27",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjTreD895KVAxXvSmwGHWbVDm0Q8awCCAk&usg=AOvVaw16U6Lxi4iHsi44b2Egh0Mi",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "https://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjTreD895KVAxXvSmwGHWbVDm0Q8awCCAk&usg=AOvVaw16U6Lxi4iHsi44b2Egh0Mi",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "https://google.com/url?q=https://policies.google.com/terms%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwjTreD895KVAxXvSmwGHWbVDm0Q8qwCCAo&usg=AOvVaw1KZtyAuUaFj3Ob9xeEdVlx",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/intl/en/ads",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "http://google.com/intl/en/policies/privacy",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/intl/en/policies/privacy",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "http://google.com/intl/en/policies/terms",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/url?q=https://support.google.com/websearch/%3Fp%3Dws_results_help%26hl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwji9pWe-ZKVAxXCb2wGHQQLHvYQ8KwCCAI&usg=AOvVaw0DGT162kFYmV20EqeyLwJ3",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwji9pWe-ZKVAxXCb2wGHQQLHvYQ8awCCAM&usg=AOvVaw2T353HII-YZeubuQ9TLUAP",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/url?q=https://policies.google.com/privacy%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwji9pWe-ZKVAxXCb2wGHQQLHvYQ8awCCAM&usg=AOvVaw2T353HII-YZeubuQ9TLUAP",
+      "keyword": "Youtube"
+    },
+    {
+      "url": "http://google.com/url?q=https://policies.google.com/terms%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwji9pWe-ZKVAxXCb2wGHQQLHvYQ8qwCCAQ&usg=AOvVaw05afN66PjDWFtHe1yQyceC",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/url?q=https://support.google.com/websearch/%3Fp%3Dws_results_help%26hl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwj05fqw-ZKVAxUcSGwGHWZQJbYQ8KwCCAg&usg=AOvVaw25ULBJUG8yMggfMkMX7wNT",
+      "keyword": "Gmail"
+    },
+    {
+      "url": "http://google.com/url?q=https://policies.google.com/terms%3Fhl%3Den-IN%26fg%3D1&opi=89978449&sa=U&ved=0ahUKEwj05fqw-ZKVAxUcSGwGHWZQJbYQ8qwCCAo&usg=AOvVaw3q0u7KHL6CyPG6A_9onQnn",
+      "keyword": "Gmail"
+    }
+  ],
+  "error": null,
+  "recentUrls": [
+    "http://google.com/websearch/answer/14901683?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16011537?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16329036?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/15662709?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16421135?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16517651?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16649374?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16833721?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16859283?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/16577498?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/17104441?hl=en-IN&ref_topic=16011146",
+    "http://google.com/websearch/answer/13572013?hl=en-IN&ref_topic=13544225",
+    "http://google.com/websearch/answer/14184960?hl=en-IN&ref_topic=13544225",
+    "http://google.com/websearch/answer/13954172?hl=en-IN&ref_topic=13544225",
+    "http://google.com/websearch/answer/16296315?hl=en-IN&ref_topic=13544225",
+    "http://google.com//www.google.com/intl/en/privacy.html",
+    "http://google.com/?hl=en-IN&fg=1",
+    "http://google.com/signin/usernamerecovery?continue=https://www.google.com/setting/search/privateresults/?hl%3Den-IN%26authuser%3D0&dsh=S1882844686:1781859927763043&flowEntry=ServiceLogin&flowName=WebLiteSignIn&followup=https://www.google.com/setting/search/privateresults/?hl%3Den-IN%26authuser%3D0&hl=en-IN&ifkv=AcDsRvwI4_kYxuA9KqtRE5nM-VEZFcYPKgMoUFIsYGFv5L2MXr9dCdus_LDA2or5FWP6YriJgEvzSw",
+    "http://google.com/lifecycle/flows/signup?continue=https://www.google.com/setting/search/privateresults/?hl%3Den-IN%26authuser%3D0&dsh=S1882844686:1781859927763043&flowEntry=SignUp&flowName=GlifWebSignIn&followup=https://www.google.com/setting/search/privateresults/?hl%3Den-IN%26authuser%3D0&hl=en-IN&ifkv=AcDsRvwI4_kYxuA9KqtRE5nM-VEZFcYPKgMoUFIsYGFv5L2MXr9dCdus_LDA2or5FWP6YriJgEvzSw",
+    "http://google.com/?sca_esv=c46b224a6a68ee93&hl=en-IN&output=search"
+  ]
+}

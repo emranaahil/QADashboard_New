@@ -1,0 +1,22 @@
+{
+  "id": "4867e6b8-bc29-474b-8cca-22e212d3c208",
+  "moduleId": "full-ui-check",
+  "modelId": "example.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://example.com",
+  "options": {},
+  "user": "anonymous",
+  "createdAt": "2026-06-22T13:09:16.022Z",
+  "startedAt": "2026-06-22T13:09:16.027Z",
+  "completedAt": "2026-06-22T13:09:37.017Z",
+  "durationMs": 20990,
+  "reportPath": "jobs/4867e6b8-bc29-474b-8cca-22e212d3c208/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 2,
+  "currentPage": 2,
+  "currentUrl": "https://example.com/domains/example"
+}

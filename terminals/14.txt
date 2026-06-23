@@ -1,0 +1,55 @@
+---
+pid: 38336
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "Set-Location \"D:\\Project\\qaiachatbot\\Keyword Finder\\web\"; npm run dev"
+started_at: 2026-06-22T13:32:23.842Z
+running_for_ms: 4489999  
+---
+
+> web@0.1.0 dev
+> next dev -p 3001
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of D:\Project\qaiachatbot\Keyword Finder\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * D:\Project\qaiachatbot\Keyword Finder\web\package-lock.json
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3001
+   - Network:      http://10.107.180.205:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.6s
+ ○ Compiling /keyword-radar ...
+ ✓ Compiled /keyword-radar in 5.1s (734 modules)
+ GET /keyword-radar 200 in 5789ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 827ms (446 modules)
+ GET /favicon.ico 200 in 976ms
+ ○ Compiling /seo-testing ...
+ ✓ Compiled /seo-testing in 830ms (793 modules)
+ GET /seo-testing 200 in 998ms
+ GET /seo-testing 200 in 67ms
+ GET /favicon.ico 200 in 51ms
+ ✓ Compiled /link-radar in 330ms (786 modules)
+ GET /link-radar 200 in 431ms
+ GET /favicon.ico 200 in 17ms
+ ✓ Compiled in 428ms (800 modules)
+ GET /link-radar 200 in 85ms
+ GET /seo-testing 200 in 39ms
+ GET /favicon.ico 200 in 17ms
+ ✓ Compiled /ui-testing in 360ms (793 modules)
+ GET /ui-testing 200 in 438ms
+ GET /favicon.ico 200 in 20ms
+ ✓ Compiled /dashboard in 387ms (808 modules)
+ GET /dashboard 200 in 456ms
+ GET /favicon.ico 200 in 25ms
+ ✓ Compiled /reports in 463ms (815 modules)
+ GET /reports 200 in 546ms
+ GET /favicon.ico 200 in 21ms
+ GET /dashboard 200 in 35ms
+ GET /favicon.ico 200 in 12ms
+

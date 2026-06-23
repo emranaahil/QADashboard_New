@@ -1,0 +1,329 @@
+---
+pid: 2760
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "$p = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if ($p) { Stop-Process -Id $p.OwningProcess -Force }; Start-Sleep -Seconds 2; Set-Location \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T13:07:08.761Z
+running_for_ms: 6005004  
+---
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+::1 - - [22/Jun/2026:13:07:17 +0000] "GET /api/health HTTP/1.1" 200 78 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:17.683Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:07:17 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 201 776 "-" "node"
+[seo:33bf0888] [2026-06-22T13:07:17.688Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:07:17 +0000] "POST /api/modules/seo/jobs HTTP/1.1" 201 565 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:17.690Z] [INFO] Job started
+::1 - - [22/Jun/2026:13:07:17 +0000] "GET /api/modules/seo/jobs/33bf0888-35a8-4869-a0d6-28cbc94e7a29 HTTP/1.1" 200 565 "-" "node"
+::1 - - [22/Jun/2026:13:07:17 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 818 "-" "node"
+[seo:33bf0888] [2026-06-22T13:07:17.893Z] [INFO] Job started
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.080Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.081Z] [INFO] PROGRESS:10 Discovering URLs...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.081Z] [INFO] [CRAWL] Starting URL discovery
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.081Z] [INFO] [CRAWL] Seed: https://example.com
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.081Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 10
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.465Z] [INFO] [CRAWL] Found 1: https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:18.466Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+[seo:33bf0888] [2026-06-22T13:07:18.564Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[seo:33bf0888] [2026-06-22T13:07:18.570Z] [INFO] PROGRESS:20 Running SEO checks...
+[seo:33bf0888] [2026-06-22T13:07:18.571Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[seo:33bf0888] [2026-06-22T13:07:18.571Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[seo:33bf0888] [2026-06-22T13:07:18.572Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[seo:33bf0888] [2026-06-22T13:07:18.573Z] [INFO] ✅ FINAL MODE: single
+[seo:33bf0888] [2026-06-22T13:07:18.573Z] [INFO] 📄 Total URLs to scan: 1
+[seo:33bf0888] [2026-06-22T13:07:18.573Z] [INFO] 📦 TOTAL BATCHES: 1
+[seo:33bf0888] [2026-06-22T13:07:18.573Z] [INFO] 📏 BATCH SIZE: 50
+[seo:33bf0888] [2026-06-22T13:07:18.676Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[seo:33bf0888] [2026-06-22T13:07:18.677Z] [INFO] 📄 Total URLs to scan: 1
+[seo:33bf0888] [2026-06-22T13:07:18.677Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[seo:33bf0888] [2026-06-22T13:07:18.677Z] [INFO] 📦 Processing batch 1/1
+[seo:33bf0888] [2026-06-22T13:07:18.677Z] [INFO] 📄 URLs in batch: 1
+[seo:33bf0888] [2026-06-22T13:07:18.677Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[seo:33bf0888] [2026-06-22T13:07:18.677Z] [INFO] ⏳ Waiting for DOM load...
+[seo:33bf0888] [2026-06-22T13:07:18.678Z] [INFO] 🔍 Running SEO checks...
+::1 - - [22/Jun/2026:13:07:19 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 813 "-" "node"
+::1 - - [22/Jun/2026:13:07:19 +0000] "GET /api/modules/seo/jobs/33bf0888-35a8-4869-a0d6-28cbc94e7a29 HTTP/1.1" 200 604 "-" "node"
+::1 - - [22/Jun/2026:13:07:20 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 813 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:21.882Z] [INFO] [CRAWL] Found 2: https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:21.883Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 1 new URL(s): https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:21.888Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 0, found 2): https://example.com/domains/example
+::1 - - [22/Jun/2026:13:07:21 +0000] "GET /api/modules/seo/jobs/33bf0888-35a8-4869-a0d6-28cbc94e7a29 HTTP/1.1" 200 604 "-" "node"
+::1 - - [22/Jun/2026:13:07:22 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 813 "-" "node"
+[seo:33bf0888] [2026-06-22T13:07:23.049Z] [INFO] ✅ Completed: https://example.com
+[seo:33bf0888] [2026-06-22T13:07:23.050Z] [INFO] ✅ Completed batch 1/1
+[seo:33bf0888] [2026-06-22T13:07:23.050Z] [INFO] 🎉 All pages processed. Generating reports...
+[seo:33bf0888] [2026-06-22T13:07:23.103Z] [INFO] PROGRESS:85 Generating QA report...
+[seo:33bf0888] [2026-06-22T13:07:23.103Z] [INFO] PROGRESS:100 Completed
+[seo:33bf0888] [2026-06-22T13:07:23.130Z] [INFO] Job completed successfully
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.641Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.645Z] [INFO] [CRAWL] Discovery complete — 2 URL(s) found
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.645Z] [INFO] [CRAWL] URL list:
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.645Z] [INFO] 1. https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.646Z] [INFO] 2. https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.704Z] [INFO] PROGRESS:25 Found 2 URLs — scanning...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.709Z] [INFO] [TEST] Starting queue processing
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.710Z] [INFO] [TEST] Total URLs in queue: 2
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.801Z] [INFO] [TEST] Running 1/2: https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:23.804Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/
+::1 - - [22/Jun/2026:13:07:23 +0000] "GET /api/modules/seo/jobs/33bf0888-35a8-4869-a0d6-28cbc94e7a29 HTTP/1.1" 200 673 "-" "node"
+::1 - - [22/Jun/2026:13:07:23 +0000] "GET /api/modules/seo/jobs/33bf0888-35a8-4869-a0d6-28cbc94e7a29/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:07:23 +0000] "GET /api/modules/seo/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:07:23 +0000] "GET /api/modules/seo/reports HTTP/1.1" 200 920 "-" "node"
+::1 - - [22/Jun/2026:13:07:23 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 815 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:23.948Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:07:23 +0000] "POST /api/modules/ui-check/jobs HTTP/1.1" 201 555 "-" "node"
+::1 - - [22/Jun/2026:13:07:23 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f HTTP/1.1" 200 555 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:23.952Z] [INFO] Job started
+[ui-check:46eb49f4] [2026-06-22T13:07:24.255Z] [INFO] PROGRESS:5 Launching browser...
+[ui-check:46eb49f4] [2026-06-22T13:07:24.265Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[ui-check:46eb49f4] [2026-06-22T13:07:24.266Z] [INFO] 🧹 Cleared old QA logs
+[ui-check:46eb49f4] [2026-06-22T13:07:24.268Z] [INFO] PROGRESS:15 Loading page...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:24.497Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:24.498Z] [INFO] [QA] Started: https://example.com/ (Desktop)
+[ui-check:46eb49f4] [2026-06-22T13:07:24.668Z] [INFO] PROGRESS:20 Testing Desktop...
+::1 - - [22/Jun/2026:13:07:25 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 815 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:25.499Z] [INFO] ==============================
+[ui-check:46eb49f4] [2026-06-22T13:07:25.500Z] [INFO] 🚀 QA START: Desktop | Desktop
+[ui-check:46eb49f4] [2026-06-22T13:07:25.500Z] [INFO] ==============================
+[ui-check:46eb49f4] [2026-06-22T13:07:25.500Z] [INFO] ISSUES NOW: 0
+[ui-check:46eb49f4] [2026-06-22T13:07:25.556Z] [INFO] 🔧 Stabilizing...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:25.706Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:25 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f HTTP/1.1" 200 591 "-" "node"
+::1 - - [22/Jun/2026:13:07:26 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:27.077Z] [INFO] 📜 Scrolling...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:27.707Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:27 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f HTTP/1.1" 200 591 "-" "node"
+::1 - - [22/Jun/2026:13:07:28 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:29.710Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:29 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f HTTP/1.1" 200 591 "-" "node"
+::1 - - [22/Jun/2026:13:07:30 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:30.092Z] [INFO] 🖼️ Waiting for images...
+::1 - - [22/Jun/2026:13:07:31 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:31.722Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:32 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f HTTP/1.1" 200 591 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:32.111Z] [INFO] 🔍 Running visual defect checks...
+[ui-check:46eb49f4] [2026-06-22T13:07:32.112Z] [INFO] 🚀 Calling popup detector...
+[ui-check:46eb49f4] [2026-06-22T13:07:32.112Z] [INFO] 🔍 [POPUP] Starting popup scan...
+[full-ui-check:e11eecc3] [2026-06-22T13:07:32.650Z] [INFO] [QA] Done: https://example.com/ — 0 issue(s)
+[full-ui-check:e11eecc3] [2026-06-22T13:07:32.655Z] [INFO] [TEST]   Loading page (QA_Tablet): https://example.com/
+::1 - - [22/Jun/2026:13:07:33 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[ui-check:46eb49f4] [2026-06-22T13:07:33.625Z] [INFO] ✅ [POPUP] No popup detected
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] ENTRY BEING SAVED: {
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] "page": "Desktop",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] "url": "https://example.com",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] "device": "Desktop",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] "issues": [],
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] "screenshot": null,
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] "timestamp": "2026-06-22T13:07:33.661Z"
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] }
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] ISSUES BEFORE PUSH: []
+[ui-check:46eb49f4] [2026-06-22T13:07:33.663Z] [INFO] WRITING REPORT: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\46eb49f4-245e-450f-9075-9540f6fd6c7f\qaReport.json
+[ui-check:46eb49f4] [2026-06-22T13:07:33.665Z] [INFO] 📝 Report written: 0 issue(s)
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] LAST REPORT ENTRY: {
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] "page": "Desktop",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] "url": "https://example.com",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] "device": "Desktop",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] "issues": [],
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] "screenshot": null,
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] "timestamp": "2026-06-22T13:07:33.661Z"
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] }
+[ui-check:46eb49f4] [2026-06-22T13:07:33.666Z] [INFO] ✅ QA COMPLETE: 0 visual defect(s) found
+[full-ui-check:e11eecc3] [2026-06-22T13:07:33.724Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+[ui-check:46eb49f4] [2026-06-22T13:07:33.726Z] [INFO] PROGRESS:85 Generating QA report...
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] Report entries: 1
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] {
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] "page": "Desktop",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] "url": "https://example.com",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] "device": "Desktop",
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] "issues": [],
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] "screenshot": null,
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] "timestamp": "2026-06-22T13:07:33.661Z"
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] }
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] Screenshot folder: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\46eb49f4-245e-450f-9075-9540f6fd6c7f\screenshots
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] Folder exists: true
+[ui-check:46eb49f4] [2026-06-22T13:07:33.728Z] [INFO] Files: []
+[ui-check:46eb49f4] [2026-06-22T13:07:33.729Z] [INFO] === Screenshot Metadata Map ===
+[ui-check:46eb49f4] [2026-06-22T13:07:33.729Z] [INFO] {}
+[ui-check:46eb49f4] [2026-06-22T13:07:33.731Z] [INFO] PROGRESS:100 Completed
+[ui-check:46eb49f4] [2026-06-22T13:07:33.750Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:07:34 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f HTTP/1.1" 200 663 "-" "node"
+::1 - - [22/Jun/2026:13:07:34 +0000] "GET /api/modules/ui-check/jobs/46eb49f4-245e-450f-9075-9540f6fd6c7f/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:07:34 +0000] "GET /api/modules/ui-check/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:07:34 +0000] "GET /api/modules/ui-check/reports HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:07:34 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 409 925 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:34.378Z] [INFO] [TEST]   Running checks (QA_Tablet): https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:34.378Z] [INFO] [QA] Started: https://example.com/ (QA_Tablet)
+::1 - - [22/Jun/2026:13:07:34 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:35.740Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:36 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+::1 - - [22/Jun/2026:13:07:37 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:37.743Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:39 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:39.743Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:40 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:41.745Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:07:42 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:42.525Z] [INFO] [QA] Done: https://example.com/ — 0 issue(s)
+[full-ui-check:e11eecc3] [2026-06-22T13:07:42.535Z] [INFO] [TEST] Completed 1/2: https://example.com/
+[full-ui-check:e11eecc3] [2026-06-22T13:07:42.535Z] [INFO] [TEST] Running 2/2: https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:42.536Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:43.078Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:43.078Z] [INFO] [QA] Started: https://example.com/domains/example (Desktop)
+::1 - - [22/Jun/2026:13:07:43 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:43.757Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:45 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:45.773Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:46 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:47.776Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:48 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+::1 - - [22/Jun/2026:13:07:49 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:49.778Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:51 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:51.269Z] [INFO] [QA] Done: https://example.com/domains/example — 1 issue(s)
+[full-ui-check:e11eecc3] [2026-06-22T13:07:51.275Z] [INFO] [TEST]   Loading page (QA_Tablet): https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:51.792Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+[full-ui-check:e11eecc3] [2026-06-22T13:07:52.110Z] [INFO] [TEST]   Running checks (QA_Tablet): https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:07:52.110Z] [INFO] [QA] Started: https://example.com/domains/example (QA_Tablet)
+::1 - - [22/Jun/2026:13:07:52 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:53.805Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:54 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+::1 - - [22/Jun/2026:13:07:55 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:55.807Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:57 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:57.808Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:07:58 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:07:59.822Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.295Z] [INFO] [QA] Done: https://example.com/domains/example — 1 issue(s)
+::1 - - [22/Jun/2026:13:08:00 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.306Z] [INFO] [TEST] Completed 2/2: https://example.com/domains/example
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.359Z] [INFO] [TEST] Queue finished — 2/2 URL(s) processed
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.359Z] [INFO] [TEST] Generating HTML report...
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.375Z] [INFO] [PDF] Skipped — HTML report at: D:\Project\qaiachatbot\Keyword Finder\backend\full-ui-check\jobs\e11eecc3-cafa-401d-8e51-16cd62e8efa8\qa-report.html
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.380Z] [INFO] PROGRESS:100 Completed
+[full-ui-check:e11eecc3] [2026-06-22T13:08:00.401Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:08:01 +0000] "GET /api/modules/full-ui-check/jobs/e11eecc3-cafa-401d-8e51-16cd62e8efa8 HTTP/1.1" 200 955 "-" "node"
+::1 - - [22/Jun/2026:13:08:06 +0000] "GET /api/health HTTP/1.1" 200 79 "-" "node"
+[seo:0dae836c] [2026-06-22T13:08:06.846Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:08:06 +0000] "POST /api/modules/seo/jobs HTTP/1.1" 201 565 "-" "node"
+::1 - - [22/Jun/2026:13:08:06 +0000] "GET /api/modules/seo/jobs/0dae836c-dd7b-4e87-93f5-3b11a9c38fae HTTP/1.1" 200 565 "-" "node"
+[seo:0dae836c] [2026-06-22T13:08:06.851Z] [INFO] Job started
+[seo:0dae836c] [2026-06-22T13:08:07.440Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[seo:0dae836c] [2026-06-22T13:08:07.446Z] [INFO] PROGRESS:20 Running SEO checks...
+[seo:0dae836c] [2026-06-22T13:08:07.446Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[seo:0dae836c] [2026-06-22T13:08:07.446Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[seo:0dae836c] [2026-06-22T13:08:07.447Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[seo:0dae836c] [2026-06-22T13:08:07.448Z] [INFO] ✅ FINAL MODE: single
+[seo:0dae836c] [2026-06-22T13:08:07.448Z] [INFO] 📄 Total URLs to scan: 1
+[seo:0dae836c] [2026-06-22T13:08:07.448Z] [INFO] 📦 TOTAL BATCHES: 1
+[seo:0dae836c] [2026-06-22T13:08:07.448Z] [INFO] 📏 BATCH SIZE: 50
+[seo:0dae836c] [2026-06-22T13:08:07.565Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[seo:0dae836c] [2026-06-22T13:08:07.565Z] [INFO] 📄 Total URLs to scan: 1
+[seo:0dae836c] [2026-06-22T13:08:07.565Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[seo:0dae836c] [2026-06-22T13:08:07.565Z] [INFO] 📦 Processing batch 1/1
+[seo:0dae836c] [2026-06-22T13:08:07.565Z] [INFO] 📄 URLs in batch: 1
+[seo:0dae836c] [2026-06-22T13:08:07.565Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[seo:0dae836c] [2026-06-22T13:08:07.566Z] [INFO] ⏳ Waiting for DOM load...
+[seo:0dae836c] [2026-06-22T13:08:07.566Z] [INFO] 🔍 Running SEO checks...
+::1 - - [22/Jun/2026:13:08:08 +0000] "GET /api/modules/seo/jobs/0dae836c-dd7b-4e87-93f5-3b11a9c38fae HTTP/1.1" 200 604 "-" "node"
+[seo:0dae836c] [2026-06-22T13:08:10.810Z] [INFO] ✅ Completed: https://example.com
+[seo:0dae836c] [2026-06-22T13:08:10.810Z] [INFO] ✅ Completed batch 1/1
+[seo:0dae836c] [2026-06-22T13:08:10.810Z] [INFO] 🎉 All pages processed. Generating reports...
+[seo:0dae836c] [2026-06-22T13:08:10.865Z] [INFO] PROGRESS:85 Generating QA report...
+[seo:0dae836c] [2026-06-22T13:08:10.866Z] [INFO] PROGRESS:100 Completed
+::1 - - [22/Jun/2026:13:08:10 +0000] "GET /api/modules/seo/jobs/0dae836c-dd7b-4e87-93f5-3b11a9c38fae HTTP/1.1" 200 594 "-" "node"
+[seo:0dae836c] [2026-06-22T13:08:10.890Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:08:12 +0000] "GET /api/modules/seo/jobs/0dae836c-dd7b-4e87-93f5-3b11a9c38fae HTTP/1.1" 200 673 "-" "node"
+::1 - - [22/Jun/2026:13:08:12 +0000] "GET /api/modules/seo/jobs/0dae836c-dd7b-4e87-93f5-3b11a9c38fae/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:08:12 +0000] "GET /api/modules/seo/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:08:12 +0000] "GET /api/modules/seo/reports HTTP/1.1" 200 - "-" "node"
+[ui-check:b70c7dfd] [2026-06-22T13:08:12.920Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:08:12 +0000] "POST /api/modules/ui-check/jobs HTTP/1.1" 201 555 "-" "node"
+::1 - - [22/Jun/2026:13:08:12 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 555 "-" "node"
+[ui-check:b70c7dfd] [2026-06-22T13:08:12.931Z] [INFO] Job started
+[ui-check:b70c7dfd] [2026-06-22T13:08:13.230Z] [INFO] PROGRESS:5 Launching browser...
+[ui-check:b70c7dfd] [2026-06-22T13:08:13.241Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[ui-check:b70c7dfd] [2026-06-22T13:08:13.242Z] [INFO] 🧹 Cleared old QA logs
+[ui-check:b70c7dfd] [2026-06-22T13:08:13.243Z] [INFO] PROGRESS:15 Loading page...
+[ui-check:b70c7dfd] [2026-06-22T13:08:13.637Z] [INFO] PROGRESS:20 Testing Desktop...
+::1 - - [22/Jun/2026:13:08:14 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 591 "-" "node"
+[ui-check:b70c7dfd] [2026-06-22T13:08:14.984Z] [INFO] ==============================
+[ui-check:b70c7dfd] [2026-06-22T13:08:14.984Z] [INFO] 🚀 QA START: Desktop | Desktop
+[ui-check:b70c7dfd] [2026-06-22T13:08:14.984Z] [INFO] ==============================
+[ui-check:b70c7dfd] [2026-06-22T13:08:14.984Z] [INFO] ISSUES NOW: 0
+[ui-check:b70c7dfd] [2026-06-22T13:08:15.043Z] [INFO] 🔧 Stabilizing...
+[ui-check:b70c7dfd] [2026-06-22T13:08:16.558Z] [INFO] 📜 Scrolling...
+::1 - - [22/Jun/2026:13:08:16 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 591 "-" "node"
+::1 - - [22/Jun/2026:13:08:18 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 591 "-" "node"
+[ui-check:b70c7dfd] [2026-06-22T13:08:19.572Z] [INFO] 🖼️ Waiting for images...
+::1 - - [22/Jun/2026:13:08:20 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 591 "-" "node"
+[ui-check:b70c7dfd] [2026-06-22T13:08:21.591Z] [INFO] 🔍 Running visual defect checks...
+[ui-check:b70c7dfd] [2026-06-22T13:08:21.591Z] [INFO] 🚀 Calling popup detector...
+[ui-check:b70c7dfd] [2026-06-22T13:08:21.591Z] [INFO] 🔍 [POPUP] Starting popup scan...
+::1 - - [22/Jun/2026:13:08:22 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 591 "-" "node"
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.094Z] [INFO] ✅ [POPUP] No popup detected
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] ENTRY BEING SAVED: {
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] "page": "Desktop",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] "url": "https://example.com",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] "device": "Desktop",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] "issues": [],
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] "screenshot": null,
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] "timestamp": "2026-06-22T13:08:23.132Z"
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] }
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] ISSUES BEFORE PUSH: []
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.132Z] [INFO] WRITING REPORT: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\b70c7dfd-1646-47b1-be19-19064ddc50eb\qaReport.json
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] 📝 Report written: 0 issue(s)
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] LAST REPORT ENTRY: {
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] "page": "Desktop",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] "url": "https://example.com",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] "device": "Desktop",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] "issues": [],
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] "screenshot": null,
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] "timestamp": "2026-06-22T13:08:23.132Z"
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] }
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.134Z] [INFO] ✅ QA COMPLETE: 0 visual defect(s) found
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.193Z] [INFO] PROGRESS:85 Generating QA report...
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] Report entries: 1
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] {
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] "page": "Desktop",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] "url": "https://example.com",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] "device": "Desktop",
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] "issues": [],
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] "screenshot": null,
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] "timestamp": "2026-06-22T13:08:23.132Z"
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] }
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] Screenshot folder: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\b70c7dfd-1646-47b1-be19-19064ddc50eb\screenshots
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] Folder exists: true
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.195Z] [INFO] Files: []
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.196Z] [INFO] === Screenshot Metadata Map ===
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.196Z] [INFO] {}
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.197Z] [INFO] PROGRESS:100 Completed
+[ui-check:b70c7dfd] [2026-06-22T13:08:23.219Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:08:25 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb HTTP/1.1" 200 664 "-" "node"
+::1 - - [22/Jun/2026:13:08:25 +0000] "GET /api/modules/ui-check/jobs/b70c7dfd-1646-47b1-be19-19064ddc50eb/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:08:25 +0000] "GET /api/modules/ui-check/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:08:25 +0000] "GET /api/modules/ui-check/reports HTTP/1.1" 200 - "-" "node"
+[full-ui-check:92711caa] [2026-06-22T13:08:25.036Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:08:25 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 201 560 "-" "node"
+::1 - - [22/Jun/2026:13:08:25 +0000] "GET /api/modules/full-ui-check/jobs/92711caa-2d44-47c3-abdf-f54dcaaaa2de HTTP/1.1" 200 560 "-" "node"
+[full-ui-check:92711caa] [2026-06-22T13:08:25.041Z] [INFO] Job started
+[full-ui-check:92711caa] [2026-06-22T13:08:25.355Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[full-ui-check:92711caa] [2026-06-22T13:08:25.367Z] [INFO] PROGRESS:10 Discovering URLs...
+[full-ui-check:92711caa] [2026-06-22T13:08:25.374Z] [INFO] [CRAWL] Starting URL discovery
+[full-ui-check:92711caa] [2026-06-22T13:08:25.375Z] [INFO] [CRAWL] Seed: https://example.com
+[full-ui-check:92711caa] [2026-06-22T13:08:25.375Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 5000
+[full-ui-check:92711caa] [2026-06-22T13:08:25.790Z] [INFO] [CRAWL] Found 1: https://example.com/
+[full-ui-check:92711caa] [2026-06-22T13:08:25.790Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+::1 - - [22/Jun/2026:13:08:27 +0000] "GET /api/modules/full-ui-check/jobs/92711caa-2d44-47c3-abdf-f54dcaaaa2de HTTP/1.1" 200 597 "-" "node"
+[full-ui-check:92711caa] [2026-06-22T13:08:27.262Z] [INFO] [CRAWL] Found 2: https://example.com/domains/example
+[full-ui-check:92711caa] [2026-06-22T13:08:27.262Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 1 new URL(s): https://example.com/
+[full-ui-check:92711caa] [2026-06-22T13:08:27.268Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 0, found 2): https://example.com/domains/example
+[full-ui-check:92711caa] [2026-06-22T13:08:27.959Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://example.com/domains/example
+[full-ui-check:92711caa] [2026-06-22T13:08:27.963Z] [INFO] [CRAWL] Discovery complete — 2 URL(s) found
+[full-ui-check:92711caa] [2026-06-22T13:08:27.963Z] [INFO] [CRAWL] URL list:
+[full-ui-check:92711caa] [2026-06-22T13:08:27.963Z] [INFO] 1. https://example.com/
+[full-ui-check:92711caa] [2026-06-22T13:08:27.963Z] [INFO] 2. https://example.com/domains/example
+[full-ui-check:92711caa] [2026-06-22T13:08:28.023Z] [INFO] PROGRESS:25 Found 2 URLs — scanning...
+[full-ui-check:92711caa] [2026-06-22T13:08:28.028Z] [ERROR] Error: Job not found
+    at D:\Project\qaiachatbot\Keyword Finder\backend\shared\jobStore.js:132:21
+[full-ui-check:92711caa] [2026-06-22T13:08:28.051Z] [ERROR] Job failed with code 1
+::1 - - [22/Jun/2026:13:08:29 +0000] "GET /api/modules/full-ui-check/jobs/92711caa-2d44-47c3-abdf-f54dcaaaa2de HTTP/1.1" 200 630 "-" "node"

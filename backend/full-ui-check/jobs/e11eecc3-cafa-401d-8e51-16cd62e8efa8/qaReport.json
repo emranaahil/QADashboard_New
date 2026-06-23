@@ -1,0 +1,54 @@
+[
+  {
+    "page": "Desktop",
+    "url": "https://example.com/",
+    "device": "Desktop",
+    "issues": [],
+    "screenshot": null,
+    "timestamp": "2026-06-22T13:07:32.649Z"
+  },
+  {
+    "page": "QA_Tablet",
+    "url": "https://example.com/",
+    "device": "QA_Tablet",
+    "issues": [],
+    "screenshot": null,
+    "timestamp": "2026-06-22T13:07:42.523Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://example.com/domains/example",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-22T13:07:43.079Z"
+      }
+    ],
+    "screenshot": "final-1782133671223.png",
+    "timestamp": "2026-06-22T13:07:51.268Z"
+  },
+  {
+    "page": "QA_Tablet",
+    "url": "https://example.com/domains/example",
+    "device": "QA_Tablet",
+    "issues": [
+      {
+        "id": "QA-0002",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-22T13:07:52.111Z"
+      }
+    ],
+    "screenshot": "final-1782133680259.png",
+    "timestamp": "2026-06-22T13:08:00.293Z"
+  }
+]

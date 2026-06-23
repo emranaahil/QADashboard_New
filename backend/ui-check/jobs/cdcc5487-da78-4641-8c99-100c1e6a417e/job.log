@@ -1,0 +1,55 @@
+[2026-06-23T12:02:10.835Z] [INFO] Job created and queued
+[2026-06-23T12:02:11.051Z] [INFO] Job started
+[2026-06-23T12:02:11.895Z] [INFO] PROGRESS:5 Launching browser...
+[2026-06-23T12:02:11.935Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[2026-06-23T12:02:11.938Z] [INFO] 🧹 Cleared old QA logs
+[2026-06-23T12:02:11.942Z] [INFO] PROGRESS:15 Loading page...
+[2026-06-23T12:02:13.211Z] [INFO] PROGRESS:20 Testing Desktop...
+[2026-06-23T12:02:17.386Z] [INFO] ==============================
+[2026-06-23T12:02:17.387Z] [INFO] 🚀 QA START: Desktop | Desktop
+[2026-06-23T12:02:17.388Z] [INFO] ==============================
+[2026-06-23T12:02:17.388Z] [INFO] ISSUES NOW: 0
+[2026-06-23T12:02:17.547Z] [INFO] 🔧 Stabilizing...
+[2026-06-23T12:02:19.066Z] [INFO] 📜 Scrolling...
+[2026-06-23T12:02:22.083Z] [INFO] 🖼️ Waiting for images...
+[2026-06-23T12:02:24.108Z] [INFO] 🔍 Running visual defect checks...
+[2026-06-23T12:02:24.109Z] [INFO] 🚀 Calling popup detector...
+[2026-06-23T12:02:24.110Z] [INFO] 🔍 [POPUP] Starting popup scan...
+[2026-06-23T12:02:25.620Z] [INFO] ✅ [POPUP] No popup detected
+[2026-06-23T12:02:25.700Z] [INFO] ENTRY BEING SAVED: {
+[2026-06-23T12:02:25.703Z] [INFO] "url": "https://example.com",
+[2026-06-23T12:02:25.701Z] [INFO] "page": "Desktop",
+[2026-06-23T12:02:25.704Z] [INFO] "device": "Desktop",
+[2026-06-23T12:02:25.704Z] [INFO] "issues": [],
+[2026-06-23T12:02:25.704Z] [INFO] "screenshot": null,
+[2026-06-23T12:02:25.705Z] [INFO] "timestamp": "2026-06-23T12:02:25.698Z"
+[2026-06-23T12:02:25.705Z] [INFO] }
+[2026-06-23T12:02:25.706Z] [INFO] ISSUES BEFORE PUSH: []
+[2026-06-23T12:02:25.706Z] [INFO] WRITING REPORT: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\cdcc5487-da78-4641-8c99-100c1e6a417e\qaReport.json
+[2026-06-23T12:02:25.711Z] [INFO] 📝 Report written: 0 issue(s)
+[2026-06-23T12:02:25.712Z] [INFO] LAST REPORT ENTRY: {
+[2026-06-23T12:02:25.712Z] [INFO] "page": "Desktop",
+[2026-06-23T12:02:25.712Z] [INFO] "url": "https://example.com",
+[2026-06-23T12:02:25.713Z] [INFO] "device": "Desktop",
+[2026-06-23T12:02:25.714Z] [INFO] "issues": [],
+[2026-06-23T12:02:25.714Z] [INFO] "screenshot": null,
+[2026-06-23T12:02:25.714Z] [INFO] "timestamp": "2026-06-23T12:02:25.698Z"
+[2026-06-23T12:02:25.715Z] [INFO] }
+[2026-06-23T12:02:25.715Z] [INFO] ✅ QA COMPLETE: 0 visual defect(s) found
+[2026-06-23T12:02:25.975Z] [INFO] PROGRESS:85 Generating QA report...
+[2026-06-23T12:02:25.980Z] [INFO] Report entries: 1
+[2026-06-23T12:02:25.981Z] [INFO] {
+[2026-06-23T12:02:25.982Z] [INFO] "page": "Desktop",
+[2026-06-23T12:02:25.984Z] [INFO] "device": "Desktop",
+[2026-06-23T12:02:25.988Z] [INFO] "issues": [],
+[2026-06-23T12:02:25.983Z] [INFO] "url": "https://example.com",
+[2026-06-23T12:02:25.993Z] [INFO] "timestamp": "2026-06-23T12:02:25.698Z"
+[2026-06-23T12:02:25.994Z] [INFO] }
+[2026-06-23T12:02:25.992Z] [INFO] "screenshot": null,
+[2026-06-23T12:02:25.996Z] [INFO] Screenshot folder: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\cdcc5487-da78-4641-8c99-100c1e6a417e\screenshots
+[2026-06-23T12:02:25.997Z] [INFO] Folder exists: true
+[2026-06-23T12:02:26.000Z] [INFO] Files: []
+[2026-06-23T12:02:26.004Z] [INFO] === Screenshot Metadata Map ===
+[2026-06-23T12:02:26.005Z] [INFO] {}
+[2026-06-23T12:02:26.007Z] [INFO] PROGRESS:100 Completed
+[2026-06-23T12:02:26.075Z] [INFO] Job completed successfully

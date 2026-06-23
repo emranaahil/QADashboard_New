@@ -1,0 +1,20 @@
+{
+  "id": "d37d8821-ad1f-4416-ab60-2982bd90e458",
+  "moduleId": "seo",
+  "status": "failed",
+  "progress": 85,
+  "message": "Test execution failed",
+  "url": "https://example.com",
+  "options": {
+    "mode": "single"
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-22T10:12:54.476Z",
+  "startedAt": "2026-06-22T10:12:54.492Z",
+  "completedAt": "2026-06-22T10:13:02.015Z",
+  "durationMs": 7523,
+  "reportPath": "jobs/d37d8821-ad1f-4416-ab60-2982bd90e458/qa-report.html",
+  "reportAvailable": true,
+  "error": "D:\\Project\\qaiachatbot\\Keyword Finder\\backend\\seo\\jobs\\d37d8821-ad1f-4416-ab60-2982bd90e458\\job.json: Unexpected end of JSON input",
+  "logs": []
+}

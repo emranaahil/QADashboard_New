@@ -1,0 +1,41 @@
+---
+pid: 18824
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "$p = Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object -First 1; if ($p) { Stop-Process -Id $p.OwningProcess -Force }; Start-Sleep -Seconds 2; Set-Location \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T10:26:09.567Z
+running_for_ms: 15660009 
+---
+Stop-Process : Cannot stop process "Idle (0)" because of the following error: Access is denied
+At line:1 char:109
++ ...  -First 1; if ($p) { Stop-Process -Id $p.OwningProcess -Force }; Star ...
++                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : CloseError: (System.Diagnostics.Process (Idle):Process) [Stop-Process], ProcessCommandEx 
+   ception
+    + FullyQualifiedErrorId : CouldNotStopProcess,Microsoft.PowerShell.Commands.StopProcessCommand
+ 
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+    at listenInCluster (node:net:2005:12)
+    at Server.listen (node:net:2110:7)
+    at app.listen (D:\Project\qaiachatbot\Keyword Finder\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (D:\Project\qaiachatbot\Keyword Finder\backend\server.js:112:5)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1984:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v24.14.0

@@ -1,0 +1,158 @@
+[2026-06-22T10:45:12.539Z] [INFO] Job created and queued
+[2026-06-22T10:45:12.546Z] [INFO] Job started
+[2026-06-22T10:45:12.862Z] [INFO] PROGRESS:5 Launching browser...
+[2026-06-22T10:45:13.175Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[2026-06-22T10:45:13.176Z] [INFO] 🧹 Cleared old QA logs
+[2026-06-22T10:45:13.177Z] [INFO] PROGRESS:15 Loading page...
+[2026-06-22T10:45:13.282Z] [INFO] PROGRESS:20 Testing Desktop...
+[2026-06-22T10:45:17.938Z] [INFO] 🚀 QA START: Desktop | Desktop
+[2026-06-22T10:45:17.937Z] [INFO] ==============================
+[2026-06-22T10:45:17.939Z] [INFO] ISSUES NOW: 0
+[2026-06-22T10:45:17.938Z] [INFO] ==============================
+[2026-06-22T10:45:31.768Z] [INFO] Job started
+[2026-06-22T10:45:32.071Z] [INFO] PROGRESS:5 Launching browser...
+[2026-06-22T10:45:32.377Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[2026-06-22T10:45:32.378Z] [INFO] 🧹 Cleared old QA logs
+[2026-06-22T10:45:32.379Z] [INFO] PROGRESS:15 Loading page...
+[2026-06-22T10:45:32.488Z] [INFO] PROGRESS:20 Testing Desktop...
+[2026-06-22T10:45:34.056Z] [INFO] ==============================
+[2026-06-22T10:45:34.057Z] [INFO] ISSUES NOW: 0
+[2026-06-22T10:45:34.057Z] [INFO] ==============================
+[2026-06-22T10:45:34.057Z] [INFO] 🚀 QA START: Desktop | Desktop
+[2026-06-22T10:45:49.086Z] [INFO] 🔧 Stabilizing...
+[2026-06-22T10:45:50.618Z] [INFO] 📜 Scrolling...
+[2026-06-22T10:45:53.633Z] [INFO] 🖼️ Waiting for images...
+[2026-06-22T10:45:55.649Z] [INFO] 🚀 Calling popup detector...
+[2026-06-22T10:45:55.649Z] [INFO] 🔍 Running visual defect checks...
+[2026-06-22T10:45:55.649Z] [INFO] 🔍 [POPUP] Starting popup scan...
+[2026-06-22T10:45:57.166Z] [INFO] ✅ [POPUP] No popup detected
+[2026-06-22T10:45:57.192Z] [INFO] Saving screenshot: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\screenshots\small-buttons-1782125157191.png
+[2026-06-22T10:45:57.250Z] [INFO] ADD ISSUE: Small Touch Targets
+[2026-06-22T10:45:57.251Z] [INFO] CURRENT ISSUE COUNT: 1
+[2026-06-22T10:45:57.264Z] [INFO] ADD ISSUE: Layout Shift (CLS)
+[2026-06-22T10:45:57.264Z] [INFO] CURRENT ISSUE COUNT: 2
+[2026-06-22T10:45:57.266Z] [INFO] Saving screenshot: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\screenshots\final-1782125157266.png
+[2026-06-22T10:45:57.330Z] [INFO] ENTRY BEING SAVED: {
+[2026-06-22T10:45:57.330Z] [INFO] "page": "Desktop",
+[2026-06-22T10:45:57.330Z] [INFO] "url": "https://GOOGLE.COM",
+[2026-06-22T10:45:57.330Z] [INFO] "device": "Desktop",
+[2026-06-22T10:45:57.331Z] [INFO] "issues": [
+[2026-06-22T10:45:57.331Z] [INFO] {
+[2026-06-22T10:45:57.331Z] [INFO] "id": "QA-0001",
+[2026-06-22T10:45:57.331Z] [INFO] "type": "Small Touch Targets",
+[2026-06-22T10:45:57.331Z] [INFO] "count": 2,
+[2026-06-22T10:45:57.331Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.331Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[2026-06-22T10:45:57.331Z] [INFO] "details": null,
+[2026-06-22T10:45:57.331Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[2026-06-22T10:45:57.331Z] [INFO] {
+[2026-06-22T10:45:57.331Z] [INFO] },
+[2026-06-22T10:45:57.331Z] [INFO] "type": "Layout Shift (CLS)",
+[2026-06-22T10:45:57.331Z] [INFO] "id": "QA-0002",
+[2026-06-22T10:45:57.331Z] [INFO] "count": 0,
+[2026-06-22T10:45:57.331Z] [INFO] "screenshot": null,
+[2026-06-22T10:45:57.331Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.331Z] [INFO] "details": "CLS Score: 0.1690",
+[2026-06-22T10:45:57.331Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[2026-06-22T10:45:57.331Z] [INFO] }
+[2026-06-22T10:45:57.331Z] [INFO] ],
+[2026-06-22T10:45:57.331Z] [INFO] "timestamp": "2026-06-22T10:45:57.329Z"
+[2026-06-22T10:45:57.331Z] [INFO] "screenshot": "final-1782125157266.png",
+[2026-06-22T10:45:57.331Z] [INFO] ISSUES BEFORE PUSH: [
+[2026-06-22T10:45:57.331Z] [INFO] {
+[2026-06-22T10:45:57.331Z] [INFO] }
+[2026-06-22T10:45:57.332Z] [INFO] "id": "QA-0001",
+[2026-06-22T10:45:57.332Z] [INFO] "type": "Small Touch Targets",
+[2026-06-22T10:45:57.332Z] [INFO] "count": 2,
+[2026-06-22T10:45:57.332Z] [INFO] "details": null,
+[2026-06-22T10:45:57.332Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[2026-06-22T10:45:57.332Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.332Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[2026-06-22T10:45:57.332Z] [INFO] "id": "QA-0002",
+[2026-06-22T10:45:57.332Z] [INFO] {
+[2026-06-22T10:45:57.332Z] [INFO] },
+[2026-06-22T10:45:57.332Z] [INFO] "type": "Layout Shift (CLS)",
+[2026-06-22T10:45:57.332Z] [INFO] "count": 0,
+[2026-06-22T10:45:57.332Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.332Z] [INFO] "details": "CLS Score: 0.1690",
+[2026-06-22T10:45:57.332Z] [INFO] "screenshot": null,
+[2026-06-22T10:45:57.332Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[2026-06-22T10:45:57.332Z] [INFO] }
+[2026-06-22T10:45:57.332Z] [INFO] ]
+[2026-06-22T10:45:57.332Z] [INFO] WRITING REPORT: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\qaReport.json
+[2026-06-22T10:45:57.333Z] [INFO] "url": "https://GOOGLE.COM",
+[2026-06-22T10:45:57.333Z] [INFO] 📝 Report written: 2 issue(s)
+[2026-06-22T10:45:57.333Z] [INFO] "page": "Desktop",
+[2026-06-22T10:45:57.334Z] [INFO] "device": "Desktop",
+[2026-06-22T10:45:57.334Z] [INFO] {
+[2026-06-22T10:45:57.334Z] [INFO] "issues": [
+[2026-06-22T10:45:57.334Z] [INFO] "id": "QA-0001",
+[2026-06-22T10:45:57.333Z] [INFO] LAST REPORT ENTRY: {
+[2026-06-22T10:45:57.334Z] [INFO] "type": "Small Touch Targets",
+[2026-06-22T10:45:57.334Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[2026-06-22T10:45:57.334Z] [INFO] "count": 2,
+[2026-06-22T10:45:57.334Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.334Z] [INFO] "details": null,
+[2026-06-22T10:45:57.334Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[2026-06-22T10:45:57.334Z] [INFO] "id": "QA-0002",
+[2026-06-22T10:45:57.334Z] [INFO] },
+[2026-06-22T10:45:57.334Z] [INFO] "count": 0,
+[2026-06-22T10:45:57.334Z] [INFO] "type": "Layout Shift (CLS)",
+[2026-06-22T10:45:57.334Z] [INFO] "screenshot": null,
+[2026-06-22T10:45:57.334Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.334Z] [INFO] "details": "CLS Score: 0.1690",
+[2026-06-22T10:45:57.334Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[2026-06-22T10:45:57.334Z] [INFO] {
+[2026-06-22T10:45:57.334Z] [INFO] "screenshot": "final-1782125157266.png",
+[2026-06-22T10:45:57.334Z] [INFO] "timestamp": "2026-06-22T10:45:57.329Z"
+[2026-06-22T10:45:57.334Z] [INFO] }
+[2026-06-22T10:45:57.335Z] [INFO] ✅ QA COMPLETE: 2 visual defect(s) found
+[2026-06-22T10:45:57.334Z] [INFO] }
+[2026-06-22T10:45:57.334Z] [INFO] ],
+[2026-06-22T10:45:57.395Z] [INFO] PROGRESS:85 Generating QA report...
+[2026-06-22T10:45:57.397Z] [INFO] Report entries: 1
+[2026-06-22T10:45:57.398Z] [INFO] {
+[2026-06-22T10:45:57.398Z] [INFO] "url": "https://GOOGLE.COM",
+[2026-06-22T10:45:57.398Z] [INFO] "page": "Desktop",
+[2026-06-22T10:45:57.398Z] [INFO] "device": "Desktop",
+[2026-06-22T10:45:57.398Z] [INFO] "issues": [
+[2026-06-22T10:45:57.398Z] [INFO] "id": "QA-0001",
+[2026-06-22T10:45:57.398Z] [INFO] {
+[2026-06-22T10:45:57.398Z] [INFO] "type": "Small Touch Targets",
+[2026-06-22T10:45:57.398Z] [INFO] "count": 2,
+[2026-06-22T10:45:57.398Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[2026-06-22T10:45:57.398Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.398Z] [INFO] "details": null,
+[2026-06-22T10:45:57.398Z] [INFO] {
+[2026-06-22T10:45:57.398Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[2026-06-22T10:45:57.398Z] [INFO] "id": "QA-0002",
+[2026-06-22T10:45:57.398Z] [INFO] "type": "Layout Shift (CLS)",
+[2026-06-22T10:45:57.398Z] [INFO] },
+[2026-06-22T10:45:57.398Z] [INFO] "count": 0,
+[2026-06-22T10:45:57.398Z] [INFO] "screenshot": null,
+[2026-06-22T10:45:57.398Z] [INFO] "severity": "minor",
+[2026-06-22T10:45:57.398Z] [INFO] "details": "CLS Score: 0.1690",
+[2026-06-22T10:45:57.398Z] [INFO] }
+[2026-06-22T10:45:57.398Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[2026-06-22T10:45:57.398Z] [INFO] ],
+[2026-06-22T10:45:57.398Z] [INFO] "screenshot": "final-1782125157266.png",
+[2026-06-22T10:45:57.398Z] [INFO] "timestamp": "2026-06-22T10:45:57.329Z"
+[2026-06-22T10:45:57.398Z] [INFO] }
+[2026-06-22T10:45:57.399Z] [INFO] Screenshot folder: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\screenshots
+[2026-06-22T10:45:57.399Z] [INFO] Folder exists: true
+[2026-06-22T10:45:57.399Z] [INFO] Files: [ 'final-1782125157266.png', 'small-buttons-1782125157191.png' ]
+[2026-06-22T10:45:57.400Z] [INFO] === Screenshot Metadata Map ===
+[2026-06-22T10:45:57.400Z] [INFO] {
+[2026-06-22T10:45:57.401Z] [INFO] "final-1782125157266.png": {
+[2026-06-22T10:45:57.401Z] [INFO] "device": "Desktop",
+[2026-06-22T10:45:57.401Z] [INFO] "url": "https://GOOGLE.COM"
+[2026-06-22T10:45:57.401Z] [INFO] "page": "Desktop",
+[2026-06-22T10:45:57.401Z] [INFO] },
+[2026-06-22T10:45:57.401Z] [INFO] "small-buttons-1782125157191.png": {
+[2026-06-22T10:45:57.401Z] [INFO] "device": "Desktop",
+[2026-06-22T10:45:57.401Z] [INFO] "page": "Desktop",
+[2026-06-22T10:45:57.401Z] [INFO] "url": "https://GOOGLE.COM"
+[2026-06-22T10:45:57.401Z] [INFO] }
+[2026-06-22T10:45:57.401Z] [INFO] }
+[2026-06-22T10:45:57.402Z] [INFO] PROGRESS:100 Completed
+[2026-06-22T10:45:57.422Z] [INFO] Job completed successfully

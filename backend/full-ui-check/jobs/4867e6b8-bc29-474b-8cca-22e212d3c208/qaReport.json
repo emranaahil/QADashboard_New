@@ -1,0 +1,28 @@
+[
+  {
+    "page": "Desktop",
+    "url": "https://example.com/",
+    "device": "Desktop",
+    "issues": [],
+    "screenshot": null,
+    "timestamp": "2026-06-22T13:09:27.237Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://example.com/domains/example",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-22T13:09:28.740Z"
+      }
+    ],
+    "screenshot": "final-1782133776883.png",
+    "timestamp": "2026-06-22T13:09:36.920Z"
+  }
+]

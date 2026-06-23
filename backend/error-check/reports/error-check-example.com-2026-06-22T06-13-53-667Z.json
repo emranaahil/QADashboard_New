@@ -1,0 +1,15 @@
+{
+  "url": "https://example.com",
+  "generatedAt": "2026-06-22T06:13:53.667Z",
+  "checked": 1,
+  "brokenPages": [],
+  "brokenLinks": [],
+  "allCheckedUrls": [
+    {
+      "url": "https://example.com/",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    }
+  ]
+}

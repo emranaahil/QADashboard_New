@@ -1,0 +1,18 @@
+{
+  "id": "f47af1b6-2014-4ff4-8b67-4f0396eaa4f0",
+  "moduleId": "ui-check",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://GOOGLE.COM",
+  "options": {},
+  "user": "anonymous",
+  "createdAt": "2026-06-22T10:45:12.527Z",
+  "startedAt": "2026-06-22T10:45:12.541Z",
+  "completedAt": "2026-06-22T10:45:57.418Z",
+  "durationMs": 44877,
+  "reportPath": "jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": []
+}

@@ -1,0 +1,12 @@
+﻿{
+  "name": "sunday-project-crawler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Terminal-only QA crawler script package",
+  "scripts": {
+    "test": "node runTest.js https://www.saucedemo.com/"
+  },
+  "dependencies": {
+    "playwright": "^1.61.0"
+  }
+}

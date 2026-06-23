@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Dashboard</title>
+  <link rel="stylesheet" href="/shared/css/enterprise.css">
+</head>
+<body>
+  <div id="ep-root">
+    <div class="ep-content" id="ep-content">
+      <div class="ep-page-stack ep-page-stack-wide">
+        <div class="ep-metrics" id="dashboard-metrics">
+          <div class="ep-metric"><div class="ep-skeleton ep-skeleton-metric"></div></div>
+          <div class="ep-metric"><div class="ep-skeleton ep-skeleton-metric"></div></div>
+          <div class="ep-metric"><div class="ep-skeleton ep-skeleton-metric"></div></div>
+          <div class="ep-metric"><div class="ep-skeleton ep-skeleton-metric"></div></div>
+        </div>
+
+        <div class="ep-grid-2">
+          <div class="ep-card">
+            <div class="ep-card-title">Recent Runs</div>
+            <div id="recent-runs"><div class="ep-skeleton ep-skeleton-row"></div></div>
+          </div>
+          <div class="ep-card">
+            <div class="ep-card-title">Quick Actions</div>
+            <div class="ep-btn-row ep-btn-row-stack">
+              <a href="/ui-testing?mode=single" class="ep-btn ep-btn-primary ep-btn-link">Run UI Test</a>
+              <a href="/seo-testing" class="ep-btn ep-btn-link">Run SEO Test</a>
+              <a href="/history" class="ep-btn ep-btn-link">View History</a>
+              <a href="/reports" class="ep-btn ep-btn-link">Reports Center</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ep-card">
+          <div class="ep-card-title">Modules</div>
+          <div id="module-links" class="ep-metrics ep-module-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/shared/js/api.js"></script>
+  <script src="/shared/js/queryCache.js"></script>
+  <script src="/shared/js/toast.js"></script>
+  <script src="/shared/js/logsDrawer.js"></script>
+  <script src="/shared/js/enterpriseShell.js"></script>
+  <script>
+    function sparklineSvg(values, color = '#22C55E') {
+      if (!values?.length) return '';
+      const w = 80, h = 24;
+      const max = Math.max(...values, 1);
+      const pts = values.map((v, i) => {
+        const x = (i / (values.length - 1 || 1)) * w;
+        const y = h - (v / max) * h;
+        return `${x},${y}`;
+      }).join(' ');
+      return `<svg class="ep-sparkline" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline fill="none" stroke="${color}" stroke-width="1.5" points="${pts}"/></svg>`;
+    }
+
+    function metricCard(label, value, trend, spark) {
+      return `<div class="ep-metric">
+        <div class="ep-metric-value">${value}</div>
+        <div class="ep-metric-label">${label}</div>
+        <div class="ep-metric-trend">${trend || ''}</div>
+        ${spark || ''}
+      </div>`;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await EnterpriseShell.mount({
+        title: 'Hi, QA Member',
+        subtitle: 'Track quality and release confidence.',
+        activePath: '/'
+      });
+
+      try {
+        const stats = await QueryCache.fetch('dashboard:stats', () => ModuleAPI.getDashboardStats(), 15000);
+        const m = document.getElementById('dashboard-metrics');
+        m.innerHTML = [
+          metricCard('Total Tests', stats.totalTests, '', sparklineSvg(stats.sparklines?.total)),
+          metricCard('Passed', stats.passed, stats.trends?.passed, sparklineSvg(stats.sparklines?.passed)),
+          metricCard('Failed', stats.failed, stats.trends?.failed, sparklineSvg(stats.sparklines?.failed, '#EF4444')),
+          metricCard('Success Rate', `${stats.successRate}%`, stats.trends?.successRate, sparklineSvg(stats.sparklines?.successRate))
+        ].join('');
+
+        const runs = document.getElementById('recent-runs');
+        if (!stats.recentRuns?.length) {
+          runs.innerHTML = '<p class="ep-empty">No runs yet. Start a test from Quick Actions.</p>';
+        } else {
+          runs.innerHTML = `<table class="ep-table"><thead><tr><th>URL</th><th>Module</th><th>Status</th><th>When</th></tr></thead><tbody>${
+            stats.recentRuns.map(r => `<tr>
+              <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.url}</td>
+              <td>${r.moduleId}</td>
+              <td><span class="ep-status-pill ${r.status}">${r.status}</span></td>
+              <td>${new Date(r.createdAt).toLocaleString()}</td>
+            </tr>`).join('')
+          }</tbody></table>`;
+        }
+
+        if (stats.running > 0) EnterpriseShell.setExecutionStatus('running');
+      } catch (err) {
+        Toast.error('Failed to load dashboard: ' + err.message);
+      }
+
+      try {
+        const { modules } = await ModuleAPI.listModules();
+        const links = {
+          'seo': '/seo-testing',
+          'ui-check': '/ui-testing?mode=single',
+          'full-ui-check': '/ui-testing?mode=full',
+          'keyword-check': '/keyword-radar',
+          'error-check': '/linkradar'
+        };
+        document.getElementById('module-links').innerHTML = modules.map(m => `
+          <a href="${links[m.id] || m.route}" class="ep-metric ep-module-tile">
+            <div class="ep-module-icon">${m.icon}</div>
+            <div class="ep-metric-label ep-module-label">${m.name}</div>
+          </a>
+        `).join('');
+      } catch { /* ignore */ }
+    });
+  </script>
+</body>
+</html>

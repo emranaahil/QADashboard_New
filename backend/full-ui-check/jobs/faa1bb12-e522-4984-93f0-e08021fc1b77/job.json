@@ -1,0 +1,24 @@
+{
+  "id": "faa1bb12-e522-4984-93f0-e08021fc1b77",
+  "moduleId": "full-ui-check",
+  "modelId": "example.com",
+  "status": "cancelled",
+  "progress": 25,
+  "message": "Cancelled by user",
+  "url": "https://example.com",
+  "options": {
+    "maxPages": 50
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-22T13:09:38.488Z",
+  "startedAt": "2026-06-22T13:09:38.493Z",
+  "completedAt": "2026-06-22T13:09:43.511Z",
+  "durationMs": 5018,
+  "reportPath": null,
+  "reportAvailable": false,
+  "error": null,
+  "logs": [],
+  "totalPages": 2,
+  "currentPage": 0,
+  "currentUrl": ""
+}

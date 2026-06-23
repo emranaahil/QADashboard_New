@@ -1,0 +1,26 @@
+services:
+  qa-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:10000"
+    environment:
+      NODE_ENV: production
+      PORT: 10000
+      STORAGE_ROOT: /app/data
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "true"
+      PLAYWRIGHT_CHROMIUM_SANDBOX: "false"
+      JOB_RECOVER_ON_STARTUP: "false"
+    volumes:
+      - qa-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "scripts/healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+volumes:
+  qa-data:

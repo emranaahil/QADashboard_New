@@ -1,0 +1,17 @@
+{
+  "watch": ["backend"],
+  "ext": "js,mjs,cjs",
+  "ignore": [
+    "backend/**/jobs/**",
+    "backend/**/reports/**",
+    "backend/keyword-check/storage/**",
+    "backend/error-check/reports/**",
+    "backend/shared/data/**",
+    "frontend/**",
+    "web/**",
+    "node_modules/**",
+    "**/*.log",
+    "**/*.tmp"
+  ],
+  "delay": 1500
+}

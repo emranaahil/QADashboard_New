@@ -1,0 +1,42 @@
+[2026-06-22T10:26:52.434Z] [INFO] Job created and queued
+[2026-06-22T10:26:52.451Z] [INFO] Job started
+[2026-06-22T10:26:52.860Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[2026-06-22T10:26:53.320Z] [INFO] PROGRESS:10 Discovering URLs...
+[2026-06-22T10:26:53.326Z] [INFO] [CRAWL] Starting URL discovery
+[2026-06-22T10:26:53.326Z] [INFO] [CRAWL] Seed: https://example.com
+[2026-06-22T10:26:53.326Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 5000
+[2026-06-22T10:26:53.487Z] [INFO] [CRAWL] Found 1: https://example.com/
+[2026-06-22T10:26:53.488Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+[2026-06-22T10:26:57.108Z] [INFO] [CRAWL] Found 2: https://example.com/domains/example
+[2026-06-22T10:26:57.109Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 1 new URL(s): https://example.com/
+[2026-06-22T10:26:57.122Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 0, found 2): https://example.com/domains/example
+[2026-06-22T10:26:58.768Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://example.com/domains/example
+[2026-06-22T10:26:58.773Z] [INFO] [CRAWL] Discovery complete — 2 URL(s) found
+[2026-06-22T10:26:58.774Z] [INFO] 1. https://example.com/
+[2026-06-22T10:26:58.774Z] [INFO] 2. https://example.com/domains/example
+[2026-06-22T10:26:58.773Z] [INFO] [CRAWL] URL list:
+[2026-06-22T10:26:58.854Z] [INFO] PROGRESS:25 Found 2 URLs — scanning...
+[2026-06-22T10:26:58.858Z] [INFO] [TEST] Starting queue processing
+[2026-06-22T10:26:58.858Z] [INFO] [TEST] Total URLs in queue: 2
+[2026-06-22T10:26:58.991Z] [INFO] [TEST] Running 1/2: https://example.com/
+[2026-06-22T10:26:58.998Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/
+[2026-06-22T10:26:59.641Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/
+[2026-06-22T10:26:59.644Z] [INFO] [QA] Started: https://example.com/ (Desktop)
+[2026-06-22T10:27:07.836Z] [INFO] [QA] Done: https://example.com/ — 0 issue(s)
+[2026-06-22T10:27:07.845Z] [INFO] [TEST] Completed 1/2: https://example.com/
+[2026-06-22T10:27:07.846Z] [INFO] [TEST] Running 2/2: https://example.com/domains/example
+[2026-06-22T10:27:07.849Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/domains/example
+[2026-06-22T10:27:08.896Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+[2026-06-22T10:27:09.521Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/domains/example
+[2026-06-22T10:27:09.522Z] [INFO] [QA] Started: https://example.com/domains/example (Desktop)
+[2026-06-22T10:27:10.899Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+[2026-06-22T10:27:12.900Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+[2026-06-22T10:27:14.913Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+[2026-06-22T10:27:16.924Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+[2026-06-22T10:27:17.756Z] [INFO] [QA] Done: https://example.com/domains/example — 1 issue(s)
+[2026-06-22T10:27:17.766Z] [INFO] [TEST] Completed 2/2: https://example.com/domains/example
+[2026-06-22T10:27:17.838Z] [INFO] [TEST] Generating HTML report...
+[2026-06-22T10:27:17.838Z] [INFO] [TEST] Queue finished — 2/2 URL(s) processed
+[2026-06-22T10:27:17.844Z] [INFO] [PDF] Skipped — HTML report at: D:\Project\qaiachatbot\Keyword Finder\backend\full-ui-check\jobs\8c4d6158-f296-4f6a-ab4a-98efa4403dc8\qa-report.html
+[2026-06-22T10:27:17.844Z] [INFO] PROGRESS:100 Completed
+[2026-06-22T10:27:17.872Z] [INFO] Job completed successfully

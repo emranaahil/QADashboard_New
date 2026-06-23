@@ -1,0 +1,76 @@
+[2026-06-22T13:30:31.508Z] [INFO] Job created and queued
+[2026-06-22T13:30:31.515Z] [INFO] Job started
+[2026-06-22T13:30:33.104Z] [INFO] Job started
+[2026-06-22T13:30:34.773Z] [INFO] Job started
+[2026-06-22T13:30:36.071Z] [INFO] Job started
+[2026-06-22T13:30:37.316Z] [INFO] Job started
+[2026-06-22T13:30:38.605Z] [INFO] Job started
+[2026-06-22T13:30:39.953Z] [INFO] Job started
+[2026-06-22T13:30:41.210Z] [INFO] Job started
+[2026-06-22T13:30:42.460Z] [INFO] Job started
+[2026-06-22T13:30:43.779Z] [INFO] Job started
+[2026-06-22T13:30:45.053Z] [INFO] Job started
+[2026-06-22T13:30:48.878Z] [INFO] Job started
+[2026-06-22T13:30:51.457Z] [INFO] Job started
+[2026-06-22T13:30:52.695Z] [INFO] Job started
+[2026-06-22T13:30:57.873Z] [INFO] Job started
+[2026-06-22T13:31:00.448Z] [INFO] Job started
+[2026-06-22T13:31:01.696Z] [INFO] Job started
+[2026-06-22T13:31:04.233Z] [INFO] Job started
+[2026-06-22T13:31:08.143Z] [INFO] Job started
+[2026-06-22T13:31:09.343Z] [INFO] Job started
+[2026-06-22T13:31:13.568Z] [INFO] Job started
+[2026-06-22T13:31:23.709Z] [INFO] Job started
+[2026-06-22T13:31:24.907Z] [INFO] Job started
+[2026-06-22T13:31:26.138Z] [INFO] Job started
+[2026-06-22T13:31:36.545Z] [INFO] Job started
+[2026-06-22T13:31:54.219Z] [INFO] Job started
+[2026-06-22T13:32:01.567Z] [INFO] Job started
+[2026-06-22T13:32:05.201Z] [INFO] Job started
+[2026-06-22T13:32:06.422Z] [INFO] Job started
+[2026-06-22T13:32:09.733Z] [INFO] Job started
+[2026-06-22T13:32:12.753Z] [INFO] Job started
+[2026-06-22T13:32:14.294Z] [INFO] Job started
+[2026-06-22T13:32:16.490Z] [INFO] Job started
+[2026-06-22T13:32:18.013Z] [INFO] Job started
+[2026-06-22T13:32:18.856Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[2026-06-22T13:32:18.864Z] [INFO] PROGRESS:20 Running SEO checks...
+[2026-06-22T13:32:18.865Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[2026-06-22T13:32:18.866Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[2026-06-22T13:32:18.867Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[2026-06-22T13:32:18.868Z] [INFO] ✅ FINAL MODE: single
+[2026-06-22T13:32:18.868Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T13:32:18.868Z] [INFO] 📏 BATCH SIZE: 50
+[2026-06-22T13:32:18.868Z] [INFO] 📦 TOTAL BATCHES: 1
+[2026-06-22T13:32:19.079Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[2026-06-22T13:32:19.080Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T13:32:19.080Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[2026-06-22T13:32:19.080Z] [INFO] 📦 Processing batch 1/1
+[2026-06-22T13:32:19.081Z] [INFO] 📄 URLs in batch: 1
+[2026-06-22T13:32:19.081Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[2026-06-22T13:32:19.081Z] [INFO] ⏳ Waiting for DOM load...
+[2026-06-22T13:32:19.081Z] [INFO] 🔍 Running SEO checks...
+[2026-06-22T13:32:39.902Z] [INFO] Job started
+[2026-06-22T13:32:40.598Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[2026-06-22T13:32:40.605Z] [INFO] PROGRESS:20 Running SEO checks...
+[2026-06-22T13:32:40.606Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[2026-06-22T13:32:40.606Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[2026-06-22T13:32:40.608Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[2026-06-22T13:32:40.608Z] [INFO] ✅ FINAL MODE: single
+[2026-06-22T13:32:40.609Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T13:32:40.609Z] [INFO] 📦 TOTAL BATCHES: 1
+[2026-06-22T13:32:40.609Z] [INFO] 📏 BATCH SIZE: 50
+[2026-06-22T13:32:40.738Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T13:32:40.738Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[2026-06-22T13:32:40.738Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[2026-06-22T13:32:40.739Z] [INFO] 📄 URLs in batch: 1
+[2026-06-22T13:32:40.739Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[2026-06-22T13:32:40.739Z] [INFO] ⏳ Waiting for DOM load...
+[2026-06-22T13:32:40.739Z] [INFO] 🔍 Running SEO checks...
+[2026-06-22T13:32:40.739Z] [INFO] 📦 Processing batch 1/1
+[2026-06-22T13:32:42.743Z] [INFO] ✅ Completed: https://example.com
+[2026-06-22T13:32:42.743Z] [INFO] ✅ Completed batch 1/1
+[2026-06-22T13:32:42.743Z] [INFO] 🎉 All pages processed. Generating reports...
+[2026-06-22T13:32:42.821Z] [INFO] PROGRESS:85 Generating QA report...
+[2026-06-22T13:32:42.822Z] [INFO] PROGRESS:100 Completed
+[2026-06-22T13:32:42.858Z] [INFO] Job completed successfully

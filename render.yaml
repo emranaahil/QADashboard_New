@@ -1,0 +1,39 @@
+# Render Blueprint — QA Dashboard
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deploy: connect repo → Render detects render.yaml → Deploy Blueprint
+# Or: Dashboard → New → Blueprint → select repository
+#
+# NOTE: Playwright requires at least Starter plan (512MB+ RAM).
+# Free tier is insufficient for browser automation workloads.
+
+services:
+  - type: web
+    name: qa-dashboard
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+        value: "true"
+      - key: PLAYWRIGHT_CHROMIUM_SANDBOX
+        value: "false"
+      - key: JOB_RECOVER_ON_STARTUP
+        value: "false"
+      - key: STORAGE_ROOT
+        value: /app/data
+
+    # Persistent disk for reports/jobs (survives redeploys)
+    disk:
+      name: qa-data
+      mountPath: /app/data
+      sizeGB: 5

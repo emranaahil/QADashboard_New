@@ -1,0 +1,740 @@
+---
+pid: 29172
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "$p = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if ($p) { Stop-Process -Id $p.OwningProcess -Force }; Start-Sleep -Seconds 2; Set-Location \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T10:45:27.537Z
+running_for_ms: 14499999 
+---
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+[ui-check:f47af1b6] [2026-06-22T10:45:31.768Z] [INFO] Job started
+::1 - - [22/Jun/2026:10:45:31 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 200 385 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:32.071Z] [INFO] PROGRESS:5 Launching browser...
+[ui-check:f47af1b6] [2026-06-22T10:45:32.377Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[ui-check:f47af1b6] [2026-06-22T10:45:32.378Z] [INFO] 🧹 Cleared old QA logs
+[ui-check:f47af1b6] [2026-06-22T10:45:32.379Z] [INFO] PROGRESS:15 Loading page...
+[ui-check:f47af1b6] [2026-06-22T10:45:32.488Z] [INFO] PROGRESS:20 Testing Desktop...
+::1 - - [22/Jun/2026:10:45:32 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 200 378 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:34.056Z] [INFO] ==============================
+[ui-check:f47af1b6] [2026-06-22T10:45:34.057Z] [INFO] 🚀 QA START: Desktop | Desktop
+[ui-check:f47af1b6] [2026-06-22T10:45:34.057Z] [INFO] ==============================
+[ui-check:f47af1b6] [2026-06-22T10:45:34.057Z] [INFO] ISSUES NOW: 0
+::1 - - [22/Jun/2026:10:45:34 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:36 +0000] "GET /api/test-status/active/seo HTTP/1.1" 200 154 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:45:36 +0000] "GET /api/test-status/example.com/seo HTTP/1.1" 200 444 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:45:36 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:38 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:40 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:43 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:45 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:47 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:49.086Z] [INFO] 🔧 Stabilizing...
+::1 - - [22/Jun/2026:10:45:49 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:50.618Z] [INFO] 📜 Scrolling...
+::1 - - [22/Jun/2026:10:45:51 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:53 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:53.633Z] [INFO] 🖼️ Waiting for images...
+::1 - - [22/Jun/2026:10:45:55 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:55.649Z] [INFO] 🔍 Running visual defect checks...
+[ui-check:f47af1b6] [2026-06-22T10:45:55.649Z] [INFO] 🚀 Calling popup detector...
+[ui-check:f47af1b6] [2026-06-22T10:45:55.649Z] [INFO] 🔍 [POPUP] Starting popup scan...
+[ui-check:f47af1b6] [2026-06-22T10:45:57.166Z] [INFO] ✅ [POPUP] No popup detected
+[ui-check:f47af1b6] [2026-06-22T10:45:57.192Z] [INFO] Saving screenshot: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\screenshots\small-buttons-1782125157191.png
+[ui-check:f47af1b6] [2026-06-22T10:45:57.250Z] [INFO] ADD ISSUE: Small Touch Targets
+[ui-check:f47af1b6] [2026-06-22T10:45:57.251Z] [INFO] CURRENT ISSUE COUNT: 1
+[ui-check:f47af1b6] [2026-06-22T10:45:57.264Z] [INFO] ADD ISSUE: Layout Shift (CLS)
+[ui-check:f47af1b6] [2026-06-22T10:45:57.264Z] [INFO] CURRENT ISSUE COUNT: 2
+[ui-check:f47af1b6] [2026-06-22T10:45:57.266Z] [INFO] Saving screenshot: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\screenshots\final-1782125157266.png
+::1 - - [22/Jun/2026:10:45:57 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.330Z] [INFO] ENTRY BEING SAVED: {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.330Z] [INFO] "page": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.330Z] [INFO] "url": "https://GOOGLE.COM",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.330Z] [INFO] "device": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "issues": [
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "id": "QA-0001",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "type": "Small Touch Targets",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "count": 2,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "details": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] },
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "id": "QA-0002",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "type": "Layout Shift (CLS)",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "count": 0,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "screenshot": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "details": "CLS Score: 0.1690",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] ],
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "screenshot": "final-1782125157266.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] "timestamp": "2026-06-22T10:45:57.329Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] ISSUES BEFORE PUSH: [
+[ui-check:f47af1b6] [2026-06-22T10:45:57.331Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "id": "QA-0001",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "type": "Small Touch Targets",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "count": 2,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "details": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] },
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "id": "QA-0002",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "type": "Layout Shift (CLS)",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "count": 0,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "screenshot": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "details": "CLS Score: 0.1690",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] ]
+[ui-check:f47af1b6] [2026-06-22T10:45:57.332Z] [INFO] WRITING REPORT: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\qaReport.json
+[ui-check:f47af1b6] [2026-06-22T10:45:57.333Z] [INFO] 📝 Report written: 2 issue(s)
+[ui-check:f47af1b6] [2026-06-22T10:45:57.333Z] [INFO] LAST REPORT ENTRY: {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.333Z] [INFO] "page": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.333Z] [INFO] "url": "https://GOOGLE.COM",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "device": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "issues": [
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "id": "QA-0001",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "type": "Small Touch Targets",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "count": 2,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "details": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] },
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "id": "QA-0002",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "type": "Layout Shift (CLS)",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "count": 0,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "screenshot": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "details": "CLS Score: 0.1690",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] ],
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "screenshot": "final-1782125157266.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] "timestamp": "2026-06-22T10:45:57.329Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.334Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.335Z] [INFO] ✅ QA COMPLETE: 2 visual defect(s) found
+[ui-check:f47af1b6] [2026-06-22T10:45:57.395Z] [INFO] PROGRESS:85 Generating QA report...
+[ui-check:f47af1b6] [2026-06-22T10:45:57.397Z] [INFO] Report entries: 1
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "page": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "url": "https://GOOGLE.COM",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "device": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "issues": [
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "id": "QA-0001",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "type": "Small Touch Targets",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "count": 2,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "screenshot": "small-buttons-1782125157191.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "details": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "timestamp": "2026-06-22T10:45:57.249Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] },
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "id": "QA-0002",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "type": "Layout Shift (CLS)",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "count": 0,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "screenshot": null,
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "severity": "minor",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "details": "CLS Score: 0.1690",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "timestamp": "2026-06-22T10:45:57.263Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] ],
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "screenshot": "final-1782125157266.png",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] "timestamp": "2026-06-22T10:45:57.329Z"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.398Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.399Z] [INFO] Screenshot folder: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f47af1b6-2014-4ff4-8b67-4f0396eaa4f0\screenshots
+[ui-check:f47af1b6] [2026-06-22T10:45:57.399Z] [INFO] Folder exists: true
+[ui-check:f47af1b6] [2026-06-22T10:45:57.399Z] [INFO] Files: [ 'final-1782125157266.png', 'small-buttons-1782125157191.png' ]
+[ui-check:f47af1b6] [2026-06-22T10:45:57.400Z] [INFO] === Screenshot Metadata Map ===
+[ui-check:f47af1b6] [2026-06-22T10:45:57.400Z] [INFO] {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "final-1782125157266.png": {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "device": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "page": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "url": "https://GOOGLE.COM"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] },
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "small-buttons-1782125157191.png": {
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "device": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "page": "Desktop",
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] "url": "https://GOOGLE.COM"
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.401Z] [INFO] }
+[ui-check:f47af1b6] [2026-06-22T10:45:57.402Z] [INFO] PROGRESS:100 Completed
+[ui-check:f47af1b6] [2026-06-22T10:45:57.422Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:10:45:59 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 200 448 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:59 +0000] "GET /api/modules/ui-check/jobs HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:59 +0000] "GET /api/modules/ui-check/reports HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:45:59 +0000] "GET /api/modules/ui-check/reports/latest-html HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::ffff:127.0.0.1 - - [22/Jun/2026:10:46:19 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::ffff:127.0.0.1 - - [22/Jun/2026:10:46:19 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0/report HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::ffff:127.0.0.1 - - [22/Jun/2026:10:46:19 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0/screenshots/final-1782125157266.png HTTP/1.1" 200 65988 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:19 +0000] "GET /api/modules/ui-check/jobs/f47af1b6-2014-4ff4-8b67-4f0396eaa4f0/screenshots/small-buttons-1782125157191.png HTTP/1.1" 200 64667 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:20 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /modules/ui-check/ HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/css/base.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/css/module-page.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/css/job-runner.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/js/shell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/js/api.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/js/reportPanel.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /modules/ui-check/reports.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /modules/ui-check/app.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /shared/js/jobRunner.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /api/modules HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /api/modules/ui-check/jobs HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /api/test-status/active/ui-check HTTP/1.1" 200 154 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /api/modules/ui-check/reports HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:10:46:26 +0000] "GET /api/modules/ui-check/reports/latest-html HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /modules/full-ui-check HTTP/1.1" 301 171 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /modules/full-ui-check/ HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/css/base.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/css/module-page.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/css/job-runner.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/js/shell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/js/jobRunner.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /shared/js/reportPanel.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /modules/full-ui-check/app.js HTTP/1.1" 200 626 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /modules/full-ui-check/reports.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /api/modules HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /api/modules/full-ui-check/jobs HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /api/test-status/active/full-ui-check HTTP/1.1" 200 154 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /api/modules/full-ui-check/reports HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:18:37 +0000] "GET /api/modules/full-ui-check/reports/job%3A8c4d6158-f296-4f6a-ab4a-98efa4403dc8 HTTP/1.1" 200 792 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:19:49.869Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:12:19:49 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 201 409 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:19:49.875Z] [INFO] Job started
+::1 - - [22/Jun/2026:12:19:50 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 355 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:19:50 +0000] "GET /api/modules/full-ui-check/jobs HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:19:50.259Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[full-ui-check:e64673be] [2026-06-22T12:19:50.598Z] [INFO] PROGRESS:10 Discovering URLs...
+[full-ui-check:e64673be] [2026-06-22T12:19:50.603Z] [INFO] [CRAWL] Starting URL discovery
+[full-ui-check:e64673be] [2026-06-22T12:19:50.604Z] [INFO] [CRAWL] Seed: https://stagedev.geniuswholesale.club
+[full-ui-check:e64673be] [2026-06-22T12:19:50.604Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 5000
+[full-ui-check:e64673be] [2026-06-22T12:19:50.775Z] [INFO] [CRAWL] Found 1: https://stagedev.geniuswholesale.club/
+[full-ui-check:e64673be] [2026-06-22T12:19:50.775Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://stagedev.geniuswholesale.club/
+::1 - - [22/Jun/2026:12:19:51 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 349 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:19:53 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:19:55 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:19:55.913Z] [INFO] [CRAWL] Found 2: https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:19:55.914Z] [INFO] [CRAWL] Found 3: https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:19:55.915Z] [INFO] [CRAWL] Found 4: https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:19:55.916Z] [INFO] [CRAWL] Found 5: https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:19:55.917Z] [INFO] [CRAWL] Found 6: https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:19:55.918Z] [INFO] [CRAWL] Found 7: https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:19:55.918Z] [INFO] [CRAWL] Found 8: https://stagedev.geniuswholesale.club/shop/supplements
+[full-ui-check:e64673be] [2026-06-22T12:19:55.919Z] [INFO] [CRAWL] Found 9: https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:19:55.920Z] [INFO] [CRAWL] Found 10: https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:19:55.921Z] [INFO] [CRAWL] Found 11: https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:19:55.923Z] [INFO] [CRAWL] Found 12: https://stagedev.geniuswholesale.club/term-and-condition
+[full-ui-check:e64673be] [2026-06-22T12:19:55.923Z] [INFO] [CRAWL] Found 13: https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:19:55.924Z] [INFO] [CRAWL] Found 14: https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:19:55.925Z] [INFO] [CRAWL] Found 15: https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:19:55.926Z] [INFO] [CRAWL] Found 16: https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:19:55.926Z] [INFO] [CRAWL] Page done — 32 link(s) checked, 15 new URL(s): https://stagedev.geniuswholesale.club/
+[full-ui-check:e64673be] [2026-06-22T12:19:55.937Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 14, found 16): https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:19:57.167Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:19:57.172Z] [INFO] [CRAWL] Scanning page 3 (depth 1, queue 13, found 16): https://stagedev.geniuswholesale.club/whcinsta
+::1 - - [22/Jun/2026:12:19:57 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:19:58.481Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:19:58.486Z] [INFO] [CRAWL] Scanning page 4 (depth 1, queue 12, found 16): https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:19:59.622Z] [INFO] [CRAWL] Page done — 0 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:19:59.626Z] [INFO] [CRAWL] Scanning page 5 (depth 1, queue 11, found 16): https://stagedev.geniuswholesale.club/wholesalehealt3
+::1 - - [22/Jun/2026:12:19:59 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:00.984Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:20:00.988Z] [INFO] [CRAWL] Scanning page 6 (depth 1, queue 10, found 16): https://stagedev.geniuswholesale.club/create-membership
+::1 - - [22/Jun/2026:12:20:01 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:02.248Z] [INFO] [CRAWL] Page done — 34 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:20:02.253Z] [INFO] [CRAWL] Scanning page 7 (depth 1, queue 9, found 16): https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:20:03.666Z] [INFO] [CRAWL] Found 17: https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:20:03.666Z] [INFO] [CRAWL] Page done — 32 link(s) checked, 1 new URL(s): https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:20:03.671Z] [INFO] [CRAWL] Scanning page 8 (depth 1, queue 9, found 17): https://stagedev.geniuswholesale.club/shop/supplements
+::1 - - [22/Jun/2026:12:20:03 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:05.378Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/shop/supplements
+[full-ui-check:e64673be] [2026-06-22T12:20:05.383Z] [INFO] [CRAWL] Scanning page 9 (depth 1, queue 8, found 17): https://stagedev.geniuswholesale.club/about
+::1 - - [22/Jun/2026:12:20:05 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:06.624Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:20:06.628Z] [INFO] [CRAWL] Scanning page 10 (depth 1, queue 7, found 17): https://stagedev.geniuswholesale.club/faq
+::1 - - [22/Jun/2026:12:20:07 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:07.977Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:20:07.982Z] [INFO] [CRAWL] Scanning page 11 (depth 1, queue 6, found 17): https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:20:09.317Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:20:09.322Z] [INFO] [CRAWL] Scanning page 12 (depth 1, queue 5, found 17): https://stagedev.geniuswholesale.club/term-and-condition
+::1 - - [22/Jun/2026:12:20:09 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:10.773Z] [INFO] [CRAWL] Page done — 32 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/term-and-condition
+[full-ui-check:e64673be] [2026-06-22T12:20:10.777Z] [INFO] [CRAWL] Scanning page 13 (depth 1, queue 4, found 17): https://stagedev.geniuswholesale.club/privacy-policy
+::1 - - [22/Jun/2026:12:20:11 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:12.582Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:20:12.586Z] [INFO] [CRAWL] Scanning page 14 (depth 1, queue 3, found 17): https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:20:13.676Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:20:13.680Z] [INFO] [CRAWL] Scanning page 15 (depth 1, queue 2, found 17): https://stagedev.geniuswholesale.club/contact-us
+::1 - - [22/Jun/2026:12:20:13 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:14.897Z] [INFO] [CRAWL] Page done — 33 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:20:14.901Z] [INFO] [CRAWL] Scanning page 16 (depth 1, queue 1, found 17): https://stagedev.geniuswholesale.club/cancel-my-subscription
+::1 - - [22/Jun/2026:12:20:15 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:16.350Z] [INFO] [CRAWL] Page done — 31 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:20:16.354Z] [INFO] [CRAWL] Scanning page 17 (depth 2, queue 0, found 17): https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:20:17.513Z] [INFO] [CRAWL] Found 18: https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:20:17.514Z] [INFO] [CRAWL] Page done — 33 link(s) checked, 1 new URL(s): https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:20:17.517Z] [INFO] [CRAWL] Scanning page 18 (depth 3, queue 0, found 18): https://stagedev.geniuswholesale.club/reset-password
+::1 - - [22/Jun/2026:12:20:17 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:18.646Z] [INFO] [CRAWL] Page done — 32 link(s) checked, 0 new URL(s): https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:20:18.650Z] [INFO] [CRAWL] Discovery complete — 18 URL(s) found
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] [CRAWL] URL list:
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 1. https://stagedev.geniuswholesale.club/
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 2. https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 3. https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 4. https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 5. https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 6. https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 7. https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 8. https://stagedev.geniuswholesale.club/shop/supplements
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 9. https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 10. https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 11. https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 12. https://stagedev.geniuswholesale.club/term-and-condition
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 13. https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 14. https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 15. https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 16. https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 17. https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:20:18.651Z] [INFO] 18. https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:20:18.709Z] [INFO] PROGRESS:25 Found 18 URLs — scanning...
+[full-ui-check:e64673be] [2026-06-22T12:20:18.711Z] [INFO] [TEST] Starting queue processing
+[full-ui-check:e64673be] [2026-06-22T12:20:18.711Z] [INFO] [TEST] Total URLs in queue: 18
+[full-ui-check:e64673be] [2026-06-22T12:20:18.802Z] [INFO] [TEST] Running 1/18: https://stagedev.geniuswholesale.club/
+[full-ui-check:e64673be] [2026-06-22T12:20:18.807Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/
+::1 - - [22/Jun/2026:12:20:19 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 359 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:20.280Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/
+[full-ui-check:e64673be] [2026-06-22T12:20:20.282Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/ (Desktop)
+::1 - - [22/Jun/2026:12:20:21 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:23 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:25 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:29 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:31 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:33 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:35 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:37 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:39 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:41 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:43 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:45 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:20:48 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:49.667Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/ — 7 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:20:49.677Z] [INFO] [TEST] Completed 1/18: https://stagedev.geniuswholesale.club/
+[full-ui-check:e64673be] [2026-06-22T12:20:49.677Z] [INFO] [TEST] Running 2/18: https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:20:49.680Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/wholesalehealthclub
+::1 - - [22/Jun/2026:12:20:50 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:50.811Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+[full-ui-check:e64673be] [2026-06-22T12:20:51.085Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:20:51.086Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/wholesalehealthclub (Desktop)
+::1 - - [22/Jun/2026:12:20:52 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 351 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:52.818Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:20:54 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:54.821Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:20:56 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:56.836Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:20:58 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:20:58.841Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:00 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:00.856Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:02 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:02.869Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:04 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:04.870Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:06 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:06.885Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:08 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:08.889Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:10 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:10.901Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:12 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:12.902Z] [INFO] PROGRESS:90 Scanning pages... 1/1
+::1 - - [22/Jun/2026:12:21:14 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:14.805Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/wholesalehealthclub — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:21:14.811Z] [INFO] [TEST] Completed 2/18: https://stagedev.geniuswholesale.club/wholesalehealthclub
+[full-ui-check:e64673be] [2026-06-22T12:21:14.812Z] [INFO] [TEST] Running 3/18: https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:21:14.814Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:21:14.902Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+[full-ui-check:e64673be] [2026-06-22T12:21:16.190Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:21:16.190Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/whcinsta (Desktop)
+::1 - - [22/Jun/2026:12:21:16 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 351 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:16.905Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:18 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:18.920Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:20 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:20.935Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:22 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:22.940Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:24 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:24.953Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:26 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:26.959Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:28 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:28.969Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:30 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:30.970Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:32 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:32.984Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:34 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:34.983Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:36 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:36.992Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+::1 - - [22/Jun/2026:12:21:38 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:39.002Z] [INFO] PROGRESS:90 Scanning pages... 2/2
+[full-ui-check:e64673be] [2026-06-22T12:21:40.151Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/whcinsta — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:21:40.157Z] [INFO] [TEST] Completed 3/18: https://stagedev.geniuswholesale.club/whcinsta
+[full-ui-check:e64673be] [2026-06-22T12:21:40.157Z] [INFO] [TEST] Running 4/18: https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:21:40.160Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/company/wholesale-health-club
+::1 - - [22/Jun/2026:12:21:40 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:41.004Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:41.374Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:21:41.375Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/company/wholesale-health-club (Desktop)
+::1 - - [22/Jun/2026:12:21:42 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 351 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:43.016Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+::1 - - [22/Jun/2026:12:21:44 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:21:45.017Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:47.018Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:49.019Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:51.034Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:53.037Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:55.037Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:57.050Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:21:59.066Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:22:01.066Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:22:03.067Z] [INFO] PROGRESS:90 Scanning pages... 3/3
+[full-ui-check:e64673be] [2026-06-22T12:22:04.593Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/company/wholesale-health-club — 2 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:22:04.599Z] [INFO] [TEST] Completed 4/18: https://stagedev.geniuswholesale.club/company/wholesale-health-club
+[full-ui-check:e64673be] [2026-06-22T12:22:04.599Z] [INFO] [TEST] Running 5/18: https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:22:04.602Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:22:05.079Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:06.184Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:22:06.184Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/wholesalehealt3 (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:22:07.080Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:09.082Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:11.083Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:13.083Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:15.084Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:17.085Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:19.098Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:21.102Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:23.102Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:25.108Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:27.109Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+::1 - - [22/Jun/2026:12:22:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 351 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:22:29.119Z] [INFO] PROGRESS:90 Scanning pages... 4/4
+[full-ui-check:e64673be] [2026-06-22T12:22:29.733Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/wholesalehealt3 — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:22:29.739Z] [INFO] [TEST] Completed 5/18: https://stagedev.geniuswholesale.club/wholesalehealt3
+[full-ui-check:e64673be] [2026-06-22T12:22:29.739Z] [INFO] [TEST] Running 6/18: https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:22:29.742Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:22:31.123Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:31.133Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:22:31.133Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/create-membership (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:22:33.132Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:35.137Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:37.136Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:39.150Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:41.153Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:43.165Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:45.165Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:47.172Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:49.181Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:51.184Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:53.199Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:55.201Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:57.215Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:59.230Z] [INFO] PROGRESS:90 Scanning pages... 5/5
+[full-ui-check:e64673be] [2026-06-22T12:22:59.572Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/create-membership — 7 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:22:59.580Z] [INFO] [TEST] Completed 6/18: https://stagedev.geniuswholesale.club/create-membership
+[full-ui-check:e64673be] [2026-06-22T12:22:59.580Z] [INFO] [TEST] Running 7/18: https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:22:59.583Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:23:00.860Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:23:00.860Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/login (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:23:01.236Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:03.249Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:05.254Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:07.261Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:09.274Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:11.286Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:13.292Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:15.302Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:17.307Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:19.311Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:21.316Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:23.331Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:25.344Z] [INFO] PROGRESS:90 Scanning pages... 6/6
+[full-ui-check:e64673be] [2026-06-22T12:23:26.113Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/login — 6 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:23:26.120Z] [INFO] [TEST] Completed 7/18: https://stagedev.geniuswholesale.club/login
+[full-ui-check:e64673be] [2026-06-22T12:23:26.120Z] [INFO] [TEST] Running 8/18: https://stagedev.geniuswholesale.club/shop/supplements
+[full-ui-check:e64673be] [2026-06-22T12:23:26.122Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/shop/supplements
+::1 - - [22/Jun/2026:12:23:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 351 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:23:27.357Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:27.517Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/shop/supplements
+[full-ui-check:e64673be] [2026-06-22T12:23:27.517Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/shop/supplements (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:23:29.363Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:31.364Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:33.364Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:35.366Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:37.379Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:39.381Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:41.382Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:43.397Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:45.409Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:47.423Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:49.428Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:51.433Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:53.438Z] [INFO] PROGRESS:90 Scanning pages... 7/7
+[full-ui-check:e64673be] [2026-06-22T12:23:54.911Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/shop/supplements — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:23:54.920Z] [INFO] [TEST] Completed 8/18: https://stagedev.geniuswholesale.club/shop/supplements
+[full-ui-check:e64673be] [2026-06-22T12:23:54.920Z] [INFO] [TEST] Running 9/18: https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:23:54.922Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:23:55.447Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:23:56.104Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:23:56.104Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/about (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:23:57.462Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:23:59.462Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:01.463Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:03.478Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:05.479Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:07.480Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:09.480Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:11.496Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:13.499Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:15.511Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:17.519Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:19.529Z] [INFO] PROGRESS:90 Scanning pages... 8/8
+[full-ui-check:e64673be] [2026-06-22T12:24:20.458Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/about — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:24:20.464Z] [INFO] [TEST] Completed 9/18: https://stagedev.geniuswholesale.club/about
+[full-ui-check:e64673be] [2026-06-22T12:24:20.465Z] [INFO] [TEST] Running 10/18: https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:24:20.467Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:24:21.529Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+[full-ui-check:e64673be] [2026-06-22T12:24:21.707Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:24:21.707Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/faq (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:24:23.529Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+[full-ui-check:e64673be] [2026-06-22T12:24:25.529Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 351 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:27.545Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:29.562Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:30 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:31.562Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:32 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:33.578Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:34 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:35.579Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:36 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:37.580Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:38 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:39.591Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:40 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:41.591Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:42 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:43.591Z] [INFO] PROGRESS:90 Scanning pages... 9/9
+::1 - - [22/Jun/2026:12:24:44 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:45.282Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/faq — 4 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:24:45.288Z] [INFO] [TEST] Completed 10/18: https://stagedev.geniuswholesale.club/faq
+[full-ui-check:e64673be] [2026-06-22T12:24:45.289Z] [INFO] [TEST] Running 11/18: https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:24:45.291Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:24:45.595Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:46 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 353 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:46.503Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:24:46.504Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/blog (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:24:47.595Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:48 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:49.595Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:50 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:51.597Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:52 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:53.611Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:54 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:55.612Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:56 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:57.611Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:24:58 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:24:59.613Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:25:00 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:01.627Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:25:02 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:03.627Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:25:04 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:05.628Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:25:06 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:07.643Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+::1 - - [22/Jun/2026:12:25:08 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:09.645Z] [INFO] PROGRESS:90 Scanning pages... 10/10
+[full-ui-check:e64673be] [2026-06-22T12:25:09.818Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/blog — 2 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:25:09.823Z] [INFO] [TEST] Completed 11/18: https://stagedev.geniuswholesale.club/blog
+[full-ui-check:e64673be] [2026-06-22T12:25:09.824Z] [INFO] [TEST] Running 12/18: https://stagedev.geniuswholesale.club/term-and-condition
+[full-ui-check:e64673be] [2026-06-22T12:25:09.826Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/term-and-condition
+::1 - - [22/Jun/2026:12:25:10 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:11.646Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:11.813Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/term-and-condition
+[full-ui-check:e64673be] [2026-06-22T12:25:11.813Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/term-and-condition (Desktop)
+::1 - - [22/Jun/2026:12:25:12 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 353 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:13.661Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:14 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:15.677Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:16 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:17.677Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:18 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:19.685Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:20 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:21.694Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:22 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:23.694Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:24 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:25.695Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:26 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:27.707Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+::1 - - [22/Jun/2026:12:25:28 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:25:29.710Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:31.710Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:33.711Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:35.717Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:37.719Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:39.716Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/term-and-condition — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:25:39.719Z] [INFO] PROGRESS:90 Scanning pages... 11/11
+[full-ui-check:e64673be] [2026-06-22T12:25:39.722Z] [INFO] [TEST] Completed 12/18: https://stagedev.geniuswholesale.club/term-and-condition
+[full-ui-check:e64673be] [2026-06-22T12:25:39.723Z] [INFO] [TEST] Running 13/18: https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:25:39.725Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:25:41.731Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:42.196Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:25:42.196Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/privacy-policy (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:25:43.740Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:45.744Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:47.759Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:49.760Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:51.760Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:53.765Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:55.776Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:57.777Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:25:59.792Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:26:01.807Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:26:03.812Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:26:05.815Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:26:07.819Z] [INFO] PROGRESS:90 Scanning pages... 12/12
+[full-ui-check:e64673be] [2026-06-22T12:26:08.118Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/privacy-policy — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:26:08.125Z] [INFO] [TEST] Completed 13/18: https://stagedev.geniuswholesale.club/privacy-policy
+[full-ui-check:e64673be] [2026-06-22T12:26:08.125Z] [INFO] [TEST] Running 14/18: https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:26:08.129Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:26:09.833Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:11.131Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:26:11.132Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/citations (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:26:11.833Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:13.842Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:15.841Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:17.842Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:19.842Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:21.844Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:23.858Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:25.860Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+::1 - - [22/Jun/2026:12:26:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 353 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:26:27.865Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:29.872Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:31.873Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:33.875Z] [INFO] PROGRESS:90 Scanning pages... 13/13
+[full-ui-check:e64673be] [2026-06-22T12:26:34.833Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/citations — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:26:34.839Z] [INFO] [TEST] Completed 14/18: https://stagedev.geniuswholesale.club/citations
+[full-ui-check:e64673be] [2026-06-22T12:26:34.840Z] [INFO] [TEST] Running 15/18: https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:26:34.842Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:26:35.876Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:37.331Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:26:37.331Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/contact-us (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:26:37.891Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:39.893Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:41.893Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:43.894Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:45.907Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:47.908Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:49.908Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:51.908Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:53.909Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:55.923Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:57.925Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:26:59.940Z] [INFO] PROGRESS:90 Scanning pages... 14/14
+[full-ui-check:e64673be] [2026-06-22T12:27:00.995Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/contact-us — 4 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:27:01.003Z] [INFO] [TEST] Completed 15/18: https://stagedev.geniuswholesale.club/contact-us
+[full-ui-check:e64673be] [2026-06-22T12:27:01.003Z] [INFO] [TEST] Running 16/18: https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:27:01.006Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:27:01.940Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:03.946Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:05.099Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:27:05.100Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/cancel-my-subscription (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:27:05.951Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:07.959Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:09.974Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:11.976Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:13.989Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:15.989Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:17.992Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:19.994Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:22.006Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:24.016Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:26.023Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+::1 - - [22/Jun/2026:12:27:27 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 353 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+[full-ui-check:e64673be] [2026-06-22T12:27:28.024Z] [INFO] PROGRESS:90 Scanning pages... 15/15
+[full-ui-check:e64673be] [2026-06-22T12:27:28.642Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/cancel-my-subscription — 5 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:27:28.650Z] [INFO] [TEST] Completed 16/18: https://stagedev.geniuswholesale.club/cancel-my-subscription
+[full-ui-check:e64673be] [2026-06-22T12:27:28.650Z] [INFO] [TEST] Running 17/18: https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:27:28.652Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:27:30.031Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:32.027Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:27:32.028Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/forget-password (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:27:32.031Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:34.043Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:36.047Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:38.056Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:40.068Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:42.074Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:44.089Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:46.096Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:48.105Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:50.105Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:52.107Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:54.110Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:56.114Z] [INFO] PROGRESS:90 Scanning pages... 16/16
+[full-ui-check:e64673be] [2026-06-22T12:27:57.160Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/forget-password — 6 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:27:57.167Z] [INFO] [TEST] Completed 17/18: https://stagedev.geniuswholesale.club/forget-password
+[full-ui-check:e64673be] [2026-06-22T12:27:57.167Z] [INFO] [TEST] Running 18/18: https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:27:57.169Z] [INFO] [TEST]   Loading page (Desktop): https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:27:58.123Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:27:59.844Z] [INFO] [TEST]   Running checks (Desktop): https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:27:59.845Z] [INFO] [QA] Started: https://stagedev.geniuswholesale.club/reset-password (Desktop)
+[full-ui-check:e64673be] [2026-06-22T12:28:00.132Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:02.146Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:04.159Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:06.166Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:08.169Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:10.184Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:12.199Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:14.206Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:16.207Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:18.220Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:20.221Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:22.223Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:24.237Z] [INFO] PROGRESS:90 Scanning pages... 17/17
+[full-ui-check:e64673be] [2026-06-22T12:28:25.014Z] [INFO] [QA] Done: https://stagedev.geniuswholesale.club/reset-password — 6 issue(s)
+[full-ui-check:e64673be] [2026-06-22T12:28:25.022Z] [INFO] [TEST] Completed 18/18: https://stagedev.geniuswholesale.club/reset-password
+[full-ui-check:e64673be] [2026-06-22T12:28:25.080Z] [INFO] [TEST] Queue finished — 18/18 URL(s) processed
+[full-ui-check:e64673be] [2026-06-22T12:28:25.080Z] [INFO] [TEST] Generating HTML report...
+[full-ui-check:e64673be] [2026-06-22T12:28:25.110Z] [INFO] [PDF] Skipped — HTML report at: D:\Project\qaiachatbot\Keyword Finder\backend\full-ui-check\jobs\e64673be-78af-41eb-b609-ee152bc79c64\qa-report.html
+[full-ui-check:e64673be] [2026-06-22T12:28:25.110Z] [INFO] PROGRESS:100 Completed
+[full-ui-check:e64673be] [2026-06-22T12:28:25.136Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:12:28:25 +0000] "GET /api/modules/full-ui-check/jobs/e64673be-78af-41eb-b609-ee152bc79c64/events HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:28:25 +0000] "GET /api/test-status/stagedev.geniuswholesale.club/full-ui-check HTTP/1.1" 200 492 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:28:25 +0000] "GET /api/modules/full-ui-check/jobs HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:28:25 +0000] "GET /api/modules/full-ui-check/reports HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:12:28:25 +0000] "GET /api/modules/full-ui-check/reports/job%3Ae64673be-78af-41eb-b609-ee152bc79c64 HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"

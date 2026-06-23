@@ -1,0 +1,84 @@
+{
+  "runId": "2026-06-21T11-10-30-715Z",
+  "completed": 20,
+  "pending": 0,
+  "failed": [],
+  "lastProcessedUrl": "https://www.saucedemo.com/",
+  "runs": {
+    "2026-06-21T11-10-30-715Z": {
+      "runId": "2026-06-21T11-10-30-715Z",
+      "lastProcessedUrl": "https://www.saucedemo.com/",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-21T11:10:30.718Z",
+        "started": "2026-06-21T11:10:46.127Z",
+        "finished": "2026-06-21T11:11:02.776Z"
+      },
+      "completed": 1,
+      "pending": 0,
+      "failed": []
+    },
+    "2026-06-21T11-13-28-551Z": {
+      "runId": "2026-06-21T11-13-28-551Z",
+      "lastProcessedUrl": "https://www.saucedemo.com/",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-21T11:13:28.556Z",
+        "started": "2026-06-21T11:13:30.307Z",
+        "finished": "2026-06-21T11:13:39.324Z"
+      },
+      "completed": 1,
+      "pending": 0,
+      "failed": []
+    },
+    "2026-06-21T11-15-20-711Z": {
+      "runId": "2026-06-21T11-15-20-711Z",
+      "lastProcessedUrl": "https://www.telehealthmed.com/privacy",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-21T11:15:20.716Z",
+        "started": "2026-06-21T11:21:16.935Z",
+        "finished": "2026-06-21T11:28:42.171Z"
+      },
+      "completed": 16,
+      "pending": 0,
+      "failed": []
+    },
+    "2026-06-21T12-30-58-634Z": {
+      "runId": "2026-06-21T12-30-58-634Z",
+      "lastProcessedUrl": "https://www.saucedemo.com/",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-21T12:30:58.638Z",
+        "started": "2026-06-21T12:31:12.604Z",
+        "finished": "2026-06-21T12:31:24.619Z"
+      },
+      "completed": 1,
+      "pending": 0,
+      "failed": []
+    },
+    "2026-06-21T12-37-28-866Z": {
+      "runId": "2026-06-21T12-37-28-866Z",
+      "lastProcessedUrl": "https://www.saucedemo.com/",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-21T12:37:28.871Z",
+        "started": "2026-06-21T12:37:41.675Z",
+        "finished": "2026-06-21T12:37:58.125Z"
+      },
+      "completed": 1,
+      "pending": 0,
+      "failed": []
+    }
+  }
+}

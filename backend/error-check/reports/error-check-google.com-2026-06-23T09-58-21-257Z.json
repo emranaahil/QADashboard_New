@@ -1,0 +1,21 @@
+{
+  "url": "https://google.com",
+  "generatedAt": "2026-06-23T09:58:21.257Z",
+  "checked": 2,
+  "brokenPages": [],
+  "brokenLinks": [],
+  "allCheckedUrls": [
+    {
+      "url": "https://google.com/",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://store.google.com/IN?utm_source=hp_header&utm_medium=google_ooo&utm_campaign=GS100042&hl=en-IN",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    }
+  ]
+}

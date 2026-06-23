@@ -1,0 +1,36 @@
+# Dependencies (installed in image)
+node_modules
+web/node_modules
+backend/**/node_modules
+
+# Next.js app (optional; not served by Express container)
+web/.next
+web/out
+
+# Dev / IDE
+.git
+.gitignore
+.cursor
+.mcps
+terminals
+*.md
+!README.md
+
+# Runtime data (mount volumes in production)
+backend/**/jobs
+backend/**/reports
+backend/keyword-check/storage
+backend/shared/data
+jobs
+reports
+storage
+
+# Logs & env secrets
+*.log
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

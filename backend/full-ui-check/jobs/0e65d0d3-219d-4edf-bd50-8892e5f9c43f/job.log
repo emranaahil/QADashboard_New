@@ -1,0 +1,193 @@
+[2026-06-22T10:22:24.351Z] [INFO] Job created and queued
+[2026-06-22T10:22:24.362Z] [INFO] Job started
+[2026-06-22T10:22:24.783Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[2026-06-22T10:22:25.206Z] [INFO] PROGRESS:10 Discovering URLs...
+[2026-06-22T10:22:25.212Z] [INFO] [CRAWL] Starting URL discovery
+[2026-06-22T10:22:25.212Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 5000
+[2026-06-22T10:22:25.212Z] [INFO] [CRAWL] Seed: https://google.com
+[2026-06-22T10:22:25.377Z] [INFO] [CRAWL] Found 1: https://google.com/
+[2026-06-22T10:22:25.378Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://google.com/
+[2026-06-22T10:22:27.712Z] [INFO] [CRAWL] Found 2: https://google.com/in
+[2026-06-22T10:22:27.713Z] [INFO] [CRAWL] Found 3: https://google.com/mail/&ogbl
+[2026-06-22T10:22:27.716Z] [INFO] [CRAWL] Found 4: https://google.com/imghp
+[2026-06-22T10:22:27.718Z] [INFO] [CRAWL] Found 5: https://google.com/intl/en/about/products
+[2026-06-22T10:22:27.722Z] [INFO] [CRAWL] Found 6: https://google.com/servicelogin
+[2026-06-22T10:22:27.724Z] [INFO] [CRAWL] Found 7: https://google.com/search
+[2026-06-22T10:22:27.725Z] [INFO] [CRAWL] Found 8: https://google.com/setprefs
+[2026-06-22T10:22:27.728Z] [INFO] [CRAWL] Found 9: https://google.com/intl/en_in/ads
+[2026-06-22T10:22:27.729Z] [INFO] [CRAWL] Found 10: https://google.com/services
+[2026-06-22T10:22:27.730Z] [INFO] [CRAWL] Found 11: https://google.com/search/howsearchworks
+[2026-06-22T10:22:27.732Z] [INFO] [CRAWL] Found 12: https://google.com/privacy
+[2026-06-22T10:22:27.734Z] [INFO] [CRAWL] Found 13: https://google.com/terms
+[2026-06-22T10:22:27.735Z] [INFO] [CRAWL] Found 14: https://google.com/preferences
+[2026-06-22T10:22:27.736Z] [INFO] [CRAWL] Found 15: https://google.com/advanced_search
+[2026-06-22T10:22:27.739Z] [INFO] [CRAWL] Found 16: https://google.com/history/privacyadvisor/search/unauth
+[2026-06-22T10:22:27.740Z] [INFO] [CRAWL] Found 17: https://google.com/history/optout
+[2026-06-22T10:22:27.743Z] [INFO] [CRAWL] Page done — 26 link(s) checked, 17 new URL(s): https://google.com/
+[2026-06-22T10:22:27.742Z] [INFO] [CRAWL] Found 18: https://google.com/websearch?p=ws_results_help
+[2026-06-22T10:22:27.756Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 16, found 18): https://google.com/in
+[2026-06-22T10:22:28.144Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://google.com/in
+[2026-06-22T10:22:28.149Z] [INFO] [CRAWL] Scanning page 3 (depth 1, queue 15, found 18): https://google.com/mail/&ogbl
+[2026-06-22T10:22:28.716Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://google.com/mail/&ogbl
+[2026-06-22T10:22:28.722Z] [INFO] [CRAWL] Scanning page 4 (depth 1, queue 14, found 18): https://google.com/imghp
+[2026-06-22T10:22:30.624Z] [INFO] [CRAWL] Found 19: https://google.com/advanced_image_search
+[2026-06-22T10:22:30.624Z] [INFO] [CRAWL] Page done — 12 link(s) checked, 1 new URL(s): https://google.com/imghp
+[2026-06-22T10:22:30.632Z] [INFO] [CRAWL] Scanning page 5 (depth 1, queue 14, found 19): https://google.com/intl/en/about/products
+[2026-06-22T10:22:32.459Z] [INFO] [CRAWL] Found 20: https://google.com/products
+[2026-06-22T10:22:32.461Z] [INFO] [CRAWL] Found 21: https://google.com/company-info
+[2026-06-22T10:22:32.465Z] [INFO] [CRAWL] Found 22: https://google.com/accessibility
+[2026-06-22T10:22:32.467Z] [INFO] [CRAWL] Found 23: https://google.com/google-app
+[2026-06-22T10:22:32.469Z] [INFO] [CRAWL] Found 24: https://google.com/ways-to-search/circle-to-search
+[2026-06-22T10:22:32.471Z] [INFO] [CRAWL] Found 25: https://google.com/ways-to-search/ai-mode
+[2026-06-22T10:22:32.472Z] [INFO] [CRAWL] Found 26: https://google.com/ways-to-search/lens
+[2026-06-22T10:22:32.473Z] [INFO] [CRAWL] Found 27: https://google.com/overview/gemini-live
+[2026-06-22T10:22:32.476Z] [INFO] [CRAWL] Found 28: https://google.com/overview/canvas
+[2026-06-22T10:22:32.478Z] [INFO] [CRAWL] Found 29: https://google.com/overview/image-generation
+[2026-06-22T10:22:32.480Z] [INFO] [CRAWL] Found 30: https://google.com/overview/video-generation
+[2026-06-22T10:22:32.482Z] [INFO] [CRAWL] Found 31: https://google.com/flow/about
+[2026-06-22T10:22:32.483Z] [INFO] [CRAWL] Found 32: https://google.com/photos/editing
+[2026-06-22T10:22:32.485Z] [INFO] [CRAWL] Found 33: https://google.com/solutions/ai
+[2026-06-22T10:22:32.487Z] [INFO] [CRAWL] Found 34: https://google.com/overview/gemini-in-chrome
+[2026-06-22T10:22:32.489Z] [INFO] [CRAWL] Found 35: https://google.com/maps
+[2026-06-22T10:22:32.491Z] [INFO] [CRAWL] Found 36: https://google.com/auto
+[2026-06-22T10:22:32.493Z] [INFO] [CRAWL] Found 37: https://google.com/tv
+[2026-06-22T10:22:32.494Z] [INFO] [CRAWL] Found 38: https://google.com/cars
+[2026-06-22T10:22:32.496Z] [INFO] [CRAWL] Found 39: https://google.com/chrome
+[2026-06-22T10:22:32.498Z] [INFO] [CRAWL] Found 40: https://google.com/chromebook
+[2026-06-22T10:22:32.499Z] [INFO] [CRAWL] Found 41: https://google.com/store/apps/details
+[2026-06-22T10:22:32.500Z] [INFO] [CRAWL] Found 42: https://google.com/digital-wellbeing
+[2026-06-22T10:22:32.502Z] [INFO] [CRAWL] Found 43: https://google.com/finance
+[2026-06-22T10:22:32.504Z] [INFO] [CRAWL] Found 44: https://google.com/android/find
+[2026-06-22T10:22:32.506Z] [INFO] [CRAWL] Found 45: https://google.com/category/watches_trackers
+[2026-06-22T10:22:32.508Z] [INFO] [CRAWL] Found 46: https://google.com/flights
+[2026-06-22T10:22:32.510Z] [INFO] [CRAWL] Found 47: https://google.com/products/calendar
+[2026-06-22T10:22:32.511Z] [INFO] [CRAWL] Found 48: https://google.com/better-together
+[2026-06-22T10:22:32.512Z] [INFO] [CRAWL] Found 49: https://google.com/products/chat
+[2026-06-22T10:22:32.513Z] [INFO] [CRAWL] Found 50: https://google.com/workspace-for-education/classroom
+[2026-06-22T10:22:32.513Z] [INFO] [CRAWL] Found 51: https://google.com/docs/about
+[2026-06-22T10:22:32.514Z] [INFO] [CRAWL] Found 52: https://google.com/drive
+[2026-06-22T10:22:32.515Z] [INFO] [CRAWL] Found 53: https://google.com/earth
+[2026-06-22T10:22:32.517Z] [INFO] [CRAWL] Found 54: https://google.com/familylink
+[2026-06-22T10:22:32.518Z] [INFO] [CRAWL] Found 55: https://google.com/about
+[2026-06-22T10:22:32.519Z] [INFO] [CRAWL] Found 56: https://google.com/fit
+[2026-06-22T10:22:32.520Z] [INFO] [CRAWL] Found 57: https://google.com/forms/about
+[2026-06-22T10:22:32.523Z] [INFO] [CRAWL] Found 58: https://google.com/welcome
+[2026-06-22T10:22:32.524Z] [INFO] [CRAWL] Found 59: https://google.com/keep
+[2026-06-22T10:22:32.525Z] [INFO] [CRAWL] Found 60: https://google.com/maps/about
+[2026-06-22T10:22:32.526Z] [INFO] [CRAWL] Found 61: https://google.com/products/meet
+[2026-06-22T10:22:32.528Z] [INFO] [CRAWL] Found 62: https://google.com/category/connected_home
+[2026-06-22T10:22:32.529Z] [INFO] [CRAWL] Found 63: https://google.com/photos/about
+[2026-06-22T10:22:32.530Z] [INFO] [CRAWL] Found 64: https://google.com/store
+[2026-06-22T10:22:32.531Z] [INFO] [CRAWL] Found 65: https://google.com/store/books
+[2026-06-22T10:22:32.532Z] [INFO] [CRAWL] Found 66: https://google.com/googleplaygames
+[2026-06-22T10:22:32.533Z] [INFO] [CRAWL] Found 67: https://google.com/about/play-pass
+[2026-06-22T10:22:32.533Z] [INFO] [CRAWL] Found 68: https://google.com/play-protect
+[2026-06-22T10:22:32.535Z] [INFO] [CRAWL] Found 69: https://google.com/sheets/about
+[2026-06-22T10:22:32.536Z] [INFO] [CRAWL] Found 70: https://google.com/products/sites
+[2026-06-22T10:22:32.538Z] [INFO] [CRAWL] Found 71: https://google.com/slides/about
+[2026-06-22T10:22:32.540Z] [INFO] [CRAWL] Found 72: https://google.com/trends
+[2026-06-22T10:22:32.541Z] [INFO] [CRAWL] Found 73: https://google.com/product/google_tv_streamer
+[2026-06-22T10:22:32.543Z] [INFO] [CRAWL] Found 74: https://google.com/products/voice
+[2026-06-22T10:22:32.545Z] [INFO] [CRAWL] Found 75: https://google.com/category/phones
+[2026-06-22T10:22:32.546Z] [INFO] [CRAWL] Found 76: https://google.com/product/pixel_buds
+[2026-06-22T10:22:32.547Z] [INFO] [CRAWL] Found 77: https://google.com/us/product/pixel_tablet
+[2026-06-22T10:22:32.549Z] [INFO] [CRAWL] Found 78: https://google.com/category/watches
+[2026-06-22T10:22:32.550Z] [INFO] [CRAWL] Found 79: https://google.com/u/0
+[2026-06-22T10:22:32.552Z] [INFO] [CRAWL] Found 80: https://google.com/streetview
+[2026-06-22T10:22:32.553Z] [INFO] [CRAWL] Found 81: https://google.com/travel
+[2026-06-22T10:22:32.556Z] [INFO] [CRAWL] Found 82: https://google.com/yt/about
+[2026-06-22T10:22:32.558Z] [INFO] [CRAWL] Found 83: https://google.com/enterprise
+[2026-06-22T10:22:32.560Z] [INFO] [CRAWL] Found 84: https://google.com/features
+[2026-06-22T10:22:32.562Z] [INFO] [CRAWL] Found 85: https://google.com/business
+[2026-06-22T10:22:32.563Z] [INFO] [CRAWL] Found 86: https://google.com/home/campaigns/demand-gen
+[2026-06-22T10:22:32.565Z] [INFO] [CRAWL] Found 87: https://google.com/home
+[2026-06-22T10:22:32.567Z] [INFO] [CRAWL] Found 88: https://google.com/adsense
+[2026-06-22T10:22:32.568Z] [INFO] [CRAWL] Found 89: https://google.com/analytics
+[2026-06-22T10:22:32.571Z] [INFO] [CRAWL] Found 90: https://google.com/webmasters/tools/home
+[2026-06-22T10:22:32.573Z] [INFO] [CRAWL] Found 91: https://google.com/home/local-services-ads
+[2026-06-22T10:22:32.574Z] [INFO] [CRAWL] Found 92: https://google.com/retail/manufacturer-center
+[2026-06-22T10:22:32.575Z] [INFO] [CRAWL] Found 93: https://google.com/retail
+[2026-06-22T10:22:32.576Z] [INFO] [CRAWL] Found 94: https://google.com/home/campaigns/performance-max
+[2026-06-22T10:22:32.578Z] [INFO] [CRAWL] Found 95: https://google.com/home/campaigns/search-ads
+[2026-06-22T10:22:32.579Z] [INFO] [CRAWL] Found 96: https://google.com/home/campaigns/shopping-ads
+[2026-06-22T10:22:32.581Z] [INFO] [CRAWL] Found 97: https://google.com/tagmanager
+[2026-06-22T10:22:32.582Z] [INFO] [CRAWL] Found 98: https://google.com/ads
+[2026-06-22T10:22:32.583Z] [INFO] [CRAWL] Found 99: https://google.com/admob
+[2026-06-22T10:22:32.584Z] [INFO] [CRAWL] Found 100: https://google.com/google-ads
+[2026-06-22T10:22:32.586Z] [INFO] [CRAWL] Found 101: https://google.com/identity
+[2026-06-22T10:22:32.588Z] [INFO] [CRAWL] Found 102: https://google.com/pay
+[2026-06-22T10:22:32.589Z] [INFO] [CRAWL] Found 103: https://google.com/distribute/console
+[2026-06-22T10:22:32.591Z] [INFO] [CRAWL] Found 104: https://google.com/wallet
+[2026-06-22T10:22:32.592Z] [INFO] [CRAWL] Found 105: https://google.com/interactive-media-ads
+[2026-06-22T10:22:32.593Z] [INFO] [CRAWL] Found 106: https://google.com/web
+[2026-06-22T10:22:32.594Z] [INFO] [CRAWL] Found 107: https://google.com/brand-resource-center
+[2026-06-22T10:22:32.595Z] [INFO] [CRAWL] Found 108: https://google.com/company-info/contact-google
+[2026-06-22T10:22:32.596Z] [INFO] [CRAWL] Found 109: https://google.com/investor
+[2026-06-22T10:22:32.597Z] [INFO] [CRAWL] Found 110: https://google.com/company-info/locations
+[2026-06-22T10:22:32.598Z] [INFO] [CRAWL] Found 111: https://google.com/press
+[2026-06-22T10:22:32.602Z] [INFO] [CRAWL] Found 112: https://google.com/around-the-globe
+[2026-06-22T10:22:32.607Z] [INFO] [CRAWL] Found 113: https://google.com/company-info/human-rights
+[2026-06-22T10:22:32.610Z] [INFO] [CRAWL] Found 114: https://google.com/progress/supplier-responsibility
+[2026-06-22T10:22:32.611Z] [INFO] [CRAWL] Page done — 185 link(s) checked, 95 new URL(s): https://google.com/intl/en/about/products
+[2026-06-22T10:22:32.638Z] [INFO] [CRAWL] Scanning page 6 (depth 1, queue 108, found 114): https://google.com/servicelogin
+[2026-06-22T10:22:33.052Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://google.com/servicelogin
+[2026-06-22T10:22:33.058Z] [INFO] [CRAWL] Scanning page 7 (depth 1, queue 107, found 114): https://google.com/search
+[2026-06-22T10:22:35.613Z] [INFO] [CRAWL] Page done — 26 link(s) checked, 0 new URL(s): https://google.com/search
+[2026-06-22T10:22:35.619Z] [INFO] [CRAWL] Scanning page 8 (depth 1, queue 106, found 114): https://google.com/setprefs
+[2026-06-22T10:22:37.242Z] [INFO] [CRAWL] Found 115: https://google.com/webhp
+[2026-06-22T10:22:37.243Z] [INFO] [CRAWL] Page done — 9 link(s) checked, 1 new URL(s): https://google.com/setprefs
+[2026-06-22T10:22:37.250Z] [INFO] [CRAWL] Scanning page 9 (depth 1, queue 106, found 115): https://google.com/intl/en_in/ads
+[2026-06-22T10:22:40.162Z] [INFO] [CRAWL] Found 116: https://google.com/addsession
+[2026-06-22T10:22:40.163Z] [INFO] [CRAWL] Found 117: https://google.com/logout
+[2026-06-22T10:22:40.164Z] [INFO] [CRAWL] Found 118: https://google.com/nav/selectaccount
+[2026-06-22T10:22:40.165Z] [INFO] [CRAWL] Found 119: https://google.com/mc/default
+[2026-06-22T10:22:40.167Z] [INFO] [CRAWL] Found 120: https://google.com/termsofservice
+[2026-06-22T10:22:40.168Z] [INFO] [CRAWL] Found 121: https://google.com/in/google-ads
+[2026-06-22T10:22:40.173Z] [INFO] [CRAWL] Found 122: https://google.com/in/google-ads/campaign-goals
+[2026-06-22T10:22:40.174Z] [INFO] [CRAWL] Found 123: https://google.com/in/google-ads/how-ads-work
+[2026-06-22T10:22:40.176Z] [INFO] [CRAWL] Found 124: https://google.com/in/google-ads/campaign-budget
+[2026-06-22T10:22:40.177Z] [INFO] [CRAWL] Found 125: https://google.com/in/resources
+[2026-06-22T10:22:40.179Z] [INFO] [CRAWL] Found 126: https://google.com/in/support/ads-expert
+[2026-06-22T10:22:40.182Z] [INFO] [CRAWL] Found 127: https://google.com/in/merchant-center
+[2026-06-22T10:22:40.183Z] [INFO] [CRAWL] Found 128: https://google.com/in/business-profile
+[2026-06-22T10:22:40.185Z] [INFO] [CRAWL] Found 129: https://google.com/in/privacy
+[2026-06-22T10:22:40.188Z] [INFO] [CRAWL] Found 130: https://google.com/in/ad-solutions/performance-max
+[2026-06-22T10:22:40.191Z] [INFO] [CRAWL] Found 131: https://google.com/in/ad-solutions/youtube-ads
+[2026-06-22T10:22:40.193Z] [INFO] [CRAWL] Found 132: https://google.com/in/ad-solutions/search
+[2026-06-22T10:22:40.194Z] [INFO] [CRAWL] Found 133: https://google.com/in/ad-solutions/demand-generation
+[2026-06-22T10:22:40.196Z] [INFO] [CRAWL] Found 134: https://google.com/in/ad-solutions/display-ads
+[2026-06-22T10:22:40.198Z] [INFO] [CRAWL] Found 135: https://google.com/in/ad-solutions
+[2026-06-22T10:22:40.200Z] [INFO] [CRAWL] Found 136: https://google.com/in/ad-tools/manage-accounts
+[2026-06-22T10:22:40.205Z] [INFO] [CRAWL] Found 137: https://google.com/in/ad-tools/keyword-planner
+[2026-06-22T10:22:40.206Z] [INFO] [CRAWL] Found 138: https://google.com/in/ad-tools/google-ads-editor
+[2026-06-22T10:22:40.207Z] [INFO] [CRAWL] Found 139: https://google.com/in/ad-tools/google-ads-app
+[2026-06-22T10:22:40.209Z] [INFO] [CRAWL] Found 140: https://google.com/in/ad-tools/reach-planner
+[2026-06-22T10:22:40.210Z] [INFO] [CRAWL] Found 141: https://google.com/in/ad-tools
+[2026-06-22T10:22:40.212Z] [INFO] [CRAWL] Found 142: https://google.com/in/google-analytics
+[2026-06-22T10:22:40.214Z] [INFO] [CRAWL] Found 143: https://google.com/in/think
+[2026-06-22T10:22:40.215Z] [INFO] [CRAWL] Found 144: https://google.com/in/accelerate/home
+[2026-06-22T10:22:40.216Z] [INFO] [CRAWL] Found 145: https://google.com/in/support/become-a-partner
+[2026-06-22T10:22:40.218Z] [INFO] [CRAWL] Found 146: https://google.com/in/support/work-with-a-partner
+[2026-06-22T10:22:40.220Z] [INFO] [CRAWL] Found 147: https://google.com/in/support
+[2026-06-22T10:22:40.223Z] [INFO] [CRAWL] Found 148: https://google.com/signup
+[2026-06-22T10:22:40.225Z] [INFO] [CRAWL] Found 149: https://google.com/nav/login
+[2026-06-22T10:22:40.227Z] [INFO] [CRAWL] Found 150: https://google.com/home/terms-and-conditions/incentives
+[2026-06-22T10:22:40.229Z] [INFO] [CRAWL] Found 151: https://google.com/in/ad-solutions/shopping-ads
+[2026-06-22T10:22:40.230Z] [INFO] [CRAWL] Found 152: https://google.com/in/ad-solutions/app-ads
+[2026-06-22T10:22:40.231Z] [INFO] [CRAWL] Found 153: https://google.com/bzmwl9_d1dw
+[2026-06-22T10:22:40.232Z] [INFO] [CRAWL] Found 154: https://google.com/mgbz1srgtky
+[2026-06-22T10:22:40.234Z] [INFO] [CRAWL] Found 155: https://google.com/vsderghx4be
+[2026-06-22T10:22:40.237Z] [INFO] [CRAWL] Found 156: https://google.com/in/support/schedule-appointment
+[2026-06-22T10:22:40.240Z] [INFO] [CRAWL] Found 157: https://google.com/products/ads
+[2026-06-22T10:22:40.243Z] [INFO] [CRAWL] Found 158: https://google.com/googleads
+[2026-06-22T10:22:40.248Z] [INFO] [CRAWL] Found 159: https://google.com/in/merchant-center/manufacturer-center
+[2026-06-22T10:22:40.250Z] [INFO] [CRAWL] Found 160: https://google.com/in/accelerate
+[2026-06-22T10:22:40.251Z] [INFO] [CRAWL] Found 161: https://google.com/google-ads/community
+[2026-06-22T10:22:40.255Z] [INFO] [CRAWL] Found 162: https://google.com/google-ads/scripts/docs/start
+[2026-06-22T10:22:40.256Z] [INFO] [CRAWL] Found 163: https://google.com/in/ad-tools/google-ads-api
+[2026-06-22T10:22:40.258Z] [INFO] [CRAWL] Found 164: https://google.com/start
+[2026-06-22T10:22:40.259Z] [INFO] [CRAWL] Found 165: https://google.com/home/get-started
+[2026-06-22T10:22:40.260Z] [INFO] [CRAWL] Found 166: https://google.com/intl/en/about
+[2026-06-22T10:22:40.261Z] [INFO] [CRAWL] Page done — 209 link(s) checked, 51 new URL(s): https://google.com/intl/en_in/ads
+[2026-06-22T10:22:40.275Z] [INFO] [CRAWL] Scanning page 10 (depth 1, queue 156, found 166): https://google.com/services
+[2026-06-22T10:22:40.541Z] [INFO] Job cancelled

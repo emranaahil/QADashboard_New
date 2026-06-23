@@ -1,0 +1,25 @@
+[2026-06-22T13:08:06.846Z] [INFO] Job created and queued
+[2026-06-22T13:08:06.851Z] [INFO] Job started
+[2026-06-22T13:08:07.440Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[2026-06-22T13:08:07.446Z] [INFO] PROGRESS:20 Running SEO checks...
+[2026-06-22T13:08:07.446Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[2026-06-22T13:08:07.446Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[2026-06-22T13:08:07.447Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[2026-06-22T13:08:07.448Z] [INFO] ✅ FINAL MODE: single
+[2026-06-22T13:08:07.448Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T13:08:07.448Z] [INFO] 📏 BATCH SIZE: 50
+[2026-06-22T13:08:07.448Z] [INFO] 📦 TOTAL BATCHES: 1
+[2026-06-22T13:08:07.565Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[2026-06-22T13:08:07.565Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T13:08:07.565Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[2026-06-22T13:08:07.565Z] [INFO] 📦 Processing batch 1/1
+[2026-06-22T13:08:07.565Z] [INFO] 📄 URLs in batch: 1
+[2026-06-22T13:08:07.565Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[2026-06-22T13:08:07.566Z] [INFO] ⏳ Waiting for DOM load...
+[2026-06-22T13:08:07.566Z] [INFO] 🔍 Running SEO checks...
+[2026-06-22T13:08:10.810Z] [INFO] ✅ Completed: https://example.com
+[2026-06-22T13:08:10.810Z] [INFO] ✅ Completed batch 1/1
+[2026-06-22T13:08:10.810Z] [INFO] 🎉 All pages processed. Generating reports...
+[2026-06-22T13:08:10.865Z] [INFO] PROGRESS:85 Generating QA report...
+[2026-06-22T13:08:10.866Z] [INFO] PROGRESS:100 Completed
+[2026-06-22T13:08:10.890Z] [INFO] Job completed successfully

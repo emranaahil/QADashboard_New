@@ -1,0 +1,32 @@
+---
+pid: 34088
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "cd \"D:\\Project\\qaiachatbot\\Keyword Finder\"; npm run dev:web"
+started_at: 2026-06-22T14:46:09.136Z
+running_for_ms: 65004    
+---
+
+> website-keyword-auditor@1.0.0 dev:web
+> npm run dev --prefix web
+
+
+> web@0.1.0 dev
+> next dev -p 3001
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of D:\Project\qaiachatbot\Keyword Finder\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * D:\Project\qaiachatbot\Keyword Finder\web\package-lock.json
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3001
+   - Network:      http://10.107.180.205:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.4s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 5.9s (770 modules)
+ GET /dashboard 200 in 6543ms

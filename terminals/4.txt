@@ -1,0 +1,20 @@
+---
+pid: 32240
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "cd \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T06:13:40.982Z
+running_for_ms: 30815001 
+---
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+Starting error content check for https://example.com (max: 2, delay: 200ms, depth: 1)
+Starting crawl for 765b3b5e-1206-4887-b875-c82c44c11dcd: https://example.com
+::1 - - [22/Jun/2026:06:13:47 +0000] "POST /api/scan/start HTTP/1.1" 200 157 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+Batch 1: Processing 1 URLs
+Launching new browser instance...
+Processing 1/2: https://example.com/ (depth 0) - Queue: 0, Discovered: 1
+Batch 1 complete. Total: 1, Matches: 1
+Crawl complete for 765b3b5e-1206-4887-b875-c82c44c11dcd. Processed 1 URLs, found 1 matches.
+::1 - - [22/Jun/2026:06:13:53 +0000] "POST /api/check-broken-pages HTTP/1.1" 200 151 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:06:13:53 +0000] "GET /api/scan/765b3b5e-1206-4887-b875-c82c44c11dcd/report HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"

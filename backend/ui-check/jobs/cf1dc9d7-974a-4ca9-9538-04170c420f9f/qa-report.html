@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA Report — 2026-06-22</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <style>
+    /* ── CSS Variables ──────────────────────────────────────────────────── */
+    :root {
+      --bg: #0b1224;
+      --card: #111c36;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --border: rgba(255,255,255,.08);
+      --good: #22c55e;
+      --warn: #ffa502;
+      --bad: #ef4444;
+      --radius: 16px;
+      --gap: 16px;
+    }
+
+    /* ── Reset & Base ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif; line-height: 1.5; }
+    img { max-width: 100%; height: auto; }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+
+    /* ── Layout ─────────────────────────────────────────────────────────── */
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 22px; }
+    .topbar { position: sticky; top: 0; background: rgba(11,18,36,.88); backdrop-filter: blur(10px); z-index: 50; border-bottom: 1px solid var(--border); }
+    .topbar .wrap { padding-top: 14px; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    h1 { margin: 0; font-size: 20px; letter-spacing: .2px; }
+    h2 { margin: 22px 0 10px; font-size: 16px; letter-spacing: .3px; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; }
+
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    /* ── Badge ──────────────────────────────────────────────────────────── */
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: .2px; }
+    .badge.critical, .badge-critical { background: rgba(239,68,68,.18); color: #fecaca; border: 1px solid rgba(239,68,68,.4); }
+    .badge.major, .badge-major { background: rgba(255,165,2,.18); color: #fde68a; border: 1px solid rgba(255,165,2,.4); }
+    .badge.minor, .badge-minor { background: rgba(34,197,94,.16); color: #bbf7d0; border: 1px solid rgba(34,197,94,.35); }
+
+    /* ── Executive Summary ──────────────────────────────────────────────── */
+    .exec-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-bottom: 10px; }
+    .exec-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-align: center; }
+    .exec-card .exec-label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .exec-card .exec-value { font-size: 28px; font-weight: 800; }
+    .exec-card .exec-status { font-size: 14px; margin-top: 8px; }
+    .health-score { font-size: 48px; font-weight: 900; }
+    .health-excellent { color: var(--good); }
+    .health-attention { color: var(--warn); }
+    .health-critical { color: var(--bad); }
+
+    /* ── Stats Grid ─────────────────────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-top: 14px; }
+    .stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .stat .v { font-size: 22px; font-weight: 800; margin-top: 6px; }
+
+    /* ── Filter Bar ─────────────────────────────────────────────────────── */
+    .filter-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 14px 0; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .filter-bar select,
+    .filter-bar input[type="text"] {
+      background: #0f1831; color: var(--text); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none;
+      min-width: 140px;
+    }
+    .filter-bar select:focus, .filter-bar input[type="text"]:focus { border-color: rgba(99,102,241,.5); }
+    .filter-bar input[type="text"] { flex: 1; min-width: 200px; }
+    .btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: #0f1831; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s; }
+    .btn:hover { background: rgba(99,102,241,.25); }
+    .btn-primary { background: rgba(99,102,241,.3); border-color: rgba(99,102,241,.5); }
+    .btn-primary:hover { background: rgba(99,102,241,.5); }
+    .filter-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    /* ── Page Cards ─────────────────────────────────────────────────────── */
+    .pageGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: var(--gap); margin-top: 14px; }
+    .page-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .page-card-info { flex: 1; }
+    .page-card-name { font-weight: 900; font-size: 15px; }
+    .page-card-url { color: var(--muted); font-size: 12px; word-break: break-word; }
+    .page-card-device { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .page-card-time { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .page-card-status { text-align: right; flex-shrink: 0; }
+    .page-card-count { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .page-card-issues-title, .page-card-shots-title { margin-top: 12px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .issue-list { list-style: none; margin: 6px 0 0 0; padding: 0; }
+    .issue-item { margin: 4px 0; font-size: 13px; display: flex; align-items: flex-start; gap: 4px; }
+
+    /* ── Table ──────────────────────────────────────────────────────────── */
+    .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .table th, .table td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: top; }
+    .table th { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; }
+    .table td { font-size: 13px; }
+
+    /* ── Thumbnails / Gallery ───────────────────────────────────────────── */
+    .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .thumb { width: 160px; background: #0f1831; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform .15s, border-color .15s; }
+    .thumb:hover { transform: translateY(-2px); border-color: rgba(99,102,241,.4); }
+    .thumb img { width: 100%; height: auto; display: block; }
+    .thumb .t { padding: 8px 10px; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── Empty State ────────────────────────────────────────────────────── */
+    .empty-state { color: var(--muted); font-size: 14px; padding: 16px; text-align: center; }
+
+    
+
+    /* ── Lightbox / Viewer ──────────────────────────────────────────────── */
+    .viewer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.94); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; touch-action: none; }
+    .viewer.open { display: flex; }
+    .viewerInner {
+  position: relative;
+  width: 95vw;
+  height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  will-change: transform;
+}
+    .viewerInner img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transform-origin: center center;
+  user-select: none;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  will-change: transform;
+  transition: none;
+}
+    .viewer-close { position: absolute; top: 16px; right: 24px; font-size: 32px; color: #fff; cursor: pointer; z-index: 10000; background: rgba(0,0,0,.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+    .viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); font-size: 28px; color: #fff; cursor: pointer; background: rgba(0,0,0,.5); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; z-index: 10000; border: none; }
+    .viewer-nav.prev { left: 10px; }
+    .viewer-nav.next { right: 10px; }
+    .viewer-info { color: var(--muted); font-size: 13px; margin-top: 10px; text-align: center; }
+    .viewer-controls { position: absolute; top: 16px; left: 24px; display: flex; gap: 8px; z-index: 10000; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .pageGrid { grid-template-columns: 1fr; }
+      .exec-summary { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+      .filter-actions { margin-left: 0; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 12px; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Print Styles ───────────────────────────────────────────────────── */
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: #0b1224 !important;
+        color: #e5e7eb !important;
+      }
+
+      .topbar {
+  position: static !important;
+  display: block !important;
+  background: rgba(11,18,36,.88) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  width: 100% !important;
+}
+
+
+.topbar .wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: 16px !important;
+}
+
+
+.topbar h1 {
+  font-size: 20px !important;
+  white-space: nowrap !important;
+}
+
+
+.topbar .row {
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+
+.topbar .row span {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+
+.topbar .badge {
+  flex-shrink: 0 !important;
+}
+
+      .wrap {
+        max-width: 100% !important;
+        padding: 16px !important;
+      }
+
+      .filter-bar,
+      #galleryGrid,
+      .viewer,
+      .viewer-controls,
+      .viewer-nav,
+      .viewer-close,
+      #galleryDeviceFilter,
+      #galleryPageFilter,
+      .gallery-item,
+      .row select {
+        display: none !important;
+      }
+
+      .pageCard {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .exec-summary {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .stats-grid {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .card table {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      img {
+        max-width: 100% !important;
+        max-height: 90vh !important;
+        object-fit: contain !important;
+      }
+
+      .thumb {
+        width: 100% !important;
+        margin-bottom: 10px;
+      }
+
+      .thumb img {
+        max-height: 90vh !important;
+        object-fit: contain !important;
+      }
+
+      .gallery-item .t small {
+        color: #e5e7eb !important;
+      }
+
+      /* Print screenshot appendix */
+      .print-screenshot-page {
+        display: block !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        page-break-after: always;
+        break-after: page;
+        padding: 20px 0;
+        background: #0b1224 !important;
+      }
+      .print-screenshot-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+      .print-shot-meta {
+        font-size: 14px;
+        color: #94a3b8 !important;
+        padding: 4px 0;
+      }
+      .print-shot-img-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 0;
+      }
+      .print-shot-img-wrap img {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,.12);
+      }
+    }
+
+    /* ── Print screenshot appendix (hidden on screen) ─────────────────── */
+    .print-screenshot-appendix { display: none; }
+    @media print {
+      .print-screenshot-appendix { display: block !important; }
+    }
+
+    /* ── Scrollbar ──────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TOP BAR                                                              -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="topbar">
+    <div class="wrap">
+      <h1>📋 QA Report</h1>
+      <div class="row" style="gap:14px;">
+        <span class="badge minor">Run</span>
+        <span style="color:var(--muted);font-size:13px;">2026-06-22</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="reportContent">
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- EXECUTIVE SUMMARY                                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>QA Executive Summary</h2>
+    <div class="exec-summary">
+      <div class="exec-card">
+        <div class="exec-label">Pages Tested</div>
+        <div class="exec-value">1</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-label">Passed</div>
+        <div class="exec-value health-excellent">0</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-label">Failed</div>
+        <div class="exec-value health-critical">1</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-label">Overall QA Health Score</div>
+        <div class="exec-value health-score health-critical">0%</div>
+        <div class="exec-status">🔴 Critical</div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- STATISTICS DASHBOARD                                               -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Statistics Overview</h2>
+    <div class="stats-grid">
+      <div class="card stat">
+        <div class="k">Total Pages</div>
+        <div class="v">1</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Passed</div>
+        <div class="v" style="color:var(--good);">0</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Failed</div>
+        <div class="v" style="color:var(--bad);">1</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Total Issues</div>
+        <div class="v">2</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Critical Issues</div>
+        <div class="v" style="color:var(--bad);">0</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Major Issues</div>
+        <div class="v" style="color:var(--warn);">0</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Minor Issues</div>
+        <div class="v" style="color:var(--good);">2</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Screenshots Captured</div>
+        <div class="v">2</div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- FILTER BAR                                                        -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <div class="filter-bar" id="filterBar">
+      <select id="filterUrl" onchange="applyFilters()">
+        <option value="">All URLs</option>
+        <option value="https://google.com">https://google.com</option>
+      </select>
+      <select id="filterDevice" onchange="applyFilters()">
+        <option value="">All Devices</option>
+        <option value="Desktop">Desktop</option>
+      </select>
+      <select id="filterPriority" onchange="applyFilters()">
+        <option value="">All Priorities</option>
+        <option value="critical">Critical</option>
+        <option value="major">Major</option>
+        <option value="minor">Minor</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="🔍 Search Issues..." oninput="applyFilters()" />
+      <div class="filter-actions">
+       
+        <button class="btn" onclick="window.print()">🖨️ Print Report /📥 Download PDF </button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- PER PAGE RESULTS                                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Per Page Results <span id="pageResultsCount" style="font-size:13px;color:var(--muted);font-weight:400;">(1)</span></h2>
+    <div class="pageGrid" id="pageGrid">
+      
+      <div class="card pageCard" data-device="Desktop" data-url="https://google.com"
+           data-has-issues="true" data-search="desktop https://google.com desktop">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">Desktop</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>Desktop</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>2</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 2</li><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Layout Shift (CLS)</li></ul>
+        <div class="page-card-shots-title">Screenshots (2)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782123798914.png')">
+          <img src="screenshots/small-buttons-1782123798914.png" alt="small-buttons-1782123798914.png" loading="lazy" />
+          <div class="t">small-buttons-1782123798914.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782123799021.png')">
+          <img src="screenshots/final-1782123799021.png" alt="final-1782123799021.png" loading="lazy" />
+          <div class="t">final-1782123799021.png</div>
+        </div>
+        
+      </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- ISSUE TABLE                                                       -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Issue Table <span id="issueTableCount" style="font-size:13px;color:var(--muted);font-weight:400;">(2)</span></h2>
+    <div class="card" style="padding:16px;overflow-x:auto;">
+      
+        <table class="table" id="issueTable">
+          <thead>
+            <tr>
+              <th style="width:20%;">Page URL</th>
+              <th style="width:38%;">Issue</th>
+              <th style="width:12%;">Severity</th>
+              <th style="width:18%;">Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr data-device="Desktop" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 2 desktop https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 2</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="Desktop" data-url="https://google.com"
+            data-severity="minor" data-search="layout shift (cls) — cls score: 0.1690 desktop https://google.com layout shift">
+          <td>https://google.com</td>
+          <td>Layout Shift (CLS)</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Layout Shift</td>
+        </tr>
+          </tbody>
+        </table>
+      
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- VISUAL QA FINDINGS                                                -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    
+   
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- SCREENSHOT GALLERY                                                -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Screenshot Gallery <span id="galleryCount" style="font-size:13px;color:var(--muted);font-weight:400;">(2)</span></h2>
+    <div class="row" style="margin-bottom:10px;gap:8px;">
+      <select id="galleryDeviceFilter" onchange="filterGallery()" style="background:#0f1831;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;">
+        <option value="">All Devices</option>
+        <option value="Desktop">Desktop</option>
+      </select>
+      <select id="galleryPageFilter" onchange="filterGallery()" style="background:#0f1831;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;">
+        <option value="">All Pages</option>
+          <option value="https://google.com">https://google.com</option>
+      </select>
+    </div>
+    <div class="card" style="padding:16px;">
+      <div class="thumbs" id="galleryGrid">
+        
+        <div class="thumb gallery-item" data-device="Desktop" data-page="Desktop"
+             onclick="openGalleryViewer(0)" data-index="0">
+          <img src="screenshots/final-1782123799021.png" alt="final-1782123799021.png" loading="lazy" />
+          <div class="t">final-1782123799021.png<br><small style="color:var(--text);">Desktop • Desktop</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="Desktop" data-page="Desktop"
+             onclick="openGalleryViewer(1)" data-index="1">
+          <img src="screenshots/small-buttons-1782123798914.png" alt="small-buttons-1782123798914.png" loading="lazy" />
+          <div class="t">small-buttons-1782123798914.png<br><small style="color:var(--text);">Desktop • Desktop</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- SCREENSHOT APPENDIX (PRINT ONLY)                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <div class="print-screenshot-appendix">
+      <h2>Screenshot Appendix</h2>
+      <div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782123799021.png</div><div class="print-shot-meta">Device: Desktop</div><div class="print-shot-meta">Page: Desktop</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782123799021.png" alt="final-1782123799021.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782123798914.png</div><div class="print-shot-meta">Device: Desktop</div><div class="print-shot-meta">Page: Desktop</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782123798914.png" alt="small-buttons-1782123798914.png" /></div></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- LIGHTBOX / VIEWER                                                   -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="viewer" id="viewer" aria-hidden="true">
+    <div class="viewer-controls">
+  <button class="btn" onclick="zoomIn()">➕ Zoom In</button>
+  <button class="btn" onclick="zoomOut()">➖ Zoom Out</button>
+  <button class="btn" onclick="resetZoom()">🔄 Reset</button>
+  <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+</div>
+    <div class="viewer-close" onclick="closeViewer()" title="Close (Esc)">✕</div>
+    <button class="viewer-nav prev" onclick="navigateViewer(-1)" title="Previous">‹</button>
+    <button class="viewer-nav next" onclick="navigateViewer(1)" title="Next">›</button>
+    <div class="viewerInner" id="viewerInner">
+      <img id="viewerImg" src="" alt="screenshot" />
+    </div>
+    <div class="viewer-info" id="viewerInfo"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- JAVASCRIPT                                                          -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function() {
+    'use strict';
+
+    // ── Gallery Data ─────────────────────────────────────────────────────
+    var galleryData = [{"file":"final-1782123799021.png","thumbSrc":"screenshots/final-1782123799021.png","fullSrc":"screenshots/final-1782123799021.png","device":"Desktop","page":"Desktop","url":"https://google.com"},{"file":"small-buttons-1782123798914.png","thumbSrc":"screenshots/small-buttons-1782123798914.png","fullSrc":"screenshots/small-buttons-1782123798914.png","device":"Desktop","page":"Desktop","url":"https://google.com"}];
+
+    var currentViewerIndex = -1;
+    var filteredGalleryIndices = [];
+
+    var viewerState = {
+      zoom: 1,
+      x: 0,
+      y: 0,
+      dragging: false,
+      startX: 0,
+      startY: 0,
+      lastX: 0,
+      lastY: 0,
+      pinchStartDist: 0,
+      pinchStartZoom: 1,
+      pinchCenterX: 0,
+      pinchCenterY: 0,
+      rafId: null
+    };
+
+    var MIN_ZOOM = 1;
+    var MAX_ZOOM = 5;
+    var ZOOM_STEP = 0.25;
+
+    function updateViewerTransform() {
+      var img = document.getElementById('viewerImg');
+      if (!img) return;
+      img.style.transform =
+        'translate(' + viewerState.x + 'px,' + viewerState.y + 'px) scale(' + viewerState.zoom + ')';
+    }
+
+window.zoomIn = function() {
+  zoomTo(viewerState.zoom + ZOOM_STEP);
+};
+
+window.zoomOut = function() {
+  zoomTo(viewerState.zoom - ZOOM_STEP);
+};
+
+window.resetZoom = function() {
+  viewerState.zoom = 1;
+  viewerState.x = 0;
+  viewerState.y = 0;
+  viewerState.lastX = 0;
+  viewerState.lastY = 0;
+  updateViewerTransform();
+};
+
+function clampZoom(z) {
+  return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, parseFloat(z.toFixed(2))));
+}
+
+function clampPan() {
+  var img = document.getElementById('viewerImg');
+  var inner = document.getElementById('viewerInner');
+  if (!img || !inner) return;
+
+  var scale = viewerState.zoom;
+  if (scale <= 1) {
+    viewerState.x = 0;
+    viewerState.y = 0;
+    return;
+  }
+
+  var imgRect = img.getBoundingClientRect();
+  var innerRect = inner.getBoundingClientRect();
+
+  var scaledWidth = imgRect.width;
+  var scaledHeight = imgRect.height;
+
+  var maxX = Math.max(0, (scaledWidth - innerRect.width) / 2);
+  var maxY = Math.max(0, (scaledHeight - innerRect.height) / 2);
+
+  viewerState.x = Math.max(-maxX, Math.min(maxX, viewerState.x));
+  viewerState.y = Math.max(-maxY, Math.min(maxY, viewerState.y));
+}
+
+function zoomTo(newZoom, anchorX, anchorY) {
+  var img = document.getElementById('viewerImg');
+  if (!img) return;
+
+  var prevZoom = viewerState.zoom;
+  newZoom = clampZoom(newZoom);
+  if (newZoom === prevZoom) return;
+
+  if (newZoom <= 1) {
+    viewerState.zoom = 1;
+    viewerState.x = 0;
+    viewerState.y = 0;
+  } else if (typeof anchorX === 'number' && typeof anchorY === 'number') {
+    var rect = img.getBoundingClientRect();
+    var offsetX = anchorX - rect.left - rect.width / 2;
+    var offsetY = anchorY - rect.top - rect.height / 2;
+    var ratio = newZoom / prevZoom;
+    viewerState.x = offsetX - (offsetX - viewerState.x) * ratio;
+    viewerState.y = offsetY - (offsetY - viewerState.y) * ratio;
+    viewerState.zoom = newZoom;
+    clampPan();
+  } else {
+    viewerState.zoom = newZoom;
+    clampPan();
+  }
+
+  updateViewerTransform();
+}
+
+function scheduleUpdate() {
+  if (viewerState.rafId) return;
+  viewerState.rafId = requestAnimationFrame(function() {
+    viewerState.rafId = null;
+    updateViewerTransform();
+  });
+}
+
+    // ── Initialize filtered gallery indices ──────────────────────────────
+    function initGallery() {
+  filteredGalleryIndices = [];
+
+  for (var i = 0; i < galleryData.length; i++) {
+    filteredGalleryIndices.push(i);
+  }
+}
+    initGallery();
+
+    // ── Filters ──────────────────────────────────────────────────────────
+    window.applyFilters = function() {
+      var urlFilter = document.getElementById('filterUrl').value;
+      var deviceFilter = document.getElementById('filterDevice').value;
+      var priorityFilter = document.getElementById('filterPriority').value;
+      var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      // Filter page cards
+      var pageCards = document.querySelectorAll('#pageGrid .pageCard');
+      var visibleCards = 0;
+      pageCards.forEach(function(card) {
+        var matchUrl = !urlFilter || card.getAttribute('data-url') === urlFilter;
+        var matchDevice = !deviceFilter || card.getAttribute('data-device') === deviceFilter;
+
+        // Priority filter: check if card has issues matching the priority
+        var matchPriority = true;
+        if (priorityFilter) {
+          matchPriority = false;
+          var issueItems = card.querySelectorAll('.issue-item .badge');
+          issueItems.forEach(function(badge) {
+            if (badge.textContent.trim().toLowerCase() === priorityFilter) {
+              matchPriority = true;
+            }
+          });
+          // If card has no issues but priority filter is active, hide it
+          if (card.getAttribute('data-has-issues') === 'false') matchPriority = false;
+        }
+
+        // Search filter
+        var matchSearch = true;
+        if (searchTerm) {
+          var cardSearchText = card.getAttribute('data-search') || '';
+          var issueTexts = '';
+          card.querySelectorAll('.issue-item').forEach(function(li) {
+            issueTexts += ' ' + li.textContent.toLowerCase();
+          });
+          matchSearch = (cardSearchText + issueTexts).indexOf(searchTerm) !== -1;
+        }
+
+        var visible = matchUrl && matchDevice && matchPriority && matchSearch;
+        card.style.display = visible ? '' : 'none';
+        if (visible) visibleCards++;
+      });
+
+      document.getElementById('pageResultsCount').textContent = '(' + visibleCards + ')';
+
+      // Filter issue table rows
+      var tableRows = document.querySelectorAll('#issueTable tbody tr');
+      var visibleRows = 0;
+      tableRows.forEach(function(row) {
+        var matchUrl = !urlFilter || row.getAttribute('data-url') === urlFilter;
+        var matchDevice = !deviceFilter || row.getAttribute('data-device') === deviceFilter;
+        var matchPriority = !priorityFilter || row.getAttribute('data-severity') === priorityFilter;
+        var matchSearch = true;
+        if (searchTerm) {
+          var rowSearch = row.getAttribute('data-search') || '';
+          matchSearch = rowSearch.indexOf(searchTerm) !== -1;
+        }
+        var visible = matchUrl && matchDevice && matchPriority && matchSearch;
+        row.style.display = visible ? '' : 'none';
+        if (visible) visibleRows++;
+      });
+      document.getElementById('issueTableCount').textContent = '(' + visibleRows + ')';
+
+      // Filter visual QA findings table
+     
+    };
+
+    // ── Gallery Filter ───────────────────────────────────────────────────
+    window.filterGallery = function() {
+      var device = document.getElementById('galleryDeviceFilter').value;
+      var page = document.getElementById('galleryPageFilter').value;
+
+      filteredGalleryIndices = [];
+      var items = document.querySelectorAll('#galleryGrid .gallery-item');
+      var count = 0;
+      items.forEach(function(item, idx) {
+        var matchDevice = !device || item.getAttribute('data-device') === device;
+        var matchPage = !page || item.getAttribute('data-page') === page;
+        var visible = matchDevice && matchPage;
+        item.style.display = visible ? '' : 'none';
+        if (visible) {
+          filteredGalleryIndices.push(parseInt(item.getAttribute('data-index')));
+          count++;
+        }
+      });
+      document.getElementById('galleryCount').textContent = '(' + count + ')';
+    };
+
+    // ── Lightbox / Viewer ────────────────────────────────────────────────
+    window.openViewer = function(src) {
+      // Find index in gallery data
+      var idx = -1;
+      for (var i = 0; i < galleryData.length; i++) {
+        if (galleryData[i].fullSrc === src || galleryData[i].thumbSrc === src) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx === -1) idx = 0;
+      openGalleryViewer(idx);
+    };
+
+    window.openGalleryViewer = function(idx) {
+      viewerState.zoom = 1;
+      viewerState.x = 0;
+      viewerState.y = 0;
+      viewerState.lastX = 0;
+      viewerState.lastY = 0;
+      currentViewerIndex = idx;
+
+      var item = galleryData[idx];
+      if (!item) return;
+      var viewerImg = document.getElementById('viewerImg');
+      if (!viewerImg) return;
+      viewerImg.src = item.fullSrc;
+      updateViewerTransform();
+      document.getElementById('viewerInfo').textContent =
+        item.file + ' — ' + item.device + ' • ' + item.page;
+      document.getElementById('viewer').classList.add('open');
+
+      // Wait for image to load before enabling zoom/pan calculations
+      viewerImg.onload = function() {
+        // Re-apply transform using actual image dimensions after load
+        updateViewerTransform();
+      };
+    };
+
+    window.closeViewer = function() {
+      document.getElementById('viewer').classList.remove('open');
+      document.getElementById('viewer').setAttribute('aria-hidden', 'true');
+      currentViewerIndex = -1;
+    };
+
+    window.navigateViewer = function(dir) {
+      if (filteredGalleryIndices.length === 0) return;
+      var currentPos = filteredGalleryIndices.indexOf(currentViewerIndex);
+      if (currentPos === -1) currentPos = 0;
+      var nextPos = (currentPos + dir + filteredGalleryIndices.length) % filteredGalleryIndices.length;
+      openGalleryViewer(filteredGalleryIndices[nextPos]);
+    };
+
+    window.toggleFullscreen = function() {
+      var viewer = document.getElementById('viewer');
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } else {
+        if (viewer.requestFullscreen) viewer.requestFullscreen();
+        else if (viewer.webkitRequestFullscreen) viewer.webkitRequestFullscreen();
+      }
+    };
+
+    // Close on backdrop click
+    var viewer = document.getElementById('viewer');
+    if (viewer) {
+      viewer.addEventListener('click', function(e) {
+        if (e.target === this || e.target.id === 'viewerInner') {
+          closeViewer();
+        }
+      });
+    }
+
+
+    // ── Drag / Pan Support ─────────────────────────────
+    var viewerImg = document.getElementById('viewerImg');
+    var viewerInner = document.getElementById('viewerInner');
+
+    if (viewerImg) {
+      viewerImg.addEventListener('mousedown', function(e) {
+        if (viewerState.zoom <= 1) return;
+        viewerState.dragging = true;
+        viewerState.startX = e.clientX - viewerState.x;
+        viewerState.startY = e.clientY - viewerState.y;
+        viewerState.lastX = e.clientX;
+        viewerState.lastY = e.clientY;
+        if (viewerInner) viewerInner.style.cursor = 'grabbing';
+      });
+    }
+
+    document.addEventListener('mousemove', function(e) {
+      if (!viewerState.dragging) return;
+      viewerState.lastX = e.clientX;
+      viewerState.lastY = e.clientY;
+      viewerState.x = e.clientX - viewerState.startX;
+      viewerState.y = e.clientY - viewerState.startY;
+      clampPan();
+      scheduleUpdate();
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (!viewerState.dragging) return;
+      viewerState.dragging = false;
+      if (viewerInner) viewerInner.style.cursor = 'grab';
+    });
+
+    // ── Mouse Wheel Zoom ────────────────────────────────
+    if (viewerInner) {
+      viewerInner.addEventListener('wheel', function(e) {
+        if (!document.getElementById('viewer').classList.contains('open')) return;
+        e.preventDefault();
+
+        var rect = viewerInner.getBoundingClientRect();
+        var anchorX = e.clientX - rect.left;
+        var anchorY = e.clientY - rect.top;
+
+        var dir = e.deltaY > 0 ? -1 : 1;
+        var newZoom = viewerState.zoom + dir * ZOOM_STEP;
+        if (dir > 0) {
+          newZoom = Math.ceil((viewerState.zoom + 0.001) / ZOOM_STEP) * ZOOM_STEP + ZOOM_STEP;
+        } else {
+          newZoom = Math.floor((viewerState.zoom - 0.001) / ZOOM_STEP) * ZOOM_STEP - ZOOM_STEP;
+        }
+
+        zoomTo(newZoom, e.clientX, e.clientY);
+      }, { passive: false });
+    }
+
+    // ── Double-Click Zoom ──────────────────────────────
+    if (viewerImg) {
+      viewerImg.addEventListener('dblclick', function(e) {
+        if (viewerState.zoom <= 1) {
+          zoomTo(2, e.clientX, e.clientY);
+        } else {
+          viewerState.zoom = 1;
+          viewerState.x = 0;
+          viewerState.y = 0;
+          updateViewerTransform();
+        }
+      });
+    }
+
+    // ── Touch / Pinch Support ──────────────────────────
+    var touchCount = 0;
+    if (viewerInner) {
+      viewerInner.addEventListener('touchstart', function(e) {
+        touchCount = e.touches.length;
+        if (touchCount === 1 && viewerState.zoom > 1) {
+          var t = e.touches[0];
+          viewerState.dragging = true;
+          viewerState.startX = t.clientX - viewerState.x;
+          viewerState.startY = t.clientY - viewerState.y;
+          viewerState.lastX = t.clientX;
+          viewerState.lastY = t.clientY;
+        } else if (touchCount === 2) {
+          viewerState.dragging = false;
+          var t1 = e.touches[0], t2 = e.touches[1];
+          viewerState.pinchStartDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          viewerState.pinchStartZoom = viewerState.zoom;
+          viewerState.pinchCenterX = (t1.clientX + t2.clientX) / 2;
+          viewerState.pinchCenterY = (t1.clientY + t2.clientY) / 2;
+        }
+      }, { passive: true });
+
+      viewerInner.addEventListener('touchmove', function(e) {
+        if (touchCount === 2 && e.touches.length === 2) {
+          var t1 = e.touches[0], t2 = e.touches[1];
+          var dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          var scale = dist / viewerState.pinchStartDist;
+          var newZoom = clampZoom(viewerState.pinchStartZoom * scale);
+          var cx = (t1.clientX + t2.clientX) / 2;
+          var cy = (t1.clientY + t2.clientY) / 2;
+          zoomTo(newZoom, cx, cy);
+        }
+      }, { passive: true });
+
+      viewerInner.addEventListener('touchend', function() {
+        if (viewerState.dragging) {
+          viewerState.dragging = false;
+        }
+        touchCount = 0;
+      }, { passive: true });
+    }
+
+    // ── Print handlers ─────────────────────────────────
+    window.addEventListener('beforeprint', function() {
+      // Force-load lazy images before printing by removing lazy attribute
+      var allImgs = document.querySelectorAll('.print-shot-img-wrap img[loading="lazy"]');
+      for (var pi = 0; pi < allImgs.length; pi++) {
+        allImgs[pi].removeAttribute('loading');
+      }
+    });
+
+    // ── Keyboard Navigation ─────────────────────────────
+    document.addEventListener('keydown', function(e) {
+      if (!document.getElementById('viewer').classList.contains('open')) return;
+      if (e.key === 'Escape') closeViewer();
+      else if (e.key === 'ArrowLeft') navigateViewer(-1);
+      else if (e.key === 'ArrowRight') navigateViewer(1);
+      else if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      else if (e.key === '+' || e.key === '=') { zoomTo(viewerState.zoom + ZOOM_STEP); }
+      else if (e.key === '-') { zoomTo(viewerState.zoom - ZOOM_STEP); }
+      else if (e.key === '0') { viewerState.zoom = 1; viewerState.x = 0; viewerState.y = 0; updateViewerTransform(); }
+    });
+
+    // ── PDF Generation ──────────────────────────────────────────────────
+    window.generatePDF = function() {
+      var content = document.getElementById('reportContent');
+      if (!content) { alert('Report content not found.'); return; }
+
+      // Show loading indicator
+      var loadingDiv = document.createElement('div');
+      loadingDiv.id = 'pdfLoading';
+      loadingDiv.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-family:Inter,sans-serif;';
+      loadingDiv.textContent = '⏳ Generating PDF, please wait...';
+      document.body.appendChild(loadingDiv);
+
+      // Check if libraries are loaded
+      var checkLibs = setInterval(function() {
+        if (window.html2canvas && window.jspdf) {
+          clearInterval(checkLibs);
+          doGeneratePDF(content, loadingDiv);
+        }
+      }, 200);
+
+      // Timeout after 10s
+      setTimeout(function() {
+        clearInterval(checkLibs);
+        var el = document.getElementById('pdfLoading');
+        if (el) {
+          el.remove();
+          if (!window.html2canvas || !window.jspdf) {
+            alert('PDF libraries failed to load. Please check your internet connection and try again.');
+          }
+        }
+      }, 10000);
+    };
+
+    function doGeneratePDF(content, loadingDiv) {
+      // Hide interactive elements for PDF
+      var filterBar = document.getElementById('filterBar');
+      var viewer = document.getElementById('viewer');
+      if (filterBar) filterBar.style.display = 'none';
+      if (viewer) viewer.style.display = 'none';
+
+      // Temporarily adjust styles for PDF capture
+      content.style.maxWidth = '1200px';
+      content.style.margin = '0 auto';
+      content.style.padding = '10px';
+      content.style.background = '#0b1224';
+
+      window.html2canvas(content, {
+        backgroundColor: '#0b1224',
+        scale: 1.5,
+        useCORS: true,
+        logging: false,
+        windowWidth: 1200,
+        scrollY: 0
+      }).then(function(canvas) {
+        var jsPDF = window.jspdf.jsPDF;
+        var imgWidth = 190;
+        var pageHeight = 277;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
+        var heightLeft = imgHeight;
+        var position = 10;
+        var imgData = canvas.toDataURL('image/jpeg', 0.85);
+        var pdf = new jsPDF('p', 'mm', 'a4');
+        pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight + 10;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        pdf.save('QA-Report-' + new Date().toISOString().slice(0, 10) + '.pdf');
+
+        // Restore elements
+        if (filterBar) filterBar.style.display = '';
+        if (viewer) viewer.style.display = '';
+        content.style.maxWidth = '';
+        content.style.margin = '';
+        content.style.padding = '';
+        content.style.background = '';
+        loadingDiv.remove();
+      }).catch(function(err) {
+        console.error('PDF generation failed:', err);
+        if (filterBar) filterBar.style.display = '';
+        if (viewer) viewer.style.display = '';
+        content.style.maxWidth = '';
+        content.style.margin = '';
+        content.style.padding = '';
+        content.style.background = '';
+        loadingDiv.remove();
+        alert('PDF generation failed: ' + err.message);
+      });
+    }
+
+  })();
+  </script>
+</body>
+</html>

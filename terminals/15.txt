@@ -1,0 +1,56 @@
+---
+pid: 22900
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "Set-Location \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T13:32:38.643Z
+running_for_ms: 4475013  
+---
+[seo:be68fb7d] [2026-06-22T13:32:39.902Z] [INFO] Job started
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+[seo:be68fb7d] [2026-06-22T13:32:40.598Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[seo:be68fb7d] [2026-06-22T13:32:40.605Z] [INFO] PROGRESS:20 Running SEO checks...
+[seo:be68fb7d] [2026-06-22T13:32:40.606Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[seo:be68fb7d] [2026-06-22T13:32:40.606Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[seo:be68fb7d] [2026-06-22T13:32:40.608Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[seo:be68fb7d] [2026-06-22T13:32:40.608Z] [INFO] ✅ FINAL MODE: single
+[seo:be68fb7d] [2026-06-22T13:32:40.609Z] [INFO] 📄 Total URLs to scan: 1
+[seo:be68fb7d] [2026-06-22T13:32:40.609Z] [INFO] 📦 TOTAL BATCHES: 1
+[seo:be68fb7d] [2026-06-22T13:32:40.609Z] [INFO] 📏 BATCH SIZE: 50
+[seo:be68fb7d] [2026-06-22T13:32:40.738Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[seo:be68fb7d] [2026-06-22T13:32:40.738Z] [INFO] 📄 Total URLs to scan: 1
+[seo:be68fb7d] [2026-06-22T13:32:40.738Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[seo:be68fb7d] [2026-06-22T13:32:40.739Z] [INFO] 📦 Processing batch 1/1
+[seo:be68fb7d] [2026-06-22T13:32:40.739Z] [INFO] 📄 URLs in batch: 1
+[seo:be68fb7d] [2026-06-22T13:32:40.739Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[seo:be68fb7d] [2026-06-22T13:32:40.739Z] [INFO] ⏳ Waiting for DOM load...
+[seo:be68fb7d] [2026-06-22T13:32:40.739Z] [INFO] 🔍 Running SEO checks...
+[seo:be68fb7d] [2026-06-22T13:32:42.743Z] [INFO] ✅ Completed: https://example.com
+[seo:be68fb7d] [2026-06-22T13:32:42.743Z] [INFO] ✅ Completed batch 1/1
+[seo:be68fb7d] [2026-06-22T13:32:42.743Z] [INFO] 🎉 All pages processed. Generating reports...
+[seo:be68fb7d] [2026-06-22T13:32:42.821Z] [INFO] PROGRESS:85 Generating QA report...
+[seo:be68fb7d] [2026-06-22T13:32:42.822Z] [INFO] PROGRESS:100 Completed
+[seo:be68fb7d] [2026-06-22T13:32:42.858Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:32:43 +0000] "GET /api/health HTTP/1.1" 200 78 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:43 +0000] "GET /api/health HTTP/1.1" 200 78 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:44 +0000] "GET /api/health HTTP/1.1" 200 78 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:44 +0000] "GET /api/health HTTP/1.1" 200 78 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:45 +0000] "GET /api/dashboard/stats HTTP/1.1" 200 1647 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:13:32:46 +0000] "GET /api/health HTTP/1.1" 200 78 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:46 +0000] "GET /api/health HTTP/1.1" 200 78 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:50 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:50 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:51 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:51 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:51 +0000] "GET /api/dashboard/stats HTTP/1.1" 200 - "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:51 +0000] "GET /api/dashboard/stats HTTP/1.1" 304 - "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:59 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:59 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:59 +0000] "GET /api/reports-center?limit=100 HTTP/1.1" 200 - "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:32:59 +0000] "GET /api/reports-center?limit=100 HTTP/1.1" 304 - "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:33:05 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:33:05 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:33:05 +0000] "GET /api/dashboard/stats HTTP/1.1" 304 - "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:33:05 +0000] "GET /api/dashboard/stats HTTP/1.1" 304 - "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:33:36 +0000] "GET /api/health HTTP/1.1" 200 79 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"

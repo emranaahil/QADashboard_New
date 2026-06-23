@@ -1,0 +1,938 @@
+[
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132614836.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:15.369Z"
+      },
+      {
+        "id": "QA-0002",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132615378.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:15.891Z"
+      },
+      {
+        "id": "QA-0003",
+        "type": "Distorted Images",
+        "count": 1,
+        "screenshot": "distorted-images-1782132615906.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:16.416Z"
+      },
+      {
+        "id": "QA-0004",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132616422.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:16.942Z"
+      },
+      {
+        "id": "QA-0005",
+        "type": "Collapsed Spacing",
+        "count": 1,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:16.958Z"
+      },
+      {
+        "id": "QA-0006",
+        "type": "Low Color Contrast",
+        "count": 12,
+        "screenshot": "low-contrast-1782132616965.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:17.466Z"
+      }
+    ],
+    "screenshot": "final-1782132617474.png",
+    "timestamp": "2026-06-22T12:50:17.989Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/wholesalehealthclub",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0007",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132645168.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:45.248Z"
+      },
+      {
+        "id": "QA-0008",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132645255.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:45.347Z"
+      },
+      {
+        "id": "QA-0009",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132645357.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:45.448Z"
+      },
+      {
+        "id": "QA-0010",
+        "type": "Low Color Contrast",
+        "count": 22,
+        "screenshot": "low-contrast-1782132645466.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:50:45.546Z"
+      }
+    ],
+    "screenshot": "final-1782132645551.png",
+    "timestamp": "2026-06-22T12:50:45.631Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/whcinsta",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0011",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132670566.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:51:10.645Z"
+      },
+      {
+        "id": "QA-0012",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132670650.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:51:10.744Z"
+      },
+      {
+        "id": "QA-0013",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132670754.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:51:10.829Z"
+      },
+      {
+        "id": "QA-0014",
+        "type": "Low Color Contrast",
+        "count": 22,
+        "screenshot": "low-contrast-1782132670845.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:51:10.945Z"
+      },
+      {
+        "id": "QA-0015",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1394",
+        "timestamp": "2026-06-22T12:51:10.947Z"
+      }
+    ],
+    "screenshot": "final-1782132670950.png",
+    "timestamp": "2026-06-22T12:51:11.032Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/company/wholesale-health-club",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0016",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-22T12:51:13.046Z"
+      },
+      {
+        "id": "QA-0017",
+        "type": "Low Color Contrast",
+        "count": 2,
+        "screenshot": "low-contrast-1782132696164.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:51:36.206Z"
+      }
+    ],
+    "screenshot": "final-1782132696210.png",
+    "timestamp": "2026-06-22T12:51:36.256Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/wholesalehealt3",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0018",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132723780.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:03.859Z"
+      },
+      {
+        "id": "QA-0019",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132723865.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:03.961Z"
+      },
+      {
+        "id": "QA-0020",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132723971.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:04.060Z"
+      },
+      {
+        "id": "QA-0021",
+        "type": "Low Color Contrast",
+        "count": 22,
+        "screenshot": "low-contrast-1782132724074.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:04.161Z"
+      },
+      {
+        "id": "QA-0022",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1394",
+        "timestamp": "2026-06-22T12:52:04.163Z"
+      }
+    ],
+    "screenshot": "final-1782132724166.png",
+    "timestamp": "2026-06-22T12:52:04.244Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/create-membership",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0023",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132753328.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:33.842Z"
+      },
+      {
+        "id": "QA-0024",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132753850.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:34.314Z"
+      },
+      {
+        "id": "QA-0025",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132754325.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:34.772Z"
+      },
+      {
+        "id": "QA-0026",
+        "type": "Collapsed Spacing",
+        "count": 1,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:34.780Z"
+      },
+      {
+        "id": "QA-0027",
+        "type": "Low Color Contrast",
+        "count": 14,
+        "screenshot": "low-contrast-1782132754786.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:52:35.231Z"
+      },
+      {
+        "id": "QA-0028",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1145",
+        "timestamp": "2026-06-22T12:52:35.233Z"
+      }
+    ],
+    "screenshot": "final-1782132755238.png",
+    "timestamp": "2026-06-22T12:52:35.683Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/login",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0029",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132785512.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:05.863Z"
+      },
+      {
+        "id": "QA-0030",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132785869.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:06.228Z"
+      },
+      {
+        "id": "QA-0031",
+        "type": "Small Touch Targets",
+        "count": 3,
+        "screenshot": "small-buttons-1782132786240.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:06.601Z"
+      },
+      {
+        "id": "QA-0032",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782132786612.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:06.956Z"
+      },
+      {
+        "id": "QA-0033",
+        "type": "Low Color Contrast",
+        "count": 19,
+        "screenshot": "low-contrast-1782132786966.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:07.316Z"
+      },
+      {
+        "id": "QA-0034",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1044",
+        "timestamp": "2026-06-22T12:53:07.318Z"
+      }
+    ],
+    "screenshot": "final-1782132787325.png",
+    "timestamp": "2026-06-22T12:53:07.675Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/shop/supplements",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0035",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132813845.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:34.728Z"
+      },
+      {
+        "id": "QA-0036",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132814737.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:35.602Z"
+      },
+      {
+        "id": "QA-0037",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132815615.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:36.480Z"
+      },
+      {
+        "id": "QA-0038",
+        "type": "Collapsed Spacing",
+        "count": 54,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:36.490Z"
+      },
+      {
+        "id": "QA-0039",
+        "type": "Low Color Contrast",
+        "count": 15,
+        "screenshot": "low-contrast-1782132816498.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:53:37.359Z"
+      }
+    ],
+    "screenshot": "final-1782132817364.png",
+    "timestamp": "2026-06-22T12:53:38.206Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/about",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0040",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132845293.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:05.455Z"
+      },
+      {
+        "id": "QA-0041",
+        "type": "Visible Element Overlap",
+        "count": 2,
+        "screenshot": "overlaps-1782132845463.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:05.621Z"
+      },
+      {
+        "id": "QA-0042",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132845633.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:05.788Z"
+      },
+      {
+        "id": "QA-0043",
+        "type": "Low Color Contrast",
+        "count": 13,
+        "screenshot": "low-contrast-1782132845803.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:05.970Z"
+      },
+      {
+        "id": "QA-0044",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1119",
+        "timestamp": "2026-06-22T12:54:05.972Z"
+      }
+    ],
+    "screenshot": "final-1782132845975.png",
+    "timestamp": "2026-06-22T12:54:06.124Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/faq",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0045",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132871810.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:31.890Z"
+      },
+      {
+        "id": "QA-0046",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132871896.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:31.974Z"
+      },
+      {
+        "id": "QA-0047",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132871984.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:32.075Z"
+      },
+      {
+        "id": "QA-0048",
+        "type": "Low Color Contrast",
+        "count": 17,
+        "screenshot": "low-contrast-1782132872088.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:32.175Z"
+      }
+    ],
+    "screenshot": "final-1782132872180.png",
+    "timestamp": "2026-06-22T12:54:32.264Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/blog",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0049",
+        "type": "Small Touch Targets",
+        "count": 1,
+        "screenshot": "small-buttons-1782132898618.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:58.681Z"
+      },
+      {
+        "id": "QA-0050",
+        "type": "Low Color Contrast",
+        "count": 20,
+        "screenshot": "low-contrast-1782132898695.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:54:58.745Z"
+      }
+    ],
+    "screenshot": "final-1782132898748.png",
+    "timestamp": "2026-06-22T12:54:58.819Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/term-and-condition",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0051",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132924541.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:55:25.568Z"
+      },
+      {
+        "id": "QA-0052",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132925573.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:55:26.505Z"
+      },
+      {
+        "id": "QA-0053",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132926520.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:55:27.477Z"
+      },
+      {
+        "id": "QA-0054",
+        "type": "Low Color Contrast",
+        "count": 14,
+        "screenshot": "low-contrast-1782132927501.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:55:28.443Z"
+      },
+      {
+        "id": "QA-0055",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.6204",
+        "timestamp": "2026-06-22T12:55:28.445Z"
+      }
+    ],
+    "screenshot": "final-1782132928453.png",
+    "timestamp": "2026-06-22T12:55:29.381Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/privacy-policy",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0056",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132958919.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:55:59.480Z"
+      },
+      {
+        "id": "QA-0057",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132959486.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:00.045Z"
+      },
+      {
+        "id": "QA-0058",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132960057.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:00.598Z"
+      },
+      {
+        "id": "QA-0059",
+        "type": "Low Color Contrast",
+        "count": 14,
+        "screenshot": "low-contrast-1782132960612.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:01.162Z"
+      },
+      {
+        "id": "QA-0060",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.6204",
+        "timestamp": "2026-06-22T12:56:01.164Z"
+      }
+    ],
+    "screenshot": "final-1782132961169.png",
+    "timestamp": "2026-06-22T12:56:01.715Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/citations",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0061",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782132987873.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:28.004Z"
+      },
+      {
+        "id": "QA-0062",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782132988009.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:28.107Z"
+      },
+      {
+        "id": "QA-0063",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782132988118.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:28.233Z"
+      },
+      {
+        "id": "QA-0064",
+        "type": "Low Color Contrast",
+        "count": 29,
+        "screenshot": "low-contrast-1782132988247.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:28.357Z"
+      },
+      {
+        "id": "QA-0065",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.3143",
+        "timestamp": "2026-06-22T12:56:28.359Z"
+      }
+    ],
+    "screenshot": "final-1782132988362.png",
+    "timestamp": "2026-06-22T12:56:28.474Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/contact-us",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0066",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782133013886.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:54.003Z"
+      },
+      {
+        "id": "QA-0067",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782133014009.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:54.119Z"
+      },
+      {
+        "id": "QA-0068",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782133014131.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:54.235Z"
+      },
+      {
+        "id": "QA-0069",
+        "type": "Low Color Contrast",
+        "count": 14,
+        "screenshot": "low-contrast-1782133014248.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:56:54.354Z"
+      }
+    ],
+    "screenshot": "final-1782133014359.png",
+    "timestamp": "2026-06-22T12:56:54.468Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/cancel-my-subscription",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0070",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782133040329.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:20.418Z"
+      },
+      {
+        "id": "QA-0071",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782133040423.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:20.516Z"
+      },
+      {
+        "id": "QA-0072",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782133040528.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:20.618Z"
+      },
+      {
+        "id": "QA-0073",
+        "type": "Low Color Contrast",
+        "count": 24,
+        "screenshot": "low-contrast-1782133040632.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:20.717Z"
+      },
+      {
+        "id": "QA-0074",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1576",
+        "timestamp": "2026-06-22T12:57:20.719Z"
+      }
+    ],
+    "screenshot": "final-1782133040722.png",
+    "timestamp": "2026-06-22T12:57:20.799Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/forget-password",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0075",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782133067070.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:47.395Z"
+      },
+      {
+        "id": "QA-0076",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782133067402.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:47.728Z"
+      },
+      {
+        "id": "QA-0077",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782133067740.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:48.062Z"
+      },
+      {
+        "id": "QA-0078",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782133068070.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:48.392Z"
+      },
+      {
+        "id": "QA-0079",
+        "type": "Low Color Contrast",
+        "count": 18,
+        "screenshot": "low-contrast-1782133068403.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:57:48.748Z"
+      },
+      {
+        "id": "QA-0080",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1219",
+        "timestamp": "2026-06-22T12:57:48.749Z"
+      }
+    ],
+    "screenshot": "final-1782133068751.png",
+    "timestamp": "2026-06-22T12:57:49.079Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://stagedev.geniuswholesale.club/reset-password",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0081",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782133094635.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:58:14.953Z"
+      },
+      {
+        "id": "QA-0082",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782133094965.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-22T12:58:15.309Z"
+      },
+      {
+        "id": "QA-0083",
+        "type": "Small Touch Targets",
+        "count": 5,
+        "screenshot": "small-buttons-1782133095318.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:58:15.716Z"
+      },
+      {
+        "id": "QA-0084",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782133095730.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:58:16.155Z"
+      },
+      {
+        "id": "QA-0085",
+        "type": "Low Color Contrast",
+        "count": 22,
+        "screenshot": "low-contrast-1782133096165.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T12:58:16.555Z"
+      },
+      {
+        "id": "QA-0086",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1204",
+        "timestamp": "2026-06-22T12:58:16.558Z"
+      }
+    ],
+    "screenshot": "final-1782133096565.png",
+    "timestamp": "2026-06-22T12:58:17.003Z"
+  }
+]

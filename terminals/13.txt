@@ -1,0 +1,360 @@
+---
+pid: 6980
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "$p = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if ($p) { Stop-Process -Id $p.OwningProcess -Force }; Start-Sleep -Seconds 2; Set-Location \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T13:08:52.196Z
+running_for_ms: 5900005  
+---
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+::1 - - [22/Jun/2026:13:08:59 +0000] "GET /api/health HTTP/1.1" 200 77 "-" "node"
+[seo:93f96b08] [2026-06-22T13:08:59.818Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:08:59 +0000] "POST /api/modules/seo/jobs HTTP/1.1" 201 565 "-" "node"
+::1 - - [22/Jun/2026:13:08:59 +0000] "GET /api/modules/seo/jobs/93f96b08-7160-467e-9658-306e1256a48b HTTP/1.1" 200 565 "-" "node"
+[seo:93f96b08] [2026-06-22T13:08:59.825Z] [INFO] Job started
+[seo:93f96b08] [2026-06-22T13:09:00.417Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[seo:93f96b08] [2026-06-22T13:09:00.422Z] [INFO] PROGRESS:20 Running SEO checks...
+[seo:93f96b08] [2026-06-22T13:09:00.423Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[seo:93f96b08] [2026-06-22T13:09:00.423Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[seo:93f96b08] [2026-06-22T13:09:00.424Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[seo:93f96b08] [2026-06-22T13:09:00.424Z] [INFO] ✅ FINAL MODE: single
+[seo:93f96b08] [2026-06-22T13:09:00.424Z] [INFO] 📄 Total URLs to scan: 1
+[seo:93f96b08] [2026-06-22T13:09:00.425Z] [INFO] 📦 TOTAL BATCHES: 1
+[seo:93f96b08] [2026-06-22T13:09:00.425Z] [INFO] 📏 BATCH SIZE: 50
+[seo:93f96b08] [2026-06-22T13:09:00.520Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[seo:93f96b08] [2026-06-22T13:09:00.520Z] [INFO] 📄 Total URLs to scan: 1
+[seo:93f96b08] [2026-06-22T13:09:00.521Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[seo:93f96b08] [2026-06-22T13:09:00.521Z] [INFO] 📦 Processing batch 1/1
+[seo:93f96b08] [2026-06-22T13:09:00.521Z] [INFO] 📄 URLs in batch: 1
+[seo:93f96b08] [2026-06-22T13:09:00.521Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[seo:93f96b08] [2026-06-22T13:09:00.521Z] [INFO] ⏳ Waiting for DOM load...
+[seo:93f96b08] [2026-06-22T13:09:00.522Z] [INFO] 🔍 Running SEO checks...
+::1 - - [22/Jun/2026:13:09:01 +0000] "GET /api/modules/seo/jobs/93f96b08-7160-467e-9658-306e1256a48b HTTP/1.1" 200 604 "-" "node"
+[seo:93f96b08] [2026-06-22T13:09:02.706Z] [INFO] ✅ Completed: https://example.com
+[seo:93f96b08] [2026-06-22T13:09:02.706Z] [INFO] ✅ Completed batch 1/1
+[seo:93f96b08] [2026-06-22T13:09:02.706Z] [INFO] 🎉 All pages processed. Generating reports...
+[seo:93f96b08] [2026-06-22T13:09:02.760Z] [INFO] PROGRESS:85 Generating QA report...
+[seo:93f96b08] [2026-06-22T13:09:02.761Z] [INFO] PROGRESS:100 Completed
+[seo:93f96b08] [2026-06-22T13:09:02.785Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:09:03 +0000] "GET /api/modules/seo/jobs/93f96b08-7160-467e-9658-306e1256a48b HTTP/1.1" 200 673 "-" "node"
+::1 - - [22/Jun/2026:13:09:03 +0000] "GET /api/modules/seo/jobs/93f96b08-7160-467e-9658-306e1256a48b/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:09:03 +0000] "GET /api/modules/seo/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:09:03 +0000] "GET /api/modules/seo/reports HTTP/1.1" 200 - "-" "node"
+[ui-check:f1758c5f] [2026-06-22T13:09:03.899Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:09:03 +0000] "POST /api/modules/ui-check/jobs HTTP/1.1" 201 555 "-" "node"
+::1 - - [22/Jun/2026:13:09:03 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 555 "-" "node"
+[ui-check:f1758c5f] [2026-06-22T13:09:03.903Z] [INFO] Job started
+[ui-check:f1758c5f] [2026-06-22T13:09:04.199Z] [INFO] PROGRESS:5 Launching browser...
+[ui-check:f1758c5f] [2026-06-22T13:09:04.210Z] [INFO] ✅ UI CHECKS RUNNING — Visual Defect Detection
+[ui-check:f1758c5f] [2026-06-22T13:09:04.211Z] [INFO] 🧹 Cleared old QA logs
+[ui-check:f1758c5f] [2026-06-22T13:09:04.213Z] [INFO] PROGRESS:15 Loading page...
+[ui-check:f1758c5f] [2026-06-22T13:09:04.612Z] [INFO] PROGRESS:20 Testing Desktop...
+[ui-check:f1758c5f] [2026-06-22T13:09:05.753Z] [INFO] ==============================
+[ui-check:f1758c5f] [2026-06-22T13:09:05.754Z] [INFO] 🚀 QA START: Desktop | Desktop
+[ui-check:f1758c5f] [2026-06-22T13:09:05.754Z] [INFO] ==============================
+[ui-check:f1758c5f] [2026-06-22T13:09:05.754Z] [INFO] ISSUES NOW: 0
+[ui-check:f1758c5f] [2026-06-22T13:09:05.806Z] [INFO] 🔧 Stabilizing...
+::1 - - [22/Jun/2026:13:09:05 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 591 "-" "node"
+[ui-check:f1758c5f] [2026-06-22T13:09:07.319Z] [INFO] 📜 Scrolling...
+::1 - - [22/Jun/2026:13:09:07 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 591 "-" "node"
+::1 - - [22/Jun/2026:13:09:09 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 591 "-" "node"
+[ui-check:f1758c5f] [2026-06-22T13:09:10.323Z] [INFO] 🖼️ Waiting for images...
+::1 - - [22/Jun/2026:13:09:11 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 591 "-" "node"
+[ui-check:f1758c5f] [2026-06-22T13:09:12.341Z] [INFO] 🔍 Running visual defect checks...
+[ui-check:f1758c5f] [2026-06-22T13:09:12.341Z] [INFO] 🚀 Calling popup detector...
+[ui-check:f1758c5f] [2026-06-22T13:09:12.341Z] [INFO] 🔍 [POPUP] Starting popup scan...
+[ui-check:f1758c5f] [2026-06-22T13:09:13.855Z] [INFO] ✅ [POPUP] No popup detected
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] ENTRY BEING SAVED: {
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] "page": "Desktop",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] "url": "https://example.com",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] "device": "Desktop",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] "issues": [],
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] "screenshot": null,
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] "timestamp": "2026-06-22T13:09:13.890Z"
+[ui-check:f1758c5f] [2026-06-22T13:09:13.892Z] [INFO] }
+[ui-check:f1758c5f] [2026-06-22T13:09:13.893Z] [INFO] ISSUES BEFORE PUSH: []
+[ui-check:f1758c5f] [2026-06-22T13:09:13.893Z] [INFO] WRITING REPORT: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f1758c5f-1bc6-4b91-a94c-e2d386831c6c\qaReport.json
+[ui-check:f1758c5f] [2026-06-22T13:09:13.894Z] [INFO] 📝 Report written: 0 issue(s)
+[ui-check:f1758c5f] [2026-06-22T13:09:13.894Z] [INFO] LAST REPORT ENTRY: {
+[ui-check:f1758c5f] [2026-06-22T13:09:13.894Z] [INFO] "page": "Desktop",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.894Z] [INFO] "url": "https://example.com",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.895Z] [INFO] "device": "Desktop",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.895Z] [INFO] "issues": [],
+[ui-check:f1758c5f] [2026-06-22T13:09:13.895Z] [INFO] "screenshot": null,
+[ui-check:f1758c5f] [2026-06-22T13:09:13.895Z] [INFO] "timestamp": "2026-06-22T13:09:13.890Z"
+[ui-check:f1758c5f] [2026-06-22T13:09:13.895Z] [INFO] }
+[ui-check:f1758c5f] [2026-06-22T13:09:13.895Z] [INFO] ✅ QA COMPLETE: 0 visual defect(s) found
+[ui-check:f1758c5f] [2026-06-22T13:09:13.948Z] [INFO] PROGRESS:85 Generating QA report...
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] Report entries: 1
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] {
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] "page": "Desktop",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] "url": "https://example.com",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] "device": "Desktop",
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] "issues": [],
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] "screenshot": null,
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] "timestamp": "2026-06-22T13:09:13.890Z"
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] }
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] Screenshot folder: D:\Project\qaiachatbot\Keyword Finder\backend\ui-check\jobs\f1758c5f-1bc6-4b91-a94c-e2d386831c6c\screenshots
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] Folder exists: true
+[ui-check:f1758c5f] [2026-06-22T13:09:13.950Z] [INFO] Files: []
+[ui-check:f1758c5f] [2026-06-22T13:09:13.951Z] [INFO] === Screenshot Metadata Map ===
+[ui-check:f1758c5f] [2026-06-22T13:09:13.951Z] [INFO] {}
+[ui-check:f1758c5f] [2026-06-22T13:09:13.953Z] [INFO] PROGRESS:100 Completed
+::1 - - [22/Jun/2026:13:09:13 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 584 "-" "node"
+[ui-check:f1758c5f] [2026-06-22T13:09:13.973Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:09:15 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c HTTP/1.1" 200 664 "-" "node"
+::1 - - [22/Jun/2026:13:09:15 +0000] "GET /api/modules/ui-check/jobs/f1758c5f-1bc6-4b91-a94c-e2d386831c6c/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:09:16 +0000] "GET /api/modules/ui-check/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:09:16 +0000] "GET /api/modules/ui-check/reports HTTP/1.1" 200 - "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.026Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:09:16 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 201 560 "-" "node"
+::1 - - [22/Jun/2026:13:09:16 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 560 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.030Z] [INFO] Job started
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.328Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.339Z] [INFO] PROGRESS:10 Discovering URLs...
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.350Z] [INFO] [CRAWL] Starting URL discovery
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.351Z] [INFO] [CRAWL] Seed: https://example.com
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.351Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 5000
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.745Z] [INFO] [CRAWL] Found 1: https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:16.746Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:17.740Z] [INFO] [CRAWL] Found 2: https://example.com/domains/example
+[full-ui-check:4867e6b8] [2026-06-22T13:09:17.741Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 1 new URL(s): https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:17.746Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 0, found 2): https://example.com/domains/example
+::1 - - [22/Jun/2026:13:09:18 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 597 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.326Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://example.com/domains/example
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.330Z] [INFO] [CRAWL] Discovery complete — 2 URL(s) found
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.330Z] [INFO] [CRAWL] URL list:
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.330Z] [INFO] 1. https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.330Z] [INFO] 2. https://example.com/domains/example
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.390Z] [INFO] PROGRESS:25 Found 2 URLs — scanning...
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.392Z] [INFO] [TEST] Starting queue processing
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.393Z] [INFO] [TEST] Total URLs in queue: 2
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.478Z] [INFO] [TEST] Running 1/2: https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:18.482Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:19.095Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:19.097Z] [INFO] [QA] Started: https://example.com/ (Desktop)
+::1 - - [22/Jun/2026:13:09:20 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 606 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:20.392Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:22 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 601 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:22.405Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:24 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 601 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:24.405Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:26 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 601 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:26.405Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+[full-ui-check:4867e6b8] [2026-06-22T13:09:27.248Z] [INFO] [QA] Done: https://example.com/ — 0 issue(s)
+[full-ui-check:4867e6b8] [2026-06-22T13:09:27.260Z] [INFO] [TEST] Completed 1/2: https://example.com/
+[full-ui-check:4867e6b8] [2026-06-22T13:09:27.260Z] [INFO] [TEST] Running 2/2: https://example.com/domains/example
+[full-ui-check:4867e6b8] [2026-06-22T13:09:27.261Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/domains/example
+::1 - - [22/Jun/2026:13:09:28 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 641 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:28.407Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+[full-ui-check:4867e6b8] [2026-06-22T13:09:28.749Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/domains/example
+[full-ui-check:4867e6b8] [2026-06-22T13:09:28.749Z] [INFO] [QA] Started: https://example.com/domains/example (Desktop)
+::1 - - [22/Jun/2026:13:09:30 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 641 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:30.420Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:09:32 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 641 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:32.422Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:09:34 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 641 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:34.436Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:09:36 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 641 "-" "node"
+[full-ui-check:4867e6b8] [2026-06-22T13:09:36.437Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+[full-ui-check:4867e6b8] [2026-06-22T13:09:36.931Z] [INFO] [QA] Done: https://example.com/domains/example — 1 issue(s)
+[full-ui-check:4867e6b8] [2026-06-22T13:09:36.941Z] [INFO] [TEST] Completed 2/2: https://example.com/domains/example
+[full-ui-check:4867e6b8] [2026-06-22T13:09:36.993Z] [INFO] [TEST] Queue finished — 2/2 URL(s) processed
+[full-ui-check:4867e6b8] [2026-06-22T13:09:36.993Z] [INFO] [TEST] Generating HTML report...
+[full-ui-check:4867e6b8] [2026-06-22T13:09:36.997Z] [INFO] [PDF] Skipped — HTML report at: D:\Project\qaiachatbot\Keyword Finder\backend\full-ui-check\jobs\4867e6b8-bc29-474b-8cca-22e212d3c208\qa-report.html
+[full-ui-check:4867e6b8] [2026-06-22T13:09:37.000Z] [INFO] PROGRESS:100 Completed
+[full-ui-check:4867e6b8] [2026-06-22T13:09:37.023Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:09:38 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208 HTTP/1.1" 200 739 "-" "node"
+::1 - - [22/Jun/2026:13:09:38 +0000] "GET /api/modules/full-ui-check/jobs/4867e6b8-bc29-474b-8cca-22e212d3c208/report HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:09:38 +0000] "GET /api/modules/full-ui-check/jobs HTTP/1.1" 200 - "-" "node"
+::1 - - [22/Jun/2026:13:09:38 +0000] "GET /api/modules/full-ui-check/reports HTTP/1.1" 200 - "-" "node"
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.492Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:09:38 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 201 573 "-" "node"
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.495Z] [INFO] Job started
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.805Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.816Z] [INFO] PROGRESS:10 Discovering URLs...
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.827Z] [INFO] [CRAWL] Starting URL discovery
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.828Z] [INFO] [CRAWL] Seed: https://example.com
+[full-ui-check:faa1bb12] [2026-06-22T13:09:38.828Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 50
+[full-ui-check:faa1bb12] [2026-06-22T13:09:39.238Z] [INFO] [CRAWL] Found 1: https://example.com/
+[full-ui-check:faa1bb12] [2026-06-22T13:09:39.239Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+[full-ui-check:faa1bb12] [2026-06-22T13:09:40.664Z] [INFO] [CRAWL] Found 2: https://example.com/domains/example
+[full-ui-check:faa1bb12] [2026-06-22T13:09:40.664Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 1 new URL(s): https://example.com/
+[full-ui-check:faa1bb12] [2026-06-22T13:09:40.669Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 0, found 2): https://example.com/domains/example
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.604Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://example.com/domains/example
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.608Z] [INFO] [CRAWL] Discovery complete — 2 URL(s) found
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.609Z] [INFO] [CRAWL] URL list:
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.609Z] [INFO] 1. https://example.com/
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.609Z] [INFO] 2. https://example.com/domains/example
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.667Z] [INFO] PROGRESS:25 Found 2 URLs — scanning...
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.669Z] [INFO] [TEST] Starting queue processing
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.669Z] [INFO] [TEST] Total URLs in queue: 2
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.780Z] [INFO] [TEST] Running 1/2: https://example.com/
+[full-ui-check:faa1bb12] [2026-06-22T13:09:41.785Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/
+[full-ui-check:faa1bb12] [2026-06-22T13:09:43.516Z] [INFO] Job cancelled
+::1 - - [22/Jun/2026:13:09:43 +0000] "POST /api/execution/cancel HTTP/1.1" 200 927 "-" "node"
+::1 - - [22/Jun/2026:13:09:46 +0000] "GET /api/modules/full-ui-check/jobs/faa1bb12-e522-4984-93f0-e08021fc1b77 HTTP/1.1" 200 634 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:46.856Z] [INFO] Job created and queued
+::1 - - [22/Jun/2026:13:09:46 +0000] "POST /api/modules/full-ui-check/jobs HTTP/1.1" 201 776 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:46.860Z] [INFO] Job started
+::1 - - [22/Jun/2026:13:09:47 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 818 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.197Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.209Z] [INFO] PROGRESS:10 Discovering URLs...
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.213Z] [INFO] [CRAWL] Starting URL discovery
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.214Z] [INFO] [CRAWL] Seed: https://example.com
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.214Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 10
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.619Z] [INFO] [CRAWL] Found 1: https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:47.619Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+::1 - - [22/Jun/2026:13:09:48 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 813 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:49.275Z] [INFO] [CRAWL] Found 2: https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:49.275Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 1 new URL(s): https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:49.281Z] [INFO] [CRAWL] Scanning page 2 (depth 1, queue 0, found 2): https://example.com/domains/example
+::1 - - [22/Jun/2026:13:09:50 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 813 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.678Z] [INFO] [CRAWL] Page done — 1 link(s) checked, 0 new URL(s): https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.681Z] [INFO] [CRAWL] Discovery complete — 2 URL(s) found
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.682Z] [INFO] [CRAWL] URL list:
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.682Z] [INFO] 1. https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.682Z] [INFO] 2. https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.742Z] [INFO] PROGRESS:25 Found 2 URLs — scanning...
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.744Z] [INFO] [TEST] Starting queue processing
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.744Z] [INFO] [TEST] Total URLs in queue: 2
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.831Z] [INFO] [TEST] Running 1/2: https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:50.834Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/
+::1 - - [22/Jun/2026:13:09:51 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 822 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:52.753Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:53 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:53.980Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:53.982Z] [INFO] [QA] Started: https://example.com/ (Desktop)
+::1 - - [22/Jun/2026:13:09:54 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:54.764Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:56 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:56.762Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:57 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:09:58.778Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:09:59 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+::1 - - [22/Jun/2026:13:10:00 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:00.794Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:02.126Z] [INFO] [QA] Done: https://example.com/ — 0 issue(s)
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:02.131Z] [INFO] [TEST]   Loading page (QA_Tablet): https://example.com/
+::1 - - [22/Jun/2026:13:10:02 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:02.793Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:10:03 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:03.785Z] [INFO] [TEST]   Running checks (QA_Tablet): https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:03.785Z] [INFO] [QA] Started: https://example.com/ (QA_Tablet)
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:04.793Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:10:05 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+::1 - - [22/Jun/2026:13:10:06 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:06.808Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:10:08 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:08.818Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:10:09 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:10.824Z] [INFO] PROGRESS:25 Scanning pages... 0 / 2
+::1 - - [22/Jun/2026:13:10:11 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 817 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:11.922Z] [INFO] [QA] Done: https://example.com/ — 0 issue(s)
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:11.932Z] [INFO] [TEST] Completed 1/2: https://example.com/
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:11.932Z] [INFO] [TEST] Running 2/2: https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:11.934Z] [INFO] [TEST]   Loading page (Desktop): https://example.com/domains/example
+::1 - - [22/Jun/2026:13:10:12 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:12.823Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:13.444Z] [INFO] [TEST]   Running checks (Desktop): https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:13.445Z] [INFO] [QA] Started: https://example.com/domains/example (Desktop)
+::1 - - [22/Jun/2026:13:10:14 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:14.823Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:15 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:16.823Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:17 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:18.824Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:18 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+::1 - - [22/Jun/2026:13:10:20 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:20.833Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:21.626Z] [INFO] [QA] Done: https://example.com/domains/example — 1 issue(s)
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:21.630Z] [INFO] [TEST]   Loading page (QA_Tablet): https://example.com/domains/example
+::1 - - [22/Jun/2026:13:10:21 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:22.245Z] [INFO] [TEST]   Running checks (QA_Tablet): https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:22.245Z] [INFO] [QA] Started: https://example.com/domains/example (QA_Tablet)
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:22.833Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:23 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:24.834Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:24 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+::1 - - [22/Jun/2026:13:10:26 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:26.849Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:27 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:28.850Z] [INFO] PROGRESS:58 Scanning pages... 1 / 2
+::1 - - [22/Jun/2026:13:10:29 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 857 "-" "node"
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.410Z] [INFO] [QA] Done: https://example.com/domains/example — 1 issue(s)
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.419Z] [INFO] [TEST] Completed 2/2: https://example.com/domains/example
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.473Z] [INFO] [TEST] Queue finished — 2/2 URL(s) processed
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.473Z] [INFO] [TEST] Generating HTML report...
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.491Z] [INFO] [PDF] Skipped — HTML report at: D:\Project\qaiachatbot\Keyword Finder\backend\full-ui-check\jobs\3ddad3bf-773c-40e7-a32f-d73ed121c6f7\qa-report.html
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.494Z] [INFO] PROGRESS:100 Completed
+[full-ui-check:3ddad3bf] [2026-06-22T13:10:30.515Z] [INFO] Job completed successfully
+::1 - - [22/Jun/2026:13:10:30 +0000] "GET /api/modules/full-ui-check/jobs/3ddad3bf-773c-40e7-a32f-d73ed121c6f7 HTTP/1.1" 200 955 "-" "node"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /shared/js/queryCache.js HTTP/1.1" 200 898 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /shared/js/toast.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /shared/js/api.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /api/dashboard/stats HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:53 +0000] "GET /api/modules HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /shared/js/queryCache.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /shared/js/toast.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /api/dashboard/stats HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:57 +0000] "GET /api/modules HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /seo-testing HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /shared/js/toast.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /shared/js/jobRunner.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /app.js HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:13:59 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:06 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /ui-testing HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /shared/js/toast.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /shared/js/jobRunner.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /app.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:09 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:11 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /keyword-radar HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /shared/js/toast.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /app.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:15 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:17 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /ui-testing HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /shared/js/toast.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /shared/js/jobRunner.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /app.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:31 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:36 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /reports HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /shared/css/enterprise.css HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /shared/js/api.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /shared/js/queryCache.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /shared/js/toast.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /shared/js/logsDrawer.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /shared/js/enterpriseShell.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /app.js HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+::1 - - [22/Jun/2026:13:14:48 +0000] "GET /favicon.ico HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"

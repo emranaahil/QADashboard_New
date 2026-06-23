@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Testing — QA Dashboard</title>
+  <link rel="stylesheet" href="/shared/css/enterprise.css">
+</head>
+<body>
+  <div id="ep-root">
+    <div class="ep-content" id="ep-content">
+      <div class="ep-ui-testing" id="ep-ui-testing">
+
+        <div class="ep-ui-testing-tabs-wrap">
+          <div class="ep-segmented ep-ui-testing-segmented" role="tablist" aria-label="Test mode">
+            <button type="button" id="modeSingle" class="active" role="tab" aria-selected="true">Single Page</button>
+            <button type="button" id="modeFull" role="tab" aria-selected="false">Full Website</button>
+          </div>
+        </div>
+
+        <div class="ep-ui-testing-workflow">
+          <div class="ep-ui-testing-card ep-ui-testing-form-card">
+            <h2 id="testCardTitle" class="ep-ui-testing-card-title">Single Page UI Check</h2>
+            <p class="ep-ui-testing-card-subtitle">Enter a URL and run visual QA checks across your selected devices.</p>
+
+            <div id="multiDeviceWarn" class="ep-warning hidden" role="status"></div>
+            <div id="browserWarn" class="ep-warning hidden" role="status"></div>
+
+            <div class="ep-ui-testing-form-body">
+              <div class="ep-field ep-ui-testing-url-field">
+                <label class="ep-label" for="testUrl" id="urlLabel">URL</label>
+                <input type="url" id="testUrl" class="ep-input ep-ui-testing-input" placeholder="https://example.com">
+              </div>
+
+              <div id="fullOnlyFields" class="hidden ep-ui-testing-advanced">
+                <div class="ep-field">
+                  <label class="ep-label" for="maxPages">Max Pages</label>
+                  <input type="number" id="maxPages" class="ep-input ep-ui-testing-input" value="50" min="1" max="500">
+                </div>
+                <div class="ep-field">
+                  <label class="ep-label"><input type="checkbox" id="includeSubdomains" style="margin-right:0.4rem;">Include Subdomains</label>
+                </div>
+                <div class="ep-field">
+                  <label class="ep-label" for="ignorePaths">Ignore Paths (one per line)</label>
+                  <textarea id="ignorePaths" class="ep-textarea" rows="2" placeholder="/admin&#10;/api"></textarea>
+                </div>
+                <div class="ep-field">
+                  <label class="ep-label" for="customCrawlRules">Custom Crawl Rules</label>
+                  <textarea id="customCrawlRules" class="ep-textarea" rows="2" placeholder="Optional crawl hints"></textarea>
+                </div>
+              </div>
+
+              <div class="ep-ui-testing-section-label">Configuration</div>
+
+              <div class="ep-field">
+                <label class="ep-label">Device Selection</label>
+                <div id="deviceGrid" class="ep-device-grid"></div>
+                <div class="ep-ui-testing-custom-device">
+                  <input type="text" id="customDeviceName" class="ep-input ep-ui-testing-input" placeholder="Custom device name">
+                  <input type="number" id="customWidth" class="ep-input ep-ui-testing-input" placeholder="Width" min="1">
+                  <input type="number" id="customHeight" class="ep-input ep-ui-testing-input" placeholder="Height" min="1">
+                  <button type="button" id="addCustomDevice" class="ep-btn ep-ui-testing-btn">Add</button>
+                </div>
+              </div>
+
+              <div class="ep-field">
+                <label class="ep-label">Browser</label>
+                <div id="browserGroup" class="ep-browser-group" role="radiogroup" aria-label="Browser selection"></div>
+              </div>
+            </div>
+
+            <div class="ep-ui-testing-btn-row">
+              <button type="button" id="runJobBtn" class="ep-btn ep-btn-primary ep-ui-testing-btn">Run Test</button>
+              <button type="button" id="cancelJobBtn" class="ep-btn ep-ui-testing-btn hidden">Cancel Test</button>
+              <button type="button" id="openReportBtn" class="ep-btn ep-ui-testing-btn hidden">Open Report</button>
+            </div>
+          </div>
+
+          <div id="executionPanel" class="ep-ui-testing-card ep-ui-testing-exec-card hidden" aria-live="polite">
+            <div class="ep-ui-testing-exec-header">
+              <h3 class="ep-ui-testing-exec-title">Execution</h3>
+              <div id="job-status"></div>
+            </div>
+
+            <div class="ep-progress ep-ui-testing-progress">
+              <div id="job-progress-fill" class="ep-progress-fill" style="width:0%"></div>
+            </div>
+
+            <div class="ep-ui-testing-progress-meta">
+              <span id="job-progress-text">0%</span>
+              <span id="job-pages">—</span>
+            </div>
+
+            <p id="job-message" class="ep-ui-testing-exec-message"></p>
+            <p id="job-current-url" class="ep-ui-testing-exec-url"></p>
+            <div id="job-error" class="ep-warning hidden" role="alert"></div>
+          </div>
+
+          <div id="resultsPanel" class="ep-ui-testing-card ep-ui-testing-results-card hidden">
+            <div class="ep-ui-testing-results-header">
+              <h3 class="ep-ui-testing-results-heading">Results Summary</h3>
+              <div id="resultsStatus"></div>
+            </div>
+            <div id="resultsStats" class="ep-ui-testing-stats-grid"></div>
+            <div id="resultsBody" class="ep-ui-testing-results-body"></div>
+            <div class="ep-ui-testing-btn-row" id="resultsActions"></div>
+          </div>
+        </div>
+
+        <div id="liveLogsCard" class="ep-ui-testing-card ep-ui-testing-logs-card hidden">
+          <div class="ep-ui-testing-card-title ep-ui-testing-logs-title">Live Logs</div>
+          <div id="liveLogs" class="ep-log-panel ep-ui-testing-log-panel"><div class="ep-log-line">Waiting for execution...</div></div>
+        </div>
+
+        <div class="ep-ui-testing-card ep-ui-testing-history-card" id="uiTestingHistoryCard">
+          <div class="ep-ui-testing-history-header">
+            <div>
+              <h2 id="historyHeading" class="ep-ui-testing-history-title">Single Page History</h2>
+              <p id="historySubheading" class="ep-ui-testing-history-subtitle">Past test runs for this mode</p>
+            </div>
+          </div>
+          <div id="historyStats" class="ep-ui-testing-mini-stats" aria-label="History statistics"></div>
+          <div class="ep-history-toolbar ep-ui-testing-history-toolbar">
+            <input type="search" id="historySearch" class="ep-input ep-ui-testing-input" placeholder="Search by URL, domain, or report name" aria-label="Search history">
+            <select id="historyTypeFilter" class="ep-select ep-ui-testing-select" aria-label="Test type filter">
+              <option value="single-page">Single Page</option>
+              <option value="full-website">Full Website</option>
+            </select>
+          </div>
+          <div id="job-history" role="list" aria-labelledby="historyHeading"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="/shared/js/api.js"></script>
+  <script src="/shared/js/queryCache.js"></script>
+  <script src="/shared/js/toast.js"></script>
+  <script src="/shared/js/logsDrawer.js"></script>
+  <script src="/shared/js/enterpriseShell.js"></script>
+  <script src="/shared/js/jobRunner.js"></script>
+  <script src="/shared/js/uiTestingHistory.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+---
+pid: 30936
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "cmd /c \"cd /d D:\\Project\\qaiachatbot\\Keyword Finder && node backend/server.js\""
+started_at: 2026-06-18T08:34:52.931Z
+running_for_ms: 10002    
+---
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+::1 - - [18/Jun/2026:08:35:03 +0000] "GET / HTTP/1.1" 200 6662 "-" "curl/8.19.0"

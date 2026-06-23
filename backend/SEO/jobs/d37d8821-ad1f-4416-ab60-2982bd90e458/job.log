@@ -1,0 +1,30 @@
+[2026-06-22T10:12:54.486Z] [INFO] Job created and queued
+[2026-06-22T10:12:54.496Z] [INFO] Job started
+[2026-06-22T10:12:55.627Z] [INFO] PROGRESS:10 Initializing SEO audit...
+[2026-06-22T10:12:55.632Z] [INFO] PROGRESS:20 Running SEO checks...
+[2026-06-22T10:12:55.634Z] [INFO] 🧪 DEBUG: FULL SITEMAP MODE STARTED
+[2026-06-22T10:12:55.634Z] [INFO] 🧪 MODE RECEIVED IN ENGINE: single
+[2026-06-22T10:12:55.637Z] [INFO] ⚡ Running SINGLE URL SEO mode
+[2026-06-22T10:12:55.637Z] [INFO] ✅ FINAL MODE: single
+[2026-06-22T10:12:55.637Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T10:12:55.638Z] [INFO] 📏 BATCH SIZE: 50
+[2026-06-22T10:12:55.637Z] [INFO] 📦 TOTAL BATCHES: 1
+[2026-06-22T10:12:56.111Z] [INFO] 🚀 Starting Playwright scan (headless)...
+[2026-06-22T10:12:56.111Z] [INFO] 📄 Total URLs to scan: 1
+[2026-06-22T10:12:56.112Z] [INFO] 📦 Processing batch 1/1
+[2026-06-22T10:12:56.113Z] [INFO] [1/1] 🔎 Opening: https://example.com
+[2026-06-22T10:12:56.113Z] [INFO] ⏳ Waiting for DOM load...
+[2026-06-22T10:12:56.111Z] [INFO] 🌐 Browser launched (headless) using Chromium
+[2026-06-22T10:12:56.113Z] [INFO] 🔍 Running SEO checks...
+[2026-06-22T10:12:56.112Z] [INFO] 📄 URLs in batch: 1
+[2026-06-22T10:13:01.868Z] [INFO] 🎉 All pages processed. Generating reports...
+[2026-06-22T10:13:01.868Z] [INFO] ✅ Completed batch 1/1
+[2026-06-22T10:13:01.867Z] [INFO] ✅ Completed: https://example.com
+[2026-06-22T10:13:01.973Z] [INFO] PROGRESS:85 Generating QA report...
+[2026-06-22T10:13:01.976Z] [INFO] PROGRESS:100 Completed
+[2026-06-22T10:13:01.980Z] [ERROR] SyntaxError: D:\Project\qaiachatbot\Keyword Finder\backend\seo\jobs\d37d8821-ad1f-4416-ab60-2982bd90e458\job.json: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Object._readFile (D:\Project\qaiachatbot\Keyword Finder\node_modules\jsonfile\index.js:25:16)
+    at async Object.updateJob (D:\Project\qaiachatbot\Keyword Finder\backend\shared\jobStore.js:97:15)
+    at async main (D:\Project\qaiachatbot\Keyword Finder\backend\seo\runJob.js:54:5)
+[2026-06-22T10:13:02.017Z] [ERROR] Job failed with code 1

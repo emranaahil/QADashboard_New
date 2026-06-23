@@ -1,0 +1,28 @@
+{
+  "id": "765b3b5e-1206-4887-b875-c82c44c11dcd",
+  "url": "https://example.com",
+  "keywords": [
+    "example"
+  ],
+  "status": "completed",
+  "startedAt": "2026-06-22T06:13:47.649Z",
+  "completedAt": "2026-06-22T06:13:53.077Z",
+  "stats": {
+    "urlsDiscovered": 1,
+    "urlsProcessed": 1,
+    "matchesFound": 1,
+    "currentBatch": 1,
+    "totalBatches": 1
+  },
+  "matches": [
+    {
+      "url": "https://example.com",
+      "keyword": "example"
+    }
+  ],
+  "error": null,
+  "recentUrls": [
+    "https://example.com",
+    "https://example.com"
+  ]
+}

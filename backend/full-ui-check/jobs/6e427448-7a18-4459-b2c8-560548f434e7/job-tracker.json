@@ -1,0 +1,24 @@
+{
+  "runId": "6e427448-7a18-4459-b2c8-560548f434e7",
+  "completed": 18,
+  "pending": 0,
+  "failed": [],
+  "lastProcessedUrl": "https://stagedev.geniuswholesale.club/reset-password",
+  "runs": {
+    "6e427448-7a18-4459-b2c8-560548f434e7": {
+      "runId": "6e427448-7a18-4459-b2c8-560548f434e7",
+      "lastProcessedUrl": "https://stagedev.geniuswholesale.club/reset-password",
+      "status": "completed",
+      "url": "",
+      "retryCount": 0,
+      "timestamps": {
+        "created": "2026-06-22T12:48:47.304Z",
+        "started": "2026-06-22T12:49:44.206Z",
+        "finished": "2026-06-22T12:58:17.013Z"
+      },
+      "completed": 18,
+      "pending": 0,
+      "failed": []
+    }
+  }
+}

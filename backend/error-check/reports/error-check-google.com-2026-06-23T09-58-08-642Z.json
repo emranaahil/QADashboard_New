@@ -1,0 +1,15 @@
+{
+  "url": "https://google.com",
+  "generatedAt": "2026-06-23T09:58:08.642Z",
+  "checked": 1,
+  "brokenPages": [],
+  "brokenLinks": [],
+  "allCheckedUrls": [
+    {
+      "url": "https://google.com/",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    }
+  ]
+}

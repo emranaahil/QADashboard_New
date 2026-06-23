@@ -1,0 +1,29 @@
+[
+  {
+    "page": "Desktop",
+    "url": "https://google.com",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782123798914.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-22T10:23:18.990Z"
+      },
+      {
+        "id": "QA-0002",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1690",
+        "timestamp": "2026-06-22T10:23:19.015Z"
+      }
+    ],
+    "screenshot": "final-1782123799021.png",
+    "timestamp": "2026-06-22T10:23:19.094Z"
+  }
+]

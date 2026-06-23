@@ -1,0 +1,623 @@
+[
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Distorted Images",
+        "count": 1,
+        "screenshot": "distorted-images-1782040900899.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:21:41.464Z"
+      },
+      {
+        "id": "QA-0002",
+        "type": "Collapsed Spacing",
+        "count": 1,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-21T11:21:41.483Z"
+      },
+      {
+        "id": "QA-0003",
+        "type": "Low Color Contrast",
+        "count": 7,
+        "screenshot": "low-contrast-1782040901489.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:21:41.994Z"
+      }
+    ],
+    "screenshot": "final-1782040902008.png",
+    "timestamp": "2026-06-21T11:21:42.514Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/tracking/865/132",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0004",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-21T11:22:02.269Z"
+      },
+      {
+        "id": "QA-0005",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782040919060&cv=11&fst=1782040919060&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0h2v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938466~115938469~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Ftracking%2F865%2F132&rcb=9&frm=0&tiba=Page%20not%20found%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1205275491.1782040919&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:22:03.931Z"
+      },
+      {
+        "id": "QA-0006",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782040919116&cv=11&fst=1782040919116&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938466~115938468~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Ftracking%2F865%2F132&rcb=8&frm=0&tiba=Page%20not%20found%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1205275491.1782040919&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&gap.plf=5&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:22:03.979Z"
+      },
+      {
+        "id": "QA-0007",
+        "type": "Small Touch Targets",
+        "count": 1,
+        "screenshot": "small-buttons-1782040930382.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:22:10.468Z"
+      },
+      {
+        "id": "QA-0008",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782040930476.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:22:10.548Z"
+      },
+      {
+        "id": "QA-0009",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782040930556.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:22:10.631Z"
+      }
+    ],
+    "screenshot": "final-1782040930637.png",
+    "timestamp": "2026-06-21T11:22:10.716Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/contact",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0010",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782040950926&cv=11&fst=1782040950926&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9244543188za200zd9244543188xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938465~115938468~118131810~119027224~119392696~119392704~119456239~119456247~119534187&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fcontact%2F&rcb=7&frm=0&tiba=Contact%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=117342174.1782040951&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&gap.plf=5&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:22:36.456Z"
+      },
+      {
+        "id": "QA-0011",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782040950991&cv=11&fst=1782040950991&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zb9244543188zd9244543188xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938465~115938469~118131810~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fcontact%2F&rcb=16&frm=0&tiba=Contact%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=117342174.1782040951&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&gap.plf=5&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:22:36.467Z"
+      },
+      {
+        "id": "QA-0012",
+        "type": "Horizontal Scroll Detected",
+        "count": 0,
+        "screenshot": "horizontal-scroll-1782040959085.png",
+        "severity": "major",
+        "details": "Page content causes horizontal scrolling",
+        "timestamp": "2026-06-21T11:22:39.200Z"
+      },
+      {
+        "id": "QA-0013",
+        "type": "Distorted Images",
+        "count": 3,
+        "screenshot": "distorted-images-1782040959216.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:22:39.319Z"
+      },
+      {
+        "id": "QA-0014",
+        "type": "Collapsed Spacing",
+        "count": 3,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-21T11:22:39.333Z"
+      },
+      {
+        "id": "QA-0015",
+        "type": "Low Color Contrast",
+        "count": 11,
+        "screenshot": "low-contrast-1782040959339.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:22:39.432Z"
+      }
+    ],
+    "screenshot": "final-1782040959438.png",
+    "timestamp": "2026-06-21T11:22:39.546Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/login",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0016",
+        "type": "Clipped / Truncated Text",
+        "count": 1,
+        "screenshot": "clipped-text-1782040980522.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-21T11:23:00.566Z"
+      }
+    ],
+    "screenshot": "final-1782040980584.png",
+    "timestamp": "2026-06-21T11:23:00.630Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/websites",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0017",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-21T11:23:18.697Z"
+      },
+      {
+        "id": "QA-0018",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782040998362&cv=11&fst=1782040998362&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118012007~119027224~119392696~119392704~119456239~119456247~119534189&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fwebsites&rcb=12&frm=0&tiba=Page%20not%20found%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1255776452.1782040998&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:23:18.976Z"
+      },
+      {
+        "id": "QA-0019",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782040998423&cv=11&fst=1782040998423&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938465~115938468~118395333~119027224~119392696~119392704~119456239~119456247~119534188&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fwebsites&rcb=10&frm=0&tiba=Page%20not%20found%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1255776452.1782040998&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:23:18.978Z"
+      },
+      {
+        "id": "QA-0020",
+        "type": "Small Touch Targets",
+        "count": 1,
+        "screenshot": "small-buttons-1782041008701.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:23:28.779Z"
+      },
+      {
+        "id": "QA-0021",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782041008787.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:23:28.861Z"
+      },
+      {
+        "id": "QA-0022",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041008869.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:23:28.946Z"
+      }
+    ],
+    "screenshot": "final-1782041008950.png",
+    "timestamp": "2026-06-21T11:23:29.030Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/terms-conditions",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0023",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782041028800&cv=11&fst=1782041028800&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fterms-conditions%2F&rcb=11&frm=0&tiba=Terms%20%26%20Conditions%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=773194946.1782041029&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:23:52.327Z"
+      },
+      {
+        "id": "QA-0024",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782041029529&cv=11&fst=1782041029529&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938468~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fterms-conditions%2F&rcb=1&frm=0&tiba=Terms%20%26%20Conditions%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=773194946.1782041029&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:23:52.327Z"
+      },
+      {
+        "id": "QA-0025",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041035096.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:23:55.788Z"
+      }
+    ],
+    "screenshot": "final-1782041035798.png",
+    "timestamp": "2026-06-21T11:23:56.419Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/privacy-policy",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0026",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782041056453&cv=11&fst=1782041056453&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938465~115938468~118131809~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fprivacy-policy%2F&rcb=9&frm=0&tiba=Privacy%20Policy%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1836222085.1782041056&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&gap.plf=5&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:24:19.530Z"
+      },
+      {
+        "id": "QA-0027",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782041056517&cv=11&fst=1782041056517&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938465~115938468~118131809~118395334~119027224~119392696~119392704~119456239~119456247~119534189&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fprivacy-policy%2F&rcb=10&frm=0&tiba=Privacy%20Policy%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1836222085.1782041056&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&gap.plf=5&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:24:19.899Z"
+      },
+      {
+        "id": "QA-0028",
+        "type": "Collapsed Spacing",
+        "count": 2,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-21T11:24:24.786Z"
+      },
+      {
+        "id": "QA-0029",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041064791.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:24:25.348Z"
+      }
+    ],
+    "screenshot": "final-1782041065357.png",
+    "timestamp": "2026-06-21T11:24:25.914Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/medical-consent",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0030",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782041098563&cv=11&fst=1782041098563&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938465~115938469~118395333~119027224~119392696~119392704~119456239~119456247~119527019~119534188&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fmedical-consent%2F&rcb=5&frm=0&tiba=Medical%20Consent%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1965946935.1782041099&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:25:01.582Z"
+      },
+      {
+        "id": "QA-0031",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782041098628&cv=11&fst=1782041098628&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0h1v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~119027224~119392696~119392704~119456239~119456247~119534188&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fmedical-consent%2F&rcb=12&frm=0&tiba=Medical%20Consent%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1965946935.1782041099&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:25:01.582Z"
+      },
+      {
+        "id": "QA-0032",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041105181.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:25:05.435Z"
+      }
+    ],
+    "screenshot": "final-1782041105439.png",
+    "timestamp": "2026-06-21T11:25:05.670Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/for-california-residents",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0033",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041130199.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:25:30.364Z"
+      }
+    ],
+    "screenshot": "final-1782041130371.png",
+    "timestamp": "2026-06-21T11:25:30.538Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/bill-of-rights",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0034",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782041151258&cv=11&fst=1782041151258&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616985~115938465~115938468~118395335~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fbill-of-rights%2F&rcb=2&frm=0&tiba=Bill%20of%20Rights%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=216718721.1782041151&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&gap.plf=5&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:25:53.769Z"
+      },
+      {
+        "id": "QA-0035",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782041151323&cv=11&fst=1782041151323&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0h1v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938468~119027224~119392696~119392704~119456239~119456247&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fbill-of-rights%2F&rcb=4&frm=0&tiba=Bill%20of%20Rights%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=216718721.1782041151&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:25:53.769Z"
+      },
+      {
+        "id": "QA-0036",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041158827.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:25:58.956Z"
+      }
+    ],
+    "screenshot": "final-1782041158962.png",
+    "timestamp": "2026-06-21T11:25:59.065Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/privacy-practices",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0037",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041191595.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:26:31.896Z"
+      }
+    ],
+    "screenshot": "final-1782041191902.png",
+    "timestamp": "2026-06-21T11:26:32.201Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/refund-policy",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0038",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041219438.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:26:59.587Z"
+      }
+    ],
+    "screenshot": "final-1782041219593.png",
+    "timestamp": "2026-06-21T11:26:59.721Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/glp1-instructions",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0039",
+        "type": "Distorted Images",
+        "count": 1,
+        "screenshot": "distorted-images-1782041244191.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:27:25.032Z"
+      },
+      {
+        "id": "QA-0040",
+        "type": "Collapsed Spacing",
+        "count": 2,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-21T11:27:25.052Z"
+      },
+      {
+        "id": "QA-0041",
+        "type": "Low Color Contrast",
+        "count": 6,
+        "screenshot": "low-contrast-1782041245057.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:27:25.856Z"
+      }
+    ],
+    "screenshot": "final-1782041245864.png",
+    "timestamp": "2026-06-21T11:27:26.664Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/verification",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0042",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-21T11:27:42.873Z"
+      },
+      {
+        "id": "QA-0043",
+        "type": "Small Touch Targets",
+        "count": 1,
+        "screenshot": "small-buttons-1782041270988.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:27:51.069Z"
+      },
+      {
+        "id": "QA-0044",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782041271076.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:27:51.151Z"
+      },
+      {
+        "id": "QA-0045",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041271158.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:27:51.233Z"
+      }
+    ],
+    "screenshot": "final-1782041271239.png",
+    "timestamp": "2026-06-21T11:27:51.318Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/jointelehealthmed",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0046",
+        "type": "Page Not Found (404)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "HTTP status: 404",
+        "timestamp": "2026-06-21T11:28:09.376Z"
+      },
+      {
+        "id": "QA-0047",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/18020455020/?random=1782041288291&cv=11&fst=1782041288291&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0v9247282555za200zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938465~115938468~118012009~119027224~119381664~119392696~119392704~119456239~119456247~119534188&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fjointelehealthmed&rcb=3&frm=0&tiba=Page%20not%20found%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1778310876.1782041288&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:28:09.774Z"
+      },
+      {
+        "id": "QA-0048",
+        "type": "Failed Request",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "https://www.google.com/rmkt/collect/17974789773/?random=1782041288362&cv=11&fst=1782041288362&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be66h0h2v9244543188za200zb9247282555zd9247282555xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938468~119027224~119392696~119392704~119456239~119456247~119534188&u_w=1440&u_h=900&url=https%3A%2F%2Fwww.telehealthmed.com%2Fjointelehealthmed&rcb=1&frm=0&tiba=Page%20not%20found%20%E2%80%93%20Telehealth%20Weight%20Loss%20Evans%20GA&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=1778310876.1782041288&uaa=x86&uab=64&uafvl=HeadlessChrome%3B149.0.7827.55%7CChromium%3B149.0.7827.55%7CNot)A%253BBrand%3B24.0.0.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&data=event%3Dgtag.config&ept=68&gcp=5",
+        "timestamp": "2026-06-21T11:28:09.774Z"
+      },
+      {
+        "id": "QA-0049",
+        "type": "Small Touch Targets",
+        "count": 1,
+        "screenshot": "small-buttons-1782041299480.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:28:19.674Z"
+      },
+      {
+        "id": "QA-0050",
+        "type": "Misaligned Layout",
+        "count": 1,
+        "screenshot": "misaligned-1782041299691.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:28:19.832Z"
+      },
+      {
+        "id": "QA-0051",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041299845.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:28:19.935Z"
+      }
+    ],
+    "screenshot": "final-1782041299941.png",
+    "timestamp": "2026-06-21T11:28:20.023Z"
+  },
+  {
+    "page": "Desktop",
+    "url": "https://www.telehealthmed.com/privacy",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0052",
+        "type": "Collapsed Spacing",
+        "count": 2,
+        "screenshot": null,
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-21T11:28:41.067Z"
+      },
+      {
+        "id": "QA-0053",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782041321072.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-21T11:28:41.628Z"
+      }
+    ],
+    "screenshot": "final-1782041321639.png",
+    "timestamp": "2026-06-21T11:28:42.165Z"
+  }
+]

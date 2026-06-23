@@ -1,0 +1,35 @@
+{
+  "id": "3fb20e92-e01e-4d53-befa-b56474c9894e",
+  "moduleId": "ui-check",
+  "testType": "single-page",
+  "modelId": "example.com",
+  "status": "cancelled",
+  "progress": 20,
+  "message": "Cancelled by user",
+  "url": "https://example.com",
+  "options": {
+    "devices": [
+      "desktop"
+    ],
+    "browser": "chrome",
+    "_resolvedDevices": [
+      {
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      }
+    ]
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-23T13:56:47.190Z",
+  "startedAt": "2026-06-23T13:56:47.217Z",
+  "completedAt": "2026-06-23T13:56:59.528Z",
+  "durationMs": 12311,
+  "reportPath": null,
+  "reportAvailable": false,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": ""
+}

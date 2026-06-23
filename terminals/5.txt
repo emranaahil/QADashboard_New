@@ -1,0 +1,23 @@
+---
+pid: 43124
+cwd: "D:\Project\qaiachatbot\Keyword Finder"
+command: "cd \"D:\\Project\\qaiachatbot\\Keyword Finder\"; node backend/server.js"
+started_at: 2026-06-22T10:04:31.721Z
+running_for_ms: 16959990 
+---
+🚀 Website Keyword Auditor running on port 3000
+📊 Dashboard: http://localhost:3000
+🔧 API: http://localhost:3000/api
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules HTTP/1.1" 200 1044 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/seo/reports/latest HTTP/1.1" 200 866 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/seo/reports HTTP/1.1" 200 169 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/ui-check/reports HTTP/1.1" 200 360 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/full-ui-check/reports HTTP/1.1" 200 1152 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/keyword-check/reports HTTP/1.1" 200 2080 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/keyword-check/reports/latest HTTP/1.1" 200 560 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /api/modules/error-check/reports HTTP/1.1" 200 252 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /modules/seo HTTP/1.1" 301 161 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /modules/seo/ HTTP/1.1" 200 1139 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /modules/keyword-check HTTP/1.1" 301 171 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET /modules/keyword-check/ HTTP/1.1" 200 3100 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"
+::1 - - [22/Jun/2026:10:04:39 +0000] "GET / HTTP/1.1" 200 1602 "-" "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-IN) WindowsPowerShell/5.1.26100.8655"

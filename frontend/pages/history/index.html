@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History — QA Dashboard</title>
+  <link rel="stylesheet" href="/shared/css/enterprise.css">
+</head>
+<body>
+  <div id="ep-root">
+    <div class="ep-content" id="ep-content">
+      <div class="ep-page-stack ep-page-stack-wide">
+        <div class="ep-card">
+          <div class="ep-page-toolbar">
+            <h2>Execution History</h2>
+            <select id="filterModule" class="ep-select ep-select-inline" aria-label="Filter by module">
+              <option value="">All modules</option>
+              <option value="seo">SEO Testing</option>
+              <option value="ui-check">UI — Single Page</option>
+              <option value="full-ui-check">UI — Full Website</option>
+            </select>
+          </div>
+        </div>
+        <div id="history-list"><div class="ep-skeleton ep-skeleton-row"></div></div>
+      </div>
+    </div>
+  </div>
+  <script src="/shared/js/api.js"></script>
+  <script src="/shared/js/queryCache.js"></script>
+  <script src="/shared/js/toast.js"></script>
+  <script src="/shared/js/logsDrawer.js"></script>
+  <script src="/shared/js/enterpriseShell.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkRadar — QA Dashboard</title>
+  <link rel="stylesheet" href="/shared/css/enterprise.css">
+  <link rel="stylesheet" href="/shared/css/base.css">
+  <link rel="stylesheet" href="/shared/css/module-page.css">
+</head>
+<body>
+  <div id="ep-root">
+    <div class="ep-content" id="ep-content">
+      <div class="lr-module">
+        <div class="module-page">
+          <section class="card" id="runner-section">
+            <h2 class="card-title">Run Error Check</h2>
+            <div class="lr-form-grid">
+              <div class="form-group"><label class="form-label">URL</label><input type="text" id="siteUrl" class="form-input" value="https://example.com"></div>
+              <div class="form-group"><label class="form-label">Max Pages</label><input type="number" id="maxPages" class="form-input" value="100"></div>
+              <div class="form-group"><label class="form-label">Max Depth</label><input type="number" id="maxDepth" class="form-input" value="5"></div>
+            </div>
+            <div class="ep-btn-row lr-btn-row">
+              <button id="startBtn" class="btn btn-primary">▶ Start Check</button>
+            </div>
+            <p id="statusLine" class="form-hint lr-status-line"></p>
+          </section>
+
+          <section id="progressSection" class="card hidden">
+            <h2 class="card-title">Progress</h2>
+            <div class="stats-grid">
+              <div class="stat-item"><span class="stat-value" id="urlsProcessed">0</span><span class="stat-label">Processed</span></div>
+              <div class="stat-item highlight"><span class="stat-value" id="errorCount">0</span><span class="stat-label">Errors</span></div>
+            </div>
+            <p id="currentUrl" class="form-hint"></p>
+          </section>
+
+          <section id="errorSection" class="card hidden">
+            <div class="alert alert-error" id="errorMessage"></div>
+          </section>
+
+          <div class="module-grid has-sidebar lr-reports-grid">
+            <aside class="card">
+              <h2 class="card-title">Saved Reports</h2>
+              <ul id="report-list" class="report-list"></ul>
+            </aside>
+            <section>
+              <div id="report-actions" class="report-actions"></div>
+              <div id="report-viewer" class="report-viewer card"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/shared/js/api.js"></script>
+  <script src="/shared/js/toast.js"></script>
+  <script src="/shared/js/logsDrawer.js"></script>
+  <script src="/shared/js/enterpriseShell.js"></script>
+  <script src="/shared/js/reportPanel.js"></script>
+  <script src="/modules/error-check/reports.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

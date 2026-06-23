@@ -1,0 +1,34 @@
+{
+  "id": "240270f3-dffb-435e-adaa-a2db2b05e109",
+  "moduleId": "ui-check",
+  "modelId": "example.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://example.com",
+  "options": {
+    "devices": [
+      "desktop"
+    ],
+    "browser": "chrome",
+    "_resolvedDevices": [
+      {
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      }
+    ]
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-22T13:50:43.713Z",
+  "startedAt": "2026-06-22T13:50:43.727Z",
+  "completedAt": "2026-06-22T14:11:33.607Z",
+  "durationMs": 1249880,
+  "reportPath": "jobs/240270f3-dffb-435e-adaa-a2db2b05e109/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": ""
+}

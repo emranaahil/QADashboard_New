@@ -1,0 +1,50 @@
+---
+pid: 33008
+cwd: "D:\Project\qaiachatbot\NEW ui CHECK\Sunday Project"
+command: "Set-Location \"D:\\Project\\qaiachatbot\\NEW ui CHECK\\Sunday Project\"; node runFullSiteUI.js https://www.saucedemo.com/"
+started_at: 2026-06-21T12:30:57.804Z
+running_for_ms: 4735013  
+---
+🚀 runTest(queue) started
+runId: 2026-06-21T12-30-58-634Z
+seedUrl: https://www.saucedemo.com/
+urlQueuePath: reports\2026-06-21T12-30-58-634Z\urlQueue.jsonl
+
+[CRAWL] Starting URL discovery
+[CRAWL] Seed: https://www.saucedemo.com/
+[CRAWL] Max depth: 5 | Max URLs: 5000
+[CRAWL] Found 1: https://www.saucedemo.com/
+[CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://www.saucedemo.com/
+[CRAWL] Page done — 0 link(s) checked, 0 new URL(s): https://www.saucedemo.com/
+
+[CRAWL] Discovery complete — 1 URL(s) found
+[CRAWL] URL list:
+  1. https://www.saucedemo.com/
+
+✅ Crawl/discovery done — 1 URL(s) queued for testing
+
+[TEST] Starting queue processing
+[TEST] Total URLs in queue: 1
+
+
+[TEST] Running 1/1: https://www.saucedemo.com/
+[TEST]   Loading page (Desktop): https://www.saucedemo.com/
+[TEST]   Running checks (Desktop): https://www.saucedemo.com/
+[QA] Started: https://www.saucedemo.com/ (Desktop)
+[QA] Done: https://www.saucedemo.com/ — 2 issue(s)
+[TEST] Completed 1/1: https://www.saucedemo.com/
+
+[TEST] Queue finished — 1/1 URL(s) processed
+[TEST] Generating HTML report and PDF...
+
+[PDF] htmlPath = D:\Project\qaiachatbot\NEW ui CHECK\Sunday Project\qa-report.html
+[PDF] pdfPath = D:\Project\qaiachatbot\NEW ui CHECK\report.pdf
+[PDF] fileUrl = file://D:\Project\qaiachatbot\NEW ui CHECK\Sunday Project\qa-report.html
+[PDF] Loading HTML...
+[PDF] HTML loaded
+[PDF] Generating PDF...
+[PDF] PDF generated successfully
+✅ Queue run done
+✅ Done
+EXIT CODE: 0
+RESULT: { success: true, mode: 'queue', runId: '2026-06-21T12-30-58-634Z' }

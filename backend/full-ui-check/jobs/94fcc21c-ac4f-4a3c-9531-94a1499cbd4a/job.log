@@ -1,0 +1,13 @@
+[2026-06-22T14:26:29.057Z] [INFO] Job created and queued
+[2026-06-22T14:26:29.062Z] [INFO] Job started
+[2026-06-22T14:26:29.418Z] [INFO] PROGRESS:5 Initializing full site UI check...
+[2026-06-22T14:26:29.436Z] [INFO] PROGRESS:10 Discovering URLs...
+[2026-06-22T14:26:29.444Z] [INFO] [CRAWL] Starting URL discovery
+[2026-06-22T14:26:29.445Z] [INFO] [CRAWL] Seed: https://example.com
+[2026-06-22T14:26:29.446Z] [INFO] [CRAWL] Max depth: 5 | Max URLs: 10
+[2026-06-22T14:26:30.044Z] [INFO] [CRAWL] Found 1: https://example.com/
+[2026-06-22T14:26:30.045Z] [INFO] [CRAWL] Scanning page 1 (depth 0, queue 0, found 1): https://example.com/
+[2026-06-22T14:26:31.103Z] [INFO] Job cancelled
+[2026-06-22T14:26:31.109Z] [INFO] Job cancelled
+[2026-06-22T14:26:31.116Z] [INFO] Job cancelled
+[2026-06-22T14:26:31.122Z] [INFO] Job cancelled

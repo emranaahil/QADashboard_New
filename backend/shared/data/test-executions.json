@@ -1,0 +1,44 @@
+{
+  "ui-check:google.com": {
+    "testType": "ui-check",
+    "modelId": "google.com",
+    "jobId": "f47af1b6-2014-4ff4-8b67-4f0396eaa4f0",
+    "url": "https://GOOGLE.COM",
+    "updatedAt": "2026-06-22T10:45:57.421Z"
+  },
+  "full-ui-check:stagedev.geniuswholesale.club": {
+    "testType": "full-ui-check",
+    "modelId": "stagedev.geniuswholesale.club",
+    "jobId": "6e427448-7a18-4459-b2c8-560548f434e7",
+    "url": "https://stagedev.geniuswholesale.club",
+    "updatedAt": "2026-06-22T12:58:17.171Z"
+  },
+  "seo:example.com": {
+    "testType": "seo",
+    "modelId": "example.com",
+    "jobId": "604fe6cf-1d20-4f59-85db-dfa7f3ceddc2",
+    "url": "https://example.com",
+    "updatedAt": "2026-06-23T13:30:35.045Z"
+  },
+  "ui-check:example.com": {
+    "testType": "ui-check",
+    "modelId": "example.com",
+    "jobId": "77a4427d-17c4-465e-8d60-7b4801e1ef4c",
+    "url": "https://example.com",
+    "updatedAt": "2026-06-23T13:59:19.811Z"
+  },
+  "full-ui-check:example.com": {
+    "testType": "full-ui-check",
+    "modelId": "example.com",
+    "jobId": "fc544d72-8103-4745-af49-b254d2686791",
+    "url": "https://example.com",
+    "updatedAt": "2026-06-23T13:37:29.238Z"
+  },
+  "full-ui-check:example1.com": {
+    "testType": "full-ui-check",
+    "modelId": "example1.com",
+    "jobId": "c3d2d84d-a443-44cb-a682-ad4e481babe2",
+    "url": "https://example1.com",
+    "updatedAt": "2026-06-23T11:36:19.833Z"
+  }
+}
