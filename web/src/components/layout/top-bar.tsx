@@ -1,7 +1,7 @@
 "use client";
 
-import { Menu, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Menu } from "lucide-react";
+import { GlobalSearch } from "@/components/layout/global-search";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -51,14 +51,7 @@ export function TopBar({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative hidden sm:block">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search runs, URLs..."
-            className="h-10 w-52 bg-background-elevated pl-9 text-sm"
-            aria-label="Global search"
-          />
-        </div>
+        <GlobalSearch />
 
         <div className="flex items-center gap-2">
           {(status === "running" || isCancelling) && (

@@ -182,10 +182,11 @@ export const api = {
       "/api/config/browsers"
     ),
 
-  getHistory: (opts?: { limit?: number; moduleId?: string }) => {
+  getHistory: (opts?: { limit?: number; moduleId?: string; q?: string }) => {
     const params = new URLSearchParams();
     if (opts?.limit) params.set("limit", String(opts.limit));
     if (opts?.moduleId) params.set("moduleId", opts.moduleId);
+    if (opts?.q) params.set("q", opts.q);
     const qs = params.toString();
     return fetchJson<{ items: Job[]; grouped: Array<{ date: string; runs: Job[] }> }>(
       `/api/history${qs ? `?${qs}` : ""}`

@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
+import { Input } from "@/components/ui/input";
 import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,26 +12,60 @@ import { api, type Job } from "@/lib/api";
 import { canViewReport } from "@/lib/report";
 import { truncateUrl } from "@/lib/utils";
 
-export default function HistoryPage() {
+function HistoryPageFallback() {
+  return (
+    <AppShell title="History" subtitle="Full execution history grouped by date">
+      <div className="mx-auto max-w-5xl">
+        <Skeleton className="mb-4 h-11 w-full rounded-lg" />
+        <Skeleton className="h-64 w-full rounded-lg" />
+      </div>
+    </AppShell>
+  );
+}
+
+function HistoryPageContent() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const [query, setQuery] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [grouped, setGrouped] = useState<Array<{ date: string; runs: Job[] }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setQuery(initialQuery);
+    setDebouncedQuery(initialQuery);
+  }, [initialQuery]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query.trim()), 300);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  useEffect(() => {
+    setLoading(true);
     api
-      .getHistory({ limit: 100 })
+      .getHistory({ limit: 100, q: debouncedQuery || undefined })
       .then((data) => setGrouped(data.grouped || []))
       .finally(() => setLoading(false));
-  }, []);
+  }, [debouncedQuery]);
 
   return (
     <AppShell title="History" subtitle="Full execution history grouped by date">
       <div className="mx-auto max-w-5xl flex flex-col gap-4">
+        <Input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Filter by URL, module, or status..."
+          className="h-11 bg-background-elevated"
+          aria-label="Filter history"
+        />
         {loading ? (
           <Skeleton className="h-64 w-full rounded-lg" />
         ) : grouped.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center text-muted-foreground">
-              No execution history yet.
+              {debouncedQuery ? `No runs match "${debouncedQuery}".` : "No execution history yet."}
             </CardContent>
           </Card>
         ) : (
@@ -66,5 +102,13 @@ export default function HistoryPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+export default function HistoryPage() {
+  return (
+    <Suspense fallback={<HistoryPageFallback />}>
+      <HistoryPageContent />
+    </Suspense>
   );
 }

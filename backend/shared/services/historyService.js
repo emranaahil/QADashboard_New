@@ -11,24 +11,47 @@ const MODULE_LABELS = {
   'full-ui-check': 'UI Testing — Full Website'
 };
 
-async function listHistory({ limit = 100, moduleId } = {}) {
+function matchesSearch(item, q) {
+  if (!q) return true;
+  const needle = String(q).toLowerCase().trim();
+  if (!needle) return true;
+  const host = (() => {
+    try { return new URL(item.url).hostname.toLowerCase(); }
+    catch { return ''; }
+  })();
+  return (
+    (item.url || '').toLowerCase().includes(needle) ||
+    host.includes(needle) ||
+    (item.id || '').toLowerCase().includes(needle) ||
+    (item.moduleId || '').toLowerCase().includes(needle) ||
+    (item.moduleLabel || '').toLowerCase().includes(needle) ||
+    (item.status || '').toLowerCase().includes(needle)
+  );
+}
+
+async function listHistory({ limit = 100, moduleId, q } = {}) {
+  const search = String(q || '').trim();
+  const cap = Math.min(Math.max(parseInt(limit, 10) || 100, 1), 500);
   const modules = moduleId
     ? (jobStore.RUNNABLE_MODULES.has(moduleId) ? [moduleId] : [])
     : [...jobStore.RUNNABLE_MODULES];
 
   const items = [];
   for (const mod of modules) {
-    const jobs = await jobStore.enrichJobs(mod, await jobStore.listJobs(mod, limit));
+    const jobs = await jobStore.enrichJobs(mod, await jobStore.listJobs(mod, cap));
     for (const job of jobs) {
-      items.push({
+      const row = {
         ...job,
         moduleLabel: MODULE_LABELS[mod] || mod
-      });
+      };
+      if (matchesSearch(row, search)) {
+        items.push(row);
+      }
     }
   }
 
   items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  return items.slice(0, limit);
+  return items.slice(0, cap);
 }
 
 function groupByDate(items) {
