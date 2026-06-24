@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -342,7 +343,15 @@ export default function LinkRadarPage() {
 
         {errorMessage ? (
           <Card className="border-destructive/40 bg-destructive/5">
-            <CardContent className="p-4 text-sm text-destructive">{errorMessage}</CardContent>
+            <CardContent className="flex flex-col gap-3 p-4">
+              <p className="text-sm text-destructive">{errorMessage}</p>
+              <div className="flex flex-wrap gap-2">
+                <ViewLogButton kind="error-check" size="sm" />
+                <Button size="sm" onClick={startCheck}>
+                  Try Again
+                </Button>
+              </div>
+            </CardContent>
           </Card>
         ) : null}
 

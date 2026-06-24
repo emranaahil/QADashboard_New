@@ -8,6 +8,7 @@ const { logJob } = require('../shared/logger');
 const testStatusService = require('../shared/testStatusService');
 const executionService = require('../shared/services/executionService');
 const executionController = require('../shared/executionController');
+const jobLogService = require('../shared/jobLogService');
 
 const router = express.Router();
 
@@ -119,6 +120,20 @@ router.use('/:moduleId/jobs/:jobId/screenshots', validateModule, (req, res, next
     express.static(dir)(req, res, next);
   } catch (err) {
     res.status(400).json({ error: 'INVALID_REQUEST', message: err.message });
+  }
+});
+
+router.get('/:moduleId/jobs/:jobId/logs', validateModule, async (req, res) => {
+  try {
+    jobStore.validateJobId(req.params.jobId);
+    const html = await jobLogService.renderJobLogsHtml(req.params.moduleId, req.params.jobId);
+    if (!html) {
+      return res.status(404).json({ error: 'NOT_FOUND', message: 'Job not found' });
+    }
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    res.status(400).json({ error: 'LOGS_FAILED', message: err.message });
   }
 });
 

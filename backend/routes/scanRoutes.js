@@ -7,6 +7,7 @@ const crawlerService = require('../keyword-check/crawlerService');
 const reportService = require('../keyword-check/reportService');
 const stateService = require('../keyword-check/stateService');
 const errorCheckService = require('../error-check/errorCheckService');
+const scanLogService = require('../shared/scanLogService');
 const { normalizeUrl } = require('../shared/urlSecurity');
 
 // Start a new scan
@@ -117,6 +118,22 @@ router.get('/scan/:scanId/status', async (req, res) => {
     }
 });
 
+// View scan logs (HTML page in new tab)
+router.get('/scan/:scanId/logs', async (req, res) => {
+    try {
+        const { scanId } = req.params;
+        const html = await scanLogService.renderScanLogsHtml(scanId);
+        if (!html) {
+            return res.status(404).json({ error: 'NOT_FOUND', message: 'Scan not found' });
+        }
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(html);
+    } catch (error) {
+        console.error('Error rendering scan logs:', error);
+        res.status(500).json({ error: 'LOGS_FAILED', message: error.message });
+    }
+});
+
 // Get scan results
 router.get('/scan/:scanId/results', async (req, res) => {
     try {
@@ -218,6 +235,21 @@ router.post('/check-broken-pages', async (req, res) => {
             message: error.message || 'Unknown error',
             log: error.stack || error.message 
         });
+    }
+});
+
+// View error-check logs (HTML page in new tab)
+router.get('/check-broken-pages/logs', (req, res) => {
+    try {
+        const html = errorCheckService.renderLastRunLogsHtml();
+        if (!html) {
+            return res.status(404).json({ error: 'NOT_FOUND', message: 'No error check logs available' });
+        }
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(html);
+    } catch (error) {
+        console.error('Error rendering error check logs:', error);
+        res.status(500).json({ error: 'LOGS_FAILED', message: error.message });
     }
 });
 

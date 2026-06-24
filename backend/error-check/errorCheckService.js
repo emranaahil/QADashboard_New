@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
+const { renderLogHtml } = require('../shared/logViewUtils');
 
 const NAVIGATION_TIMEOUT = 30000;
 const { moduleReportsDir } = require('../shared/storagePaths');
@@ -34,6 +35,78 @@ let progress = {
   errorCount: 0,
   filteredCount: 0
 };
+
+let lastRun = {
+  id: null,
+  url: null,
+  status: 'idle',
+  error: null,
+  logs: [],
+  startedAt: null,
+  completedAt: null
+};
+
+function appendLastRunLog(message) {
+  lastRun.logs.push({ at: new Date().toISOString(), message });
+}
+
+function beginLastRun(startUrl) {
+  lastRun = {
+    id: new Date().toISOString(),
+    url: startUrl,
+    status: 'running',
+    error: null,
+    logs: [],
+    startedAt: new Date().toISOString(),
+    completedAt: null
+  };
+  appendLastRunLog(`Starting error content check for ${startUrl}`);
+}
+
+function failLastRun(error) {
+  lastRun.status = 'failed';
+  lastRun.error = error.message || String(error);
+  lastRun.completedAt = new Date().toISOString();
+  appendLastRunLog(`[ERROR] ${lastRun.error}`);
+  if (error.stack) appendLastRunLog(error.stack);
+}
+
+function completeLastRun(summary) {
+  lastRun.status = 'completed';
+  lastRun.completedAt = new Date().toISOString();
+  appendLastRunLog(summary);
+}
+
+function getLastRun() {
+  return { ...lastRun, logs: [...(lastRun.logs || [])] };
+}
+
+function renderLastRunLogsHtml() {
+  if (!lastRun.id && lastRun.status === 'idle') return null;
+
+  const lines = [];
+  if (lastRun.error) lines.push(`[ERROR] ${lastRun.error}`);
+  for (const entry of lastRun.logs || []) {
+    const stamp = entry.at ? `[${entry.at}] ` : '';
+    lines.push(`${stamp}${entry.message}`);
+  }
+
+  if (progress.recentUrls?.length) {
+    lines.push('[RECENT URLS]');
+    for (const url of progress.recentUrls) lines.push(`  ${url}`);
+  }
+
+  return renderLogHtml({
+    title: 'Error Check Logs',
+    subtitle: lastRun.url || '',
+    meta: {
+      Status: lastRun.status,
+      'Started At': lastRun.startedAt,
+      'Completed At': lastRun.completedAt
+    },
+    lines
+  });
+}
 
 function getProgress() {
   return { ...progress };
@@ -71,6 +144,8 @@ async function checkForBrokenPages(startUrl, options = {}) {
   const delay = options.delay || 400;
   const maxDepth = options.maxDepth || 5;
 
+  beginLastRun(startUrl);
+  appendLastRunLog(`Options: maxUrls=${maxUrls}, delay=${delay}ms, maxDepth=${maxDepth}`);
   console.log(`Starting error content check for ${startUrl} (max: ${maxUrls}, delay: ${delay}ms, depth: ${maxDepth})`);
 
   try {
@@ -286,12 +361,22 @@ async function checkForBrokenPages(startUrl, options = {}) {
     };
 
     saveReport(startUrl, result);
+    completeLastRun(
+      `Completed. Checked ${checked} pages, found ${brokenPages.length} broken pages and ${uniqueBL.length} broken links.`
+    );
     return result;
 
   } catch (error) {
     console.error('Error in checkForBrokenPages:', error);
+    failLastRun(error);
     throw error;
   }
 }
 
-module.exports = { checkForBrokenPages, getProgress, resetProgress };
+module.exports = {
+  checkForBrokenPages,
+  getProgress,
+  resetProgress,
+  getLastRun,
+  renderLastRunLogsHtml
+};

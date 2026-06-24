@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -153,6 +154,7 @@ export default function KeywordRadarPage() {
   const [scanning, setScanning] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [failedScanId, setFailedScanId] = useState<string | null>(null);
   const [urlsDiscovered, setUrlsDiscovered] = useState(0);
   const [urlsProcessed, setUrlsProcessed] = useState(0);
   const [currentBatch, setCurrentBatch] = useState(0);
@@ -203,9 +205,10 @@ export default function KeywordRadarPage() {
     };
   }, []);
 
-  const showError = (msg: string) => {
+  const showError = (msg: string, scanId?: string | null) => {
     setErrorMessage(msg);
     setShowProgress(false);
+    if (scanId) setFailedScanId(scanId);
   };
 
   const pollStatus = async () => {
@@ -230,12 +233,12 @@ export default function KeywordRadarPage() {
       } else if (data.status === "failed") {
         if (pollRef.current) clearInterval(pollRef.current);
         setScanning(false);
-        showError(data.error || "Scan failed");
+        showError(data.error || "Scan failed", scanIdRef.current);
       }
     } catch (err) {
       if (pollRef.current) clearInterval(pollRef.current);
       setScanning(false);
-      showError(err instanceof Error ? err.message : "Scan failed");
+      showError(err instanceof Error ? err.message : "Scan failed", scanIdRef.current);
     }
   };
 
@@ -250,6 +253,7 @@ export default function KeywordRadarPage() {
     if (!keywords.length) return showError("Please enter at least one keyword");
 
     setErrorMessage("");
+    setFailedScanId(null);
     setShowProgress(true);
     setScanning(true);
     setUrlsDiscovered(0);
@@ -279,6 +283,7 @@ export default function KeywordRadarPage() {
   const clearForm = () => {
     if (pollRef.current) clearInterval(pollRef.current);
     scanIdRef.current = null;
+    setFailedScanId(null);
     setUrl("");
     setKeywordsText("");
     setShowProgress(false);
@@ -369,9 +374,12 @@ export default function KeywordRadarPage() {
           <Card className="border-destructive/40 bg-destructive/5">
             <CardContent className="flex flex-col gap-3 p-4">
               <p className="text-sm text-destructive">{errorMessage}</p>
-              <Button size="sm" onClick={startScan}>
-                Try Again
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                {failedScanId ? <ViewLogButton kind="scan" scanId={failedScanId} size="sm" /> : null}
+                <Button size="sm" onClick={startScan}>
+                  Try Again
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : null}

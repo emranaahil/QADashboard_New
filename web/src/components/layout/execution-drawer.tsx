@@ -4,8 +4,10 @@ import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
 import { useExecutionStore } from "@/store/execution-store";
+import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +39,7 @@ export function ExecutionDrawer() {
 
   const isRunning = status === "running" || isCancelling;
   const showViewReport = canViewReport(job) && !!moduleId && !!jobId;
+  const showViewLog = canViewLogs(status) && !!moduleId && !!jobId;
 
   return (
     <div
@@ -98,6 +101,9 @@ export function ExecutionDrawer() {
               </Button>
             )}
             {showViewReport && <ViewReportButton moduleId={moduleId!} jobId={jobId!} size="sm" />}
+            {showViewLog && (
+              <ViewLogButton kind="job" moduleId={moduleId!} jobId={jobId!} size="sm" />
+            )}
           </div>
         </div>
       )}

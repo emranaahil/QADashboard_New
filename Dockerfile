@@ -9,7 +9,7 @@ ENV API_URL=http://127.0.0.1:3000
 RUN npm run build
 
 # Stage 2 — production image (Express API + Playwright + Next.js standalone)
-FROM mcr.microsoft.com/playwright:v1.40.0-jammy
+FROM mcr.microsoft.com/playwright:v1.61.0-jammy
 
 WORKDIR /app
 

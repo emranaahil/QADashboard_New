@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
 import { api, type Job } from "@/lib/api";
+import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import { truncateUrl } from "@/lib/utils";
 
@@ -91,6 +93,9 @@ function HistoryPageContent() {
                     <div className="flex shrink-0 items-center gap-2">
                       {canViewReport(run) && (
                         <ViewReportButton moduleId={run.moduleId} jobId={run.id} size="sm" />
+                      )}
+                      {canViewLogs(run.status) && (
+                        <ViewLogButton kind="job" moduleId={run.moduleId} jobId={run.id} size="sm" />
                       )}
                       <Badge variant={statusBadgeVariant(run.status)}>{run.status}</Badge>
                     </div>

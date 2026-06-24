@@ -264,6 +264,13 @@ export const api = {
   jobReportUrl: (moduleId: string, jobId: string) =>
     apiUrl(`/api/modules/${moduleId}/jobs/${encodeURIComponent(jobId)}/report`),
 
+  jobLogUrl: (moduleId: string, jobId: string) =>
+    apiUrl(`/api/modules/${moduleId}/jobs/${encodeURIComponent(jobId)}/logs`),
+
+  scanLogUrl: (scanId: string) => apiUrl(`/api/scan/${encodeURIComponent(scanId)}/logs`),
+
+  errorCheckLogUrl: () => apiUrl("/api/check-broken-pages/logs"),
+
   subscribeJobEvents: (
     moduleId: string,
     jobId: string,

@@ -6,10 +6,12 @@ import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
 import { useJobRunner } from "@/hooks/use-job-runner";
 import type { Job } from "@/lib/api";
 import { fallbackSeoSummary, loadSeoTestSummary, type SeoTestSummary } from "@/lib/seo-testing-summary";
+import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import { normalizeUrl, validateUrl } from "@/lib/url-validation";
 import { toast } from "sonner";
@@ -111,6 +113,7 @@ export function SeoTestingWorkspace({
         : "—";
 
   const showViewReport = canViewReport(activeJob) && !!activeJob?.id;
+  const showViewLog = canViewLogs(displayStatus) && !!activeJob?.id;
 
   return (
     <div className="ui-check-container flex w-full flex-col gap-6">
@@ -210,6 +213,9 @@ export function SeoTestingWorkspace({
           <div className="flex flex-wrap gap-3">
             {showViewReport && (
               <ViewReportButton moduleId={MODULE_ID} jobId={activeJob.id} className="h-11 rounded-lg" />
+            )}
+            {showViewLog && (
+              <ViewLogButton kind="job" moduleId={MODULE_ID} jobId={activeJob.id} className="h-11 rounded-lg" />
             )}
             <Button variant="secondary" className="h-11 rounded-lg px-4" onClick={handleRun}>
               Re-run Test

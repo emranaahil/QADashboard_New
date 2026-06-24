@@ -5,7 +5,9 @@ import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
+import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import type { Job } from "@/lib/api";
 
@@ -49,6 +51,7 @@ export function TestModuleShell({
   isCancelling = false,
 }: TestModuleShellProps) {
   const showViewReport = canViewReport(job) && !!moduleId && !!job?.id;
+  const showViewLog = canViewLogs(status) && !!moduleId && !!job?.id;
   const showRerun =
     !running &&
     !isCancelling &&
@@ -82,6 +85,7 @@ export function TestModuleShell({
               </Button>
             )}
             {showViewReport && <ViewReportButton moduleId={moduleId!} jobId={job!.id} />}
+            {showViewLog && <ViewLogButton kind="job" moduleId={moduleId!} jobId={job!.id} />}
             {showRerun && (
               <Button variant="secondary" onClick={onRun}>
                 Re-run Test

@@ -6,10 +6,12 @@ import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
 import { useJobRunner } from "@/hooks/use-job-runner";
 import type { Job } from "@/lib/api";
 import { fallbackSummary, loadUiTestSummary, type UiTestSummary } from "@/lib/ui-testing-summary";
+import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import { normalizeUrl, validateUrl } from "@/lib/url-validation";
 import { toast } from "sonner";
@@ -116,6 +118,8 @@ export function UiTestingWorkspace({
         : "—";
 
   const showViewReport = canViewReport(activeJob) && !!displayModuleId && !!activeJob?.id;
+  const showViewLog =
+    canViewLogs(displayStatus) && !!displayModuleId && !!activeJob?.id;
 
   return (
     <div className="ui-check-container flex w-full flex-col gap-6">
@@ -210,6 +214,14 @@ export function UiTestingWorkspace({
           <div className="flex flex-wrap gap-3">
             {showViewReport && (
               <ViewReportButton moduleId={displayModuleId} jobId={activeJob.id} className="h-11 rounded-lg" />
+            )}
+            {showViewLog && (
+              <ViewLogButton
+                kind="job"
+                moduleId={displayModuleId}
+                jobId={activeJob.id}
+                className="h-11 rounded-lg"
+              />
             )}
             <Button variant="secondary" className="h-11 rounded-lg px-4" onClick={handleRun}>
               Re-run Test
