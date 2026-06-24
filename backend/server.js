@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const { createRateLimiter, buildCorsOptions } = require('./shared/securityMiddleware');
-const { mountFrontend } = require('./shared/frontendRoutes');
 const scanRoutes = require('./routes/scanRoutes');
 const modulesRouter = require('./routes/modulesRouter');
 const jobsRouter = require('./routes/jobsRouter');
@@ -23,10 +22,8 @@ const { ensureStorageDirs } = require('./shared/storagePaths');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const rawWebAppUrl = process.env.WEB_APP_URL;
-const SERVE_STATIC =
-    process.env.SERVE_STATIC_FRONTEND === 'true' ||
-    (process.env.NODE_ENV === 'production' && !rawWebAppUrl);
 const WEB_APP_URL = rawWebAppUrl ? rawWebAppUrl.replace(/\/$/, '') : 'http://localhost:3001';
 let server = null;
 
@@ -36,23 +33,10 @@ app.set('trust proxy', 1);
 
 // Middleware
 app.use(helmet({
-    contentSecurityPolicy: SERVE_STATIC ? {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-            connectSrc: ["'self'"],
-            fontSrc: ["'self'"],
-            objectSrc: ["'none'"],
-            frameAncestors: ["'none'"],
-            baseUri: ["'self'"],
-            formAction: ["'self'"]
-        }
-    } : false,
+    contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false
 }));
-app.use(cors(buildCorsOptions({ serveStatic: SERVE_STATIC, webAppUrl: WEB_APP_URL })));
+app.use(cors(buildCorsOptions({ apiOnly: IS_PRODUCTION, webAppUrl: WEB_APP_URL })));
 app.use(compression());
 app.use(morgan('combined'));
 app.use('/api', createRateLimiter({ windowMs: 60_000, max: 120 }));
@@ -81,7 +65,7 @@ app.get('/api/health', (req, res) => {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
-        ui: SERVE_STATIC ? 'self' : WEB_APP_URL
+        ui: IS_PRODUCTION ? 'next' : WEB_APP_URL
     });
 });
 
@@ -90,16 +74,8 @@ app.use('/api', (req, res) => {
     res.status(404).json({ error: 'NOT_FOUND', message: `API route not found: ${req.method} ${req.path}` });
 });
 
-if (SERVE_STATIC) {
-    mountFrontend(app);
-    app.get('*', (req, res) => {
-        if (req.path.startsWith('/api')) {
-            return res.status(404).json({ error: 'NOT_FOUND', message: 'API route not found' });
-        }
-        res.status(404).send('Page not found');
-    });
-} else {
-    /** Map legacy Express UI paths to Next.js routes */
+// Development only — redirect browser traffic on the API port to the Next.js app (port 3001)
+if (!IS_PRODUCTION) {
     const UI_PATH_MAP = {
         '/': '/dashboard',
         '/linkradar': '/link-radar'
@@ -189,7 +165,9 @@ server = app.listen(PORT, '0.0.0.0', async () => {
         console.error('Startup cleanup failed:', err.message);
     }
     console.log(`API server running on port ${PORT}`);
-    console.log(`UI dashboard: ${SERVE_STATIC ? `http://localhost:${PORT}` : WEB_APP_URL}`);
+    if (!IS_PRODUCTION) {
+        console.log(`UI dashboard: ${WEB_APP_URL}`);
+    }
     console.log(`API base: http://localhost:${PORT}/api`);
 });
 

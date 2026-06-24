@@ -4,7 +4,8 @@
   "description": "Professional Website Content Validation Tool - Crawls websites and generates PDF reports",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node scripts/start-production.js",
+    "start:api": "node backend/server.js",
     "dev": "concurrently -n api,web -c blue,green \"nodemon --config nodemon.json backend/server.js\" \"npm run dev --prefix web\"",
     "dev:api": "nodemon --config nodemon.json backend/server.js",
     "dev:web": "npm run dev --prefix web",

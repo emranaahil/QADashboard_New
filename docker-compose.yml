@@ -8,6 +8,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 10000
+      API_PORT: 3000
+      API_URL: http://127.0.0.1:3000
       STORAGE_ROOT: /app/data
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "true"
       PLAYWRIGHT_CHROMIUM_SANDBOX: "false"

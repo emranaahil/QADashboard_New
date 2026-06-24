@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+:root {
+  --background: #071a12;
+  --background-elevated: #0b241b;
+  --foreground: #f5f7fa;
+  --card: rgba(255, 255, 255, 0.06);
+  --card-foreground: #f5f7fa;
+  --elevated: rgba(255, 255, 255, 0.1);
+  --primary: #0f8f6f;
+  --primary-hover: #1dbf73;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #f5f7fa;
+  --muted: rgba(7, 26, 18, 0.45);
+  --muted-foreground: #a7b3af;
+  --accent: rgba(29, 191, 115, 0.12);
+  --accent-foreground: #1dbf73;
+  --destructive: #ef4444;
+  --destructive-foreground: #fca5a5;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  --success: #86efac;
+  --border: rgba(255, 255, 255, 0.08);
+  --ring: #0f8f6f;
+  --shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-elevated: var(--elevated);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-inter);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --radius-lg: var(--radius-lg);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  color: var(--foreground);
+  font-family: var(--font-sans), Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(circle at top right, rgba(29, 191, 115, 0.15), transparent 40%),
+    radial-gradient(circle at bottom left, rgba(15, 143, 111, 0.15), transparent 50%),
+    linear-gradient(120deg, var(--background), var(--background-elevated));
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(29, 191, 115, 0.25);
+  color: var(--foreground);
+}
+
+.glass-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-header {
+  background: rgba(11, 36, 27, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.gradient-primary {
+  background: linear-gradient(120deg, var(--primary), var(--primary-hover));
+  color: #fff;
+}
+
+.gradient-progress {
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, border-color 0.25s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* UI Testing & SEO Testing page spacing system */
+.ui-testing-page,
+.seo-testing-page {
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+}
+
+.ui-testing-stack,
+.seo-testing-stack,
+.ui-check-container,
+.history-container {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 1199px) {
+  .ui-testing-page,
+  .seo-testing-page {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ui-testing-page,
+  .seo-testing-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .ui-check-card {
+    min-height: auto;
+    padding: 24px !important;
+  }
+
+  .history-container .p-8 {
+    padding: 24px !important;
+  }
+
+  .run-test-btn {
+    width: 100%;
+  }
+
+  .history-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-radio {
+    min-width: 0 !important;
+    width: 100%;
+  }
+}

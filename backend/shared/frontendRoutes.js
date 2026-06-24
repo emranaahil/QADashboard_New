@@ -1,5 +1,6 @@
 /**
- * Serve the static frontend (production / Render single-service deploy).
+ * @deprecated Legacy static frontend (frontend/). Production uses web/ (Next.js).
+ * Kept for reference only — not mounted by server.js.
  */
 const path = require('path');
 const fs = require('fs');

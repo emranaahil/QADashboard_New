@@ -23,8 +23,8 @@ function createRateLimiter({ windowMs = 60_000, max = 120 } = {}) {
   };
 }
 
-function buildCorsOptions({ serveStatic, webAppUrl }) {
-  if (serveStatic) {
+function buildCorsOptions({ apiOnly, webAppUrl }) {
+  if (apiOnly) {
     return {
       origin: false,
       credentials: false
