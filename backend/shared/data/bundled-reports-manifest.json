@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-25T19:04:59.234Z",
+  "jobs": {
+    "ui-check": [
+      "099bd551-745f-4602-9bc5-3ca1c4ef5805",
+      "865fecde-ce1d-433b-ab6e-1be1958248f8",
+      "f0a1cad6-be90-432d-ad0c-3c2f60e4e173"
+    ],
+    "full-ui-check": [
+      "bb58162c-3dd3-4966-bc86-33a431d37654"
+    ],
+    "seo": [
+      "6fba01e3-9533-45f8-998b-d76ff8b4a485",
+      "815ee67d-202e-49c0-9393-5445f88bfe60",
+      "a4ef719d-058b-4355-bf96-d1e3b3cf3271",
+      "b08c4c99-2e7d-4f45-b675-726059007453",
+      "f0dba4fd-8c81-4070-89c5-22dc14408c7a"
+    ]
+  },
+  "paths": [
+    "error-check/error-check-stagedev.geniuswholesale.club-2026-06-25T09-34-21-362Z.json",
+    "keyword-check/checkpoints/f18a6e74-79c0-4d45-9b08-e1f5a155d0d5.json",
+    "keyword-check/reports/keyword-audit-report-c62647be-8e1b-4637-b48d-1dc9cb65ec70.pdf",
+    "keyword-check/scans/stagedev.geniuswholesale.club-2026-06-25T09-17-25-778Z.json",
+    "seo/2026-06-25T07-39-27-087Z/qa-report.html",
+    "seo/2026-06-25T07-39-27-087Z/seoReport.json",
+    "seo/2026-06-25T07-58-13-340Z/qa-report.html",
+    "seo/2026-06-25T07-58-13-340Z/seoReport.json",
+    "seo/2026-06-25T08-25-18-293Z/qa-report.html",
+    "seo/2026-06-25T08-25-18-293Z/seoReport.json",
+    "seo/2026-06-25T08-27-38-064Z/qa-report.html",
+    "seo/2026-06-25T08-27-38-064Z/seoReport.json",
+    "seo/2026-06-25T08-29-33-501Z/qa-report.html",
+    "seo/2026-06-25T08-29-33-501Z/seoReport.json",
+    "seo/reports/2026-06-25T07-39-27-087Z",
+    "seo/reports/2026-06-25T07-58-13-340Z",
+    "seo/reports/2026-06-25T08-25-18-293Z",
+    "seo/reports/2026-06-25T08-27-38-064Z",
+    "seo/reports/2026-06-25T08-29-33-501Z"
+  ]
+}

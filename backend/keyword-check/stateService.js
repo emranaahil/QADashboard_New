@@ -3,6 +3,7 @@ const path = require('path');
 
 const { uuidv4, validateUuid } = require('../shared/uuidUtils');
 const { keywordStorageDir } = require('../shared/storagePaths');
+const ephemeralLiveReports = require('../shared/ephemeralLiveReports');
 const { buildScanFilename } = require('./scanFilename');
 
 const SCANS_DIR = keywordStorageDir('scans');
@@ -127,6 +128,11 @@ async function updateScanStatus(scanId, status, extra = {}) {
   }
 
   await saveScanState(scanId, data);
+
+  if (status === 'completed' || status === 'failed') {
+    const fresh = await getScanState(scanId);
+    await ephemeralLiveReports.registerKeywordScan(scanId, fresh);
+  }
 }
 
 // Save checkpoint for resume capability

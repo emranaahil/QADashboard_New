@@ -37,6 +37,8 @@ services:
         value: /app/data
       - key: RENDER
         value: "true"
+      - key: LIVE_REPORT_TTL_MINUTES
+        value: "10"
 
     # Persistent disk for reports/jobs (survives redeploys)
     disk:

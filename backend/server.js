@@ -20,6 +20,8 @@ const errorCheckService = require('./error-check/errorCheckService');
 const stateService = require('./keyword-check/stateService');
 const { ensureStorageDirs } = require('./shared/storagePaths');
 const { seedBundledStorageSync } = require('./shared/seedBundledStorage');
+const { refreshBundledManifestSync } = require('./shared/bundledReportsManifest');
+const ephemeralLiveReports = require('./shared/ephemeralLiveReports');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +32,9 @@ let server = null;
 const SERVER_STARTED_AT = new Date().toISOString();
 
 seedBundledStorageSync();
+if (process.env.STORAGE_ROOT) {
+    refreshBundledManifestSync();
+}
 ensureStorageDirs();
 
 app.set('trust proxy', 1);
@@ -165,6 +170,15 @@ async function runStartupCleanup() {
         console.log(
             `Startup cleanup: ${staleScans} keyword scan(s) stopped, ` +
             `${jobResult.cancelled} job(s) cancelled, ${jobResult.recovered} job(s) re-queued`
+        );
+    }
+
+    if (ephemeralLiveReports.isEnabled()) {
+        const ephemeral = await ephemeralLiveReports.cleanupExpiredReports();
+        ephemeralLiveReports.startCleanupSchedule();
+        console.log(
+            `Ephemeral live reports enabled — TTL ${Math.round(ephemeralLiveReports.getTtlMs() / 60000)} min ` +
+            `(startup removed ${ephemeral.removedJobs} job(s), ${ephemeral.removedArtifacts} artifact group(s))`
         );
     }
 }

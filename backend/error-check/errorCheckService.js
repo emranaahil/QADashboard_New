@@ -5,6 +5,7 @@ const { renderLogHtml } = require('../shared/logViewUtils');
 
 const NAVIGATION_TIMEOUT = 30000;
 const { moduleReportsDir } = require('../shared/storagePaths');
+const ephemeralLiveReports = require('../shared/ephemeralLiveReports');
 const REPORTS_DIR = moduleReportsDir('error-check');
 
 function saveReport(startUrl, result) {
@@ -20,6 +21,7 @@ function saveReport(startUrl, result) {
     generatedAt: new Date().toISOString(),
     ...result
   }, null, 2), 'utf8');
+  ephemeralLiveReports.registerErrorCheckReport(filePath);
   return filePath;
 }
 

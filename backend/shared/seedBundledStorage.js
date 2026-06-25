@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { BACKEND_ROOT, STORAGE_ROOT } = require('./storagePaths');
+const { refreshBundledManifestSync } = require('./bundledReportsManifest');
 
 /**
  * Bundled report paths in the repo (backend/) → runtime paths when STORAGE_ROOT is set.
@@ -93,6 +94,7 @@ function seedBundledStorageSync() {
   }
 
   mergeTestExecutionsIndexSync(stats);
+  refreshBundledManifestSync();
 
   if (stats.copied > 0 || stats.indexMerged > 0) {
     console.log(
