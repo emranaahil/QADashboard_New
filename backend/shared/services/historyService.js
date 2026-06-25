@@ -5,6 +5,7 @@
 const fs = require('fs-extra');
 const jobStore = require('../jobStore');
 const { formatDisplayDate } = require('../dateFormat');
+const { filterJobsForSession } = require('../reportVisibility');
 
 const MODULE_LABELS = {
   seo: 'SEO Testing',
@@ -30,7 +31,7 @@ function matchesSearch(item, q) {
   );
 }
 
-async function listHistory({ limit = 100, moduleId, q } = {}) {
+async function listHistory({ limit = 100, moduleId, q, sessionId } = {}) {
   const search = String(q || '').trim();
   const cap = Math.min(Math.max(parseInt(limit, 10) || 100, 1), 500);
   const modules = moduleId
@@ -39,7 +40,8 @@ async function listHistory({ limit = 100, moduleId, q } = {}) {
 
   const items = [];
   for (const mod of modules) {
-    const jobs = await jobStore.enrichJobs(mod, await jobStore.listJobs(mod, cap));
+    const rawJobs = await jobStore.listJobs(mod, cap);
+    const jobs = await jobStore.enrichJobs(mod, filterJobsForSession(rawJobs, mod, sessionId));
     for (const job of jobs) {
       const row = {
         ...job,

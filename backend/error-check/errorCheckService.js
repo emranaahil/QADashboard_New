@@ -8,7 +8,7 @@ const { moduleReportsDir } = require('../shared/storagePaths');
 const ephemeralLiveReports = require('../shared/ephemeralLiveReports');
 const REPORTS_DIR = moduleReportsDir('error-check');
 
-function saveReport(startUrl, result) {
+function saveReport(startUrl, result, sessionId = null) {
   fs.mkdirSync(REPORTS_DIR, { recursive: true });
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const host = (() => {
@@ -18,6 +18,7 @@ function saveReport(startUrl, result) {
   const filePath = path.join(REPORTS_DIR, `error-check-${host}-${timestamp}.json`);
   fs.writeFileSync(filePath, JSON.stringify({
     url: startUrl,
+    sessionId: sessionId || null,
     generatedAt: new Date().toISOString(),
     ...result
   }, null, 2), 'utf8');
@@ -56,10 +57,11 @@ function appendLastRunLog(message) {
   lastRun.logs.push({ at: new Date().toISOString(), message });
 }
 
-function beginLastRun(startUrl) {
+function beginLastRun(startUrl, sessionId = null) {
   cancelRequested = false;
   lastRun = {
     id: new Date().toISOString(),
+    sessionId: sessionId || null,
     url: startUrl,
     status: 'running',
     error: null,
@@ -405,7 +407,7 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       allCheckedUrls: allChecked
     };
 
-    saveReport(startUrl, result);
+    saveReport(startUrl, result, lastRun.sessionId);
     completeLastRun(
       `Completed. Checked ${checked} pages, found ${brokenPages.length} broken pages and ${uniqueBL.length} broken links.`
     );
@@ -452,17 +454,24 @@ function requestCancel() {
   return true;
 }
 
-function isCheckRunning() {
+function isCheckRunning(sessionId = null) {
+  const running = Boolean(activeRunPromise) || progress.status === 'running' || lastRun.status === 'running';
+  if (!running) return false;
+  if (!sessionId) return running;
+  return lastRun.sessionId === sessionId;
+}
+
+function isCheckRunningGlobally() {
   return Boolean(activeRunPromise) || progress.status === 'running' || lastRun.status === 'running';
 }
 
-function startCheck(startUrl, options = {}) {
-  if (isCheckRunning()) {
+function startCheck(startUrl, options = {}, sessionId = null) {
+  if (isCheckRunningGlobally()) {
     const err = new Error('An error check is already running');
     err.code = 'SCAN_ALREADY_RUNNING';
     throw err;
   }
-  beginLastRun(startUrl);
+  beginLastRun(startUrl, sessionId);
   const maxUrls = Math.min(Math.max(parseInt(options.maxUrls, 10) || 100, 1), 500);
   beginProgress(maxUrls);
   const runId = lastRun.id;
@@ -487,6 +496,7 @@ module.exports = {
   startCheck,
   requestCancel,
   isCheckRunning,
+  isCheckRunningGlobally,
   getProgress,
   resetProgress,
   getLastRun,

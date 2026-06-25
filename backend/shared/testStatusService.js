@@ -119,15 +119,17 @@ async function getActiveForModule(testType) {
   return toStatusResponse(testType, active || null);
 }
 
-async function findRunningJob(testType, url) {
+async function findRunningJob(testType, url, sessionId = null) {
   validateTestType(testType);
   const modelId = deriveModelId(url);
   if (!modelId) return null;
 
+  const { isJobVisibleToSession } = require('./reportVisibility');
   const jobs = await jobStore.listJobs(testType, 100);
   return jobs.find(j =>
     (j.status === 'pending' || j.status === 'running') &&
-    (j.modelId === modelId || deriveModelId(j.url) === modelId)
+    (j.modelId === modelId || deriveModelId(j.url) === modelId) &&
+    isJobVisibleToSession(j, testType, sessionId)
   ) || null;
 }
 

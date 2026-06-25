@@ -3,6 +3,8 @@ const executionController = require('../shared/executionController');
 const executionLock = require('../shared/executionLock');
 const jobStore = require('../shared/jobStore');
 const { getModule } = require('../shared/moduleRegistry');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+const { isJobVisibleToSession } = require('../shared/reportVisibility');
 
 const router = express.Router();
 const RUNNABLE_MODULES = ['full-ui-check', 'ui-check', 'seo'];
@@ -15,19 +17,28 @@ function validateModule(moduleId) {
   }
 }
 
-router.get('/active', async (_req, res) => {
+router.get('/active', async (req, res) => {
   try {
+    const sessionId = getSessionIdFromRequest(req);
     const locked = executionLock.getActiveExecution();
     if (locked?.moduleId && locked?.jobId) {
       const job = await jobStore.getJob(locked.moduleId, locked.jobId);
-      if (job && !jobStore.TERMINAL_STATUSES.has(job.status)) {
+      if (
+        job &&
+        !jobStore.TERMINAL_STATUSES.has(job.status) &&
+        isJobVisibleToSession(job, locked.moduleId, sessionId)
+      ) {
         return res.json({ active: true, job: await jobStore.enrichJob(locked.moduleId, job) });
       }
     }
 
     for (const moduleId of RUNNABLE_MODULES) {
       const jobs = await jobStore.listJobs(moduleId, 20);
-      const running = jobs.find((j) => j.status === 'pending' || j.status === 'running');
+      const running = jobs.find(
+        (j) =>
+          (j.status === 'pending' || j.status === 'running') &&
+          isJobVisibleToSession(j, moduleId, sessionId)
+      );
       if (running) {
         return res.json({ active: true, job: await jobStore.enrichJob(moduleId, running) });
       }

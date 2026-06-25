@@ -1,5 +1,6 @@
 const express = require('express');
 const historyService = require('../shared/services/historyService');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
 
 const router = express.Router();
 
@@ -8,7 +9,8 @@ router.get('/', async (req, res) => {
     const limit = Math.min(parseInt(req.query.limit, 10) || 100, 500);
     const moduleId = req.query.moduleId || undefined;
     const q = req.query.q || undefined;
-    const items = await historyService.listHistory({ limit, moduleId, q });
+    const sessionId = getSessionIdFromRequest(req);
+    const items = await historyService.listHistory({ limit, moduleId, q, sessionId });
     res.json({
       total: items.length,
       grouped: historyService.groupByDate(items),

@@ -6,7 +6,6 @@ const path = require('path');
 const jobStore = require('../jobStore');
 const jobQueue = require('../jobQueue');
 const testStatusService = require('../testStatusService');
-const executionLock = require('../executionLock');
 const { resolveDevices, applyDevicesToEnv } = require('./deviceService');
 const { applyBrowserToEnv } = require('./browserService');
 
@@ -17,10 +16,8 @@ async function persistResolvedDevices(moduleId, jobId, devices) {
   await fs.writeJson(path.join(jobDir, 'devices.runtime.json'), devices, { spaces: 2 });
 }
 
-async function startExecution(moduleId, { url, options = {}, user }) {
-  executionLock.assertCanStart();
-
-  const running = await testStatusService.findRunningJob(moduleId, url);
+async function startExecution(moduleId, { url, options = {}, user, sessionId }) {
+  const running = await testStatusService.findRunningJob(moduleId, url, sessionId);
   if (running) {
     const err = new Error('A test is already running for this URL. Please wait for it to finish.');
     err.code = 'ALREADY_RUNNING';
@@ -33,7 +30,7 @@ async function startExecution(moduleId, { url, options = {}, user }) {
     execOptions._resolvedDevices = resolveDevices(execOptions.devices);
   }
 
-  const created = await jobStore.createJob(moduleId, { url, options: execOptions, user });
+  const created = await jobStore.createJob(moduleId, { url, options: execOptions, user, sessionId });
   if (execOptions._resolvedDevices?.length) {
     await persistResolvedDevices(moduleId, created.id, execOptions._resolvedDevices);
   }

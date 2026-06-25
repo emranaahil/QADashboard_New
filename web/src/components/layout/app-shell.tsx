@@ -18,6 +18,10 @@ const JobResumeBootstrap = dynamic(
   () => import("./job-resume-bootstrap").then((m) => m.JobResumeBootstrap),
   { ssr: false }
 );
+const SessionBootstrap = dynamic(
+  () => import("./session-bootstrap").then((m) => m.SessionBootstrap),
+  { ssr: false }
+);
 
 export function AppShell({
   title,
@@ -54,6 +58,7 @@ export function AppShell({
         </div>
         <main className="relative z-0 flex-1 overflow-auto px-5 pb-24 pt-4">{children}</main>
         <ExecutionDrawer />
+        <SessionBootstrap />
         <JobResumeBootstrap />
         <ScanResumeBootstrap />
       </div>

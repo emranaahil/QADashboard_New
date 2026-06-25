@@ -3,6 +3,12 @@ const jobStore = require('../shared/jobStore');
 const stateService = require('../keyword-check/stateService');
 const { listFilesByMtime, safeReadJson } = require('../shared/reportUtils');
 const { moduleReportsDir } = require('../shared/storagePaths');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+const {
+  filterJobsForSession,
+  isKeywordScanVisible,
+  isErrorReportVisible
+} = require('../shared/reportVisibility');
 
 const router = express.Router();
 
@@ -35,10 +41,10 @@ function normalizeStatus(status) {
   return status || 'unknown';
 }
 
-async function collectJobRuns() {
+async function collectJobRuns(sessionId) {
   const runs = [];
   for (const moduleId of jobStore.RUNNABLE_MODULES) {
-    const jobs = await jobStore.listJobs(moduleId, 200);
+    const jobs = filterJobsForSession(await jobStore.listJobs(moduleId, 200), moduleId, sessionId);
     for (const job of jobs) {
       const enriched = await jobStore.enrichJob(moduleId, { ...job, moduleId: job.moduleId || moduleId });
       runs.push({
@@ -56,11 +62,12 @@ async function collectJobRuns() {
   return runs;
 }
 
-async function collectKeywordRuns() {
+async function collectKeywordRuns(sessionId) {
   const scans = await stateService.listScans();
   const runs = [];
 
   for (const scan of scans) {
+    if (!isKeywordScanVisible(scan, sessionId)) continue;
     const status = normalizeStatus(scan.status);
     const reportAvailable = status === 'completed';
 
@@ -83,13 +90,15 @@ async function collectKeywordRuns() {
   return runs;
 }
 
-async function collectErrorCheckRuns() {
+async function collectErrorCheckRuns(sessionId) {
   const reportsDir = moduleReportsDir('error-check');
   const files = await listFilesByMtime(reportsDir, { extension: '.json', prefix: 'error-check-' });
   const runs = [];
 
   for (const file of files) {
     const data = await safeReadJson(file.path);
+    const rel = `error-check/reports/${file.name}`;
+    if (!isErrorReportVisible(rel, data, sessionId)) continue;
     runs.push({
       id: file.name,
       moduleId: 'error-check',
@@ -105,11 +114,11 @@ async function collectErrorCheckRuns() {
   return runs;
 }
 
-async function collectAllRuns() {
+async function collectAllRuns(sessionId) {
   const [jobs, keywords, errorChecks] = await Promise.all([
-    collectJobRuns(),
-    collectKeywordRuns(),
-    collectErrorCheckRuns()
+    collectJobRuns(sessionId),
+    collectKeywordRuns(sessionId),
+    collectErrorCheckRuns(sessionId)
   ]);
   return [...jobs, ...keywords, ...errorChecks];
 }
@@ -139,7 +148,8 @@ function pickBalancedRecentRuns(allRuns, limit = 15) {
 
 router.get('/stats', async (req, res) => {
   try {
-    const allRuns = await collectAllRuns();
+    const sessionId = getSessionIdFromRequest(req);
+    const allRuns = await collectAllRuns(sessionId);
 
     let passed = 0;
     let failed = 0;

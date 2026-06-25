@@ -223,9 +223,19 @@ async function canResumeScan(scanId) {
   return scanData.status === 'running' || scanData.status === 'starting';
 }
 
-async function findActiveScan() {
+async function findAnyActiveScan() {
   const scans = await listScans();
-  return scans.find(s => s.status === 'running' || s.status === 'starting') || null;
+  return scans.find((s) => s.status === 'running' || s.status === 'starting') || null;
+}
+
+async function findActiveScan(sessionId = null) {
+  const scans = await listScans();
+  const { isKeywordScanVisible } = require('../shared/reportVisibility');
+  return scans.find(
+    (s) =>
+      (s.status === 'running' || s.status === 'starting') &&
+      isKeywordScanVisible(s, sessionId)
+  ) || null;
 }
 
 /** Rename legacy UUID scan files to URL-based filenames (one-time per file). */
@@ -300,6 +310,7 @@ module.exports = {
   listScans,
   deleteScan,
   canResumeScan,
+  findAnyActiveScan,
   findActiveScan,
   cleanupStaleScansOnStartup,
   migrateLegacyScanFilenames,

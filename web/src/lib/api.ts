@@ -131,6 +131,8 @@ function apiUrl(path: string) {
   return API_BASE ? `${API_BASE}${p}` : p;
 }
 
+import { getSessionHeaders, withSessionQuery } from "./session";
+
 async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> {
   let res: Response;
   try {
@@ -138,6 +140,7 @@ async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> 
       ...options,
       headers: {
         Accept: "application/json",
+        ...getSessionHeaders(),
         ...(options.headers || {}),
       },
     });
@@ -363,7 +366,9 @@ export const api = {
 
     const connect = () => {
       if (closed) return;
-      es = new EventSource(apiUrl(`/api/modules/${moduleId}/jobs/${jobId}/events`));
+      es = new EventSource(
+        withSessionQuery(apiUrl(`/api/modules/${moduleId}/jobs/${jobId}/events`))
+      );
       es.onmessage = (e) => {
         reconnectAttempt = 0;
         try {

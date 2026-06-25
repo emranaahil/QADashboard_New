@@ -10,16 +10,26 @@ const stateService = require('../keyword-check/stateService');
 const errorCheckService = require('../error-check/errorCheckService');
 const scanLogService = require('../shared/scanLogService');
 const { normalizeUrl } = require('../shared/urlSecurity');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
 
 // Start a new scan
 router.post('/scan/start', async (req, res) => {
     try {
-        const active = await stateService.findActiveScan();
+        const sessionId = getSessionIdFromRequest(req);
+        const active = await stateService.findActiveScan(sessionId);
         if (active) {
             return res.status(409).json({
                 error: 'SCAN_ALREADY_RUNNING',
                 message: 'A keyword scan is already in progress. Please wait for it to finish.',
                 scanId: active.id
+            });
+        }
+
+        const globalActive = await stateService.findAnyActiveScan();
+        if (globalActive && globalActive.sessionId && globalActive.sessionId !== sessionId) {
+            return res.status(409).json({
+                error: 'SERVER_BUSY',
+                message: 'The server is running another user\'s scan. Please try again shortly.'
             });
         }
 
@@ -65,6 +75,7 @@ router.post('/scan/start', async (req, res) => {
         const scanId = uuidv4();
         const scanData = {
             id: scanId,
+            sessionId: sessionId || null,
             url: cleanUrl,
             keywords: cleanKeywords,
             status: 'starting',
@@ -107,7 +118,8 @@ router.post('/scan/start', async (req, res) => {
 // Active keyword scan (for UI resume after navigation)
 router.get('/scan/active', async (req, res) => {
     try {
-        const active = await stateService.findActiveScan();
+        const sessionId = getSessionIdFromRequest(req);
+        const active = await stateService.findActiveScan(sessionId);
         if (!active) {
             return res.json({ active: false });
         }
@@ -247,8 +259,9 @@ router.get('/scan/:scanId/report', async (req, res) => {
 // Start broken page / link check (non-blocking — poll /check-broken-pages/status)
 router.post('/check-broken-pages', async (req, res) => {
     try {
-        const running = errorCheckService.isCheckRunning
-            ? errorCheckService.isCheckRunning()
+        const sessionId = getSessionIdFromRequest(req);
+        const running = errorCheckService.isCheckRunningGlobally
+            ? errorCheckService.isCheckRunningGlobally()
             : (errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'idle' }).status === 'running';
         if (running) {
             const prog = errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'running' };
@@ -281,7 +294,7 @@ router.post('/check-broken-pages', async (req, res) => {
             maxDepth: Math.min(Math.max(parseInt(maxDepth, 10) || 5, 1), 20)
         };
 
-        const { runId } = errorCheckService.startCheck(cleanUrl, options);
+        const { runId } = errorCheckService.startCheck(cleanUrl, options, sessionId);
         res.json({
             status: 'started',
             runId,
@@ -333,9 +346,28 @@ router.get('/check-broken-pages/status', (req, res) => {
     res.setHeader('Expires', '0');
 
     try {
+        const sessionId = getSessionIdFromRequest(req);
         const prog = errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'idle' };
-        // Return in format similar to main auditor for UI reuse
         const lastRun = errorCheckService.getLastRun ? errorCheckService.getLastRun() : {};
+
+        if (
+          sessionId &&
+          lastRun.sessionId &&
+          lastRun.sessionId !== sessionId &&
+          (prog.status === 'running' || lastRun.status === 'running')
+        ) {
+            return res.json({
+                status: 'idle',
+                runId: null,
+                error: null,
+                stats: {},
+                recentUrls: [],
+                currentUrl: '',
+                checked: 0,
+                total: 0
+            });
+        }
+
         let status = prog.status;
         if (status === 'running' && lastRun.status === 'cancelled') {
             status = 'cancelled';

@@ -101,7 +101,7 @@ async function ensureJobsDir(moduleId) {
   await fs.ensureDir(getModuleJobsDir(moduleId));
 }
 
-async function createJob(moduleId, { url, options = {}, user = 'anonymous' }) {
+async function createJob(moduleId, { url, options = {}, user = 'anonymous', sessionId = null }) {
   if (!RUNNABLE_MODULES.has(moduleId)) {
     throw new Error('Module does not support job execution');
   }
@@ -125,6 +125,7 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous' }) {
     url: cleanUrl,
     options,
     user,
+    sessionId: sessionId || null,
     createdAt: now,
     startedAt: null,
     completedAt: null,

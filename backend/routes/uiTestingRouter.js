@@ -1,6 +1,7 @@
 const express = require('express');
 const uiTestingHistoryService = require('../shared/services/uiTestingHistoryService');
 const historyService = require('../shared/services/historyService');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
 
 const router = express.Router();
 
@@ -14,10 +15,12 @@ router.get('/history', async (req, res) => {
       });
     }
 
+    const sessionId = getSessionIdFromRequest(req);
     const result = await uiTestingHistoryService.listUiTestingHistory({
       type,
       q: req.query.q,
-      limit: req.query.limit
+      limit: req.query.limit,
+      sessionId
     });
 
     res.json(result);

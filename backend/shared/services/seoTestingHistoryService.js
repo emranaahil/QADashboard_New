@@ -2,6 +2,7 @@
  * SEO Testing history — server-side filter by test type (mode) and search query.
  */
 const jobStore = require('../jobStore');
+const { filterJobsForSession } = require('../reportVisibility');
 const { seoJobHasCriticalIssues } = require('./qaReportUtils');
 const { formatDisplayDate } = require('../dateFormat');
 
@@ -76,12 +77,16 @@ function groupByIsoDate(items) {
   return [...groups.values()].sort((a, b) => b.date.localeCompare(a.date));
 }
 
-async function listSeoTestingHistory({ type, q, limit = 100 } = {}) {
+async function listSeoTestingHistory({ type, q, limit = 100, sessionId } = {}) {
   const testType = normalizeTestType(type);
   const search = String(q || '').trim();
   const cap = Math.min(Math.max(parseInt(limit, 10) || 100, 1), 500);
 
-  const jobs = await jobStore.enrichJobs(MODULE_ID, await jobStore.listJobs(MODULE_ID, cap));
+  const rawJobs = await jobStore.listJobs(MODULE_ID, cap);
+  const jobs = await jobStore.enrichJobs(
+    MODULE_ID,
+    filterJobsForSession(rawJobs, MODULE_ID, sessionId)
+  );
 
   const items = (await Promise.all(
     jobs

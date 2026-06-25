@@ -9,6 +9,7 @@ const testStatusService = require('../shared/testStatusService');
 const executionService = require('../shared/services/executionService');
 const executionController = require('../shared/executionController');
 const jobLogService = require('../shared/jobLogService');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
 
 const router = express.Router();
 
@@ -27,7 +28,13 @@ router.post('/:moduleId/jobs', validateModule, async (req, res) => {
   try {
     const { url, options, user } = req.body || {};
 
-    const job = await executionService.startExecution(req.params.moduleId, { url, options, user });
+    const sessionId = getSessionIdFromRequest(req);
+    const job = await executionService.startExecution(req.params.moduleId, {
+      url,
+      options,
+      user,
+      sessionId
+    });
     logJob(req.params.moduleId, job.id, 'info', 'Job created and queued');
     res.status(201).json({ job });
   } catch (err) {
