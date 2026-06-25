@@ -1,4 +1,5 @@
 const path = require('path');
+const { loadRuntimeDevices } = require('../shared/deviceRuntimeConfig');
 
 const projectRoot = path.resolve(__dirname);
 const jobDir = process.env.QA_JOB_DIR ? path.resolve(process.env.QA_JOB_DIR) : null;
@@ -28,19 +29,13 @@ module.exports = {
       '--disable-gpu'
     ]
   },
-  devices: (() => {
-    if (process.env.QA_DEVICES_JSON) {
-      try {
-        const parsed = JSON.parse(process.env.QA_DEVICES_JSON);
-        if (Array.isArray(parsed) && parsed.length) return parsed;
-      } catch { /* fall through to defaults */ }
-    }
-    return [
-      { label: 'Desktop', width: 1440, height: 900 }
-      //{ label: 'Tablet', width: 768, height: 1024 },
-      //{ label: 'Mobile', width: 390, height: 844 }
-    ];
-  })()
+  get devices() {
+    return loadRuntimeDevices([
+      { label: 'Desktop', width: 1440, height: 900 },
+      { label: 'Tablet_Portrait', width: 768, height: 1024 },
+      { label: 'iPhone13_Portrait', width: 390, height: 844 }
+    ]);
+  }
 };
 
 

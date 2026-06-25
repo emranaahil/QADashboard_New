@@ -36,6 +36,7 @@ async function renderScanLogsHtml(scanId) {
   if (!payload) return null;
 
   const { scan, lines } = payload;
+  const isRunning = scan.status === 'running' || scan.status === 'starting';
   return renderLogHtml({
     title: 'Keyword Scan Logs',
     subtitle: scan.url,
@@ -44,7 +45,8 @@ async function renderScanLogsHtml(scanId) {
       Status: scan.status,
       Keywords: (scan.keywords || []).join(', ')
     },
-    lines
+    lines,
+    autoRefreshSec: isRunning ? 5 : 0
   });
 }
 

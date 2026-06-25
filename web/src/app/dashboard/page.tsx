@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AppShell } from "@/components/layout/app-shell";
+import { AboutPlatformCard } from "@/components/dashboard/about-platform-card";
 import { KpiCards } from "@/components/dashboard/kpi-cards";
 import { api } from "@/lib/api";
 import { useDashboardStore } from "@/store/dashboard-store";
@@ -53,6 +54,7 @@ export default function DashboardPage() {
           </div>
         )}
         <KpiCards stats={stats} loading={loading} />
+        <AboutPlatformCard />
         <div className="flex flex-col gap-4 lg:flex-row">
           <RecentRunsTable stats={stats} loading={loading} />
           <QuickActions />

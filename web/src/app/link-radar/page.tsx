@@ -1,12 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
+import { RunModuleButton } from "@/components/execution/run-module-button";
 import { ViewLogButton } from "@/components/execution/view-log-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
+import { MAX_URL_LENGTH, validateUrl } from "@/lib/url-validation";
+import { RadarReportPanel } from "@/components/modules/radar-report-panel";
+import {
+  collectErrorCheckLinks,
+  copyTextToClipboard,
+  exportErrorCheckCsv,
+} from "@/lib/radar-report-utils";
+import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
+import { useScanStore } from "@/store/scan-store";
+import { useDashboardStore } from "@/store/dashboard-store";
+import { toast } from "sonner";
 
 const MODULE_ID = "error-check";
 
@@ -26,21 +38,17 @@ type ErrorCheckReport = {
   checked?: number;
   brokenPages?: BrokenPage[];
   brokenLinks?: BrokenLink[];
+  allCheckedUrls?: Array<{
+    url: string;
+    statusCode?: number;
+    detectedErrors?: string[];
+  }>;
 };
 
 type ReportMeta = {
   id: string;
   title?: string;
   generatedAt?: string;
-};
-
-type ProgressStatus = {
-  status?: string;
-  stats?: {
-    urlsProcessed?: number;
-    errorCount?: number;
-  };
-  currentUrl?: string;
 };
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
@@ -58,133 +66,36 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return data as T;
 }
 
-function ReportViewer({ data }: { data: ErrorCheckReport }) {
-  const brokenPages = data.brokenPages || [];
-  const brokenLinks = data.brokenLinks || [];
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h3 className="text-sm font-semibold">Error Check — {data.url || "Report"}</h3>
-        <p className="text-xs text-muted-foreground">
-          Generated: {data.generatedAt ? new Date(data.generatedAt).toLocaleString() : "—"}
-        </p>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[
-          { label: "Checked", value: data.checked || 0, highlight: false },
-          { label: "Broken Pages", value: brokenPages.length, highlight: true },
-          { label: "Broken Links", value: brokenLinks.length, highlight: false },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className={cn(
-              "rounded-lg border px-3 py-2 text-center",
-              s.highlight ? "border-primary bg-primary/10" : "border-border bg-muted/30"
-            )}
-          >
-            <div className="font-mono text-xl font-bold">{s.value}</div>
-            <div className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      <div>
-        <h4 className="mb-2 text-sm font-semibold">Broken Pages</h4>
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="px-3 py-2 text-left font-medium">URL</th>
-                <th className="px-3 py-2 text-left font-medium">Issues</th>
-              </tr>
-            </thead>
-            <tbody>
-              {brokenPages.length ? (
-                brokenPages.map((p) => (
-                  <tr key={p.url} className="border-b border-border bg-destructive/5">
-                    <td className="break-all px-3 py-2">
-                      <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        {p.url}
-                      </a>
-                    </td>
-                    <td className="px-3 py-2">{(p.detectedErrors || []).join(", ") || "—"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={2} className="px-3 py-2 text-muted-foreground">
-                    None
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div>
-        <h4 className="mb-2 text-sm font-semibold">Broken Links</h4>
-        <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="px-3 py-2 text-left font-medium">Broken URL</th>
-                <th className="px-3 py-2 text-left font-medium">Found In</th>
-              </tr>
-            </thead>
-            <tbody>
-              {brokenLinks.length ? (
-                brokenLinks.map((l) => (
-                  <tr key={`${l.brokenUrl}|${l.foundIn}`} className="border-b border-border">
-                    <td className="break-all px-3 py-2">
-                      <a
-                        href={l.brokenUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-destructive hover:underline"
-                      >
-                        {l.brokenUrl}
-                      </a>
-                    </td>
-                    <td className="break-all px-3 py-2">
-                      <a href={l.foundIn} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        {l.foundIn}
-                      </a>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={2} className="px-3 py-2 text-muted-foreground">
-                    None
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function LinkRadarPage() {
-  const [url, setUrl] = useState("https://example.com");
+  const [url, setUrl] = useState("");
   const [maxPages, setMaxPages] = useState("100");
   const [maxDepth, setMaxDepth] = useState("5");
-  const [statusLine, setStatusLine] = useState("");
-  const [running, setRunning] = useState(false);
-  const [showProgress, setShowProgress] = useState(false);
-  const [urlsProcessed, setUrlsProcessed] = useState(0);
-  const [errorCount, setErrorCount] = useState(0);
-  const [currentUrl, setCurrentUrl] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [reportLoadError, setReportLoadError] = useState("");
   const [reports, setReports] = useState<ReportMeta[]>([]);
   const [activeReportId, setActiveReportId] = useState<string | null>(null);
   const [reportData, setReportData] = useState<ErrorCheckReport | null>(null);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const scanStatus = useScanStore((s) => s.status);
+  const scanModuleId = useScanStore((s) => s.moduleId);
+  const isLinkActive = scanModuleId === "error-check";
+  const isCancelling = useScanStore((s) => s.isCancelling);
+  const running = isLinkActive && (scanStatus === "running" || isCancelling);
+  const errorMessage = useScanStore((s) => (isLinkActive ? s.errorMessage : ""));
+  const urlsProcessed = useScanStore((s) => (isLinkActive ? s.urlsProcessed : 0));
+  const errorCount = useScanStore((s) => (isLinkActive ? s.errorCount : 0));
+  const currentUrl = useScanStore((s) => (isLinkActive ? s.currentUrl : ""));
+  const statusLine = useScanStore((s) => (isLinkActive ? s.message : ""));
+  const startErrorCheck = useScanStore((s) => s.startErrorCheck);
+  const cancelScan = useScanStore((s) => s.cancelScan);
+  const dashboardRefreshKey = useDashboardStore((s) => s.refreshKey);
+  const globalBusy = useGlobalWorkBusy();
+  const showProgress =
+    isLinkActive &&
+    (scanStatus === "running" ||
+      scanStatus === "success" ||
+      isCancelling ||
+      statusLine === "Starting check…" ||
+      statusLine === "Checking pages…");
 
   const loadReports = useCallback(async (selectFirst = false) => {
     try {
@@ -195,7 +106,7 @@ export default function LinkRadarPage() {
         setActiveReportId(list[0].id);
       }
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Failed to load reports");
+      setReportLoadError(err instanceof Error ? err.message : "Failed to load reports");
     }
   }, []);
 
@@ -205,78 +116,36 @@ export default function LinkRadarPage() {
         `/api/modules/${MODULE_ID}/reports/${encodeURIComponent(reportId)}`
       );
       setReportData(result.data);
-      setErrorMessage("");
+      setReportLoadError("");
     } catch (err) {
       setReportData(null);
-      setErrorMessage(err instanceof Error ? err.message : "Failed to load report");
+      setReportLoadError(err instanceof Error ? err.message : "Failed to load report");
     }
   }, []);
 
   useEffect(() => {
     loadReports(true);
-  }, [loadReports]);
+  }, [loadReports, dashboardRefreshKey]);
 
   useEffect(() => {
     if (activeReportId) loadReport(activeReportId);
   }, [activeReportId, loadReport]);
 
   useEffect(() => {
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, []);
-
-  const pollProgress = async () => {
-    try {
-      const p = await fetchJson<ProgressStatus>(`/api/check-broken-pages/status?t=${Date.now()}`);
-      if (p.stats) {
-        setUrlsProcessed(p.stats.urlsProcessed || 0);
-        setErrorCount(p.stats.errorCount || 0);
-      }
-      if (p.currentUrl) setCurrentUrl(p.currentUrl);
-    } catch {
-      /* ignore poll errors */
+    if (scanModuleId === MODULE_ID && scanStatus === "success") {
+      void loadReports(true);
     }
-  };
+  }, [scanModuleId, scanStatus, loadReports, dashboardRefreshKey]);
 
   const startCheck = async () => {
-    const trimmed = url.trim();
-    if (!trimmed) return;
-
-    setErrorMessage("");
-    setShowProgress(true);
-    setStatusLine("Starting...");
-    setRunning(true);
-    setUrlsProcessed(0);
-    setErrorCount(0);
-    setCurrentUrl("");
-
-    if (pollRef.current) clearInterval(pollRef.current);
-    pollRef.current = setInterval(pollProgress, 1800);
-
-    try {
-      await fetchJson("/api/check-broken-pages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: trimmed,
-          maxUrls: parseInt(maxPages, 10) || 100,
-          maxDepth: parseInt(maxDepth, 10) || 5,
-          delay: 400,
-        }),
-      });
-      if (pollRef.current) clearInterval(pollRef.current);
-      setStatusLine("Check complete. Report saved.");
-      setShowProgress(false);
-      setRunning(false);
-      await loadReports(true);
-    } catch (err) {
-      if (pollRef.current) clearInterval(pollRef.current);
-      setErrorMessage(err instanceof Error ? err.message : "Check failed");
-      setShowProgress(false);
-      setRunning(false);
-      setStatusLine("");
+    const urlError = validateUrl(url);
+    if (urlError) {
+      toast.error(urlError);
+      return;
     }
+    const maxUrls = Math.min(Math.max(parseInt(maxPages, 10) || 100, 1), 500);
+    const depth = Math.min(Math.max(parseInt(maxDepth, 10) || 5, 1), 20);
+    await startErrorCheck(url, { maxUrls, maxDepth: depth });
   };
 
   return (
@@ -290,7 +159,13 @@ export default function LinkRadarPage() {
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-medium text-muted-foreground">URL</label>
-                <Input value={url} onChange={(e) => setUrl(e.target.value)} disabled={running} />
+                <Input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  disabled={globalBusy}
+                  maxLength={MAX_URL_LENGTH}
+                  placeholder="https://example.com"
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-medium text-muted-foreground">Max Pages</label>
@@ -298,7 +173,7 @@ export default function LinkRadarPage() {
                   type="number"
                   value={maxPages}
                   onChange={(e) => setMaxPages(e.target.value)}
-                  disabled={running}
+                  disabled={globalBusy}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -307,13 +182,31 @@ export default function LinkRadarPage() {
                   type="number"
                   value={maxDepth}
                   onChange={(e) => setMaxDepth(e.target.value)}
-                  disabled={running}
+                  disabled={globalBusy}
                 />
               </div>
             </div>
-            <Button onClick={startCheck} disabled={running}>
-              {running ? "Checking…" : "▶ Start Check"}
-            </Button>
+            <div className="run-test-actions flex flex-wrap gap-3">
+              <RunModuleButton
+                kind="link-check"
+                label="Start Check"
+                loadingLabel="Checking…"
+                loading={running && !isCancelling}
+                disabled={isCancelling}
+                onClick={startCheck}
+              />
+              {running ? (
+                <Button
+                  variant="cancel"
+                  className="h-11 min-w-[120px] rounded-lg px-4"
+                  loading={isCancelling}
+                  disabled={isCancelling}
+                  onClick={cancelScan}
+                >
+                  {isCancelling ? "Cancelling…" : "Stop Check"}
+                </Button>
+              ) : null}
+            </div>
             {statusLine ? <p className="text-xs text-muted-foreground">{statusLine}</p> : null}
           </CardContent>
         </Card>
@@ -338,6 +231,12 @@ export default function LinkRadarPage() {
                 <p className="text-xs text-muted-foreground">Checking: {currentUrl}</p>
               ) : null}
             </CardContent>
+          </Card>
+        ) : null}
+
+        {reportLoadError ? (
+          <Card className="border-destructive/40 bg-destructive/5">
+            <CardContent className="p-4 text-sm text-destructive">{reportLoadError}</CardContent>
           </Card>
         ) : null}
 
@@ -377,7 +276,7 @@ export default function LinkRadarPage() {
                     <span className="block break-all">{r.title || r.id}</span>
                     {r.generatedAt ? (
                       <span className="mt-0.5 block text-[0.7rem] text-muted-foreground">
-                        {new Date(r.generatedAt).toLocaleString()}
+                        {formatDateTime(r.generatedAt)}
                       </span>
                     ) : null}
                   </button>
@@ -389,12 +288,45 @@ export default function LinkRadarPage() {
           </Card>
 
           <Card>
-            <CardContent className="p-4">
-              {reportData ? (
-                <ReportViewer data={reportData} />
+            <CardHeader>
+              <CardTitle>Report</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              {activeReportId && reportData ? (
+                <RadarReportPanel
+                  moduleId={MODULE_ID}
+                  reportId={activeReportId}
+                  hasData={
+                    Boolean(
+                      (reportData.allCheckedUrls?.length || 0) +
+                        (reportData.brokenPages?.length || 0) +
+                        (reportData.brokenLinks?.length || 0)
+                    )
+                  }
+                  onExportCsv={() => {
+                    const ok = exportErrorCheckCsv(
+                      reportData.brokenPages || [],
+                      reportData.brokenLinks || [],
+                      reportData.allCheckedUrls || []
+                    );
+                    if (!ok) toast.error("No data to export");
+                    else toast.success("CSV downloaded");
+                  }}
+                  onCopyLinks={async () => {
+                    const links = collectErrorCheckLinks(
+                      reportData.brokenPages || [],
+                      reportData.brokenLinks || [],
+                      reportData.allCheckedUrls || []
+                    );
+                    if (!links.length) throw new Error("No links");
+                    await copyTextToClipboard(links.join("\n"));
+                  }}
+                />
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  {reports.length ? "Select a report to view results." : "No reports found for this module."}
+                  {reports.length
+                    ? "Select a report to view the HTML report."
+                    : "No reports found. Run a check to generate one."}
                 </p>
               )}
             </CardContent>

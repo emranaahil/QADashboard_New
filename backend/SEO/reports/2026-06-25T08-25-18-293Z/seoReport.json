@@ -1,0 +1,45 @@
+{
+  "mainUrl": "https://bathmatedirect.com",
+  "scanDate": "2026-06-25T08:25:18.293Z",
+  "sitemapUsed": null,
+  "urlsAttempted": 1,
+  "concurrency": 3,
+  "timeoutMs": 15000,
+  "pages": [
+    {
+      "url": "https://bathmatedirect.com/",
+      "title": "Penis Pump - World’s Best Water Penis Pump from Bathmate Official Site",
+      "description": "Penis Pump - The World’s Best Water Penis Pump - Boost performance with Bathmate’s doctor-approved hydropumps. Backed by 1M+ users, 60-day money-back guarantee & discreet global shipping.",
+      "h1Count": 3,
+      "h2Count": 20,
+      "h3Count": 5,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 1
+      },
+      "issues": {
+        "critical": [
+          "Multiple <h1>: Found 3 h1 tags in source (visible + hidden + commented).",
+          "Multiple <title> tags: Found 14 <title> tags in source.",
+          "Images without ALT: Found 1 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)"
+        ],
+        "minor": [],
+        "hidden": []
+      },
+      "seoScore": 60,
+      "_debug": {
+        "durationMs": 11918
+      }
+    }
+  ],
+  "summary": {
+    "totalPages": 1,
+    "totalCritical": 4,
+    "totalMinor": 0,
+    "totalHidden": 0,
+    "averageScore": 60
+  }
+}

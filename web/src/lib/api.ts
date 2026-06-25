@@ -19,6 +19,13 @@ export type Job = {
   completedAt?: string;
   durationMs?: number;
   testType?: "single-page" | "full-website";
+  options?: {
+    devices?: Array<string | { name: string; width: number; height: number }>;
+    browser?: string;
+    _resolvedDevices?: Array<{ label: string; width: number; height: number }>;
+    maxPages?: number;
+    mode?: string;
+  };
   executionState?: {
     currentPage: number;
     totalPages: number;
@@ -38,6 +45,7 @@ export type UiTestingHistoryItem = {
   completedAt?: string;
   durationMs?: number;
   reportAvailable?: boolean;
+  hasQaIssues?: boolean;
   message?: string;
   error?: string;
   progress?: number;
@@ -69,6 +77,7 @@ export type SeoTestingHistoryItem = {
   completedAt?: string;
   durationMs?: number;
   reportAvailable?: boolean;
+  hasQaIssues?: boolean;
   message?: string;
   error?: string;
   progress?: number;
@@ -103,6 +112,7 @@ export type DashboardStats = {
     status: string;
     progress: number;
     createdAt: string;
+    reportAvailable?: boolean;
   }>;
 };
 
@@ -254,6 +264,9 @@ export const api = {
   getJob: (moduleId: string, jobId: string) =>
     fetchJson<{ job: Job }>(`/api/modules/${moduleId}/jobs/${jobId}`),
 
+  getActiveJob: () =>
+    fetchJson<{ active: boolean; job: Job | null }>("/api/execution/active"),
+
   cancelExecution: (moduleId: string, jobId: string) =>
     fetchJson<{ job: Job }>("/api/execution/cancel", {
       method: "POST",
@@ -264,6 +277,12 @@ export const api = {
   jobReportUrl: (moduleId: string, jobId: string) =>
     apiUrl(`/api/modules/${moduleId}/jobs/${encodeURIComponent(jobId)}/report`),
 
+  moduleReportPdfUrl: (moduleId: string, reportId: string) =>
+    apiUrl(`/api/modules/${moduleId}/reports/${encodeURIComponent(reportId)}/pdf`),
+
+  scanReportUrl: (scanId: string) =>
+    apiUrl(`/api/scan/${encodeURIComponent(scanId)}/report`),
+
   jobLogUrl: (moduleId: string, jobId: string) =>
     apiUrl(`/api/modules/${moduleId}/jobs/${encodeURIComponent(jobId)}/logs`),
 
@@ -271,26 +290,106 @@ export const api = {
 
   errorCheckLogUrl: () => apiUrl("/api/check-broken-pages/logs"),
 
+  getActiveKeywordScan: () =>
+    fetchJson<{
+      active: boolean;
+      scanId?: string;
+      status?: string;
+      url?: string;
+      stats?: Record<string, number>;
+    }>("/api/scan/active"),
+
+  startKeywordScan: (url: string, keywords: string[]) =>
+    fetchJson<{ scanId: string }>("/api/scan/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, keywords }),
+    }),
+
+  getKeywordScanStatus: (scanId: string) =>
+    fetchJson<{
+      scanId: string;
+      status: string;
+      stats?: {
+        urlsDiscovered?: number;
+        urlsProcessed?: number;
+        matchesFound?: number;
+        currentBatch?: number;
+      };
+      error?: string;
+    }>(`/api/scan/${encodeURIComponent(scanId)}/status`),
+
+  cancelKeywordScan: (scanId: string) =>
+    fetchJson<{ scanId: string; status: string }>(`/api/scan/${encodeURIComponent(scanId)}/cancel`, {
+      method: "POST",
+    }),
+
+  startErrorCheck: (url: string, options?: { maxUrls?: number; maxDepth?: number }) =>
+    fetchJson<{ status: string; runId: string }>("/api/check-broken-pages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        url,
+        maxUrls: options?.maxUrls ?? 100,
+        maxDepth: options?.maxDepth ?? 5,
+        delay: 400,
+      }),
+    }),
+
+  getErrorCheckStatus: () =>
+    fetchJson<{
+      status?: string;
+      runId?: string | null;
+      error?: string | null;
+      currentUrl?: string;
+      checked?: number;
+      total?: number;
+      stats?: { urlsProcessed?: number; errorCount?: number; urlsDiscovered?: number };
+    }>("/api/check-broken-pages/status"),
+
+  cancelErrorCheck: () =>
+    fetchJson<{ status: string }>("/api/check-broken-pages/cancel", { method: "POST" }),
+
   subscribeJobEvents: (
     moduleId: string,
     jobId: string,
     onUpdate: (job: Job) => void,
     onError?: (err: Error) => void
   ) => {
-    const es = new EventSource(apiUrl(`/api/modules/${moduleId}/jobs/${jobId}/events`));
-    es.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        if (data.job) onUpdate(data.job);
-        if (data.error) onError?.(new Error(data.error));
-      } catch (err) {
-        onError?.(err as Error);
-      }
+    let es: EventSource | null = null;
+    let closed = false;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let reconnectAttempt = 0;
+
+    const connect = () => {
+      if (closed) return;
+      es = new EventSource(apiUrl(`/api/modules/${moduleId}/jobs/${jobId}/events`));
+      es.onmessage = (e) => {
+        reconnectAttempt = 0;
+        try {
+          const data = JSON.parse(e.data);
+          if (data.job) onUpdate(data.job);
+          if (data.error) onError?.(new Error(data.error));
+        } catch (err) {
+          onError?.(err as Error);
+        }
+      };
+      es.onerror = () => {
+        es?.close();
+        es = null;
+        if (closed) return;
+        const delay = Math.min(30_000, 1000 * 2 ** reconnectAttempt);
+        reconnectAttempt += 1;
+        reconnectTimer = setTimeout(connect, delay);
+      };
     };
-    es.onerror = () => {
-      es.close();
-      onError?.(new Error("SSE connection lost"));
+
+    connect();
+
+    return () => {
+      closed = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      es?.close();
     };
-    return () => es.close();
   },
 };

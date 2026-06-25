@@ -1,0 +1,83 @@
+{
+  "id": "099bd551-745f-4602-9bc5-3ca1c4ef5805",
+  "moduleId": "ui-check",
+  "testType": "single-page",
+  "modelId": "wholesalehealthclub.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://wholesalehealthclub.com/",
+  "options": {
+    "devices": [
+      "desktop",
+      "iphone15_plus_portrait",
+      "iphone15_plus_landscape",
+      "s21_portrait",
+      "s21_landscape",
+      "tablet_portrait",
+      "tablet_landscape",
+      "iphone13_portrait",
+      "iphone13_landscape"
+    ],
+    "browser": "chrome",
+    "_resolvedDevices": [
+      {
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "label": "iPhone15_Plus_Portrait",
+        "width": 430,
+        "height": 932
+      },
+      {
+        "label": "iPhone15_Plus_Landscape",
+        "width": 932,
+        "height": 430
+      },
+      {
+        "label": "S21_Portrait",
+        "width": 360,
+        "height": 800
+      },
+      {
+        "label": "S21_Landscape",
+        "width": 800,
+        "height": 360
+      },
+      {
+        "label": "Tablet_Portrait",
+        "width": 768,
+        "height": 1024
+      },
+      {
+        "label": "Tablet_Landscape",
+        "width": 1024,
+        "height": 768
+      },
+      {
+        "label": "iPhone13_Portrait",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "label": "iPhone13_Landscape",
+        "width": 844,
+        "height": 390
+      }
+    ]
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T08:32:10.745Z",
+  "startedAt": "2026-06-25T08:32:10.759Z",
+  "completedAt": "2026-06-25T08:34:34.877Z",
+  "durationMs": 144118,
+  "reportPath": "jobs/099bd551-745f-4602-9bc5-3ca1c4ef5805/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": ""
+}

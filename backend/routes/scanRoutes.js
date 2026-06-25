@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const { uuidv4 } = require('../shared/uuidUtils');
 const crawlerService = require('../keyword-check/crawlerService');
+const { MAX_URL_LENGTH } = require('../shared/urlSecurity');
 const reportService = require('../keyword-check/reportService');
 const stateService = require('../keyword-check/stateService');
 const errorCheckService = require('../error-check/errorCheckService');
@@ -32,6 +33,12 @@ router.post('/scan/start', async (req, res) => {
         if (!keywords || !Array.isArray(keywords) || keywords.length === 0) {
             return res.status(400).json({ error: 'At least one keyword is required' });
         }
+        if (keywords.length > 50) {
+            return res.status(400).json({ error: 'Maximum 50 keywords allowed' });
+        }
+        if (String(url).trim().length > MAX_URL_LENGTH) {
+            return res.status(400).json({ error: `URL must be ${MAX_URL_LENGTH} characters or less` });
+        }
 
         let cleanUrl;
         try {
@@ -47,6 +54,11 @@ router.post('/scan/start', async (req, res) => {
 
         if (cleanKeywords.length === 0) {
             return res.status(400).json({ error: 'At least one valid keyword is required' });
+        }
+        for (const kw of cleanKeywords) {
+            if (kw.length > 200) {
+                return res.status(400).json({ error: 'Each keyword must be 200 characters or less' });
+            }
         }
 
         // Create scan session
@@ -89,6 +101,43 @@ router.post('/scan/start', async (req, res) => {
     } catch (error) {
         console.error('Error starting scan:', error);
         res.status(500).json({ error: 'Failed to start scan', message: error.message });
+    }
+});
+
+// Active keyword scan (for UI resume after navigation)
+router.get('/scan/active', async (req, res) => {
+    try {
+        const active = await stateService.findActiveScan();
+        if (!active) {
+            return res.json({ active: false });
+        }
+        res.json({
+            active: true,
+            scanId: active.id,
+            status: active.status,
+            url: active.url,
+            stats: active.stats
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to get active scan', message: error.message });
+    }
+});
+
+// Cancel keyword scan
+router.post('/scan/:scanId/cancel', async (req, res) => {
+    try {
+        const { scanId } = req.params;
+        const scanData = await stateService.getScanState(scanId);
+        if (!scanData) {
+            return res.status(404).json({ error: 'Scan not found' });
+        }
+        if (!['running', 'starting'].includes(scanData.status)) {
+            return res.status(400).json({ error: 'Scan is not running' });
+        }
+        await crawlerService.cancelCrawl(scanId);
+        res.json({ scanId, status: 'cancelled', message: 'Scan cancelled' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to cancel scan', message: error.message });
     }
 });
 
@@ -195,11 +244,14 @@ router.get('/scan/:scanId/report', async (req, res) => {
     }
 });
 
-// Dedicated Broken Page / Error Content Checker (separate from keyword search)
+// Start broken page / link check (non-blocking — poll /check-broken-pages/status)
 router.post('/check-broken-pages', async (req, res) => {
     try {
-        const prog = errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'idle' };
-        if (prog.status === 'running') {
+        const running = errorCheckService.isCheckRunning
+            ? errorCheckService.isCheckRunning()
+            : (errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'idle' }).status === 'running';
+        if (running) {
+            const prog = errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'running' };
             return res.status(409).json({
                 error: 'SCAN_ALREADY_RUNNING',
                 message: 'An error check is already running. Please wait for it to finish.',
@@ -212,6 +264,9 @@ router.post('/check-broken-pages', async (req, res) => {
         if (!url) {
             return res.status(400).json({ error: 'URL is required' });
         }
+        if (String(url).trim().length > MAX_URL_LENGTH) {
+            return res.status(400).json({ error: `URL must be ${MAX_URL_LENGTH} characters or less` });
+        }
 
         let cleanUrl;
         try {
@@ -221,13 +276,18 @@ router.post('/check-broken-pages', async (req, res) => {
         }
 
         const options = {
-            maxUrls: parseInt(maxUrls) || 500,
-            delay: parseInt(delay) || 400,
-            maxDepth: parseInt(maxDepth) || 5
+            maxUrls: Math.min(Math.max(parseInt(maxUrls, 10) || 100, 1), 500),
+            delay: Math.min(Math.max(parseInt(delay, 10) || 400, 100), 5000),
+            maxDepth: Math.min(Math.max(parseInt(maxDepth, 10) || 5, 1), 20)
         };
 
-        const result = await errorCheckService.checkForBrokenPages(cleanUrl, options);
-        res.json(result);
+        const { runId } = errorCheckService.startCheck(cleanUrl, options);
+        res.json({
+            status: 'started',
+            runId,
+            message: 'Error check started',
+            url: cleanUrl
+        });
     } catch (error) {
         console.error('Error in broken page check:', error);
         res.status(500).json({ 
@@ -235,6 +295,19 @@ router.post('/check-broken-pages', async (req, res) => {
             message: error.message || 'Unknown error',
             log: error.stack || error.message 
         });
+    }
+});
+
+// Cancel running error check
+router.post('/check-broken-pages/cancel', (req, res) => {
+    try {
+        const cancelled = errorCheckService.requestCancel();
+        if (!cancelled) {
+            return res.status(400).json({ error: 'No error check is running' });
+        }
+        res.json({ status: 'cancelling', message: 'Cancellation requested' });
+    } catch (error) {
+        res.status(500).json({ error: 'CANCEL_FAILED', message: error.message });
     }
 });
 
@@ -262,8 +335,17 @@ router.get('/check-broken-pages/status', (req, res) => {
     try {
         const prog = errorCheckService.getProgress ? errorCheckService.getProgress() : { status: 'idle' };
         // Return in format similar to main auditor for UI reuse
+        const lastRun = errorCheckService.getLastRun ? errorCheckService.getLastRun() : {};
+        let status = prog.status;
+        if (status === 'running' && lastRun.status === 'cancelled') {
+            status = 'cancelled';
+        } else if (status === 'idle' && lastRun.status === 'running') {
+            status = 'running';
+        }
         res.json({
-            status: prog.status,
+            status,
+            runId: lastRun.id || null,
+            error: lastRun.error || null,
             stats: {
                 urlsDiscovered: prog.urlsDiscovered || prog.checked || 0,
                 urlsProcessed: prog.checked || 0,

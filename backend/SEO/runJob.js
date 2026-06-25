@@ -2,10 +2,9 @@
 /**
  * SEO job runner — invoked by job queue. Uses existing uiseocheck engine.
  */
-const fs = require('fs');
-const path = require('path');
 const jobStore = require('../shared/jobStore');
 const { runSeoAudit } = require('./uiseocheck');
+const { makeRunId, writeRunArtifacts } = require('./seoReportStorage');
 
 const MODULE_ID = 'seo';
 
@@ -20,7 +19,6 @@ async function main() {
   const job = await jobStore.getJob(MODULE_ID, jobId);
   if (!job) process.exit(1);
 
-  const jobDir = jobStore.getJobDir(MODULE_ID, jobId);
   const mode = job.options?.mode || 'single';
 
   try {
@@ -42,13 +40,19 @@ async function main() {
       summary: report.summary
     };
 
-    fs.writeFileSync(path.join(jobDir, 'seoReport.json'), JSON.stringify(seoReport, null, 2), 'utf8');
-
     const html = report.htmlReport;
     if (!html || typeof html !== 'string') {
       throw new Error('SEO audit did not produce HTML report');
     }
-    fs.writeFileSync(path.join(jobDir, 'qa-report.html'), html, 'utf8');
+
+    const runId = makeRunId();
+    const saved = await writeRunArtifacts(runId, { seoReport, html });
+
+    await jobStore.updateJob(MODULE_ID, jobId, {
+      reportPath: saved.reportPath,
+      reportRunId: runId,
+      message: 'Report saved'
+    });
 
     emitProgress(100, 'Completed');
     process.exit(0);

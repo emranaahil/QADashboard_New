@@ -10,6 +10,14 @@ const ExecutionDrawer = dynamic(
   () => import("./execution-drawer").then((m) => m.ExecutionDrawer),
   { ssr: false }
 );
+const ScanResumeBootstrap = dynamic(
+  () => import("./scan-resume-bootstrap").then((m) => m.ScanResumeBootstrap),
+  { ssr: false }
+);
+const JobResumeBootstrap = dynamic(
+  () => import("./job-resume-bootstrap").then((m) => m.JobResumeBootstrap),
+  { ssr: false }
+);
 
 export function AppShell({
   title,
@@ -35,15 +43,19 @@ export function AppShell({
 
       <Sidebar mobileOpen={mobileOpen} onNavigate={() => setMobileOpen(false)} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative flex min-w-0 flex-1 flex-col">
         <ApiBanner />
-        <TopBar
-          title={title}
-          subtitle={subtitle}
-          onMenuClick={() => setMobileOpen(true)}
-        />
-        <main className="flex-1 overflow-auto px-5 pb-24 pt-4">{children}</main>
+        <div className="relative z-50 shrink-0">
+          <TopBar
+            title={title}
+            subtitle={subtitle}
+            onMenuClick={() => setMobileOpen(true)}
+          />
+        </div>
+        <main className="relative z-0 flex-1 overflow-auto px-5 pb-24 pt-4">{children}</main>
         <ExecutionDrawer />
+        <JobResumeBootstrap />
+        <ScanResumeBootstrap />
       </div>
     </div>
   );

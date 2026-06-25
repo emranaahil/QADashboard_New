@@ -145,6 +145,12 @@ function buildSeoScore({ criticalCount, minorCount }) {
   return clamp(score, 0, 100);
 }
 
+function averageSeoScore(pages) {
+  if (!pages.length) return 0;
+  const total = pages.reduce((sum, page) => sum + (page.seoScore || 0), 0);
+  return Math.round(total / pages.length);
+}
+
 function computeBadLinkCounts(html) {
   const hrefHash = (html.match(/href\s*=\s*(['"])#\1/gi) || []).length;
   const jsVoid = (html.match(/javascript\s*:\s*void\s*\(\s*0\s*\)/gi) || []).length;
@@ -374,7 +380,7 @@ function generateHtmlReport({ mainUrl, scanDate, pages }) {
   const totalCritical = pages.reduce((acc, p) => acc + (p.issues.critical?.length || 0), 0);
   const totalMinor = pages.reduce((acc, p) => acc + (p.issues.minor?.length || 0), 0);
   const totalHidden = pages.reduce((acc, p) => acc + (p.issues.hidden?.length || 0), 0);
-  const averageScore = totalPages ? pages.reduce((a, p) => a + (p.seoScore || 0), 0) / totalPages : 0;
+  const averageScore = averageSeoScore(pages);
 
   const formatHierarchyShort = (s) => {
     const v = (s || '').toString();
@@ -898,7 +904,7 @@ async function runSeoAudit({ mainUrl, mode }) {
         totalCritical: pages.reduce((a, p) => a + (p.issues.critical?.length || 0), 0),
         totalMinor: pages.reduce((a, p) => a + (p.issues.minor?.length || 0), 0),
         totalHidden: pages.reduce((a, p) => a + (p.issues.hidden?.length || 0), 0),
-        averageScore: pages.reduce((a, p) => a + (p.seoScore || 0), 0) / (pages.length || 1)
+        averageScore: averageSeoScore(pages)
       },
       htmlReport
     };

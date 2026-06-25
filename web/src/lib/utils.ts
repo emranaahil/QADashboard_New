@@ -10,6 +10,25 @@ export function truncateUrl(url: string, max = 48) {
   return url.slice(0, max - 3) + "...";
 }
 
+export function formatDateTime(
+  value?: string | Date | null,
+  opts?: { dateOnly?: boolean }
+): string {
+  if (!value) return "—";
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+
+  if (opts?.dateOnly) return `${dd}/${mm}/${yyyy}`;
+
+  const hh = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  return `${dd}/${mm}/${yyyy}, ${hh}:${min}`;
+}
+
 export function deriveModelId(url: string) {
   if (!url) return null;
   try {

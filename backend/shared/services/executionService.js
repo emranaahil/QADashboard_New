@@ -1,12 +1,21 @@
 /**
  * Thin adapter over jobQueue + jobStore — preserves existing execution pipeline.
  */
+const fs = require('fs-extra');
+const path = require('path');
 const jobStore = require('../jobStore');
 const jobQueue = require('../jobQueue');
 const testStatusService = require('../testStatusService');
 const executionLock = require('../executionLock');
 const { resolveDevices, applyDevicesToEnv } = require('./deviceService');
 const { applyBrowserToEnv } = require('./browserService');
+
+async function persistResolvedDevices(moduleId, jobId, devices) {
+  if (!devices?.length) return;
+  const jobDir = jobStore.getJobDir(moduleId, jobId);
+  await fs.ensureDir(jobDir);
+  await fs.writeJson(path.join(jobDir, 'devices.runtime.json'), devices, { spaces: 2 });
+}
 
 async function startExecution(moduleId, { url, options = {}, user }) {
   executionLock.assertCanStart();
@@ -25,6 +34,9 @@ async function startExecution(moduleId, { url, options = {}, user }) {
   }
 
   const created = await jobStore.createJob(moduleId, { url, options: execOptions, user });
+  if (execOptions._resolvedDevices?.length) {
+    await persistResolvedDevices(moduleId, created.id, execOptions._resolvedDevices);
+  }
   const modelId = created.modelId || testStatusService.deriveModelId(created.url);
   if (modelId) {
     await testStatusService.setExecution(moduleId, modelId, created.id, created.url);
@@ -42,10 +54,14 @@ async function getExecution(moduleId, jobId) {
 
 async function applyJobRuntimeEnv(job) {
   const opts = job.options || {};
-  if (opts._resolvedDevices) {
-    applyDevicesToEnv(opts._resolvedDevices);
-  } else if (opts.devices) {
-    applyDevicesToEnv(resolveDevices(opts.devices));
+  let resolved = Array.isArray(opts._resolvedDevices) && opts._resolvedDevices.length
+    ? opts._resolvedDevices
+    : null;
+  if (!resolved && opts.devices) {
+    resolved = resolveDevices(opts.devices);
+  }
+  if (resolved?.length) {
+    await applyDevicesToEnv(resolved);
   }
   if (opts.browser) {
     applyBrowserToEnv(opts.browser);

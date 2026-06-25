@@ -6,7 +6,7 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
-function renderLogHtml({ title, subtitle, lines = [], meta = {} }) {
+function renderLogHtml({ title, subtitle, lines = [], meta = {}, autoRefreshSec = 0 }) {
   const metaRows = Object.entries(meta)
     .filter(([, v]) => v !== undefined && v !== null && v !== '')
     .map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`)
@@ -16,11 +16,16 @@ function renderLogHtml({ title, subtitle, lines = [], meta = {} }) {
     ? lines.map((line) => `<div class="line">${escapeHtml(line)}</div>`).join('')
     : '<div class="empty">No log lines recorded for this execution.</div>';
 
+  const refreshTag = autoRefreshSec > 0
+    ? `<meta http-equiv="refresh" content="${autoRefreshSec}" />`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  ${refreshTag}
   <title>${escapeHtml(title)}</title>
   <style>
     body { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #0b1220; color: #e2e8f0; }
@@ -44,6 +49,11 @@ function renderLogHtml({ title, subtitle, lines = [], meta = {} }) {
     ${metaRows ? `<table>${metaRows}</table>` : ''}
   </header>
   <main>${body}</main>
+  <script>
+    window.addEventListener('load', function () {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+  </script>
 </body>
 </html>`;
 }

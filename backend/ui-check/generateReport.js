@@ -127,6 +127,21 @@ function priorityLabel(severity) {
 // SCREENSHOT HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 
+function resolveScreenshotBaseUrl({ htmlDir, screenshotDirAbs, runId, moduleId }) {
+  if (process.env.QA_SCREENSHOT_BASE_URL) {
+    return String(process.env.QA_SCREENSHOT_BASE_URL).replace(/\/$/, '');
+  }
+
+  const mod = moduleId || process.env.QA_JOB_MODULE_ID;
+  if (runId && mod) {
+    return `/api/modules/${mod}/jobs/${runId}/screenshots`;
+  }
+
+  const rel = path.relative(htmlDir, screenshotDirAbs).replace(/\\/g, '/');
+  if (rel && rel !== '.') return rel;
+  return runId ? `reports/${runId}/screenshots` : 'screenshots';
+}
+
 function getScreenshotThumbsForFolder(screenshotDir, screenshotBaseUrl) {
   if (!fs.existsSync(screenshotDir)) return [];
   const files = fs.readdirSync(screenshotDir).filter(f => f.toLowerCase().endsWith('.png'));
@@ -226,18 +241,20 @@ module.exports = function generateReport({
   qaReportPath,
   outputHtmlPath,
   screenshotFolder,
-  runId
+  runId,
+  moduleId
 }) {
   const resolvedQaReportPath = qaReportPath || path.join('reports', 'qaReport.json');
   const resolvedScreenshotFolder = screenshotFolder || path.join('reports', 'screenshots');
 
   const htmlDir = path.resolve(path.dirname(outputHtmlPath || 'qa-report.html'));
   const screenshotDirAbs = path.resolve(resolvedScreenshotFolder);
-  let screenshotBaseUrl = process.env.QA_SCREENSHOT_BASE_URL
-    || path.relative(htmlDir, screenshotDirAbs).replace(/\\/g, '/');
-  if (!screenshotBaseUrl || screenshotBaseUrl === '.') {
-    screenshotBaseUrl = runId ? `reports/${runId}/screenshots` : 'screenshots';
-  }
+  const screenshotBaseUrl = resolveScreenshotBaseUrl({
+    htmlDir,
+    screenshotDirAbs,
+    runId,
+    moduleId
+  });
   // Load report data
   const report = loadJson(resolvedQaReportPath, []);
   console.log('Report entries:', report.length);
@@ -598,20 +615,21 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
   justify-content: center;
   overflow: hidden;
   cursor: grab;
-  will-change: transform;
 }
     .viewerInner img {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
   width: auto;
   height: auto;
+  max-width: none !important;
+  max-height: none !important;
   object-fit: contain;
   transform-origin: center center;
   user-select: none;
-  border-radius: 14px;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+  image-rendering: auto;
+  border-radius: 8px;
   border: 1px solid rgba(255,255,255,.12);
-  will-change: transform;
   transition: none;
 }
     .viewer-close { position: absolute; top: 16px; right: 24px; font-size: 32px; color: #fff; cursor: pointer; z-index: 10000; background: rgba(0,0,0,.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
@@ -1004,6 +1022,8 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
 
     var viewerState = {
       zoom: 1,
+      baseWidth: 0,
+      baseHeight: 0,
       x: 0,
       y: 0,
       dragging: false,
@@ -1022,11 +1042,33 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
     var MAX_ZOOM = 5;
     var ZOOM_STEP = 0.25;
 
+    function layoutViewerImage() {
+      var img = document.getElementById('viewerImg');
+      var inner = document.getElementById('viewerInner');
+      if (!img || !inner || !img.naturalWidth || !img.naturalHeight) return;
+
+      var innerRect = inner.getBoundingClientRect();
+      var maxW = Math.max(1, innerRect.width);
+      var maxH = Math.max(1, innerRect.height);
+      var nw = img.naturalWidth;
+      var nh = img.naturalHeight;
+      // Never upscale beyond native pixels at 100% zoom — prevents soft/blurry default view
+      var fitScale = Math.min(1, maxW / nw, maxH / nh);
+      viewerState.baseWidth = nw * fitScale;
+      viewerState.baseHeight = nh * fitScale;
+      updateViewerTransform();
+      clampPan();
+    }
+
     function updateViewerTransform() {
       var img = document.getElementById('viewerImg');
       if (!img) return;
+      if (viewerState.baseWidth > 0 && viewerState.baseHeight > 0) {
+        img.style.width = (viewerState.baseWidth * viewerState.zoom) + 'px';
+        img.style.height = (viewerState.baseHeight * viewerState.zoom) + 'px';
+      }
       img.style.transform =
-        'translate(' + viewerState.x + 'px,' + viewerState.y + 'px) scale(' + viewerState.zoom + ')';
+        'translate3d(' + viewerState.x + 'px,' + viewerState.y + 'px,0)';
     }
 
 window.zoomIn = function() {
@@ -1051,22 +1093,19 @@ function clampZoom(z) {
 }
 
 function clampPan() {
-  var img = document.getElementById('viewerImg');
   var inner = document.getElementById('viewerInner');
-  if (!img || !inner) return;
+  if (!inner) return;
 
   var scale = viewerState.zoom;
-  if (scale <= 1) {
+  if (scale <= 1 || viewerState.baseWidth <= 0) {
     viewerState.x = 0;
     viewerState.y = 0;
     return;
   }
 
-  var imgRect = img.getBoundingClientRect();
   var innerRect = inner.getBoundingClientRect();
-
-  var scaledWidth = imgRect.width;
-  var scaledHeight = imgRect.height;
+  var scaledWidth = viewerState.baseWidth * scale;
+  var scaledHeight = viewerState.baseHeight * scale;
 
   var maxX = Math.max(0, (scaledWidth - innerRect.width) / 2);
   var maxY = Math.max(0, (scaledHeight - innerRect.height) / 2);
@@ -1076,8 +1115,8 @@ function clampPan() {
 }
 
 function zoomTo(newZoom, anchorX, anchorY) {
-  var img = document.getElementById('viewerImg');
-  if (!img) return;
+  var inner = document.getElementById('viewerInner');
+  if (!inner) return;
 
   var prevZoom = viewerState.zoom;
   newZoom = clampZoom(newZoom);
@@ -1088,12 +1127,12 @@ function zoomTo(newZoom, anchorX, anchorY) {
     viewerState.x = 0;
     viewerState.y = 0;
   } else if (typeof anchorX === 'number' && typeof anchorY === 'number') {
-    var rect = img.getBoundingClientRect();
-    var offsetX = anchorX - rect.left - rect.width / 2;
-    var offsetY = anchorY - rect.top - rect.height / 2;
+    var innerRect = inner.getBoundingClientRect();
+    var cx = innerRect.left + innerRect.width / 2;
+    var cy = innerRect.top + innerRect.height / 2;
     var ratio = newZoom / prevZoom;
-    viewerState.x = offsetX - (offsetX - viewerState.x) * ratio;
-    viewerState.y = offsetY - (offsetY - viewerState.y) * ratio;
+    viewerState.x = (viewerState.x - (anchorX - cx)) * ratio + (anchorX - cx);
+    viewerState.y = (viewerState.y - (anchorY - cy)) * ratio + (anchorY - cy);
     viewerState.zoom = newZoom;
     clampPan();
   } else {
@@ -1227,6 +1266,8 @@ function scheduleUpdate() {
 
     window.openGalleryViewer = function(idx) {
       viewerState.zoom = 1;
+      viewerState.baseWidth = 0;
+      viewerState.baseHeight = 0;
       viewerState.x = 0;
       viewerState.y = 0;
       viewerState.lastX = 0;
@@ -1237,17 +1278,27 @@ function scheduleUpdate() {
       if (!item) return;
       var viewerImg = document.getElementById('viewerImg');
       if (!viewerImg) return;
+      viewerImg.style.width = '';
+      viewerImg.style.height = '';
+      viewerImg.style.maxWidth = 'none';
+      viewerImg.style.maxHeight = 'none';
+      viewerImg.style.transform = '';
       viewerImg.src = item.fullSrc;
-      updateViewerTransform();
       document.getElementById('viewerInfo').textContent =
         item.file + ' — ' + item.device + ' • ' + item.page;
       document.getElementById('viewer').classList.add('open');
+      document.getElementById('viewer').setAttribute('aria-hidden', 'false');
 
-      // Wait for image to load before enabling zoom/pan calculations
       viewerImg.onload = function() {
-        // Re-apply transform using actual image dimensions after load
-        updateViewerTransform();
+        if (viewerImg.decode) {
+          viewerImg.decode().then(layoutViewerImage).catch(layoutViewerImage);
+        } else {
+          layoutViewerImage();
+        }
       };
+      if (viewerImg.complete && viewerImg.naturalWidth) {
+        layoutViewerImage();
+      }
     };
 
     window.closeViewer = function() {
@@ -1346,10 +1397,7 @@ function scheduleUpdate() {
         if (viewerState.zoom <= 1) {
           zoomTo(2, e.clientX, e.clientY);
         } else {
-          viewerState.zoom = 1;
-          viewerState.x = 0;
-          viewerState.y = 0;
-          updateViewerTransform();
+          resetZoom();
         }
       });
     }
@@ -1396,6 +1444,16 @@ function scheduleUpdate() {
       }, { passive: true });
     }
 
+    function relayoutOpenViewer() {
+      if (document.getElementById('viewer').classList.contains('open')) {
+        layoutViewerImage();
+      }
+    }
+
+    window.addEventListener('resize', relayoutOpenViewer);
+    document.addEventListener('fullscreenchange', relayoutOpenViewer);
+    document.addEventListener('webkitfullscreenchange', relayoutOpenViewer);
+
     // ── Print handlers ─────────────────────────────────
     window.addEventListener('beforeprint', function() {
       // Force-load lazy images before printing by removing lazy attribute
@@ -1414,7 +1472,7 @@ function scheduleUpdate() {
       else if (e.key.toLowerCase() === 'f') toggleFullscreen();
       else if (e.key === '+' || e.key === '=') { zoomTo(viewerState.zoom + ZOOM_STEP); }
       else if (e.key === '-') { zoomTo(viewerState.zoom - ZOOM_STEP); }
-      else if (e.key === '0') { viewerState.zoom = 1; viewerState.x = 0; viewerState.y = 0; updateViewerTransform(); }
+      else if (e.key === '0') { resetZoom(); }
     });
 
     // ── PDF Generation ──────────────────────────────────────────────────

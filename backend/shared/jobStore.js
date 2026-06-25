@@ -4,7 +4,7 @@ const { uuidv4, validateUuid } = require('./uuidUtils');
 const { normalizeUrl } = require('./urlSecurity');
 const { getModule } = require('./moduleRegistry');
 const { deriveModelId } = require('./modelUtils');
-const { moduleJobsDir } = require('./storagePaths');
+const { moduleDataRoot, moduleJobsDir } = require('./storagePaths');
 
 const RUNNABLE_MODULES = new Set(['seo', 'ui-check', 'full-ui-check']);
 const TERMINAL_STATUSES = new Set(['completed', 'failed', 'cancelled']);
@@ -52,7 +52,37 @@ function getJobFile(moduleId, jobId) {
   return path.join(getJobDir(moduleId, jobId), 'job.json');
 }
 
+function resolveReportAbsolutePath(moduleId, jobId, job) {
+  if (job?.reportPath && typeof job.reportPath === 'string') {
+    return path.join(moduleDataRoot(moduleId), job.reportPath);
+  }
+  if (moduleId === 'seo' && job?.reportRunId) {
+    return path.join(moduleDataRoot(moduleId), 'reports', job.reportRunId, 'qa-report.html');
+  }
+  return path.join(getJobDir(moduleId, jobId), 'qa-report.html');
+}
+
+function inferReportRelativePath(moduleId, jobId, job) {
+  if (job?.reportPath && typeof job.reportPath === 'string') {
+    return job.reportPath;
+  }
+  if (moduleId === 'seo' && job?.reportRunId) {
+    return `reports/${job.reportRunId}/qa-report.html`;
+  }
+  return `jobs/${jobId}/qa-report.html`;
+}
+
 function getReportPath(moduleId, jobId) {
+  const jobFile = getJobFile(moduleId, jobId);
+  try {
+    if (fs.existsSync(jobFile)) {
+      const job = fs.readJsonSync(jobFile);
+      const candidate = resolveReportAbsolutePath(moduleId, jobId, job);
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  } catch {
+    /* fall through to legacy job-dir path */
+  }
   return path.join(getJobDir(moduleId, jobId), 'qa-report.html');
 }
 
@@ -147,12 +177,18 @@ async function updateJob(moduleId, jobId, patch) {
       }
     }
 
-    const reportFile = getReportPath(moduleId, jobId);
+    const reportFile = resolveReportAbsolutePath(moduleId, jobId, updated);
     const hasReport = await fs.pathExists(reportFile);
-    updated.reportAvailable = updated.status === 'completed' && hasReport;
-    updated.reportPath = updated.reportAvailable
-      ? (updated.reportPath || `jobs/${jobId}/qa-report.html`)
-      : null;
+
+    if (TERMINAL_STATUSES.has(updated.status)) {
+      updated.reportAvailable = updated.status === 'completed' && hasReport;
+      if (updated.status === 'completed' && hasReport) {
+        updated.reportPath = inferReportRelativePath(moduleId, jobId, updated);
+      }
+    } else if (hasReport && (patch.reportPath || patch.reportRunId)) {
+      // Preserve SEO report location saved before process exit (status still running)
+      updated.reportPath = patch.reportPath || inferReportRelativePath(moduleId, jobId, updated);
+    }
 
     await atomicWriteJson(getJobFile(moduleId, jobId), updated);
     return updated;

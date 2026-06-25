@@ -2,10 +2,12 @@
  * Production security middleware — rate limiting and CORS policy.
  */
 
-function createRateLimiter({ windowMs = 60_000, max = 120 } = {}) {
+function createRateLimiter({ windowMs = 60_000, max = 120, skip = () => false } = {}) {
   const hits = new Map();
 
   return (req, res, next) => {
+    if (skip(req)) return next();
+
     const ip = req.ip || req.socket?.remoteAddress || 'unknown';
     const now = Date.now();
     const recent = (hits.get(ip) || []).filter((t) => now - t < windowMs);

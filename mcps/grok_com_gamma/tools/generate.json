@@ -31,7 +31,7 @@
           "social",
           "webpage"
         ],
-        "description": "Format: this optional parameter tells Gamma what type of content to create: 'presentation' (slides), 'document' (long-form), 'social' (social media post), 'webpage' (single page web site). The default value is presentation which works most of the time, so it is not necessary to specify this unless user requests different format."
+        "description": "Format: this optional parameter tells Gamma what type of content to create: 'presentation' (slides), 'document' (long-form text — use for one-pagers, handouts, flyers, briefs, spec sheets, and leave-behinds), 'social' (social media post), 'webpage' (a website or landing page meant to be published online). The default value is presentation which works most of the time, so it is not necessary to specify this unless user requests different format."
       },
       "numCards": {
         "type": "number",

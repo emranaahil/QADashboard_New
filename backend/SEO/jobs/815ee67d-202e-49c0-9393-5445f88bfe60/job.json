@@ -1,0 +1,26 @@
+{
+  "id": "815ee67d-202e-49c0-9393-5445f88bfe60",
+  "moduleId": "seo",
+  "testType": "single-page",
+  "modelId": "bathmatedirect.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://bathmatedirect.com/",
+  "options": {
+    "mode": "single"
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T08:25:05.404Z",
+  "startedAt": "2026-06-25T08:25:05.423Z",
+  "completedAt": "2026-06-25T08:25:18.324Z",
+  "durationMs": 12901,
+  "reportPath": "reports/2026-06-25T08-25-18-293Z/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": "",
+  "reportRunId": "2026-06-25T08-25-18-293Z"
+}

@@ -1,19 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { RunModuleButton } from "@/components/execution/run-module-button";
+import { StatusWithReport } from "@/components/execution/status-with-report";
 import { ViewLogButton } from "@/components/execution/view-log-button";
-import { ViewReportButton } from "@/components/execution/view-report-button";
+import {
+  DeviceSelector,
+  type CustomDevice,
+  type DeviceSelectorHandle,
+} from "@/components/modules/device-selector";
+import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
 import { useJobRunner } from "@/hooks/use-job-runner";
-import type { Job } from "@/lib/api";
+import { api, type Job } from "@/lib/api";
 import { fallbackSummary, loadUiTestSummary, type UiTestSummary } from "@/lib/ui-testing-summary";
 import { canViewLogs } from "@/lib/logs";
-import { canViewReport } from "@/lib/report";
-import { normalizeUrl, validateUrl } from "@/lib/url-validation";
+import { MAX_URL_LENGTH, normalizeUrl, validateUrl } from "@/lib/url-validation";
 import { toast } from "sonner";
 
 type Mode = "single" | "full";
@@ -45,9 +51,14 @@ export function UiTestingWorkspace({
   historyJob,
   onHistoryJobClear,
 }: Props) {
-  const [url, setUrl] = useState("https://example.com");
+  const [url, setUrl] = useState("");
   const [summary, setSummary] = useState<UiTestSummary | null>(null);
+  const [selectedDeviceIds, setSelectedDeviceIds] = useState<string[]>([]);
+  const [customDevices, setCustomDevices] = useState<CustomDevice[]>([]);
+  const [devicesReady, setDevicesReady] = useState(false);
   const moduleId = mode === "full" ? "full-ui-check" : "ui-check";
+  const globalBusy = useGlobalWorkBusy();
+  const deviceSelectorRef = useRef<DeviceSelectorHandle>(null);
 
   const runner = useJobRunner({
     moduleId,
@@ -68,11 +79,35 @@ export function UiTestingWorkspace({
 
   const displayStatus = runner.isActive ? runner.status : historyJob?.status;
 
+  useEffect(() => {
+    if (devicesReady) return;
+    api
+      .getDevices()
+      .then((res) => {
+        const ids = (res.devices || []).map((d) => d.id);
+        const defaultId = ids.includes("desktop") ? "desktop" : ids[0] || "desktop";
+        setSelectedDeviceIds([defaultId]);
+        setDevicesReady(true);
+      })
+      .catch(() => {
+        setSelectedDeviceIds(["desktop"]);
+        setDevicesReady(true);
+      });
+  }, [devicesReady]);
+
+  const resolvedDeviceCount = useCallback((job: Job) => {
+    const resolved = job.options?._resolvedDevices;
+    if (Array.isArray(resolved) && resolved.length) return resolved.length;
+    const selected = job.options?.devices;
+    if (Array.isArray(selected) && selected.length) return selected.length;
+    return 1;
+  }, []);
+
   const loadSummary = useCallback(async (job: Job, modId: string) => {
     const base = fallbackSummary({
       totalPages: job.totalPages,
       completed: job.status === "completed",
-      deviceCount: 1,
+      deviceCount: resolvedDeviceCount(job),
     });
     if (job.status === "completed" && job.reportAvailable && job.id) {
       const loaded = await loadUiTestSummary(modId, job.id, base);
@@ -80,7 +115,7 @@ export function UiTestingWorkspace({
     } else {
       setSummary(base);
     }
-  }, []);
+  }, [resolvedDeviceCount]);
 
   useEffect(() => {
     if (historyJob?.url) setUrl(historyJob.url);
@@ -101,10 +136,13 @@ export function UiTestingWorkspace({
       return;
     }
 
+    const devices = deviceSelectorRef.current?.getDevicesForRun();
+    if (!devices?.length) return;
+
     onHistoryJobClear();
     setSummary(null);
     runner.start(normalizeUrl(url), {
-      devices: ["desktop"],
+      devices,
       browser: "chrome",
       ...(mode === "full" ? { maxPages: 50 } : {}),
     });
@@ -117,7 +155,6 @@ export function UiTestingWorkspace({
         ? `${runner.progress}%`
         : "—";
 
-  const showViewReport = canViewReport(activeJob) && !!displayModuleId && !!activeJob?.id;
   const showViewLog =
     canViewLogs(displayStatus) && !!displayModuleId && !!activeJob?.id;
 
@@ -137,19 +174,32 @@ export function UiTestingWorkspace({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://example.com"
-          disabled={runner.running || runner.isCancelling}
+          disabled={globalBusy}
+          maxLength={MAX_URL_LENGTH}
           className="mb-0 h-11 w-full rounded-lg text-sm"
         />
 
+        <div className="mt-4">
+          <DeviceSelector
+            ref={deviceSelectorRef}
+            selectedIds={selectedDeviceIds}
+            onSelectedIdsChange={setSelectedDeviceIds}
+            customDevices={customDevices}
+            onCustomDevicesChange={setCustomDevices}
+            disabled={globalBusy}
+            showMultiDeviceWarning={mode === "full"}
+          />
+        </div>
+
         <div className="run-test-actions mt-6 flex flex-wrap gap-3">
-          <Button
-            className="run-test-btn h-11 min-w-[140px] flex-1 rounded-lg px-4 sm:flex-none"
+          <RunModuleButton
+            kind="ui-test"
+            label="Run Test"
+            loadingLabel="Running…"
             loading={runner.running && !runner.isCancelling}
-            disabled={runner.running || runner.isCancelling}
+            disabled={runner.isCancelling}
             onClick={handleRun}
-          >
-            {runner.running ? "Running…" : "Run Test"}
-          </Button>
+          />
           {(runner.running || runner.isCancelling) && (
             <Button
               variant="cancel"
@@ -180,6 +230,17 @@ export function UiTestingWorkspace({
           {runner.message && (
             <p className="mt-3 break-words text-sm text-muted-foreground">{runner.message}</p>
           )}
+          {showViewLog && activeJob?.id && (
+            <div className="mt-4">
+              <ViewLogButton
+                kind="job"
+                moduleId={displayModuleId}
+                jobId={activeJob.id}
+                size="sm"
+                className="h-10 rounded-lg"
+              />
+            </div>
+          )}
         </Card>
       )}
 
@@ -187,11 +248,14 @@ export function UiTestingWorkspace({
         <Card className={`${UI_CHECK_CARD} min-h-0`}>
           <div className="mb-4 flex items-center justify-between gap-3">
             <h3 className="text-lg font-bold leading-tight">Results Summary</h3>
-            {displayStatus && (
-              <Badge variant={statusBadgeVariant(displayStatus)} className="shrink-0 uppercase">
-                {displayStatus}
-              </Badge>
-            )}
+            {displayStatus ? (
+              <StatusWithReport
+                status={displayStatus}
+                moduleId={displayModuleId}
+                jobId={activeJob.id}
+                reportAvailable={activeJob.reportAvailable}
+              />
+            ) : null}
           </div>
 
           <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -212,9 +276,6 @@ export function UiTestingWorkspace({
           )}
 
           <div className="flex flex-wrap gap-3">
-            {showViewReport && (
-              <ViewReportButton moduleId={displayModuleId} jobId={activeJob.id} className="h-11 rounded-lg" />
-            )}
             {showViewLog && (
               <ViewLogButton
                 kind="job"
@@ -223,7 +284,12 @@ export function UiTestingWorkspace({
                 className="h-11 rounded-lg"
               />
             )}
-            <Button variant="secondary" className="h-11 rounded-lg px-4" onClick={handleRun}>
+            <Button
+              variant="secondary"
+              className="h-11 rounded-lg px-4"
+              disabled={globalBusy}
+              onClick={handleRun}
+            >
               Re-run Test
             </Button>
           </div>

@@ -1,0 +1,26 @@
+{
+  "id": "f0dba4fd-8c81-4070-89c5-22dc14408c7a",
+  "moduleId": "seo",
+  "testType": "full-website",
+  "modelId": "wholesalehealthclub.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://wholesalehealthclub.com/",
+  "options": {
+    "mode": "full"
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T08:26:52.923Z",
+  "startedAt": "2026-06-25T08:26:52.935Z",
+  "completedAt": "2026-06-25T08:27:38.123Z",
+  "durationMs": 45188,
+  "reportPath": "reports/2026-06-25T08-27-38-064Z/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": "",
+  "reportRunId": "2026-06-25T08-27-38-064Z"
+}

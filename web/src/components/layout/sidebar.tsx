@@ -11,6 +11,7 @@ import {
   History,
   FileText,
 } from "lucide-react";
+import { AuthorSidebarCredit } from "@/components/layout/author-sidebar-credit";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -40,14 +41,14 @@ export function Sidebar({ mobileOpen = false, onNavigate }: SidebarProps) {
       )}
       aria-label="Main navigation"
     >
-      <div className="mb-3 inline-flex items-center gap-2.5 rounded-full border border-border bg-card px-3.5 py-2.5">
+      <div className="mb-3 inline-flex shrink-0 items-center gap-2.5 rounded-full border border-border bg-card px-3.5 py-2.5">
         <div className="flex h-7 w-7 items-center justify-center rounded-lg gradient-primary text-[10px] font-bold">
           QA
         </div>
         <span className="text-sm font-semibold tracking-tight">QA Dashboard</span>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-2">
+      <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
@@ -68,6 +69,8 @@ export function Sidebar({ mobileOpen = false, onNavigate }: SidebarProps) {
           );
         })}
       </nav>
+
+      <AuthorSidebarCredit />
     </aside>
   );
 }

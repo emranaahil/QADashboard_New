@@ -22,18 +22,20 @@ async function main() {
   const jobDir = jobStore.getJobDir(MODULE_ID, jobId);
 
   process.env.QA_JOB_DIR = jobDir;
+  process.env.QA_JOB_MODULE_ID = MODULE_ID;
   process.env.QA_REPORT_HTML_PATH = path.join(jobDir, 'qa-report.html');
+  process.env.QA_SCREENSHOT_BASE_URL = `/api/modules/${MODULE_ID}/jobs/${jobId}/screenshots`;
   process.env.SKIP_PDF = '1';
 
-  const { applyJobRuntimeEnv } = require('../shared/services/executionService');
-  await applyJobRuntimeEnv(job);
+    const { applyJobRuntimeEnv } = require('../shared/services/executionService');
+    await applyJobRuntimeEnv(job);
 
-  try {
-    emitProgress(5, 'Launching browser...');
-    await jobStore.updateJob(MODULE_ID, jobId, { progress: 5, message: 'Launching browser...' });
+    try {
+      emitProgress(5, 'Launching browser...');
+      await jobStore.updateJob(MODULE_ID, jobId, { progress: 5, message: 'Launching browser...' });
 
-    const { launchBrowser } = require('./browser');
-    const config = require('./config');
+      const config = require('./config');
+      const { launchBrowser } = require('./browser');
     const { ensureDir, saveJson, normalizeIssues } = require('./utils/reportUtils');
     const generateReport = require('./generateReport');
     const uiChecks = require('./uiChecks');
@@ -50,6 +52,9 @@ async function main() {
     emitProgress(15, 'Loading page...');
     const browser = await launchBrowser();
     const devices = config.devices || [];
+    if (!devices.length) {
+      throw new Error('No devices configured for UI check');
+    }
 
     try {
       for (let i = 0; i < devices.length; i++) {
@@ -82,7 +87,8 @@ async function main() {
       qaReportPath: reportFile,
       outputHtmlPath: reportHtmlPath,
       screenshotFolder,
-      runId: jobId
+      runId: jobId,
+      moduleId: MODULE_ID
     });
 
     if (!fs.existsSync(reportHtmlPath)) {

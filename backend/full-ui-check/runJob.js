@@ -39,7 +39,9 @@ async function main() {
   cancelSignal.clearCancelled(jobDir);
 
   process.env.QA_JOB_DIR = jobDir;
+  process.env.QA_JOB_MODULE_ID = MODULE_ID;
   process.env.QA_REPORT_HTML_PATH = path.join(jobDir, 'qa-report.html');
+  process.env.QA_SCREENSHOT_BASE_URL = `/api/modules/${MODULE_ID}/jobs/${jobId}/screenshots`;
   process.env.SKIP_PDF = '1';
 
   const { applyJobRuntimeEnv } = require('../shared/services/executionService');

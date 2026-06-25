@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Next.js
+web/.next/
+web/out/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# Local dev / agent artifacts (not for repo)
+terminals/
+agent-tools/
+
+# Misc
+*.tsbuildinfo
+web/next-env.d.ts

@@ -1,0 +1,47 @@
+{
+  "mainUrl": "https://stagedev.geniuswholesale.club",
+  "scanDate": "2026-06-25T07:58:13.340Z",
+  "sitemapUsed": null,
+  "urlsAttempted": 1,
+  "concurrency": 3,
+  "timeoutMs": 15000,
+  "pages": [
+    {
+      "url": "https://stagedev.geniuswholesale.club",
+      "title": "Home",
+      "description": "Home Page",
+      "h1Count": 2,
+      "h2Count": 7,
+      "h3Count": 3,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 0
+      },
+      "issues": {
+        "critical": [
+          "Multiple <h1>: Found 2 h1 tags in source (visible + hidden + commented).",
+          "Missing Open Graph tags: Missing required OG tag(s): og:title, og:description, og:image",
+          "Broken heading hierarchy: First heading is h2 (expected h1)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source.",
+          "Empty meta content tags: Found 1 meta tag(s) with empty content attribute."
+        ],
+        "hidden": []
+      },
+      "seoScore": 64,
+      "_debug": {
+        "durationMs": 6799
+      }
+    }
+  ],
+  "summary": {
+    "totalPages": 1,
+    "totalCritical": 3,
+    "totalMinor": 2,
+    "totalHidden": 0,
+    "averageScore": 64
+  }
+}

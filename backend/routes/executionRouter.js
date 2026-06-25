@@ -1,9 +1,11 @@
 const express = require('express');
 const executionController = require('../shared/executionController');
+const executionLock = require('../shared/executionLock');
 const jobStore = require('../shared/jobStore');
 const { getModule } = require('../shared/moduleRegistry');
 
 const router = express.Router();
+const RUNNABLE_MODULES = ['full-ui-check', 'ui-check', 'seo'];
 
 function validateModule(moduleId) {
   const mod = getModule(moduleId);
@@ -12,6 +14,30 @@ function validateModule(moduleId) {
     throw new Error('Module does not support execution');
   }
 }
+
+router.get('/active', async (_req, res) => {
+  try {
+    const locked = executionLock.getActiveExecution();
+    if (locked?.moduleId && locked?.jobId) {
+      const job = await jobStore.getJob(locked.moduleId, locked.jobId);
+      if (job && !jobStore.TERMINAL_STATUSES.has(job.status)) {
+        return res.json({ active: true, job: await jobStore.enrichJob(locked.moduleId, job) });
+      }
+    }
+
+    for (const moduleId of RUNNABLE_MODULES) {
+      const jobs = await jobStore.listJobs(moduleId, 20);
+      const running = jobs.find((j) => j.status === 'pending' || j.status === 'running');
+      if (running) {
+        return res.json({ active: true, job: await jobStore.enrichJob(moduleId, running) });
+      }
+    }
+
+    res.json({ active: false, job: null });
+  } catch (err) {
+    res.status(500).json({ error: 'ACTIVE_FAILED', message: err.message });
+  }
+});
 
 router.post('/cancel', async (req, res) => {
   try {

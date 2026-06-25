@@ -4,6 +4,7 @@
  */
 const fs = require('fs-extra');
 const jobStore = require('../jobStore');
+const { formatDisplayDate } = require('../dateFormat');
 
 const MODULE_LABELS = {
   seo: 'SEO Testing',
@@ -58,9 +59,7 @@ function groupByDate(items) {
   const groups = {};
   for (const item of items) {
     const d = item.completedAt || item.createdAt;
-    const key = d ? new Date(d).toLocaleDateString('en-US', {
-      weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
-    }) : 'Unknown';
+    const key = d ? formatDisplayDate(d, { dateOnly: true }) : 'Unknown';
     if (!groups[key]) groups[key] = [];
     groups[key].push(item);
   }

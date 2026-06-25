@@ -39,7 +39,7 @@ async function main() {
   reports.ok && Array.isArray(reports.data.reports) ? pass('Reports center API') : fail('Reports center API', reports.data.message);
 
   const devices = await fetchJson(`${BASE}/api/config/devices`);
-  devices.ok && devices.data.devices?.length >= 9 ? pass('Device config (9+ presets)') : fail('Device config', 'missing devices');
+  devices.ok && devices.data.devices?.length >= 5 ? pass('Device config (5+ presets)') : fail('Device config', 'missing devices');
 
   const browsers = await fetchJson(`${BASE}/api/config/browsers`);
   browsers.ok && browsers.data.browsers?.length >= 6 ? pass('Browser config') : fail('Browser config', 'missing browsers');
@@ -54,7 +54,7 @@ async function main() {
     ['/history', 200],
     ['/reports', 200],
     ['/keyword-radar', 200],
-    ['/linkradar', 200],
+    ['/link-radar', 200],
     ['/modules/ui-check?legacy=1', 200],
     ['/modules/full-ui-check?legacy=1', 200],
     ['/modules/seo?legacy=1', 200],

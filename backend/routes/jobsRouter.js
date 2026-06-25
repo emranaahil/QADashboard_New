@@ -69,8 +69,9 @@ router.get('/:moduleId/jobs/:jobId/events', validateModule, async (req, res) => 
   try {
     jobStore.validateJobId(req.params.jobId);
     res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders?.();
 
     const send = async () => {
@@ -81,6 +82,7 @@ router.get('/:moduleId/jobs/:jobId/events', validateModule, async (req, res) => 
       }
       const job = await jobStore.enrichJob(req.params.moduleId, raw);
       res.write(`data: ${JSON.stringify({ job })}\n\n`);
+      res.flush?.();
       return jobStore.TERMINAL_STATUSES.has(job.status);
     };
 
@@ -92,7 +94,7 @@ router.get('/:moduleId/jobs/:jobId/events', validateModule, async (req, res) => 
         const finished = await send();
         if (finished) { clearInterval(interval); res.end(); }
       } catch { clearInterval(interval); res.end(); }
-    }, 1500);
+    }, 2000);
 
     req.on('close', () => clearInterval(interval));
   } catch (err) {

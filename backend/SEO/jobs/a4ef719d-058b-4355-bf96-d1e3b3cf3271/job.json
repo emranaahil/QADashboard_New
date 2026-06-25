@@ -1,0 +1,26 @@
+{
+  "id": "a4ef719d-058b-4355-bf96-d1e3b3cf3271",
+  "moduleId": "seo",
+  "testType": "single-page",
+  "modelId": "stagedev.geniuswholesale.club",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://stagedev.geniuswholesale.club",
+  "options": {
+    "mode": "single"
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T07:58:05.376Z",
+  "startedAt": "2026-06-25T07:58:05.400Z",
+  "completedAt": "2026-06-25T07:58:13.373Z",
+  "durationMs": 7973,
+  "reportPath": "reports/2026-06-25T07-58-13-340Z/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": "",
+  "reportRunId": "2026-06-25T07-58-13-340Z"
+}

@@ -3,9 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge, statusBadgeVariant } from "@/components/ui/badge";
+import { HistoryReportListItem } from "@/components/modules/history-report-list-item";
 import { UiTestingSegmented } from "@/components/modules/ui-testing-segmented";
 import { api, type SeoTestingHistoryItem, type SeoTestingHistoryResponse } from "@/lib/api";
+import { computeHistoryStats, getHistoryDisplayStatus } from "@/lib/history-stats";
+import { useDashboardStore } from "@/store/dashboard-store";
+import { useHistoryStartRefresh } from "@/hooks/use-history-start-refresh";
+import { formatDateTime } from "@/lib/utils";
 
 type TestType = "single-page" | "full-website";
 
@@ -26,33 +30,6 @@ type Props = {
   refreshKey?: number;
   selectedJobId?: string | null;
 };
-
-function computeStats(items: SeoTestingHistoryItem[]) {
-  let completed = 0;
-  let failed = 0;
-  let running = 0;
-  for (const item of items) {
-    if (item.status === "completed") completed++;
-    else if (item.status === "failed" || item.status === "cancelled") failed++;
-    else if (item.status === "running" || item.status === "pending") running++;
-  }
-  return { total: items.length, completed, failed, running };
-}
-
-function formatReportTime(item: SeoTestingHistoryItem) {
-  const raw = item.completedAt || item.createdAt;
-  if (!raw) return "";
-  try {
-    return new Date(raw).toLocaleString([], {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return "";
-  }
-}
 
 function MiniStat({
   value,
@@ -94,14 +71,16 @@ export function SeoTestingHistoryPanel({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [collapsedDates, setCollapsedDates] = useState<Set<string>>(new Set());
+  const dashboardRefreshKey = useDashboardStore((s) => s.refreshKey);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
     return () => clearTimeout(t);
   }, [search]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent ?? false;
+    if (!silent) setLoading(true);
     setError(null);
     try {
       const result = await api.getSeoTestingHistory({
@@ -111,18 +90,27 @@ export function SeoTestingHistoryPanel({
       });
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load history");
-      setData(null);
+      if (!silent) {
+        setError(err instanceof Error ? err.message : "Failed to load history");
+        setData(null);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [testType, debouncedSearch]);
 
   useEffect(() => {
     load();
-  }, [load, refreshKey]);
+  }, [load]);
 
-  const stats = useMemo(() => computeStats(data?.items || []), [data?.items]);
+  useEffect(() => {
+    if (refreshKey === 0 && dashboardRefreshKey === 0) return;
+    load({ silent: true });
+  }, [refreshKey, dashboardRefreshKey, load]);
+
+  useHistoryStartRefresh(useCallback(() => load({ silent: true }), [load]));
+
+  const stats = useMemo(() => computeHistoryStats(data?.items || []), [data?.items]);
 
   const subheading = useMemo(() => {
     if (!stats.total) return "Past SEO test runs";
@@ -215,31 +203,23 @@ export function SeoTestingHistoryPanel({
                 </button>
                 {!collapsed &&
                   group.reports.map((item) => {
-                    const time = formatReportTime(item);
+                    const time = formatDateTime(item.completedAt || item.createdAt);
                     const duration = item.durationMs ? `${Math.round(item.durationMs / 1000)}s` : null;
-                    const meta = [duration, time].filter(Boolean).join(" · ");
+                    const meta = [duration, time !== "—" ? time : null].filter(Boolean).join(" · ");
                     return (
-                      <button
+                      <HistoryReportListItem
                         key={item.id}
-                        type="button"
-                        onClick={() => onSelectReport(item)}
-                        className={`flex w-full items-center justify-between gap-3 rounded-[12px] border px-4 py-3 text-left text-sm transition-colors hover:border-[rgba(29,191,115,0.35)] ${
-                          selectedJobId === item.id
-                            ? "border-[rgba(29,191,115,0.5)] bg-[rgba(29,191,115,0.08)]"
-                            : "border-border bg-background-elevated"
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate font-medium">{item.title || item.url}</div>
-                          <div className="truncate text-xs text-muted-foreground">{item.url}</div>
-                          {meta && (
-                            <div className="mt-0.5 text-[0.68rem] text-muted-foreground/80">{meta}</div>
-                          )}
-                        </div>
-                        <Badge variant={statusBadgeVariant(item.status)} className="shrink-0 uppercase">
-                          {item.status}
-                        </Badge>
-                      </button>
+                        id={item.id}
+                        moduleId={item.moduleId}
+                        title={item.title}
+                        url={item.url}
+                        status={getHistoryDisplayStatus(item)}
+                        reportStatus={item.status}
+                        reportAvailable={item.reportAvailable}
+                        meta={meta}
+                        selected={selectedJobId === item.id}
+                        onSelect={() => onSelectReport(item)}
+                      />
                     );
                   })}
               </section>

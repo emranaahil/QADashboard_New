@@ -35,7 +35,7 @@ export async function loadSeoTestSummary(
       return {
         pages: summary.totalPages ?? fallback.pages,
         criticalIssues: summary.totalCritical ?? 0,
-        averageScore: summary.averageScore ?? 0,
+        averageScore: Math.round(summary.averageScore ?? 0),
       };
     }
     if (Array.isArray(payload?.pages) && payload.pages.length) {

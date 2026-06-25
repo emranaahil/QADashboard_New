@@ -46,11 +46,16 @@ let lastRun = {
   completedAt: null
 };
 
+let cancelRequested = false;
+let activeRunPromise = null;
+let activeBrowser = null;
+
 function appendLastRunLog(message) {
   lastRun.logs.push({ at: new Date().toISOString(), message });
 }
 
 function beginLastRun(startUrl) {
+  cancelRequested = false;
   lastRun = {
     id: new Date().toISOString(),
     url: startUrl,
@@ -96,6 +101,7 @@ function renderLastRunLogsHtml() {
     for (const url of progress.recentUrls) lines.push(`  ${url}`);
   }
 
+  const isRunning = lastRun.status === 'running';
   return renderLogHtml({
     title: 'Error Check Logs',
     subtitle: lastRun.url || '',
@@ -104,7 +110,8 @@ function renderLastRunLogsHtml() {
       'Started At': lastRun.startedAt,
       'Completed At': lastRun.completedAt
     },
-    lines
+    lines,
+    autoRefreshSec: isRunning ? 5 : 0
   });
 }
 
@@ -126,6 +133,13 @@ function resetProgress() {
   };
 }
 
+function beginProgress(maxUrls) {
+  resetProgress();
+  progress.status = 'running';
+  progress.total = maxUrls;
+  progress.lastUpdated = Date.now();
+}
+
 const ERROR_TEXT_PATTERNS = [
   'page not found', '404', 'not found', 'error 404',
   'sorry, this page', 'this page doesn\'t exist',
@@ -139,12 +153,13 @@ const ERROR_TEXT_PATTERNS = [
   'the requested page could not be found'
 ];
 
-async function checkForBrokenPages(startUrl, options = {}) {
+async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
   const maxUrls = options.maxUrls || 500;
   const delay = options.delay || 400;
   const maxDepth = options.maxDepth || 5;
 
-  beginLastRun(startUrl);
+  if (!runOpts.skipBegin) beginLastRun(startUrl);
+  if (!runOpts.skipProgressInit) beginProgress(maxUrls);
   appendLastRunLog(`Options: maxUrls=${maxUrls}, delay=${delay}ms, maxDepth=${maxDepth}`);
   console.log(`Starting error content check for ${startUrl} (max: ${maxUrls}, delay: ${delay}ms, depth: ${maxDepth})`);
 
@@ -153,6 +168,7 @@ async function checkForBrokenPages(startUrl, options = {}) {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
+    activeBrowser = browser;
 
     const context = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -175,10 +191,6 @@ async function checkForBrokenPages(startUrl, options = {}) {
     const baseHost = new URL(startUrl).hostname;
     const rootDomain = baseHost.split('.').slice(-2).join('.');
 
-    resetProgress();
-    progress.status = 'running';
-    progress.total = maxUrls;
-
     function normalizeAndValidate(rawHref, currentBase) {
       try {
         const u = new URL(rawHref, currentBase);
@@ -200,8 +212,15 @@ async function checkForBrokenPages(startUrl, options = {}) {
       }
     }
 
-    function sleep(ms) {
-      return new Promise(r => setTimeout(r, ms));
+    async function sleep(ms) {
+      const chunk = 150;
+      let elapsed = 0;
+      while (elapsed < ms) {
+        if (cancelRequested) return;
+        const wait = Math.min(chunk, ms - elapsed);
+        await new Promise((r) => setTimeout(r, wait));
+        elapsed += wait;
+      }
     }
 
     const initial = normalizeAndValidate(startUrl, startUrl);
@@ -210,7 +229,8 @@ async function checkForBrokenPages(startUrl, options = {}) {
       queue.push({ url: initial, depth: 0 });
     }
 
-    while (queue.length > 0 && checked < maxUrls) {
+    while (queue.length > 0 && checked < maxUrls && !cancelRequested) {
+
       const { url, depth } = queue.shift();
 
       // Update live progress immediately upon picking up a URL
@@ -259,7 +279,8 @@ async function checkForBrokenPages(startUrl, options = {}) {
         finalUrl = page.url();
 
         // Give the page more time for client-side rendering of product grids
-        await page.waitForTimeout(1500);
+        await sleep(1500);
+        if (cancelRequested) break;
 
         const evalResult = await page.evaluate(() => {
           const text = document.body ? document.body.innerText.toLowerCase() : '';
@@ -297,6 +318,7 @@ async function checkForBrokenPages(startUrl, options = {}) {
         }
 
       } catch (e) {
+        if (cancelRequested) break;
         isBroken = true;
         detectedErrors.push('page failed to load');
         console.warn(`Failed to load ${url}: ${e.message}`);
@@ -320,12 +342,33 @@ async function checkForBrokenPages(startUrl, options = {}) {
         progress.errorCount = (progress.errorCount || 0) + 1;
       }
 
-      if (queue.length > 0) await sleep(delay);
+      if (queue.length > 0) {
+        await sleep(delay);
+        if (cancelRequested) break;
+      }
+    }
+
+    if (cancelRequested) {
+      progress.status = 'cancelled';
+      lastRun.status = 'cancelled';
+      lastRun.completedAt = new Date().toISOString();
+      appendLastRunLog('Check cancelled by user');
+      await browser.close().catch(() => {});
+      activeBrowser = null;
+      resetProgress();
+      return {
+        checked,
+        cancelled: true,
+        brokenPages: brokenPages.sort((a, b) => a.url.localeCompare(b.url)),
+        brokenLinks: [],
+        allCheckedUrls: []
+      };
     }
 
     await browser.close();
+    activeBrowser = null;
 
-    progress.status = 'done';
+    progress.status = 'completed';
     progress.currentUrl = '';
     progress.lastUpdated = Date.now();
 
@@ -367,14 +410,81 @@ async function checkForBrokenPages(startUrl, options = {}) {
     return result;
 
   } catch (error) {
+    if (cancelRequested) {
+      progress.status = 'cancelled';
+      lastRun.status = 'cancelled';
+      lastRun.completedAt = new Date().toISOString();
+      appendLastRunLog('Check cancelled by user');
+      resetProgress();
+      return { checked: progress.checked || 0, cancelled: true, brokenPages: [], brokenLinks: [], allCheckedUrls: [] };
+    }
     console.error('Error in checkForBrokenPages:', error);
     failLastRun(error);
     throw error;
+  } finally {
+    if (activeBrowser) {
+      await activeBrowser.close().catch(() => {});
+      activeBrowser = null;
+    }
   }
+}
+
+function requestCancel() {
+  if (progress.status !== 'running' && lastRun.status !== 'running') {
+    return false;
+  }
+
+  cancelRequested = true;
+  progress.status = 'cancelled';
+  progress.currentUrl = '';
+  progress.lastUpdated = Date.now();
+  lastRun.status = 'cancelled';
+  lastRun.completedAt = new Date().toISOString();
+  appendLastRunLog('Check cancelled by user');
+
+  if (activeBrowser) {
+    activeBrowser.close().catch(() => {});
+    activeBrowser = null;
+  }
+
+  return true;
+}
+
+function isCheckRunning() {
+  return Boolean(activeRunPromise) || progress.status === 'running' || lastRun.status === 'running';
+}
+
+function startCheck(startUrl, options = {}) {
+  if (isCheckRunning()) {
+    const err = new Error('An error check is already running');
+    err.code = 'SCAN_ALREADY_RUNNING';
+    throw err;
+  }
+  beginLastRun(startUrl);
+  const maxUrls = Math.min(Math.max(parseInt(options.maxUrls, 10) || 100, 1), 500);
+  beginProgress(maxUrls);
+  const runId = lastRun.id;
+  activeRunPromise = checkForBrokenPages(startUrl, options, { skipBegin: true, skipProgressInit: true })
+    .catch((err) => {
+      if (!cancelRequested) throw err;
+      return { checked: progress.checked || 0, cancelled: true };
+    })
+    .finally(() => {
+      activeRunPromise = null;
+      const wasCancelled = cancelRequested || lastRun.status === 'cancelled';
+      cancelRequested = false;
+      if (wasCancelled) {
+        resetProgress();
+      }
+    });
+  return { runId, promise: activeRunPromise };
 }
 
 module.exports = {
   checkForBrokenPages,
+  startCheck,
+  requestCancel,
+  isCheckRunning,
   getProgress,
   resetProgress,
   getLastRun,

@@ -1,0 +1,497 @@
+[
+  {
+    "page": "Desktop",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "Desktop",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376341289.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:32:21.796Z"
+      },
+      {
+        "id": "QA-0002",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376345330.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:25.888Z"
+      },
+      {
+        "id": "QA-0003",
+        "type": "Visible Element Overlap",
+        "count": 1,
+        "screenshot": "overlaps-1782376345899.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:26.451Z"
+      },
+      {
+        "id": "QA-0004",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782376346469.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:27.023Z"
+      },
+      {
+        "id": "QA-0005",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376347060.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:27.628Z"
+      },
+      {
+        "id": "QA-0006",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.4113",
+        "timestamp": "2026-06-25T08:32:27.631Z"
+      }
+    ],
+    "screenshot": "final-1782376347636.png",
+    "timestamp": "2026-06-25T08:32:28.213Z"
+  },
+  {
+    "page": "iPhone15_Plus_Portrait",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "iPhone15_Plus_Portrait",
+    "issues": [
+      {
+        "id": "QA-0007",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376359198.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:32:39.441Z"
+      },
+      {
+        "id": "QA-0008",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376362919.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:43.146Z"
+      },
+      {
+        "id": "QA-0009",
+        "type": "Small Touch Targets",
+        "count": 4,
+        "screenshot": "small-buttons-1782376363170.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:43.408Z"
+      },
+      {
+        "id": "QA-0010",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376363428.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:32:43.660Z"
+      },
+      {
+        "id": "QA-0011",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 1.2741",
+        "timestamp": "2026-06-25T08:32:43.663Z"
+      }
+    ],
+    "screenshot": "final-1782376363670.png",
+    "timestamp": "2026-06-25T08:32:43.912Z"
+  },
+  {
+    "page": "iPhone15_Plus_Landscape",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "iPhone15_Plus_Landscape",
+    "issues": [
+      {
+        "id": "QA-0012",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376376992.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:32:57.353Z"
+      },
+      {
+        "id": "QA-0013",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376380853.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:01.158Z"
+      },
+      {
+        "id": "QA-0014",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782376381180.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:01.474Z"
+      },
+      {
+        "id": "QA-0015",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376381495.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:01.914Z"
+      },
+      {
+        "id": "QA-0016",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.7158",
+        "timestamp": "2026-06-25T08:33:01.917Z"
+      }
+    ],
+    "screenshot": "final-1782376381931.png",
+    "timestamp": "2026-06-25T08:33:02.250Z"
+  },
+  {
+    "page": "S21_Portrait",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "S21_Portrait",
+    "issues": [
+      {
+        "id": "QA-0017",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376392824.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:33:12.988Z"
+      },
+      {
+        "id": "QA-0018",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376396485.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:16.674Z"
+      },
+      {
+        "id": "QA-0019",
+        "type": "Small Touch Targets",
+        "count": 4,
+        "screenshot": "small-buttons-1782376396696.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:16.890Z"
+      },
+      {
+        "id": "QA-0020",
+        "type": "Low Color Contrast",
+        "count": 4,
+        "screenshot": "low-contrast-1782376396915.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:17.136Z"
+      },
+      {
+        "id": "QA-0021",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 1.6710",
+        "timestamp": "2026-06-25T08:33:17.140Z"
+      }
+    ],
+    "screenshot": "final-1782376397145.png",
+    "timestamp": "2026-06-25T08:33:17.366Z"
+  },
+  {
+    "page": "S21_Landscape",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "S21_Landscape",
+    "issues": [
+      {
+        "id": "QA-0022",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376406675.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:33:26.979Z"
+      },
+      {
+        "id": "QA-0023",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376410479.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:30.746Z"
+      },
+      {
+        "id": "QA-0024",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782376410770.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:31.058Z"
+      },
+      {
+        "id": "QA-0025",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376411083.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:31.363Z"
+      },
+      {
+        "id": "QA-0026",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.8224",
+        "timestamp": "2026-06-25T08:33:31.367Z"
+      }
+    ],
+    "screenshot": "final-1782376411375.png",
+    "timestamp": "2026-06-25T08:33:31.680Z"
+  },
+  {
+    "page": "Tablet_Portrait",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "Tablet_Portrait",
+    "issues": [
+      {
+        "id": "QA-0027",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376420675.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:33:40.873Z"
+      },
+      {
+        "id": "QA-0028",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376424366.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:44.626Z"
+      },
+      {
+        "id": "QA-0029",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782376424652.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:44.925Z"
+      },
+      {
+        "id": "QA-0030",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376424954.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:45.250Z"
+      },
+      {
+        "id": "QA-0031",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.8727",
+        "timestamp": "2026-06-25T08:33:45.256Z"
+      }
+    ],
+    "screenshot": "final-1782376425261.png",
+    "timestamp": "2026-06-25T08:33:45.529Z"
+  },
+  {
+    "page": "Tablet_Landscape",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "Tablet_Landscape",
+    "issues": [
+      {
+        "id": "QA-0032",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376435587.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:33:55.944Z"
+      },
+      {
+        "id": "QA-0033",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376439428.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:33:59.813Z"
+      },
+      {
+        "id": "QA-0034",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782376439840.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:00.245Z"
+      },
+      {
+        "id": "QA-0035",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376440271.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:00.631Z"
+      },
+      {
+        "id": "QA-0036",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.6957",
+        "timestamp": "2026-06-25T08:34:00.636Z"
+      }
+    ],
+    "screenshot": "final-1782376440647.png",
+    "timestamp": "2026-06-25T08:34:01.014Z"
+  },
+  {
+    "page": "iPhone13_Portrait",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "iPhone13_Portrait",
+    "issues": [
+      {
+        "id": "QA-0037",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376451546.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:34:11.742Z"
+      },
+      {
+        "id": "QA-0038",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376455253.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:15.467Z"
+      },
+      {
+        "id": "QA-0039",
+        "type": "Small Touch Targets",
+        "count": 4,
+        "screenshot": "small-buttons-1782376455490.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:15.708Z"
+      },
+      {
+        "id": "QA-0040",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376455727.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:15.931Z"
+      },
+      {
+        "id": "QA-0041",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 1.6573",
+        "timestamp": "2026-06-25T08:34:15.933Z"
+      }
+    ],
+    "screenshot": "final-1782376455939.png",
+    "timestamp": "2026-06-25T08:34:16.151Z"
+  },
+  {
+    "page": "iPhone13_Landscape",
+    "url": "https://wholesalehealthclub.com/",
+    "device": "iPhone13_Landscape",
+    "issues": [
+      {
+        "id": "QA-0042",
+        "type": "Popup/Overlay Visible",
+        "count": 2,
+        "screenshot": "popup_1782376469513.png",
+        "severity": "minor",
+        "details": "DIV#.mp-popup-overlay overlay; DIV#.popup1728494507519-container show",
+        "timestamp": "2026-06-25T08:34:29.853Z"
+      },
+      {
+        "id": "QA-0043",
+        "type": "Content Overflow",
+        "count": 2,
+        "screenshot": "overflow-1782376473332.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:33.615Z"
+      },
+      {
+        "id": "QA-0044",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782376473646.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:33.949Z"
+      },
+      {
+        "id": "QA-0045",
+        "type": "Low Color Contrast",
+        "count": 5,
+        "screenshot": "low-contrast-1782376473968.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T08:34:34.267Z"
+      },
+      {
+        "id": "QA-0046",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 1.0992",
+        "timestamp": "2026-06-25T08:34:34.272Z"
+      }
+    ],
+    "screenshot": "final-1782376474276.png",
+    "timestamp": "2026-06-25T08:34:34.584Z"
+  }
+]

@@ -1,17 +1,18 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { Input } from "@/components/ui/input";
-import { Badge, statusBadgeVariant } from "@/components/ui/badge";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StatusWithReport } from "@/components/execution/status-with-report";
 import { ViewLogButton } from "@/components/execution/view-log-button";
-import { ViewReportButton } from "@/components/execution/view-report-button";
 import { api, type Job } from "@/lib/api";
 import { canViewLogs } from "@/lib/logs";
-import { canViewReport } from "@/lib/report";
+import { useDashboardStore } from "@/store/dashboard-store";
+import { useHistoryStartRefresh } from "@/hooks/use-history-start-refresh";
 import { truncateUrl } from "@/lib/utils";
 
 function HistoryPageFallback() {
@@ -32,6 +33,7 @@ function HistoryPageContent() {
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [grouped, setGrouped] = useState<Array<{ date: string; runs: Job[] }>>([]);
   const [loading, setLoading] = useState(true);
+  const dashboardRefreshKey = useDashboardStore((s) => s.refreshKey);
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -43,13 +45,27 @@ function HistoryPageContent() {
     return () => clearTimeout(t);
   }, [query]);
 
-  useEffect(() => {
-    setLoading(true);
-    api
-      .getHistory({ limit: 100, q: debouncedQuery || undefined })
-      .then((data) => setGrouped(data.grouped || []))
-      .finally(() => setLoading(false));
+  const loadHistory = useCallback(async (opts?: { silent?: boolean }) => {
+    const silent = opts?.silent ?? false;
+    if (!silent) setLoading(true);
+    try {
+      const data = await api.getHistory({ limit: 100, q: debouncedQuery || undefined });
+      setGrouped(data.grouped || []);
+    } finally {
+      if (!silent) setLoading(false);
+    }
   }, [debouncedQuery]);
+
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
+
+  useEffect(() => {
+    if (dashboardRefreshKey === 0) return;
+    loadHistory({ silent: true });
+  }, [dashboardRefreshKey, loadHistory]);
+
+  useHistoryStartRefresh(useCallback(() => loadHistory({ silent: true }), [loadHistory]));
 
   return (
     <AppShell title="History" subtitle="Full execution history grouped by date">
@@ -91,13 +107,15 @@ function HistoryPageContent() {
                       <p className="text-xs text-muted-foreground">{run.moduleId}</p>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      {canViewReport(run) && (
-                        <ViewReportButton moduleId={run.moduleId} jobId={run.id} size="sm" />
-                      )}
                       {canViewLogs(run.status) && (
                         <ViewLogButton kind="job" moduleId={run.moduleId} jobId={run.id} size="sm" />
                       )}
-                      <Badge variant={statusBadgeVariant(run.status)}>{run.status}</Badge>
+                      <StatusWithReport
+                        status={run.status}
+                        moduleId={run.moduleId}
+                        jobId={run.id}
+                        reportAvailable={run.reportAvailable}
+                      />
                     </div>
                   </div>
                 ))}

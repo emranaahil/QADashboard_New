@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const jobStore = require('./jobStore');
+const { moduleDataRoot } = require('./storagePaths');
 const { toReportMeta, safeReadJson } = require('./reportUtils');
 
 const JOB_PREFIX = 'job:';
@@ -49,7 +50,11 @@ async function getJobReport(moduleId, reportId) {
   const jobDir = jobStore.getJobDir(moduleId, jobId);
   let data = null;
 
-  const seoPath = path.join(jobDir, 'seoReport.json');
+  let seoPath = path.join(jobDir, 'seoReport.json');
+  if (job.reportPath) {
+    const htmlPath = path.join(moduleDataRoot(moduleId), job.reportPath);
+    seoPath = path.join(path.dirname(htmlPath), 'seoReport.json');
+  }
   const qaPath = path.join(jobDir, 'qaReport.json');
   if (await fs.pathExists(seoPath)) {
     data = await safeReadJson(seoPath);

@@ -2,6 +2,8 @@
  * UI Testing history — server-side filter by test type and search query.
  */
 const jobStore = require('../jobStore');
+const { jobHasQaIssues } = require('./qaReportUtils');
+const { formatDisplayDate } = require('../dateFormat');
 
 const TYPE_TO_MODULE = {
   'single-page': 'ui-check',
@@ -56,11 +58,7 @@ function groupByIsoDate(items) {
     if (!groups.has(iso)) {
       groups.set(iso, {
         date: iso,
-        dateLabel: iso === 'unknown' ? 'Unknown' : new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        }),
+        dateLabel: iso === 'unknown' ? 'Unknown' : formatDisplayDate(`${iso}T12:00:00`, { dateOnly: true }),
         reports: []
       });
     }
@@ -77,11 +75,13 @@ async function listUiTestingHistory({ type, q, limit = 100 } = {}) {
 
   const jobs = await jobStore.enrichJobs(moduleId, await jobStore.listJobs(moduleId, cap));
 
-  const items = jobs
-    .map(job => {
+  const items = (await Promise.all(
+    jobs.map(async (job) => {
       const tt = deriveTestType(job, moduleId);
       let title = job.url;
       try { title = new URL(job.url).hostname; } catch { /* keep url */ }
+      const hasQaIssues =
+        job.status === 'completed' ? await jobHasQaIssues(moduleId, job.id) : false;
       return {
         id: job.id,
         url: job.url,
@@ -89,6 +89,7 @@ async function listUiTestingHistory({ type, q, limit = 100 } = {}) {
         testType: tt,
         moduleId,
         status: job.status,
+        hasQaIssues,
         createdAt: job.createdAt,
         completedAt: job.completedAt,
         durationMs: job.durationMs,
@@ -100,8 +101,9 @@ async function listUiTestingHistory({ type, q, limit = 100 } = {}) {
         currentPage: job.currentPage
       };
     })
-    .filter(item => item.testType === testType)
-    .filter(item => matchesSearch(item, search));
+  ))
+    .filter((item) => item.testType === testType)
+    .filter((item) => matchesSearch(item, search));
 
   return {
     testType,

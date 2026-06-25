@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
+import { formatDateTime } from "@/lib/utils";
 import { openJobReport } from "@/lib/report";
+import { useDashboardStore } from "@/store/dashboard-store";
+import { useHistoryStartRefresh } from "@/hooks/use-history-start-refresh";
 
 type Report = {
   id: string;
@@ -23,15 +26,31 @@ export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [pinned, setPinned] = useState<string[]>([]);
+  const dashboardRefreshKey = useDashboardStore((s) => s.refreshKey);
+
+  const loadReports = useCallback((opts?: { silent?: boolean }) => {
+    const silent = opts?.silent ?? false;
+    if (!silent) setLoading(true);
+    api
+      .getReportsCenter({ limit: 100 })
+      .then((data) => setReports(data.reports || []))
+      .finally(() => {
+        if (!silent) setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem("qa:pinned-reports");
     if (stored) try { setPinned(JSON.parse(stored)); } catch { /* ignore */ }
-    api
-      .getReportsCenter({ limit: 100 })
-      .then((data) => setReports(data.reports || []))
-      .finally(() => setLoading(false));
-  }, []);
+    loadReports();
+  }, [loadReports]);
+
+  useEffect(() => {
+    if (dashboardRefreshKey === 0) return;
+    loadReports({ silent: true });
+  }, [dashboardRefreshKey, loadReports]);
+
+  useHistoryStartRefresh(useCallback(() => loadReports({ silent: true }), [loadReports]));
 
   const togglePin = (key: string) => {
     const next = pinned.includes(key) ? pinned.filter((k) => k !== key) : [...pinned, key];
@@ -63,7 +82,7 @@ export default function ReportsPage() {
               <div className="min-w-0">
                 <p className="truncate font-medium">{r.title || r.id}</p>
                 <p className="text-xs text-muted-foreground">
-                  {r.moduleName} · {r.generatedAt ? new Date(r.generatedAt).toLocaleString() : ""}
+                  {r.moduleName} · {formatDateTime(r.generatedAt)}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">

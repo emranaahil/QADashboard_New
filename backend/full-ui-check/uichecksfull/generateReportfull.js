@@ -139,6 +139,21 @@ function toHtmlRelativePath(relPath) {
     .join('/');
 }
 
+function resolveScreenshotBaseUrl({ htmlDir, screenshotDirAbs, runId, moduleId }) {
+  if (process.env.QA_SCREENSHOT_BASE_URL) {
+    return String(process.env.QA_SCREENSHOT_BASE_URL).replace(/\/$/, '');
+  }
+
+  const mod = moduleId || process.env.QA_JOB_MODULE_ID;
+  if (runId && mod) {
+    return `/api/modules/${mod}/jobs/${runId}/screenshots`;
+  }
+
+  const rel = path.relative(htmlDir, screenshotDirAbs).replace(/\\/g, '/');
+  if (rel && rel !== '.') return rel;
+  return runId ? `reports/${runId}/screenshots` : 'screenshots';
+}
+
 function shortUrlLabel(url) {
   if (!url) return 'Unknown page';
   try {
@@ -283,18 +298,20 @@ module.exports = function generateReport({
   qaReportPath,
   outputHtmlPath,
   screenshotFolder,
-  runId
+  runId,
+  moduleId
 }) {
   const resolvedQaReportPath = qaReportPath || path.join('reports', 'qaReport.json');
   const resolvedScreenshotFolder = screenshotFolder || path.join('reports', 'screenshots');
 
   const htmlDir = path.resolve(path.dirname(outputHtmlPath || 'qa-report.html'));
   const screenshotDirAbs = path.resolve(resolvedScreenshotFolder);
-  let screenshotBaseUrl = process.env.QA_SCREENSHOT_BASE_URL
-    || path.relative(htmlDir, screenshotDirAbs).replace(/\\/g, '/');
-  if (!screenshotBaseUrl || screenshotBaseUrl === '.') {
-    screenshotBaseUrl = runId ? `reports/${runId}/screenshots` : 'reports/screenshots';
-  }
+  const screenshotBaseUrl = resolveScreenshotBaseUrl({
+    htmlDir,
+    screenshotDirAbs,
+    runId,
+    moduleId
+  });
   // Load report data
   const report = loadJson(resolvedQaReportPath, []);
   reportDebug('Report entries:', report.length);

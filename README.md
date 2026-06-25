@@ -20,6 +20,8 @@ A production-ready QA toolkit that crawls websites, checks for keywords, detects
 - **PDF Generation**: PDFKit (keyword check), Playwright (UI check)
 - **Storage**: JSON files (per-feature folders)
 
+For architecture, storage paths, API map, and production notes, see **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)**.
+
 ## Quick Start
 
 ### Prerequisites
@@ -33,6 +35,14 @@ A production-ready QA toolkit that crawls websites, checks for keywords, detects
 npm install
 npx playwright install chromium
 npm run dev
+```
+
+Maintenance:
+
+```bash
+npm run reports:purge-test        # Remove cancelled + example.com test artifacts
+npm run reports:purge-cancelled   # Remove all cancelled jobs/scans
+npm run build:web && npm start   # Production
 ```
 
 - **UI dashboard**: `http://localhost:3001`

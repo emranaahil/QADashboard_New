@@ -1,0 +1,700 @@
+{
+  "mainUrl": "https://wholesalehealthclub.com",
+  "scanDate": "2026-06-25T08:27:38.064Z",
+  "sitemapUsed": null,
+  "urlsAttempted": 22,
+  "concurrency": 3,
+  "timeoutMs": 15000,
+  "pages": [
+    {
+      "url": "https://wholesalehealthclub.com",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 1,
+      "h2Count": 8,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (Broken heading hierarchy: h2 -> h2 (expected +1 step))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 17
+      },
+      "issues": {
+        "critical": [
+          "Images without ALT: Found 17 image(s) without alt (visible).",
+          "Broken heading hierarchy: Broken heading hierarchy: h2 -> h2 (expected +1 step)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 57,
+      "_debug": {
+        "durationMs": 9610
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/discount",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 8,
+      "h3Count": 14,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 59
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 59 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 4149
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/supplements",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 21
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 21 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 8978
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/gummies",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 18
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 18 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 7303
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/skincare",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 15
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 15 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 4923
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/blue-forrest-beauty",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 12
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 12 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 5435
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/emma-bean-skin-care",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 10
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 10 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 6289
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/healthy-living-products",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 13
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 13 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 5060
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/total-life-nutrition",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 14
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 14 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 3881
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/the-complete-life",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 15
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 15 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 5471
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/shop/tru-body-supplements",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 11
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 11 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 3496
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/create-membership",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 0,
+      "h3Count": 2,
+      "hierarchyStatus": "NO (First heading is h3 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 18
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 18 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h3 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 7438
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/faq",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 1,
+      "h2Count": 5,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (Broken heading hierarchy: h2 -> h2 (expected +1 step))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: Broken heading hierarchy: h2 -> h2 (expected +1 step)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 57,
+      "_debug": {
+        "durationMs": 3350
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/term-and-condition",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 2,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 4202
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/privacy-policy",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 0,
+      "h3Count": 12,
+      "hierarchyStatus": "NO (First heading is h3 (expected h1))",
+      "counts": {
+        "hrefHash": 1,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Bad links: href=\"#\": Found 1 href=\"#\" link(s).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h3 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 37,
+      "_debug": {
+        "durationMs": 2876
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/citations",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 0,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (No h1-h4 headings found in source)",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: No h1-h4 headings found in source",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 3080
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/contact-us",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 2,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 7557
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/v1",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 7547
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/v2",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 4087
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/v1t",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 1,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Bad links: javascript:void(0): Found 1 javascript:void(0) link(s).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 37,
+      "_debug": {
+        "durationMs": 4829
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/v2t",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 1,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (First heading is h2 (expected h1))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 1,
+        "missingAlt": 8
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Bad links: javascript:void(0): Found 1 javascript:void(0) link(s).",
+          "Images without ALT: Found 8 image(s) without alt (visible).",
+          "Broken heading hierarchy: First heading is h2 (expected h1)",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 37,
+      "_debug": {
+        "durationMs": 7227
+      }
+    },
+    {
+      "url": "https://wholesalehealthclub.com/cs",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 0,
+      "h2Count": 0,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (No h1-h4 headings found in source)",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 6
+      },
+      "issues": {
+        "critical": [
+          "Missing <h1>: No h1 tag found in source (visible/hidden/commented).",
+          "Images without ALT: Found 6 image(s) without alt (visible).",
+          "Broken heading hierarchy: No h1-h4 headings found in source",
+          "Duplicate title across pages (CRITICAL)",
+          "Duplicate description across pages (CRITICAL)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 47,
+      "_debug": {
+        "durationMs": 3104
+      }
+    }
+  ],
+  "summary": {
+    "totalPages": 22,
+    "totalCritical": 111,
+    "totalMinor": 22,
+    "totalHidden": 0,
+    "averageScore": 46.54545454545455
+  }
+}

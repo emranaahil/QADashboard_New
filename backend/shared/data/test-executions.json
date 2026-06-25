@@ -2,37 +2,16 @@
   "ui-check:google.com": {
     "testType": "ui-check",
     "modelId": "google.com",
-    "jobId": "f47af1b6-2014-4ff4-8b67-4f0396eaa4f0",
-    "url": "https://GOOGLE.COM",
-    "updatedAt": "2026-06-22T10:45:57.421Z"
+    "jobId": "f0a1cad6-be90-432d-ad0c-3c2f60e4e173",
+    "url": "https://google.com/",
+    "updatedAt": "2026-06-25T17:30:19.170Z"
   },
   "full-ui-check:stagedev.geniuswholesale.club": {
     "testType": "full-ui-check",
     "modelId": "stagedev.geniuswholesale.club",
-    "jobId": "6e427448-7a18-4459-b2c8-560548f434e7",
-    "url": "https://stagedev.geniuswholesale.club",
-    "updatedAt": "2026-06-22T12:58:17.171Z"
-  },
-  "seo:example.com": {
-    "testType": "seo",
-    "modelId": "example.com",
-    "jobId": "604fe6cf-1d20-4f59-85db-dfa7f3ceddc2",
-    "url": "https://example.com",
-    "updatedAt": "2026-06-23T13:30:35.045Z"
-  },
-  "ui-check:example.com": {
-    "testType": "ui-check",
-    "modelId": "example.com",
-    "jobId": "77a4427d-17c4-465e-8d60-7b4801e1ef4c",
-    "url": "https://example.com",
-    "updatedAt": "2026-06-23T13:59:19.811Z"
-  },
-  "full-ui-check:example.com": {
-    "testType": "full-ui-check",
-    "modelId": "example.com",
-    "jobId": "fc544d72-8103-4745-af49-b254d2686791",
-    "url": "https://example.com",
-    "updatedAt": "2026-06-23T13:37:29.238Z"
+    "jobId": "bb58162c-3dd3-4966-bc86-33a431d37654",
+    "url": "https://stagedev.geniuswholesale.club/",
+    "updatedAt": "2026-06-25T18:08:16.884Z"
   },
   "full-ui-check:example1.com": {
     "testType": "full-ui-check",
@@ -40,5 +19,33 @@
     "jobId": "c3d2d84d-a443-44cb-a682-ad4e481babe2",
     "url": "https://example1.com",
     "updatedAt": "2026-06-23T11:36:19.833Z"
+  },
+  "ui-check:stagedev.geniuswholesale.club": {
+    "testType": "ui-check",
+    "modelId": "stagedev.geniuswholesale.club",
+    "jobId": "941c2ca9-fb61-4392-b955-4c87d5aeea9a",
+    "url": "https://stagedev.geniuswholesale.club",
+    "updatedAt": "2026-06-25T07:18:33.594Z"
+  },
+  "seo:wholesalehealthclub.com": {
+    "testType": "seo",
+    "modelId": "wholesalehealthclub.com",
+    "jobId": "6fba01e3-9533-45f8-998b-d76ff8b4a485",
+    "url": "https://wholesalehealthclub.com/",
+    "updatedAt": "2026-06-25T08:29:33.558Z"
+  },
+  "seo:stagedev.geniuswholesale.club": {
+    "testType": "seo",
+    "modelId": "stagedev.geniuswholesale.club",
+    "jobId": "a4ef719d-058b-4355-bf96-d1e3b3cf3271",
+    "url": "https://stagedev.geniuswholesale.club",
+    "updatedAt": "2026-06-25T07:58:13.379Z"
+  },
+  "ui-check:wholesalehealthclub.com": {
+    "testType": "ui-check",
+    "modelId": "wholesalehealthclub.com",
+    "jobId": "099bd551-745f-4602-9bc5-3ca1c4ef5805",
+    "url": "https://wholesalehealthclub.com/",
+    "updatedAt": "2026-06-25T08:34:34.885Z"
   }
 }

@@ -1,5 +1,6 @@
 const path = require('path');
 const { safeReadJson, listFilesByMtime, toReportMeta } = require('../shared/reportUtils');
+const { renderErrorCheckHtml } = require('../shared/radarReportHtml');
 
 const { moduleReportsDir } = require('../shared/storagePaths');
 const REPORTS_DIR = moduleReportsDir('error-check');
@@ -11,7 +12,8 @@ async function listReports() {
     type: 'error-check',
     title: f.name.replace('error-check-', '').replace('.json', ''),
     generatedAt: f.mtime.toISOString(),
-    size: f.size
+    size: f.size,
+    hasHtml: true
   }));
 }
 
@@ -33,8 +35,10 @@ async function getLatestReport() {
   return getReport(files[0].name);
 }
 
-async function getHtmlForReport() {
-  return { error: 'NOT_AVAILABLE', message: 'Error check reports are JSON only.' };
+async function getHtmlForReport(reportId) {
+  const result = reportId ? await getReport(reportId) : await getLatestReport();
+  if (result.error) return result;
+  return { html: renderErrorCheckHtml(result.data) };
 }
 
 module.exports = { listReports, getReport, getLatestReport, getHtmlForReport };

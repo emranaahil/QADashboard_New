@@ -2,6 +2,8 @@
  * SEO Testing history — server-side filter by test type (mode) and search query.
  */
 const jobStore = require('../jobStore');
+const { seoJobHasCriticalIssues } = require('./qaReportUtils');
+const { formatDisplayDate } = require('../dateFormat');
 
 const MODULE_ID = 'seo';
 
@@ -65,11 +67,7 @@ function groupByIsoDate(items) {
     if (!groups.has(iso)) {
       groups.set(iso, {
         date: iso,
-        dateLabel: iso === 'unknown' ? 'Unknown' : new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        }),
+        dateLabel: iso === 'unknown' ? 'Unknown' : formatDisplayDate(`${iso}T12:00:00`, { dateOnly: true }),
         reports: []
       });
     }
@@ -85,30 +83,37 @@ async function listSeoTestingHistory({ type, q, limit = 100 } = {}) {
 
   const jobs = await jobStore.enrichJobs(MODULE_ID, await jobStore.listJobs(MODULE_ID, cap));
 
-  const items = jobs
-    .filter(job => matchesMode(job, testType))
-    .map(job => {
-      const tt = deriveTestType(job);
-      let title = job.url;
-      try { title = new URL(job.url).hostname; } catch { /* keep url */ }
-      return {
-        id: job.id,
-        url: job.url,
-        title,
-        testType: tt,
-        moduleId: MODULE_ID,
-        status: job.status,
-        createdAt: job.createdAt,
-        completedAt: job.completedAt,
-        durationMs: job.durationMs,
-        reportAvailable: job.reportAvailable,
-        message: job.message,
-        error: job.error,
-        progress: job.progress,
-        totalPages: job.totalPages,
-        currentPage: job.currentPage
-      };
-    })
+  const items = (await Promise.all(
+    jobs
+      .filter((job) => matchesMode(job, testType))
+      .map(async (job) => {
+        const tt = deriveTestType(job);
+        let title = job.url;
+        try { title = new URL(job.url).hostname; } catch { /* keep url */ }
+        const hasQaIssues =
+          job.status === 'completed'
+            ? await seoJobHasCriticalIssues(MODULE_ID, job.id, job)
+            : false;
+        return {
+          id: job.id,
+          url: job.url,
+          title,
+          testType: tt,
+          moduleId: MODULE_ID,
+          status: job.status,
+          hasQaIssues,
+          createdAt: job.createdAt,
+          completedAt: job.completedAt,
+          durationMs: job.durationMs,
+          reportAvailable: job.reportAvailable,
+          message: job.message,
+          error: job.error,
+          progress: job.progress,
+          totalPages: job.totalPages,
+          currentPage: job.currentPage
+        };
+      })
+  ))
     .filter(item => item.testType === testType)
     .filter(item => matchesSearch(item, search));
 

@@ -17,6 +17,7 @@ const NAVIGATION_TIMEOUT = 60000;
 // Single browser instance for memory efficiency
 let browser = null;
 let browserLaunchPromise = null;
+const cancelledScans = new Set();
 
 /**
  * Launch browser (singleton pattern) with crash recovery
@@ -414,8 +415,18 @@ async function startCrawl(scanId, startUrl, keywords) {
             });
         }
         
+        async function isCancelled() {
+            if (cancelledScans.has(scanId)) return true;
+            const live = await stateService.getScanState(scanId);
+            return live?.status === 'cancelled';
+        }
+
         // Process until queue is empty
         while (!queueService.isEmpty()) {
+            if (await isCancelled()) {
+                console.log(`Scan ${scanId} cancelled by user`);
+                break;
+            }
             batchNumber++;
             
             // Get next batch
@@ -535,6 +546,25 @@ async function startCrawl(scanId, startUrl, keywords) {
             errorType: data.errorType
         }));
         
+        if (await isCancelled()) {
+            await stateService.updateScanStatus(scanId, 'cancelled', {
+                stats: {
+                    urlsDiscovered: queueService.getTotalDiscovered(),
+                    urlsProcessed: totalProcessed,
+                    matchesFound: allMatches.length,
+                    currentBatch: batchNumber,
+                    totalBatches: batchNumber
+                },
+                matches: allMatches,
+                results: finalResults,
+                error: 'Cancelled by user'
+            });
+            await stateService.deleteCheckpoint(scanId);
+            cancelledScans.delete(scanId);
+            console.log(`Crawl cancelled for ${scanId}. Processed ${totalProcessed} URLs before stop.`);
+            return;
+        }
+
         await stateService.updateScanStatus(scanId, 'completed', {
             stats: {
                 urlsDiscovered: queueService.getTotalDiscovered(),
@@ -549,6 +579,7 @@ async function startCrawl(scanId, startUrl, keywords) {
         
         // Clean up checkpoint
         await stateService.deleteCheckpoint(scanId);
+        cancelledScans.delete(scanId);
         
         console.log(`Crawl complete for ${scanId}. Processed ${totalProcessed} URLs, found ${allMatches.length} matches.`);
         
@@ -572,8 +603,14 @@ async function closeBrowser() {
     }
 }
 
+async function cancelCrawl(scanId) {
+    cancelledScans.add(scanId);
+    await stateService.updateScanStatus(scanId, 'cancelled', { error: 'Cancelled by user' });
+}
+
 module.exports = {
     startCrawl,
+    cancelCrawl,
     closeBrowser,
     getBrowser
 };

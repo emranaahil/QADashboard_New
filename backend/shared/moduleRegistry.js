@@ -12,7 +12,7 @@ const MODULES = [
     icon: '🔍',
     route: '/modules/keyword-check',
     hasRunner: true,
-    reportTypes: ['json', 'pdf'],
+    reportTypes: ['json', 'html', 'pdf'],
     reader: () => require('../keyword-check/reportReader')
   },
   {
@@ -22,7 +22,7 @@ const MODULES = [
     icon: '⚠️',
     route: '/modules/error-check',
     hasRunner: true,
-    reportTypes: ['json'],
+    reportTypes: ['json', 'html'],
     reader: () => require('../error-check/reportReader')
   },
   {

@@ -1,12 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
+import { RunModuleButton } from "@/components/execution/run-module-button";
 import { ViewLogButton } from "@/components/execution/view-log-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
+import { MAX_URL_LENGTH, validateKeywords } from "@/lib/url-validation";
+import { RadarReportPanel } from "@/components/modules/radar-report-panel";
+import {
+  collectKeywordLinks,
+  copyTextToClipboard,
+  exportKeywordCsv,
+} from "@/lib/radar-report-utils";
+import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
+import { useScanStore } from "@/store/scan-store";
+import { useDashboardStore } from "@/store/dashboard-store";
+import { toast } from "sonner";
 
 const MODULE_ID = "keyword-check";
 
@@ -37,17 +49,6 @@ type ReportMeta = {
   generatedAt?: string;
 };
 
-type ScanStatus = {
-  status: string;
-  error?: string;
-  stats?: {
-    urlsDiscovered?: number;
-    urlsProcessed?: number;
-    currentBatch?: number;
-    matchesFound?: number;
-  };
-};
-
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
     ...options,
@@ -63,109 +64,35 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   return data as T;
 }
 
-function ReportViewer({ data }: { data: KeywordReport }) {
-  const results = data.results || [];
-  const matches = data.matches || [];
-  const rows = results.length
-    ? results.map((item) => ({
-        url: item.url,
-        status: item.statusCode != null ? String(item.statusCode) : "—",
-        keywords: (item.matchedKeywords || []).join(", ") || "—",
-        isError: item.isError || (item.statusCode != null && item.statusCode >= 400),
-      }))
-    : matches.map((m) => ({
-        url: m.url,
-        status: "—",
-        keywords: m.keyword,
-        isError: false,
-      }));
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h3 className="text-sm font-semibold">{data.url || "Keyword Scan"}</h3>
-        <p className="text-xs text-muted-foreground">
-          Status: <strong>{data.status || "—"}</strong>
-          {" · "}
-          Keywords: {(data.keywords || []).join(", ") || "—"}
-        </p>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        {[
-          { label: "Processed", value: data.stats?.urlsProcessed || 0, highlight: false },
-          { label: "Matches", value: data.stats?.matchesFound ?? matches.length, highlight: true },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className={cn(
-              "rounded-lg border px-3 py-2 text-center",
-              s.highlight ? "border-primary bg-primary/10" : "border-border bg-muted/30"
-            )}
-          >
-            <div className="font-mono text-xl font-bold">{s.value}</div>
-            <div className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/40">
-              <th className="px-3 py-2 text-left font-medium">URL</th>
-              <th className="px-3 py-2 text-left font-medium">Status</th>
-              <th className="px-3 py-2 text-left font-medium">Keywords</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length ? (
-              rows.map((row) => (
-                <tr
-                  key={`${row.url}|${row.keywords}`}
-                  className={cn("border-b border-border", row.isError && "bg-destructive/5")}
-                >
-                  <td className="break-all px-3 py-2">
-                    <a href={row.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                      {row.url}
-                    </a>
-                  </td>
-                  <td className="px-3 py-2">{row.status}</td>
-                  <td className="px-3 py-2">{row.keywords}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3} className="px-3 py-2 text-muted-foreground">
-                  No results
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
 export default function KeywordRadarPage() {
   const [url, setUrl] = useState("");
   const [keywordsText, setKeywordsText] = useState("");
-  const [scanning, setScanning] = useState(false);
-  const [showProgress, setShowProgress] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [failedScanId, setFailedScanId] = useState<string | null>(null);
-  const [urlsDiscovered, setUrlsDiscovered] = useState(0);
-  const [urlsProcessed, setUrlsProcessed] = useState(0);
-  const [currentBatch, setCurrentBatch] = useState(0);
-  const [matchesFound, setMatchesFound] = useState(0);
-  const [progressPct, setProgressPct] = useState(0);
-  const [statusText, setStatusText] = useState("Initializing...");
   const [reports, setReports] = useState<ReportMeta[]>([]);
   const [activeReportId, setActiveReportId] = useState<string | null>(null);
   const [reportData, setReportData] = useState<KeywordReport | null>(null);
-  const scanIdRef = useRef<string | null>(null);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [reportLoadError, setReportLoadError] = useState("");
+
+  const scanStatus = useScanStore((s) => s.status);
+  const scanModuleId = useScanStore((s) => s.moduleId);
+  const isKeywordActive = scanModuleId === "keyword-check";
+  const isCancelling = useScanStore((s) => s.isCancelling);
+  const scanning = isKeywordActive && (scanStatus === "running" || isCancelling);
+  const errorMessage = useScanStore((s) => (isKeywordActive ? s.errorMessage : ""));
+  const failedScanId = useScanStore((s) => (isKeywordActive ? s.failedScanId : null));
+  const urlsDiscovered = useScanStore((s) => (isKeywordActive ? s.urlsDiscovered : 0));
+  const urlsProcessed = useScanStore((s) => (isKeywordActive ? s.urlsProcessed : 0));
+  const currentBatch = useScanStore((s) => (isKeywordActive ? s.currentBatch : 0));
+  const matchesFound = useScanStore((s) => (isKeywordActive ? s.matchesFound : 0));
+  const progressPct = useScanStore((s) => (isKeywordActive ? s.progress : 0));
+  const statusText = useScanStore((s) => (isKeywordActive ? s.message : ""));
+  const startKeywordScan = useScanStore((s) => s.startKeywordScan);
+  const cancelScan = useScanStore((s) => s.cancelScan);
+  const resetScan = useScanStore((s) => s.reset);
+  const scanId = useScanStore((s) => (isKeywordActive ? s.scanId : null));
+  const dashboardRefreshKey = useDashboardStore((s) => s.refreshKey);
+  const globalBusy = useGlobalWorkBusy();
+
+  const showProgress = isKeywordActive && (scanStatus === "running" || scanStatus === "success" || isCancelling);
 
   const loadReports = useCallback(async (selectFirst = false) => {
     try {
@@ -174,7 +101,7 @@ export default function KeywordRadarPage() {
       setReports(list);
       if (selectFirst && list.length) setActiveReportId(list[0].id);
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Failed to load reports");
+      setReportLoadError(err instanceof Error ? err.message : "Failed to load reports");
     }
   }, []);
 
@@ -184,111 +111,44 @@ export default function KeywordRadarPage() {
         `/api/modules/${MODULE_ID}/reports/${encodeURIComponent(reportId)}`
       );
       setReportData(result.data);
-      setErrorMessage("");
+      setReportLoadError("");
     } catch (err) {
       setReportData(null);
-      setErrorMessage(err instanceof Error ? err.message : "Failed to load report");
+      setReportLoadError(err instanceof Error ? err.message : "Failed to load report");
     }
   }, []);
 
   useEffect(() => {
     loadReports(true);
-  }, [loadReports]);
+  }, [loadReports, dashboardRefreshKey]);
 
   useEffect(() => {
     if (activeReportId) loadReport(activeReportId);
   }, [activeReportId, loadReport]);
 
   useEffect(() => {
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, []);
-
-  const showError = (msg: string, scanId?: string | null) => {
-    setErrorMessage(msg);
-    setShowProgress(false);
-    if (scanId) setFailedScanId(scanId);
-  };
-
-  const pollStatus = async () => {
-    if (!scanIdRef.current) return;
-    try {
-      const data = await fetchJson<ScanStatus>(`/api/scan/${scanIdRef.current}/status`);
-      const stats = data.stats || {};
-      setUrlsDiscovered(stats.urlsDiscovered || 0);
-      setUrlsProcessed(stats.urlsProcessed || 0);
-      setCurrentBatch(stats.currentBatch || 0);
-      setMatchesFound(stats.matchesFound || 0);
-      const pct = stats.urlsDiscovered
-        ? Math.min(100, Math.round(((stats.urlsProcessed || 0) / stats.urlsDiscovered) * 100))
-        : 0;
-      setProgressPct(pct);
-      setStatusText(data.status);
-
-      if (data.status === "completed") {
-        if (pollRef.current) clearInterval(pollRef.current);
-        setScanning(false);
-        await loadReports(true);
-      } else if (data.status === "failed") {
-        if (pollRef.current) clearInterval(pollRef.current);
-        setScanning(false);
-        showError(data.error || "Scan failed", scanIdRef.current);
-      }
-    } catch (err) {
-      if (pollRef.current) clearInterval(pollRef.current);
-      setScanning(false);
-      showError(err instanceof Error ? err.message : "Scan failed", scanIdRef.current);
+    if (scanModuleId === MODULE_ID && scanStatus === "success") {
+      void (async () => {
+        await loadReports(false);
+        if (scanId) setActiveReportId(scanId);
+        else await loadReports(true);
+      })();
     }
-  };
+  }, [scanModuleId, scanStatus, scanId, loadReports, dashboardRefreshKey]);
 
   const startScan = async () => {
-    const trimmedUrl = url.trim();
-    const keywords = keywordsText
-      .split("\n")
-      .map((k) => k.trim())
-      .filter(Boolean);
-
-    if (!trimmedUrl) return showError("Please enter a website URL");
-    if (!keywords.length) return showError("Please enter at least one keyword");
-
-    setErrorMessage("");
-    setFailedScanId(null);
-    setShowProgress(true);
-    setScanning(true);
-    setUrlsDiscovered(0);
-    setUrlsProcessed(0);
-    setCurrentBatch(0);
-    setMatchesFound(0);
-    setProgressPct(0);
-    setStatusText("Initializing...");
-
-    if (pollRef.current) clearInterval(pollRef.current);
-
-    try {
-      const data = await fetchJson<{ scanId: string }>("/api/scan/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: trimmedUrl, keywords }),
-      });
-      scanIdRef.current = data.scanId;
-      pollRef.current = setInterval(pollStatus, 2000);
-    } catch (err) {
-      setScanning(false);
-      setShowProgress(false);
-      showError(err instanceof Error ? err.message : "Failed to start scan");
+    const { keywords, error } = validateKeywords(keywordsText);
+    if (error) {
+      toast.error(error);
+      return;
     }
+    await startKeywordScan(url, keywords);
   };
 
   const clearForm = () => {
-    if (pollRef.current) clearInterval(pollRef.current);
-    scanIdRef.current = null;
-    setFailedScanId(null);
+    if (!scanning) resetScan();
     setUrl("");
     setKeywordsText("");
-    setShowProgress(false);
-    setErrorMessage("");
-    setScanning(false);
   };
 
   return (
@@ -306,7 +166,8 @@ export default function KeywordRadarPage() {
                 placeholder="https://example.com"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                disabled={scanning}
+                disabled={globalBusy}
+                maxLength={MAX_URL_LENGTH}
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -317,14 +178,35 @@ export default function KeywordRadarPage() {
                 placeholder={"keyword1\nkeyword2"}
                 value={keywordsText}
                 onChange={(e) => setKeywordsText(e.target.value)}
-                disabled={scanning}
+                disabled={globalBusy}
               />
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={startScan} disabled={scanning}>
-                {scanning ? "Scanning…" : "▶ Start Scan"}
-              </Button>
-              <Button variant="secondary" onClick={clearForm} disabled={scanning}>
+            <div className="run-test-actions flex flex-wrap gap-3">
+              <RunModuleButton
+                kind="keyword-scan"
+                label="Start Scan"
+                loadingLabel="Scanning…"
+                loading={scanning && !isCancelling}
+                disabled={isCancelling}
+                onClick={startScan}
+              />
+              {scanning ? (
+                <Button
+                  variant="cancel"
+                  className="h-11 min-w-[120px] rounded-lg px-4"
+                  loading={isCancelling}
+                  disabled={isCancelling}
+                  onClick={cancelScan}
+                >
+                  {isCancelling ? "Cancelling…" : "Stop Scan"}
+                </Button>
+              ) : null}
+              <Button
+                variant="secondary"
+                className="h-11 min-w-[100px] rounded-lg px-4"
+                onClick={clearForm}
+                disabled={globalBusy}
+              >
                 Clear
               </Button>
             </div>
@@ -370,6 +252,12 @@ export default function KeywordRadarPage() {
           </Card>
         ) : null}
 
+        {reportLoadError ? (
+          <Card className="border-destructive/40 bg-destructive/5">
+            <CardContent className="p-4 text-sm text-destructive">{reportLoadError}</CardContent>
+          </Card>
+        ) : null}
+
         {errorMessage ? (
           <Card className="border-destructive/40 bg-destructive/5">
             <CardContent className="flex flex-col gap-3 p-4">
@@ -406,7 +294,7 @@ export default function KeywordRadarPage() {
                     <span className="block break-all">{r.title || r.id}</span>
                     {r.generatedAt ? (
                       <span className="mt-0.5 block text-[0.7rem] text-muted-foreground">
-                        {new Date(r.generatedAt).toLocaleString()}
+                        {formatDateTime(r.generatedAt)}
                       </span>
                     ) : null}
                   </button>
@@ -418,12 +306,31 @@ export default function KeywordRadarPage() {
           </Card>
 
           <Card>
-            <CardContent className="p-4">
-              {reportData ? (
-                <ReportViewer data={reportData} />
+            <CardHeader>
+              <CardTitle>Report</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              {activeReportId && reportData ? (
+                <RadarReportPanel
+                  moduleId={MODULE_ID}
+                  reportId={activeReportId}
+                  hasData={Boolean((reportData.results?.length || 0) + (reportData.matches?.length || 0))}
+                  onExportCsv={() => {
+                    const ok = exportKeywordCsv(reportData.results || [], reportData.matches || []);
+                    if (!ok) toast.error("No data to export");
+                    else toast.success("CSV downloaded");
+                  }}
+                  onCopyLinks={async () => {
+                    const links = collectKeywordLinks(reportData.results || [], reportData.matches || []);
+                    if (!links.length) throw new Error("No links");
+                    await copyTextToClipboard(links.join("\n"));
+                  }}
+                />
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  {reports.length ? "Select a report to view results." : "No reports found for this module."}
+                  {reports.length
+                    ? "Select a report to view the HTML report."
+                    : "No reports found. Run a scan to generate one."}
                 </p>
               )}
             </CardContent>

@@ -6,14 +6,16 @@ import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { RunModuleButton } from "@/components/execution/run-module-button";
 import { ViewLogButton } from "@/components/execution/view-log-button";
-import { ViewReportButton } from "@/components/execution/view-report-button";
+import { StatusWithReport } from "@/components/execution/status-with-report";
+import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
 import { useJobRunner } from "@/hooks/use-job-runner";
 import type { Job } from "@/lib/api";
 import { fallbackSeoSummary, loadSeoTestSummary, type SeoTestSummary } from "@/lib/seo-testing-summary";
 import { canViewLogs } from "@/lib/logs";
-import { canViewReport } from "@/lib/report";
-import { normalizeUrl, validateUrl } from "@/lib/url-validation";
+
+import { MAX_URL_LENGTH, normalizeUrl, validateUrl } from "@/lib/url-validation";
 import { toast } from "sonner";
 
 type Mode = "single" | "full";
@@ -47,8 +49,9 @@ export function SeoTestingWorkspace({
   historyJob,
   onHistoryJobClear,
 }: Props) {
-  const [url, setUrl] = useState("https://example.com");
+  const [url, setUrl] = useState("");
   const [summary, setSummary] = useState<SeoTestSummary | null>(null);
+  const globalBusy = useGlobalWorkBusy();
 
   const runner = useJobRunner({
     moduleId: MODULE_ID,
@@ -112,7 +115,6 @@ export function SeoTestingWorkspace({
         ? `${runner.progress}%`
         : "—";
 
-  const showViewReport = canViewReport(activeJob) && !!activeJob?.id;
   const showViewLog = canViewLogs(displayStatus) && !!activeJob?.id;
 
   return (
@@ -129,19 +131,20 @@ export function SeoTestingWorkspace({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://example.com"
-          disabled={runner.running || runner.isCancelling}
+          disabled={globalBusy}
+          maxLength={MAX_URL_LENGTH}
           className="mb-0 h-11 w-full rounded-lg text-sm"
         />
 
         <div className="run-test-actions mt-6 flex flex-wrap gap-3">
-          <Button
-            className="run-test-btn h-11 min-w-[140px] flex-1 rounded-lg px-4 sm:flex-none"
+          <RunModuleButton
+            kind="seo-test"
+            label="Run SEO Test"
+            loadingLabel="Running…"
             loading={runner.running && !runner.isCancelling}
-            disabled={runner.running || runner.isCancelling}
+            disabled={runner.isCancelling}
             onClick={handleRun}
-          >
-            {runner.running ? "Running…" : "Run SEO Test"}
-          </Button>
+          />
           {(runner.running || runner.isCancelling) && (
             <Button
               variant="cancel"
@@ -172,6 +175,17 @@ export function SeoTestingWorkspace({
           {runner.message && (
             <p className="mt-3 break-words text-sm text-muted-foreground">{runner.message}</p>
           )}
+          {showViewLog && activeJob?.id && (
+            <div className="mt-4">
+              <ViewLogButton
+                kind="job"
+                moduleId={MODULE_ID}
+                jobId={activeJob.id}
+                size="sm"
+                className="h-10 rounded-lg"
+              />
+            </div>
+          )}
         </Card>
       )}
 
@@ -179,11 +193,14 @@ export function SeoTestingWorkspace({
         <Card className={`${UI_CHECK_CARD} min-h-0`}>
           <div className="mb-4 flex items-center justify-between gap-3">
             <h3 className="text-lg font-bold leading-tight">Results Summary</h3>
-            {displayStatus && (
-              <Badge variant={statusBadgeVariant(displayStatus)} className="shrink-0 uppercase">
-                {displayStatus}
-              </Badge>
-            )}
+            {displayStatus ? (
+              <StatusWithReport
+                status={displayStatus}
+                moduleId={MODULE_ID}
+                jobId={activeJob.id}
+                reportAvailable={activeJob.reportAvailable}
+              />
+            ) : null}
           </div>
 
           <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -194,7 +211,7 @@ export function SeoTestingWorkspace({
               highlight={summary.criticalIssues > 0}
             />
             <StatCard
-              value={summary.averageScore > 0 ? summary.averageScore : "—"}
+              value={summary.averageScore > 0 ? Math.round(summary.averageScore) : "—"}
               label="Avg SEO Score"
             />
           </div>
@@ -211,13 +228,15 @@ export function SeoTestingWorkspace({
           )}
 
           <div className="flex flex-wrap gap-3">
-            {showViewReport && (
-              <ViewReportButton moduleId={MODULE_ID} jobId={activeJob.id} className="h-11 rounded-lg" />
-            )}
             {showViewLog && (
               <ViewLogButton kind="job" moduleId={MODULE_ID} jobId={activeJob.id} className="h-11 rounded-lg" />
             )}
-            <Button variant="secondary" className="h-11 rounded-lg px-4" onClick={handleRun}>
+            <Button
+              variant="secondary"
+              className="h-11 rounded-lg px-4"
+              disabled={globalBusy}
+              onClick={handleRun}
+            >
               Re-run Test
             </Button>
           </div>

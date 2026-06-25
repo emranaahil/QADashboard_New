@@ -1,4 +1,5 @@
 const path = require('path');
+const { loadRuntimeDevices } = require('../../shared/deviceRuntimeConfig');
 
 const projectRoot = path.resolve(__dirname, '..');
 const jobDir = process.env.QA_JOB_DIR ? path.resolve(process.env.QA_JOB_DIR) : null;
@@ -38,17 +39,11 @@ module.exports = {
     ]
   },
   browserRestartEvery: Number(process.env.QA_BROWSER_RESTART_EVERY || 50),
-  devices: (() => {
-    if (process.env.QA_DEVICES_JSON) {
-      try {
-        const parsed = JSON.parse(process.env.QA_DEVICES_JSON);
-        if (Array.isArray(parsed) && parsed.length) return parsed;
-      } catch { /* fall through to defaults */ }
-    }
-    return [
+  get devices() {
+    return loadRuntimeDevices([
       { label: 'Desktop', width: 1440, height: 900 }
-    ];
-  })()
+    ]);
+  }
 };
 
 

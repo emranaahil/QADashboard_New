@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
+import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
 import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import type { Job } from "@/lib/api";
@@ -50,6 +51,8 @@ export function TestModuleShell({
   showExecution = false,
   isCancelling = false,
 }: TestModuleShellProps) {
+  const globalBusy = useGlobalWorkBusy();
+  const formLocked = globalBusy || running || isCancelling;
   const showViewReport = canViewReport(job) && !!moduleId && !!job?.id;
   const showViewLog = canViewLogs(status) && !!moduleId && !!job?.id;
   const showRerun =
@@ -72,11 +75,11 @@ export function TestModuleShell({
               value={url}
               onChange={(e) => onUrlChange(e.target.value)}
               placeholder="https://example.com"
-              disabled={running || isCancelling}
+              disabled={formLocked}
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button loading={running && !isCancelling} disabled={running || isCancelling} onClick={onRun}>
+            <Button loading={running && !isCancelling} disabled={formLocked} onClick={onRun}>
               {running ? "Running…" : runLabel}
             </Button>
             {(running || isCancelling) && (
@@ -87,7 +90,7 @@ export function TestModuleShell({
             {showViewReport && <ViewReportButton moduleId={moduleId!} jobId={job!.id} />}
             {showViewLog && <ViewLogButton kind="job" moduleId={moduleId!} jobId={job!.id} />}
             {showRerun && (
-              <Button variant="secondary" onClick={onRun}>
+              <Button variant="secondary" disabled={globalBusy} onClick={onRun}>
                 Re-run Test
               </Button>
             )}

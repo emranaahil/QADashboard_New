@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import { toast } from "sonner";
 import { api, type Job } from "@/lib/api";
+import { startVisibleInterval } from "@/lib/polling";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { normalizeUrl, validateUrl } from "@/lib/url-validation";
+import { useScanStore } from "@/store/scan-store";
 
 export type ExecStatus = "idle" | "running" | "success" | "failed" | "cancelled";
 export type ExecSource = "quick_actions" | "ui_test" | "seo_test" | null;
@@ -32,12 +34,14 @@ type ExecutionStore = {
   successMessage: string;
   startJob: (params: StartJobParams) => Promise<void>;
   cancelJob: () => Promise<void>;
+  resumeActive: () => Promise<void>;
   setLogsOpen: (open: boolean) => void;
   reset: () => void;
 };
 
 let unsubRef: (() => void) | null = null;
-let pollRef: ReturnType<typeof setInterval> | null = null;
+let stopPollRef: (() => void) | null = null;
+const JOB_POLL_MS = 5000;
 
 const IDLE_STATE = {
   status: "idle" as ExecStatus,
@@ -59,10 +63,8 @@ const IDLE_STATE = {
 function stopWatching() {
   unsubRef?.();
   unsubRef = null;
-  if (pollRef) {
-    clearInterval(pollRef);
-    pollRef = null;
-  }
+  stopPollRef?.();
+  stopPollRef = null;
 }
 
 function mapJobStatus(status: string): ExecStatus {
@@ -118,18 +120,38 @@ function watchJob(moduleId: string, jobId: string, get: () => ExecutionStore, se
     }
   };
 
-  unsubRef = api.subscribeJobEvents(moduleId, jobId, applyJob, () => {
-    pollRef = setInterval(poll, 2000);
-    poll();
-  });
-  pollRef = setInterval(poll, 2000);
-  poll();
+  unsubRef = api.subscribeJobEvents(moduleId, jobId, applyJob);
+
+  stopPollRef = startVisibleInterval(poll, JOB_POLL_MS);
+  void poll();
 }
 
 export const useExecutionStore = create<ExecutionStore>((set, get) => ({
   ...IDLE_STATE,
 
   setLogsOpen: (open) => set({ logsOpen: open }),
+
+  resumeActive: async () => {
+    const { status } = get();
+    if (status === "running") return;
+
+    try {
+      const { job } = await api.getActiveJob();
+      if (!job || !["pending", "running"].includes(job.status)) return;
+
+      set({
+        ...extractJobFields(job),
+        status: "running",
+        source: null,
+        logsOpen: true,
+        isCancelling: false,
+        successMessage: "Test completed successfully",
+      });
+      watchJob(job.moduleId, job.id, get, set);
+    } catch {
+      /* ignore resume errors */
+    }
+  },
 
   reset: () => {
     stopWatching();
@@ -147,6 +169,11 @@ export const useExecutionStore = create<ExecutionStore>((set, get) => ({
     const { status, isCancelling } = get();
     if (status === "running" || isCancelling) {
       toast.error("An execution is already in progress");
+      return;
+    }
+    const scan = useScanStore.getState();
+    if (scan.status === "running" || scan.isCancelling) {
+      toast.error("A keyword or link scan is already in progress");
       return;
     }
 

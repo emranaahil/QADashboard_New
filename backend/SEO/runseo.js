@@ -3,11 +3,8 @@
 // Production CLI entry for SEO auditing.
 // Usage: node runseo.js https://example.com
 
-const fs = require('fs');
-const path = require('path');
-
 const { runSeoAudit } = require('./uiseocheck');
-
+const { makeRunId, writeRunArtifacts } = require('./seoReportStorage');
 
 function log(...args) {
   process.stdout.write(args.join(' ') + '\n');
@@ -35,11 +32,11 @@ async function main() {
 
   console.time('SEO Audit');
   const modeArg = process.argv[3];
-  let mode = "full";
-  if (modeArg === "single") mode = "single";
-  if (modeArg === "full" || !modeArg) mode = "full";
+  let mode = 'full';
+  if (modeArg === 'single') mode = 'single';
+  if (modeArg === 'full' || !modeArg) mode = 'full';
 
-  console.log("🧪 CLI MODE:", mode);
+  console.log('🧪 CLI MODE:', mode);
 
   const report = await runSeoAudit({ mainUrl, mode });
   console.timeEnd('SEO Audit');
@@ -57,28 +54,17 @@ async function main() {
     summary: report.summary
   };
 
-  const reportsDir = path.join(__dirname, 'reports');
-  const seoReportPath = path.join(reportsDir, 'seoReport.json');
-  const reportHtmlPath = path.join(reportsDir, 'reportseo.html');
-
-  fs.mkdirSync(reportsDir, { recursive: true });
-  fs.writeFileSync(seoReportPath, JSON.stringify(seoReport, null, 2), 'utf8');
   const html = report.htmlReport;
   if (!html || typeof html !== 'string') {
     throw new Error('uiseocheck.js did not return htmlReport as a string');
   }
-  fs.writeFileSync(reportHtmlPath, html, 'utf8');
 
+  const runId = makeRunId();
+  const saved = await writeRunArtifacts(runId, { seoReport, html });
+  log('📁 Reports saved to:', saved.folder);
 }
 
 main().catch((e) => {
   console.error('❌ SEO audit failed:', e?.stack || e?.message || e);
   process.exit(1);
 });
-
-
-
-
-
-
-

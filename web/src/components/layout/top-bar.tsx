@@ -1,11 +1,13 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import { ApiDevStatus } from "@/components/layout/api-dev-status";
+import { AuthorTopBarCredit } from "@/components/layout/author-top-bar-credit";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useExecutionStore } from "@/store/execution-store";
+import { useScanStore } from "@/store/scan-store";
 
 const statusLabels = {
   idle: "Idle",
@@ -24,13 +26,36 @@ export function TopBar({
   subtitle?: string;
   onMenuClick?: () => void;
 }) {
-  const status = useExecutionStore((s) => s.status);
-  const progress = useExecutionStore((s) => s.progress);
-  const moduleId = useExecutionStore((s) => s.moduleId);
-  const isCancelling = useExecutionStore((s) => s.isCancelling);
+  const jobStatus = useExecutionStore((s) => s.status);
+  const jobProgress = useExecutionStore((s) => s.progress);
+  const jobCancelling = useExecutionStore((s) => s.isCancelling);
+  const jobModuleId = useExecutionStore((s) => s.moduleId);
+
+  const scanStatus = useScanStore((s) => s.status);
+  const scanProgress = useScanStore((s) => s.progress);
+  const scanCancelling = useScanStore((s) => s.isCancelling);
+  const scanModuleId = useScanStore((s) => s.moduleId);
+
+  const jobRunning = jobStatus === "running" || jobCancelling;
+  const scanRunning = scanStatus === "running" || scanCancelling;
+
+  const activeKind = jobRunning ? "job" : scanRunning ? "scan" : null;
+  const status = activeKind === "job" ? jobStatus : activeKind === "scan" ? scanStatus : "idle";
+  const progress = activeKind === "job" ? jobProgress : scanProgress;
+  const isCancelling = activeKind === "job" ? jobCancelling : scanCancelling;
+  const moduleLabel =
+    activeKind === "job"
+      ? jobModuleId || "test"
+      : activeKind === "scan"
+        ? scanModuleId === "keyword-check"
+          ? "keyword"
+          : scanModuleId === "error-check"
+            ? "link"
+            : "scan"
+        : null;
 
   return (
-    <header className="glass-header mx-5 mt-5 flex shrink-0 flex-wrap items-center justify-between gap-4 rounded-[18px] border border-border px-5 py-4">
+    <header className="glass-header mx-5 mt-5 flex shrink-0 flex-wrap items-center justify-between gap-4 overflow-visible rounded-[18px] border border-border px-5 py-4">
       <div className="flex min-w-0 items-center gap-3">
         <Button
           type="button"
@@ -52,13 +77,13 @@ export function TopBar({
 
       <div className="flex flex-wrap items-center gap-3">
         <GlobalSearch />
+        <ApiDevStatus />
+        <AuthorTopBarCredit />
 
         <div className="flex items-center gap-2">
-          {(status === "running" || isCancelling) && (
-            <div className="hidden w-28 md:block">
-              <Progress value={progress} className="h-2" />
-            </div>
-          )}
+          {moduleLabel ? (
+            <span className="hidden text-xs text-muted-foreground sm:inline">{moduleLabel}</span>
+          ) : null}
           <Badge
             variant={
               status === "running" || isCancelling
@@ -71,10 +96,11 @@ export function TopBar({
             }
             className="rounded-full px-2.5 py-1.5"
           >
-            {isCancelling ? "Cancelling" : statusLabels[status]}
-            {(status === "running" || isCancelling) && moduleId && (
-              <span className="ml-1 font-normal opacity-70">· {progress}%</span>
-            )}
+            {isCancelling
+              ? "Cancelling"
+              : status === "running"
+                ? `${progress}%`
+                : statusLabels[status as keyof typeof statusLabels] || "Idle"}
           </Badge>
         </div>
       </div>

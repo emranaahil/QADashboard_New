@@ -26,6 +26,7 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const rawWebAppUrl = process.env.WEB_APP_URL;
 const WEB_APP_URL = rawWebAppUrl ? rawWebAppUrl.replace(/\/$/, '') : 'http://localhost:3001';
 let server = null;
+const SERVER_STARTED_AT = new Date().toISOString();
 
 ensureStorageDirs();
 
@@ -37,9 +38,20 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false
 }));
 app.use(cors(buildCorsOptions({ apiOnly: IS_PRODUCTION, webAppUrl: WEB_APP_URL })));
-app.use(compression());
+app.use(compression({
+  filter: (req, res) => {
+    if (req.path?.endsWith('/events')) return false;
+    if (res.getHeader('Content-Type') === 'text/event-stream') return false;
+    return compression.filter(req, res);
+  }
+}));
 app.use(morgan('combined'));
-app.use('/api', createRateLimiter({ windowMs: 60_000, max: 120 }));
+const RATE_LIMIT_MAX = Number(process.env.API_RATE_LIMIT_MAX || (IS_PRODUCTION ? 120 : 600));
+app.use('/api', createRateLimiter({
+  windowMs: 60_000,
+  max: RATE_LIMIT_MAX,
+  skip: (req) => req.path === '/health' || req.path.endsWith('/events')
+}));
 app.use(express.json({
     limit: '10mb',
     verify: (req, _res, buf) => { req.rawBody = buf; }
@@ -64,8 +76,11 @@ app.get('/api/health', (req, res) => {
     res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
+        startedAt: SERVER_STARTED_AT,
         uptime: process.uptime(),
-        ui: IS_PRODUCTION ? 'next' : WEB_APP_URL
+        ui: IS_PRODUCTION ? 'next' : WEB_APP_URL,
+        api: `http://localhost:${PORT}/api`,
+        mode: IS_PRODUCTION ? 'production' : 'development'
     });
 });
 
@@ -120,8 +135,29 @@ async function runStartupCleanup() {
         errorCheckService.resetProgress();
     }
 
+    const scanMigration = await stateService.migrateLegacyScanFilenames();
+    if (scanMigration.renamed > 0) {
+        console.log(`Keyword scan filename migration: renamed ${scanMigration.renamed} legacy file(s)`);
+    }
+
     const staleScans = await stateService.cleanupStaleScansOnStartup();
     const jobResult = await jobQueue.cleanupOnStartup();
+
+    let seoMigration = null;
+    try {
+        const { migrateSeoReportLayoutOnce } = require('./SEO/seoReportStorage');
+        seoMigration = await migrateSeoReportLayoutOnce();
+        if (seoMigration && !seoMigration.skipped) {
+            console.log(
+                'SEO report layout migration: cleared legacy reports — ' +
+                `${seoMigration.removed.flatFiles} flat file(s), ` +
+                `${seoMigration.removed.jobArtifacts} job artifact(s), ` +
+                `${seoMigration.removed.jobsUpdated} job record(s) updated`
+            );
+        }
+    } catch (err) {
+        console.error('SEO report layout migration failed:', err.message);
+    }
 
     if (staleScans > 0 || jobResult.cancelled > 0 || jobResult.recovered > 0) {
         console.log(
@@ -164,9 +200,11 @@ server = app.listen(PORT, '0.0.0.0', async () => {
     } catch (err) {
         console.error('Startup cleanup failed:', err.message);
     }
-    console.log(`API server running on port ${PORT}`);
+    console.log(`API server running on port ${PORT} (started ${SERVER_STARTED_AT})`);
     if (!IS_PRODUCTION) {
         console.log(`UI dashboard: ${WEB_APP_URL}`);
+        console.log('Dev tip: use http://localhost:3001 — production port will not show latest UI changes.');
+        console.log('Restart anytime: npm run dev:restart');
     }
     console.log(`API base: http://localhost:${PORT}/api`);
 });

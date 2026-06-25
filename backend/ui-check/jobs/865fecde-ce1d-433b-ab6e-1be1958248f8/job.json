@@ -1,0 +1,71 @@
+{
+  "id": "865fecde-ce1d-433b-ab6e-1be1958248f8",
+  "moduleId": "ui-check",
+  "testType": "single-page",
+  "modelId": "google.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://google.com",
+  "options": {
+    "devices": [
+      "iphone13_landscape",
+      "iphone15_plus_portrait",
+      "iphone15_plus_landscape",
+      "s21_portrait",
+      "s21_landscape",
+      "tablet_portrait",
+      "tablet_landscape"
+    ],
+    "browser": "chrome",
+    "_resolvedDevices": [
+      {
+        "label": "iPhone13_Landscape",
+        "width": 844,
+        "height": 390
+      },
+      {
+        "label": "iPhone15_Plus_Portrait",
+        "width": 430,
+        "height": 932
+      },
+      {
+        "label": "iPhone15_Plus_Landscape",
+        "width": 932,
+        "height": 430
+      },
+      {
+        "label": "S21_Portrait",
+        "width": 360,
+        "height": 800
+      },
+      {
+        "label": "S21_Landscape",
+        "width": 800,
+        "height": 360
+      },
+      {
+        "label": "Tablet_Portrait",
+        "width": 768,
+        "height": 1024
+      },
+      {
+        "label": "Tablet_Landscape",
+        "width": 1024,
+        "height": 768
+      }
+    ]
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T07:31:58.154Z",
+  "startedAt": "2026-06-25T07:31:58.185Z",
+  "completedAt": "2026-06-25T07:34:59.320Z",
+  "durationMs": 181135,
+  "reportPath": "jobs/865fecde-ce1d-433b-ab6e-1be1958248f8/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": ""
+}

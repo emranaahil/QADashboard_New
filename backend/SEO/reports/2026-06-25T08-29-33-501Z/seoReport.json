@@ -1,0 +1,45 @@
+{
+  "mainUrl": "https://wholesalehealthclub.com",
+  "scanDate": "2026-06-25T08:29:33.501Z",
+  "sitemapUsed": null,
+  "urlsAttempted": 1,
+  "concurrency": 3,
+  "timeoutMs": 15000,
+  "pages": [
+    {
+      "url": "https://wholesalehealthclub.com/",
+      "title": "Wholesale Health Club",
+      "description": "Wholesalehealthclub",
+      "h1Count": 1,
+      "h2Count": 8,
+      "h3Count": 0,
+      "hierarchyStatus": "NO (Broken heading hierarchy: h2 -> h2 (expected +1 step))",
+      "counts": {
+        "hrefHash": 0,
+        "jsVoid": 0,
+        "missingAlt": 17
+      },
+      "issues": {
+        "critical": [
+          "Images without ALT: Found 17 image(s) without alt (visible).",
+          "Broken heading hierarchy: Broken heading hierarchy: h2 -> h2 (expected +1 step)"
+        ],
+        "minor": [
+          "Missing canonical: No canonical link tag found in source."
+        ],
+        "hidden": []
+      },
+      "seoScore": 77,
+      "_debug": {
+        "durationMs": 6063
+      }
+    }
+  ],
+  "summary": {
+    "totalPages": 1,
+    "totalCritical": 2,
+    "totalMinor": 1,
+    "totalHidden": 0,
+    "averageScore": 77
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
-import { useExecutionStore, type ExecSource } from "@/store/execution-store";
+import { useCallback, useEffect, useRef } from "react";
+import { useExecutionStore, type ExecSource, type ExecStatus } from "@/store/execution-store";
 
 type UseJobRunnerOptions = {
   moduleId: string;
@@ -31,12 +31,25 @@ export function useJobRunner({
   const running = isActive && (status === "running" || isCancelling);
   const globalRunning = status === "running" || isCancelling;
 
+  const prevStatusRef = useRef<ExecStatus>("idle");
+
+  useEffect(() => {
+    const prev = prevStatusRef.current;
+    prevStatusRef.current = status;
+    if (
+      isActive &&
+      prev === "running" &&
+      (status === "success" || status === "failed" || status === "cancelled")
+    ) {
+      onComplete?.();
+    }
+  }, [status, isActive, onComplete]);
+
   const start = useCallback(
     async (url: string, options?: Record<string, unknown>) => {
       await startJob({ moduleId, url, options, source, successMessage });
-      onComplete?.();
     },
-    [moduleId, source, successMessage, startJob, onComplete]
+    [moduleId, source, successMessage, startJob]
   );
 
   const cancel = useCallback(async () => {

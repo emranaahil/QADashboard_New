@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA Report — 2026-06-25</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <style>
+    /* ── CSS Variables ──────────────────────────────────────────────────── */
+    :root {
+      --bg: #0b1224;
+      --card: #111c36;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --border: rgba(255,255,255,.08);
+      --good: #22c55e;
+      --warn: #ffa502;
+      --bad: #ef4444;
+      --radius: 16px;
+      --gap: 16px;
+    }
+
+    /* ── Reset & Base ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Arial, sans-serif; line-height: 1.5; }
+    img { max-width: 100%; height: auto; }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+
+    /* ── Layout ─────────────────────────────────────────────────────────── */
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 22px; }
+    .topbar { position: sticky; top: 0; background: rgba(11,18,36,.88); backdrop-filter: blur(10px); z-index: 50; border-bottom: 1px solid var(--border); }
+    .topbar .wrap { padding-top: 14px; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    h1 { margin: 0; font-size: 20px; letter-spacing: .2px; }
+    h2 { margin: 22px 0 10px; font-size: 16px; letter-spacing: .3px; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; }
+
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    /* ── Badge ──────────────────────────────────────────────────────────── */
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: .2px; }
+    .badge.critical, .badge-critical { background: rgba(239,68,68,.18); color: #fecaca; border: 1px solid rgba(239,68,68,.4); }
+    .badge.major, .badge-major { background: rgba(255,165,2,.18); color: #fde68a; border: 1px solid rgba(255,165,2,.4); }
+    .badge.minor, .badge-minor { background: rgba(34,197,94,.16); color: #bbf7d0; border: 1px solid rgba(34,197,94,.35); }
+
+    /* ── Executive Summary ──────────────────────────────────────────────── */
+    .exec-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-bottom: 10px; }
+    .exec-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-align: center; }
+    .exec-card .exec-label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .exec-card .exec-value { font-size: 28px; font-weight: 800; }
+    .exec-card .exec-status { font-size: 14px; margin-top: 8px; }
+    .health-score { font-size: 48px; font-weight: 900; }
+    .health-excellent { color: var(--good); }
+    .health-attention { color: var(--warn); }
+    .health-critical { color: var(--bad); }
+
+    /* ── Stats Grid ─────────────────────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--gap); margin-top: 14px; }
+    .stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .stat .v { font-size: 22px; font-weight: 800; margin-top: 6px; }
+
+    /* ── Filter Bar ─────────────────────────────────────────────────────── */
+    .filter-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 14px 0; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .filter-bar select,
+    .filter-bar input[type="text"] {
+      background: #0f1831; color: var(--text); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 12px; font-size: 13px; outline: none;
+      min-width: 140px;
+    }
+    .filter-bar select:focus, .filter-bar input[type="text"]:focus { border-color: rgba(99,102,241,.5); }
+    .filter-bar input[type="text"] { flex: 1; min-width: 200px; }
+    .btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: #0f1831; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s; }
+    .btn:hover { background: rgba(99,102,241,.25); }
+    .btn-primary { background: rgba(99,102,241,.3); border-color: rgba(99,102,241,.5); }
+    .btn-primary:hover { background: rgba(99,102,241,.5); }
+    .filter-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    /* ── Page Cards ─────────────────────────────────────────────────────── */
+    .pageGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: var(--gap); margin-top: 14px; }
+    .page-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .page-card-info { flex: 1; }
+    .page-card-name { font-weight: 900; font-size: 15px; }
+    .page-card-url { color: var(--muted); font-size: 12px; word-break: break-word; }
+    .page-card-device { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .page-card-time { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .page-card-status { text-align: right; flex-shrink: 0; }
+    .page-card-count { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .page-card-issues-title, .page-card-shots-title { margin-top: 12px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .issue-list { list-style: none; margin: 6px 0 0 0; padding: 0; }
+    .issue-item { margin: 4px 0; font-size: 13px; display: flex; align-items: flex-start; gap: 4px; }
+
+    /* ── Table ──────────────────────────────────────────────────────────── */
+    .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .table th, .table td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: top; }
+    .table th { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .3px; }
+    .table td { font-size: 13px; }
+
+    /* ── Thumbnails / Gallery ───────────────────────────────────────────── */
+    .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .thumb { width: 160px; background: #0f1831; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform .15s, border-color .15s; }
+    .thumb:hover { transform: translateY(-2px); border-color: rgba(99,102,241,.4); }
+    .thumb img { width: 100%; height: auto; display: block; }
+    .thumb .t { padding: 8px 10px; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── Empty State ────────────────────────────────────────────────────── */
+    .empty-state { color: var(--muted); font-size: 14px; padding: 16px; text-align: center; }
+
+    
+
+    /* ── Lightbox / Viewer ──────────────────────────────────────────────── */
+    .viewer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.94); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; touch-action: none; }
+    .viewer.open { display: flex; }
+    .viewerInner {
+  position: relative;
+  width: 95vw;
+  height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+}
+    .viewerInner img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+  transform-origin: center center;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+  image-rendering: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  transition: none;
+}
+    .viewer-close { position: absolute; top: 16px; right: 24px; font-size: 32px; color: #fff; cursor: pointer; z-index: 10000; background: rgba(0,0,0,.5); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+    .viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); font-size: 28px; color: #fff; cursor: pointer; background: rgba(0,0,0,.5); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; z-index: 10000; border: none; }
+    .viewer-nav.prev { left: 10px; }
+    .viewer-nav.next { right: 10px; }
+    .viewer-info { color: var(--muted); font-size: 13px; margin-top: 10px; text-align: center; }
+    .viewer-controls { position: absolute; top: 16px; left: 24px; display: flex; gap: 8px; z-index: 10000; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .pageGrid { grid-template-columns: 1fr; }
+      .exec-summary { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+      .filter-actions { margin-left: 0; }
+    }
+    @media (max-width: 520px) {
+      .wrap { padding: 12px; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Print Styles ───────────────────────────────────────────────────── */
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: #0b1224 !important;
+        color: #e5e7eb !important;
+      }
+
+      .topbar {
+  position: static !important;
+  display: block !important;
+  background: rgba(11,18,36,.88) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  width: 100% !important;
+}
+
+
+.topbar .wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: 16px !important;
+}
+
+
+.topbar h1 {
+  font-size: 20px !important;
+  white-space: nowrap !important;
+}
+
+
+.topbar .row {
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+
+.topbar .row span {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+
+.topbar .badge {
+  flex-shrink: 0 !important;
+}
+
+      .wrap {
+        max-width: 100% !important;
+        padding: 16px !important;
+      }
+
+      .filter-bar,
+      #galleryGrid,
+      .viewer,
+      .viewer-controls,
+      .viewer-nav,
+      .viewer-close,
+      #galleryDeviceFilter,
+      #galleryPageFilter,
+      .gallery-item,
+      .row select {
+        display: none !important;
+      }
+
+      .pageCard {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .exec-summary {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .stats-grid {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .card table {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      img {
+        max-width: 100% !important;
+        max-height: 90vh !important;
+        object-fit: contain !important;
+      }
+
+      .thumb {
+        width: 100% !important;
+        margin-bottom: 10px;
+      }
+
+      .thumb img {
+        max-height: 90vh !important;
+        object-fit: contain !important;
+      }
+
+      .gallery-item .t small {
+        color: #e5e7eb !important;
+      }
+
+      /* Print screenshot appendix */
+      .print-screenshot-page {
+        display: block !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        page-break-after: always;
+        break-after: page;
+        padding: 20px 0;
+        background: #0b1224 !important;
+      }
+      .print-screenshot-page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+      .print-shot-meta {
+        font-size: 14px;
+        color: #94a3b8 !important;
+        padding: 4px 0;
+      }
+      .print-shot-img-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 0;
+      }
+      .print-shot-img-wrap img {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,.12);
+      }
+    }
+
+    /* ── Print screenshot appendix (hidden on screen) ─────────────────── */
+    .print-screenshot-appendix { display: none; }
+    @media print {
+      .print-screenshot-appendix { display: block !important; }
+    }
+
+    /* ── Scrollbar ──────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TOP BAR                                                              -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="topbar">
+    <div class="wrap">
+      <h1>📋 QA Report</h1>
+      <div class="row" style="gap:14px;">
+        <span class="badge minor">Run</span>
+        <span style="color:var(--muted);font-size:13px;">2026-06-25</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="reportContent">
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- EXECUTIVE SUMMARY                                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>QA Executive Summary</h2>
+    <div class="exec-summary">
+      <div class="exec-card">
+        <div class="exec-label">Pages Tested</div>
+        <div class="exec-value">7</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-label">Passed</div>
+        <div class="exec-value health-excellent">0</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-label">Failed</div>
+        <div class="exec-value health-critical">7</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-label">Overall QA Health Score</div>
+        <div class="exec-value health-score health-critical">0%</div>
+        <div class="exec-status">🔴 Critical</div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- STATISTICS DASHBOARD                                               -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Statistics Overview</h2>
+    <div class="stats-grid">
+      <div class="card stat">
+        <div class="k">Total Pages</div>
+        <div class="v">7</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Passed</div>
+        <div class="v" style="color:var(--good);">0</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Failed</div>
+        <div class="v" style="color:var(--bad);">7</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Total Issues</div>
+        <div class="v">14</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Critical Issues</div>
+        <div class="v" style="color:var(--bad);">0</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Major Issues</div>
+        <div class="v" style="color:var(--warn);">3</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Minor Issues</div>
+        <div class="v" style="color:var(--good);">11</div>
+      </div>
+      <div class="card stat">
+        <div class="k">Screenshots Captured</div>
+        <div class="v">18</div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- FILTER BAR                                                        -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <div class="filter-bar" id="filterBar">
+      <select id="filterUrl" onchange="applyFilters()">
+        <option value="">All URLs</option>
+        <option value="https://google.com">https://google.com</option>
+      </select>
+      <select id="filterDevice" onchange="applyFilters()">
+        <option value="">All Devices</option>
+        <option value="iPhone13_Landscape">iPhone13_Landscape</option><option value="iPhone15_Plus_Portrait">iPhone15_Plus_Portrait</option><option value="iPhone15_Plus_Landscape">iPhone15_Plus_Landscape</option><option value="S21_Portrait">S21_Portrait</option><option value="S21_Landscape">S21_Landscape</option><option value="Tablet_Portrait">Tablet_Portrait</option><option value="Tablet_Landscape">Tablet_Landscape</option>
+      </select>
+      <select id="filterPriority" onchange="applyFilters()">
+        <option value="">All Priorities</option>
+        <option value="critical">Critical</option>
+        <option value="major">Major</option>
+        <option value="minor">Minor</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="🔍 Search Issues..." oninput="applyFilters()" />
+      <div class="filter-actions">
+       
+        <button class="btn" onclick="window.print()">🖨️ Print Report /📥 Download PDF </button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- PER PAGE RESULTS                                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Per Page Results <span id="pageResultsCount" style="font-size:13px;color:var(--muted);font-weight:400;">(7)</span></h2>
+    <div class="pageGrid" id="pageGrid">
+      
+      <div class="card pageCard" data-device="iPhone13_Landscape" data-url="https://google.com"
+           data-has-issues="true" data-search="iphone13_landscape https://google.com iphone13_landscape">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">iPhone13_Landscape</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>iPhone13_Landscape</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>1</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 2</li></ul>
+        <div class="page-card-shots-title">Screenshots (2)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372747011.png')">
+          <img src="screenshots/small-buttons-1782372747011.png" alt="small-buttons-1782372747011.png" loading="lazy" />
+          <div class="t">small-buttons-1782372747011.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782372747095.png')">
+          <img src="screenshots/final-1782372747095.png" alt="final-1782372747095.png" loading="lazy" />
+          <div class="t">final-1782372747095.png</div>
+        </div>
+        
+      </div>
+      </div>
+      <div class="card pageCard" data-device="iPhone15_Plus_Portrait" data-url="https://google.com"
+           data-has-issues="true" data-search="iphone15_plus_portrait https://google.com iphone15_plus_portrait">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">iPhone15_Plus_Portrait</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>iPhone15_Plus_Portrait</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>3</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Distorted Images: 1</li><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 5</li><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Layout Shift (CLS)</li></ul>
+        <div class="page-card-shots-title">Screenshots (3)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/distorted-images-1782372772785.png')">
+          <img src="screenshots/distorted-images-1782372772785.png" alt="distorted-images-1782372772785.png" loading="lazy" />
+          <div class="t">distorted-images-1782372772785.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372772824.png')">
+          <img src="screenshots/small-buttons-1782372772824.png" alt="small-buttons-1782372772824.png" loading="lazy" />
+          <div class="t">small-buttons-1782372772824.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782372772868.png')">
+          <img src="screenshots/final-1782372772868.png" alt="final-1782372772868.png" loading="lazy" />
+          <div class="t">final-1782372772868.png</div>
+        </div>
+        
+      </div>
+      </div>
+      <div class="card pageCard" data-device="iPhone15_Plus_Landscape" data-url="https://google.com"
+           data-has-issues="true" data-search="iphone15_plus_landscape https://google.com iphone15_plus_landscape">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">iPhone15_Plus_Landscape</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>iPhone15_Plus_Landscape</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>1</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 2</li></ul>
+        <div class="page-card-shots-title">Screenshots (2)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372798548.png')">
+          <img src="screenshots/small-buttons-1782372798548.png" alt="small-buttons-1782372798548.png" loading="lazy" />
+          <div class="t">small-buttons-1782372798548.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782372798625.png')">
+          <img src="screenshots/final-1782372798625.png" alt="final-1782372798625.png" loading="lazy" />
+          <div class="t">final-1782372798625.png</div>
+        </div>
+        
+      </div>
+      </div>
+      <div class="card pageCard" data-device="S21_Portrait" data-url="https://google.com"
+           data-has-issues="true" data-search="s21_portrait https://google.com s21_portrait">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">S21_Portrait</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>S21_Portrait</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>5</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Console Error</li><li class="issue-item"><span class="badge badge-major" style="margin-right:6px;font-size:10px;">MAJOR</span>Horizontal Scroll Detected</li><li class="issue-item"><span class="badge badge-major" style="margin-right:6px;font-size:10px;">MAJOR</span>Content Overflow: 14</li><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Distorted Images: 1</li><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 5</li></ul>
+        <div class="page-card-shots-title">Screenshots (5)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/horizontal-scroll-1782372823817.png')">
+          <img src="screenshots/horizontal-scroll-1782372823817.png" alt="horizontal-scroll-1782372823817.png" loading="lazy" />
+          <div class="t">horizontal-scroll-1782372823817.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/overflow-1782372823872.png')">
+          <img src="screenshots/overflow-1782372823872.png" alt="overflow-1782372823872.png" loading="lazy" />
+          <div class="t">overflow-1782372823872.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/distorted-images-1782372823929.png')">
+          <img src="screenshots/distorted-images-1782372823929.png" alt="distorted-images-1782372823929.png" loading="lazy" />
+          <div class="t">distorted-images-1782372823929.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372823987.png')">
+          <img src="screenshots/small-buttons-1782372823987.png" alt="small-buttons-1782372823987.png" loading="lazy" />
+          <div class="t">small-buttons-1782372823987.png</div>
+        </div>
+        <div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;">+1 more</div>
+      </div>
+      </div>
+      <div class="card pageCard" data-device="S21_Landscape" data-url="https://google.com"
+           data-has-issues="true" data-search="s21_landscape https://google.com s21_landscape">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">S21_Landscape</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>S21_Landscape</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>1</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 2</li></ul>
+        <div class="page-card-shots-title">Screenshots (2)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372849071.png')">
+          <img src="screenshots/small-buttons-1782372849071.png" alt="small-buttons-1782372849071.png" loading="lazy" />
+          <div class="t">small-buttons-1782372849071.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782372849155.png')">
+          <img src="screenshots/final-1782372849155.png" alt="final-1782372849155.png" loading="lazy" />
+          <div class="t">final-1782372849155.png</div>
+        </div>
+        
+      </div>
+      </div>
+      <div class="card pageCard" data-device="Tablet_Portrait" data-url="https://google.com"
+           data-has-issues="true" data-search="tablet_portrait https://google.com tablet_portrait">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">Tablet_Portrait</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>Tablet_Portrait</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>2</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 2</li><li class="issue-item"><span class="badge badge-major" style="margin-right:6px;font-size:10px;">MAJOR</span>Layout Shift (CLS)</li></ul>
+        <div class="page-card-shots-title">Screenshots (2)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372874092.png')">
+          <img src="screenshots/small-buttons-1782372874092.png" alt="small-buttons-1782372874092.png" loading="lazy" />
+          <div class="t">small-buttons-1782372874092.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782372874158.png')">
+          <img src="screenshots/final-1782372874158.png" alt="final-1782372874158.png" loading="lazy" />
+          <div class="t">final-1782372874158.png</div>
+        </div>
+        
+      </div>
+      </div>
+      <div class="card pageCard" data-device="Tablet_Landscape" data-url="https://google.com"
+           data-has-issues="true" data-search="tablet_landscape https://google.com tablet_landscape">
+        <div class="page-card-header">
+          <div class="page-card-info">
+            <div class="page-card-name">Tablet_Landscape</div>
+            <div class="page-card-url">https://google.com</div>
+            <div class="page-card-device">Device: <b>Tablet_Landscape</b></div>
+           
+          </div>
+          <div class="page-card-status">
+            <span class="badge badge-critical">FAIL</span>
+            <div class="page-card-count">Issues: <b>1</b></div>
+          </div>
+        </div>
+        <div class="page-card-issues-title">Issue List</div>
+        <ul class="issue-list"><li class="issue-item"><span class="badge badge-minor" style="margin-right:6px;font-size:10px;">MINOR</span>Small Touch Targets: 2</li></ul>
+        <div class="page-card-shots-title">Screenshots (2)</div>
+        <div class="thumbs">
+        <div class="thumb" onclick="openViewer('screenshots/small-buttons-1782372899075.png')">
+          <img src="screenshots/small-buttons-1782372899075.png" alt="small-buttons-1782372899075.png" loading="lazy" />
+          <div class="t">small-buttons-1782372899075.png</div>
+        </div>
+        <div class="thumb" onclick="openViewer('screenshots/final-1782372899148.png')">
+          <img src="screenshots/final-1782372899148.png" alt="final-1782372899148.png" loading="lazy" />
+          <div class="t">final-1782372899148.png</div>
+        </div>
+        
+      </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- ISSUE TABLE                                                       -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Issue Table <span id="issueTableCount" style="font-size:13px;color:var(--muted);font-weight:400;">(14)</span></h2>
+    <div class="card" style="padding:16px;overflow-x:auto;">
+      
+        <table class="table" id="issueTable">
+          <thead>
+            <tr>
+              <th style="width:20%;">Page URL</th>
+              <th style="width:38%;">Issue</th>
+              <th style="width:12%;">Severity</th>
+              <th style="width:18%;">Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+        <tr data-device="iPhone13_Landscape" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 2 iphone13_landscape https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 2</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="iPhone15_Plus_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="distorted images — 1 iphone15_plus_portrait https://google.com image distortion">
+          <td>https://google.com</td>
+          <td>Distorted Images: 1</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Image Distortion</td>
+        </tr>
+        <tr data-device="iPhone15_Plus_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 5 iphone15_plus_portrait https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 5</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="iPhone15_Plus_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="layout shift (cls) — cls score: 0.1994 iphone15_plus_portrait https://google.com layout shift">
+          <td>https://google.com</td>
+          <td>Layout Shift (CLS)</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Layout Shift</td>
+        </tr>
+        <tr data-device="iPhone15_Plus_Landscape" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 2 iphone15_plus_landscape https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 2</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="S21_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="console error — failed to load resource: the server responded with a status of 503 () s21_portrait https://google.com runtime">
+          <td>https://google.com</td>
+          <td>Console Error</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Runtime</td>
+        </tr>
+        <tr data-device="S21_Portrait" data-url="https://google.com"
+            data-severity="major" data-search="horizontal scroll detected — page content causes horizontal scrolling s21_portrait https://google.com overflow">
+          <td>https://google.com</td>
+          <td>Horizontal Scroll Detected</td>
+          <td><span class="badge badge-major">MAJOR</span></td>
+          <td>Overflow</td>
+        </tr>
+        <tr data-device="S21_Portrait" data-url="https://google.com"
+            data-severity="major" data-search="content overflow — 14 s21_portrait https://google.com overflow">
+          <td>https://google.com</td>
+          <td>Content Overflow: 14</td>
+          <td><span class="badge badge-major">MAJOR</span></td>
+          <td>Overflow</td>
+        </tr>
+        <tr data-device="S21_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="distorted images — 1 s21_portrait https://google.com image distortion">
+          <td>https://google.com</td>
+          <td>Distorted Images: 1</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Image Distortion</td>
+        </tr>
+        <tr data-device="S21_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 5 s21_portrait https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 5</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="S21_Landscape" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 2 s21_landscape https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 2</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="Tablet_Portrait" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 2 tablet_portrait https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 2</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+        <tr data-device="Tablet_Portrait" data-url="https://google.com"
+            data-severity="major" data-search="layout shift (cls) — cls score: 0.3159 tablet_portrait https://google.com layout shift">
+          <td>https://google.com</td>
+          <td>Layout Shift (CLS)</td>
+          <td><span class="badge badge-major">MAJOR</span></td>
+          <td>Layout Shift</td>
+        </tr>
+        <tr data-device="Tablet_Landscape" data-url="https://google.com"
+            data-severity="minor" data-search="small touch targets — 2 tablet_landscape https://google.com button size">
+          <td>https://google.com</td>
+          <td>Small Touch Targets: 2</td>
+          <td><span class="badge badge-minor">MINOR</span></td>
+          <td>Button Size</td>
+        </tr>
+          </tbody>
+        </table>
+      
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- VISUAL QA FINDINGS                                                -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    
+   
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- SCREENSHOT GALLERY                                                -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <h2>Screenshot Gallery <span id="galleryCount" style="font-size:13px;color:var(--muted);font-weight:400;">(18)</span></h2>
+    <div class="row" style="margin-bottom:10px;gap:8px;">
+      <select id="galleryDeviceFilter" onchange="filterGallery()" style="background:#0f1831;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;">
+        <option value="">All Devices</option>
+        <option value="iPhone13_Landscape">iPhone13_Landscape</option><option value="iPhone15_Plus_Portrait">iPhone15_Plus_Portrait</option><option value="iPhone15_Plus_Landscape">iPhone15_Plus_Landscape</option><option value="S21_Portrait">S21_Portrait</option><option value="S21_Landscape">S21_Landscape</option><option value="Tablet_Portrait">Tablet_Portrait</option><option value="Tablet_Landscape">Tablet_Landscape</option>
+      </select>
+      <select id="galleryPageFilter" onchange="filterGallery()" style="background:#0f1831;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;">
+        <option value="">All Pages</option>
+          <option value="https://google.com">https://google.com</option>
+      </select>
+    </div>
+    <div class="card" style="padding:16px;">
+      <div class="thumbs" id="galleryGrid">
+        
+        <div class="thumb gallery-item" data-device="iPhone15_Plus_Portrait" data-page="iPhone15_Plus_Portrait"
+             onclick="openGalleryViewer(0)" data-index="0">
+          <img src="screenshots/distorted-images-1782372772785.png" alt="distorted-images-1782372772785.png" loading="lazy" />
+          <div class="t">distorted-images-1782372772785.png<br><small style="color:var(--text);">iPhone15_Plus_Portrait • iPhone15_Plus_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Portrait" data-page="S21_Portrait"
+             onclick="openGalleryViewer(1)" data-index="1">
+          <img src="screenshots/distorted-images-1782372823929.png" alt="distorted-images-1782372823929.png" loading="lazy" />
+          <div class="t">distorted-images-1782372823929.png<br><small style="color:var(--text);">S21_Portrait • S21_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="iPhone13_Landscape" data-page="iPhone13_Landscape"
+             onclick="openGalleryViewer(2)" data-index="2">
+          <img src="screenshots/final-1782372747095.png" alt="final-1782372747095.png" loading="lazy" />
+          <div class="t">final-1782372747095.png<br><small style="color:var(--text);">iPhone13_Landscape • iPhone13_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="iPhone15_Plus_Portrait" data-page="iPhone15_Plus_Portrait"
+             onclick="openGalleryViewer(3)" data-index="3">
+          <img src="screenshots/final-1782372772868.png" alt="final-1782372772868.png" loading="lazy" />
+          <div class="t">final-1782372772868.png<br><small style="color:var(--text);">iPhone15_Plus_Portrait • iPhone15_Plus_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="iPhone15_Plus_Landscape" data-page="iPhone15_Plus_Landscape"
+             onclick="openGalleryViewer(4)" data-index="4">
+          <img src="screenshots/final-1782372798625.png" alt="final-1782372798625.png" loading="lazy" />
+          <div class="t">final-1782372798625.png<br><small style="color:var(--text);">iPhone15_Plus_Landscape • iPhone15_Plus_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Portrait" data-page="S21_Portrait"
+             onclick="openGalleryViewer(5)" data-index="5">
+          <img src="screenshots/final-1782372824050.png" alt="final-1782372824050.png" loading="lazy" />
+          <div class="t">final-1782372824050.png<br><small style="color:var(--text);">S21_Portrait • S21_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Landscape" data-page="S21_Landscape"
+             onclick="openGalleryViewer(6)" data-index="6">
+          <img src="screenshots/final-1782372849155.png" alt="final-1782372849155.png" loading="lazy" />
+          <div class="t">final-1782372849155.png<br><small style="color:var(--text);">S21_Landscape • S21_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="Tablet_Portrait" data-page="Tablet_Portrait"
+             onclick="openGalleryViewer(7)" data-index="7">
+          <img src="screenshots/final-1782372874158.png" alt="final-1782372874158.png" loading="lazy" />
+          <div class="t">final-1782372874158.png<br><small style="color:var(--text);">Tablet_Portrait • Tablet_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="Tablet_Landscape" data-page="Tablet_Landscape"
+             onclick="openGalleryViewer(8)" data-index="8">
+          <img src="screenshots/final-1782372899148.png" alt="final-1782372899148.png" loading="lazy" />
+          <div class="t">final-1782372899148.png<br><small style="color:var(--text);">Tablet_Landscape • Tablet_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Portrait" data-page="S21_Portrait"
+             onclick="openGalleryViewer(9)" data-index="9">
+          <img src="screenshots/horizontal-scroll-1782372823817.png" alt="horizontal-scroll-1782372823817.png" loading="lazy" />
+          <div class="t">horizontal-scroll-1782372823817.png<br><small style="color:var(--text);">S21_Portrait • S21_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Portrait" data-page="S21_Portrait"
+             onclick="openGalleryViewer(10)" data-index="10">
+          <img src="screenshots/overflow-1782372823872.png" alt="overflow-1782372823872.png" loading="lazy" />
+          <div class="t">overflow-1782372823872.png<br><small style="color:var(--text);">S21_Portrait • S21_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="iPhone13_Landscape" data-page="iPhone13_Landscape"
+             onclick="openGalleryViewer(11)" data-index="11">
+          <img src="screenshots/small-buttons-1782372747011.png" alt="small-buttons-1782372747011.png" loading="lazy" />
+          <div class="t">small-buttons-1782372747011.png<br><small style="color:var(--text);">iPhone13_Landscape • iPhone13_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="iPhone15_Plus_Portrait" data-page="iPhone15_Plus_Portrait"
+             onclick="openGalleryViewer(12)" data-index="12">
+          <img src="screenshots/small-buttons-1782372772824.png" alt="small-buttons-1782372772824.png" loading="lazy" />
+          <div class="t">small-buttons-1782372772824.png<br><small style="color:var(--text);">iPhone15_Plus_Portrait • iPhone15_Plus_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="iPhone15_Plus_Landscape" data-page="iPhone15_Plus_Landscape"
+             onclick="openGalleryViewer(13)" data-index="13">
+          <img src="screenshots/small-buttons-1782372798548.png" alt="small-buttons-1782372798548.png" loading="lazy" />
+          <div class="t">small-buttons-1782372798548.png<br><small style="color:var(--text);">iPhone15_Plus_Landscape • iPhone15_Plus_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Portrait" data-page="S21_Portrait"
+             onclick="openGalleryViewer(14)" data-index="14">
+          <img src="screenshots/small-buttons-1782372823987.png" alt="small-buttons-1782372823987.png" loading="lazy" />
+          <div class="t">small-buttons-1782372823987.png<br><small style="color:var(--text);">S21_Portrait • S21_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="S21_Landscape" data-page="S21_Landscape"
+             onclick="openGalleryViewer(15)" data-index="15">
+          <img src="screenshots/small-buttons-1782372849071.png" alt="small-buttons-1782372849071.png" loading="lazy" />
+          <div class="t">small-buttons-1782372849071.png<br><small style="color:var(--text);">S21_Landscape • S21_Landscape</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="Tablet_Portrait" data-page="Tablet_Portrait"
+             onclick="openGalleryViewer(16)" data-index="16">
+          <img src="screenshots/small-buttons-1782372874092.png" alt="small-buttons-1782372874092.png" loading="lazy" />
+          <div class="t">small-buttons-1782372874092.png<br><small style="color:var(--text);">Tablet_Portrait • Tablet_Portrait</small></div>
+        </div>
+        <div class="thumb gallery-item" data-device="Tablet_Landscape" data-page="Tablet_Landscape"
+             onclick="openGalleryViewer(17)" data-index="17">
+          <img src="screenshots/small-buttons-1782372899075.png" alt="small-buttons-1782372899075.png" loading="lazy" />
+          <div class="t">small-buttons-1782372899075.png<br><small style="color:var(--text);">Tablet_Landscape • Tablet_Landscape</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <!-- SCREENSHOT APPENDIX (PRINT ONLY)                                  -->
+    <!-- ════════════════════════════════════════════════════════════════════ -->
+    <div class="print-screenshot-appendix">
+      <h2>Screenshot Appendix</h2>
+      <div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: distorted-images-1782372772785.png</div><div class="print-shot-meta">Device: iPhone15_Plus_Portrait</div><div class="print-shot-meta">Page: iPhone15_Plus_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/distorted-images-1782372772785.png" alt="distorted-images-1782372772785.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: distorted-images-1782372823929.png</div><div class="print-shot-meta">Device: S21_Portrait</div><div class="print-shot-meta">Page: S21_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/distorted-images-1782372823929.png" alt="distorted-images-1782372823929.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372747095.png</div><div class="print-shot-meta">Device: iPhone13_Landscape</div><div class="print-shot-meta">Page: iPhone13_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372747095.png" alt="final-1782372747095.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372772868.png</div><div class="print-shot-meta">Device: iPhone15_Plus_Portrait</div><div class="print-shot-meta">Page: iPhone15_Plus_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372772868.png" alt="final-1782372772868.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372798625.png</div><div class="print-shot-meta">Device: iPhone15_Plus_Landscape</div><div class="print-shot-meta">Page: iPhone15_Plus_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372798625.png" alt="final-1782372798625.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372824050.png</div><div class="print-shot-meta">Device: S21_Portrait</div><div class="print-shot-meta">Page: S21_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372824050.png" alt="final-1782372824050.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372849155.png</div><div class="print-shot-meta">Device: S21_Landscape</div><div class="print-shot-meta">Page: S21_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372849155.png" alt="final-1782372849155.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372874158.png</div><div class="print-shot-meta">Device: Tablet_Portrait</div><div class="print-shot-meta">Page: Tablet_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372874158.png" alt="final-1782372874158.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: final-1782372899148.png</div><div class="print-shot-meta">Device: Tablet_Landscape</div><div class="print-shot-meta">Page: Tablet_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/final-1782372899148.png" alt="final-1782372899148.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: horizontal-scroll-1782372823817.png</div><div class="print-shot-meta">Device: S21_Portrait</div><div class="print-shot-meta">Page: S21_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/horizontal-scroll-1782372823817.png" alt="horizontal-scroll-1782372823817.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: overflow-1782372823872.png</div><div class="print-shot-meta">Device: S21_Portrait</div><div class="print-shot-meta">Page: S21_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/overflow-1782372823872.png" alt="overflow-1782372823872.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372747011.png</div><div class="print-shot-meta">Device: iPhone13_Landscape</div><div class="print-shot-meta">Page: iPhone13_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372747011.png" alt="small-buttons-1782372747011.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372772824.png</div><div class="print-shot-meta">Device: iPhone15_Plus_Portrait</div><div class="print-shot-meta">Page: iPhone15_Plus_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372772824.png" alt="small-buttons-1782372772824.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372798548.png</div><div class="print-shot-meta">Device: iPhone15_Plus_Landscape</div><div class="print-shot-meta">Page: iPhone15_Plus_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372798548.png" alt="small-buttons-1782372798548.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372823987.png</div><div class="print-shot-meta">Device: S21_Portrait</div><div class="print-shot-meta">Page: S21_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372823987.png" alt="small-buttons-1782372823987.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372849071.png</div><div class="print-shot-meta">Device: S21_Landscape</div><div class="print-shot-meta">Page: S21_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372849071.png" alt="small-buttons-1782372849071.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372874092.png</div><div class="print-shot-meta">Device: Tablet_Portrait</div><div class="print-shot-meta">Page: Tablet_Portrait</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372874092.png" alt="small-buttons-1782372874092.png" /></div></div><div class="print-screenshot-page"><div class="print-shot-meta">Screenshot: small-buttons-1782372899075.png</div><div class="print-shot-meta">Device: Tablet_Landscape</div><div class="print-shot-meta">Page: Tablet_Landscape</div><div class="print-shot-img-wrap"><img src="screenshots/small-buttons-1782372899075.png" alt="small-buttons-1782372899075.png" /></div></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- LIGHTBOX / VIEWER                                                   -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="viewer" id="viewer" aria-hidden="true">
+    <div class="viewer-controls">
+  <button class="btn" onclick="zoomIn()">➕ Zoom In</button>
+  <button class="btn" onclick="zoomOut()">➖ Zoom Out</button>
+  <button class="btn" onclick="resetZoom()">🔄 Reset</button>
+  <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+</div>
+    <div class="viewer-close" onclick="closeViewer()" title="Close (Esc)">✕</div>
+    <button class="viewer-nav prev" onclick="navigateViewer(-1)" title="Previous">‹</button>
+    <button class="viewer-nav next" onclick="navigateViewer(1)" title="Next">›</button>
+    <div class="viewerInner" id="viewerInner">
+      <img id="viewerImg" src="" alt="screenshot" />
+    </div>
+    <div class="viewer-info" id="viewerInfo"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- JAVASCRIPT                                                          -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function() {
+    'use strict';
+
+    // ── Gallery Data ─────────────────────────────────────────────────────
+    var galleryData = [{"file":"distorted-images-1782372772785.png","thumbSrc":"screenshots/distorted-images-1782372772785.png","fullSrc":"screenshots/distorted-images-1782372772785.png","device":"iPhone15_Plus_Portrait","page":"iPhone15_Plus_Portrait","url":"https://google.com"},{"file":"distorted-images-1782372823929.png","thumbSrc":"screenshots/distorted-images-1782372823929.png","fullSrc":"screenshots/distorted-images-1782372823929.png","device":"S21_Portrait","page":"S21_Portrait","url":"https://google.com"},{"file":"final-1782372747095.png","thumbSrc":"screenshots/final-1782372747095.png","fullSrc":"screenshots/final-1782372747095.png","device":"iPhone13_Landscape","page":"iPhone13_Landscape","url":"https://google.com"},{"file":"final-1782372772868.png","thumbSrc":"screenshots/final-1782372772868.png","fullSrc":"screenshots/final-1782372772868.png","device":"iPhone15_Plus_Portrait","page":"iPhone15_Plus_Portrait","url":"https://google.com"},{"file":"final-1782372798625.png","thumbSrc":"screenshots/final-1782372798625.png","fullSrc":"screenshots/final-1782372798625.png","device":"iPhone15_Plus_Landscape","page":"iPhone15_Plus_Landscape","url":"https://google.com"},{"file":"final-1782372824050.png","thumbSrc":"screenshots/final-1782372824050.png","fullSrc":"screenshots/final-1782372824050.png","device":"S21_Portrait","page":"S21_Portrait","url":"https://google.com"},{"file":"final-1782372849155.png","thumbSrc":"screenshots/final-1782372849155.png","fullSrc":"screenshots/final-1782372849155.png","device":"S21_Landscape","page":"S21_Landscape","url":"https://google.com"},{"file":"final-1782372874158.png","thumbSrc":"screenshots/final-1782372874158.png","fullSrc":"screenshots/final-1782372874158.png","device":"Tablet_Portrait","page":"Tablet_Portrait","url":"https://google.com"},{"file":"final-1782372899148.png","thumbSrc":"screenshots/final-1782372899148.png","fullSrc":"screenshots/final-1782372899148.png","device":"Tablet_Landscape","page":"Tablet_Landscape","url":"https://google.com"},{"file":"horizontal-scroll-1782372823817.png","thumbSrc":"screenshots/horizontal-scroll-1782372823817.png","fullSrc":"screenshots/horizontal-scroll-1782372823817.png","device":"S21_Portrait","page":"S21_Portrait","url":"https://google.com"},{"file":"overflow-1782372823872.png","thumbSrc":"screenshots/overflow-1782372823872.png","fullSrc":"screenshots/overflow-1782372823872.png","device":"S21_Portrait","page":"S21_Portrait","url":"https://google.com"},{"file":"small-buttons-1782372747011.png","thumbSrc":"screenshots/small-buttons-1782372747011.png","fullSrc":"screenshots/small-buttons-1782372747011.png","device":"iPhone13_Landscape","page":"iPhone13_Landscape","url":"https://google.com"},{"file":"small-buttons-1782372772824.png","thumbSrc":"screenshots/small-buttons-1782372772824.png","fullSrc":"screenshots/small-buttons-1782372772824.png","device":"iPhone15_Plus_Portrait","page":"iPhone15_Plus_Portrait","url":"https://google.com"},{"file":"small-buttons-1782372798548.png","thumbSrc":"screenshots/small-buttons-1782372798548.png","fullSrc":"screenshots/small-buttons-1782372798548.png","device":"iPhone15_Plus_Landscape","page":"iPhone15_Plus_Landscape","url":"https://google.com"},{"file":"small-buttons-1782372823987.png","thumbSrc":"screenshots/small-buttons-1782372823987.png","fullSrc":"screenshots/small-buttons-1782372823987.png","device":"S21_Portrait","page":"S21_Portrait","url":"https://google.com"},{"file":"small-buttons-1782372849071.png","thumbSrc":"screenshots/small-buttons-1782372849071.png","fullSrc":"screenshots/small-buttons-1782372849071.png","device":"S21_Landscape","page":"S21_Landscape","url":"https://google.com"},{"file":"small-buttons-1782372874092.png","thumbSrc":"screenshots/small-buttons-1782372874092.png","fullSrc":"screenshots/small-buttons-1782372874092.png","device":"Tablet_Portrait","page":"Tablet_Portrait","url":"https://google.com"},{"file":"small-buttons-1782372899075.png","thumbSrc":"screenshots/small-buttons-1782372899075.png","fullSrc":"screenshots/small-buttons-1782372899075.png","device":"Tablet_Landscape","page":"Tablet_Landscape","url":"https://google.com"}];
+
+    var currentViewerIndex = -1;
+    var filteredGalleryIndices = [];
+
+    var viewerState = {
+      zoom: 1,
+      baseWidth: 0,
+      baseHeight: 0,
+      x: 0,
+      y: 0,
+      dragging: false,
+      startX: 0,
+      startY: 0,
+      lastX: 0,
+      lastY: 0,
+      pinchStartDist: 0,
+      pinchStartZoom: 1,
+      pinchCenterX: 0,
+      pinchCenterY: 0,
+      rafId: null
+    };
+
+    var MIN_ZOOM = 1;
+    var MAX_ZOOM = 5;
+    var ZOOM_STEP = 0.25;
+
+    function layoutViewerImage() {
+      var img = document.getElementById('viewerImg');
+      var inner = document.getElementById('viewerInner');
+      if (!img || !inner || !img.naturalWidth || !img.naturalHeight) return;
+
+      var innerRect = inner.getBoundingClientRect();
+      var maxW = Math.max(1, innerRect.width);
+      var maxH = Math.max(1, innerRect.height);
+      var nw = img.naturalWidth;
+      var nh = img.naturalHeight;
+      // Never upscale beyond native pixels at 100% zoom — prevents soft/blurry default view
+      var fitScale = Math.min(1, maxW / nw, maxH / nh);
+      viewerState.baseWidth = nw * fitScale;
+      viewerState.baseHeight = nh * fitScale;
+      updateViewerTransform();
+      clampPan();
+    }
+
+    function updateViewerTransform() {
+      var img = document.getElementById('viewerImg');
+      if (!img) return;
+      if (viewerState.baseWidth > 0 && viewerState.baseHeight > 0) {
+        img.style.width = (viewerState.baseWidth * viewerState.zoom) + 'px';
+        img.style.height = (viewerState.baseHeight * viewerState.zoom) + 'px';
+      }
+      img.style.transform =
+        'translate3d(' + viewerState.x + 'px,' + viewerState.y + 'px,0)';
+    }
+
+window.zoomIn = function() {
+  zoomTo(viewerState.zoom + ZOOM_STEP);
+};
+
+window.zoomOut = function() {
+  zoomTo(viewerState.zoom - ZOOM_STEP);
+};
+
+window.resetZoom = function() {
+  viewerState.zoom = 1;
+  viewerState.x = 0;
+  viewerState.y = 0;
+  viewerState.lastX = 0;
+  viewerState.lastY = 0;
+  updateViewerTransform();
+};
+
+function clampZoom(z) {
+  return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, parseFloat(z.toFixed(2))));
+}
+
+function clampPan() {
+  var inner = document.getElementById('viewerInner');
+  if (!inner) return;
+
+  var scale = viewerState.zoom;
+  if (scale <= 1 || viewerState.baseWidth <= 0) {
+    viewerState.x = 0;
+    viewerState.y = 0;
+    return;
+  }
+
+  var innerRect = inner.getBoundingClientRect();
+  var scaledWidth = viewerState.baseWidth * scale;
+  var scaledHeight = viewerState.baseHeight * scale;
+
+  var maxX = Math.max(0, (scaledWidth - innerRect.width) / 2);
+  var maxY = Math.max(0, (scaledHeight - innerRect.height) / 2);
+
+  viewerState.x = Math.max(-maxX, Math.min(maxX, viewerState.x));
+  viewerState.y = Math.max(-maxY, Math.min(maxY, viewerState.y));
+}
+
+function zoomTo(newZoom, anchorX, anchorY) {
+  var inner = document.getElementById('viewerInner');
+  if (!inner) return;
+
+  var prevZoom = viewerState.zoom;
+  newZoom = clampZoom(newZoom);
+  if (newZoom === prevZoom) return;
+
+  if (newZoom <= 1) {
+    viewerState.zoom = 1;
+    viewerState.x = 0;
+    viewerState.y = 0;
+  } else if (typeof anchorX === 'number' && typeof anchorY === 'number') {
+    var innerRect = inner.getBoundingClientRect();
+    var cx = innerRect.left + innerRect.width / 2;
+    var cy = innerRect.top + innerRect.height / 2;
+    var ratio = newZoom / prevZoom;
+    viewerState.x = (viewerState.x - (anchorX - cx)) * ratio + (anchorX - cx);
+    viewerState.y = (viewerState.y - (anchorY - cy)) * ratio + (anchorY - cy);
+    viewerState.zoom = newZoom;
+    clampPan();
+  } else {
+    viewerState.zoom = newZoom;
+    clampPan();
+  }
+
+  updateViewerTransform();
+}
+
+function scheduleUpdate() {
+  if (viewerState.rafId) return;
+  viewerState.rafId = requestAnimationFrame(function() {
+    viewerState.rafId = null;
+    updateViewerTransform();
+  });
+}
+
+    // ── Initialize filtered gallery indices ──────────────────────────────
+    function initGallery() {
+  filteredGalleryIndices = [];
+
+  for (var i = 0; i < galleryData.length; i++) {
+    filteredGalleryIndices.push(i);
+  }
+}
+    initGallery();
+
+    // ── Filters ──────────────────────────────────────────────────────────
+    window.applyFilters = function() {
+      var urlFilter = document.getElementById('filterUrl').value;
+      var deviceFilter = document.getElementById('filterDevice').value;
+      var priorityFilter = document.getElementById('filterPriority').value;
+      var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      // Filter page cards
+      var pageCards = document.querySelectorAll('#pageGrid .pageCard');
+      var visibleCards = 0;
+      pageCards.forEach(function(card) {
+        var matchUrl = !urlFilter || card.getAttribute('data-url') === urlFilter;
+        var matchDevice = !deviceFilter || card.getAttribute('data-device') === deviceFilter;
+
+        // Priority filter: check if card has issues matching the priority
+        var matchPriority = true;
+        if (priorityFilter) {
+          matchPriority = false;
+          var issueItems = card.querySelectorAll('.issue-item .badge');
+          issueItems.forEach(function(badge) {
+            if (badge.textContent.trim().toLowerCase() === priorityFilter) {
+              matchPriority = true;
+            }
+          });
+          // If card has no issues but priority filter is active, hide it
+          if (card.getAttribute('data-has-issues') === 'false') matchPriority = false;
+        }
+
+        // Search filter
+        var matchSearch = true;
+        if (searchTerm) {
+          var cardSearchText = card.getAttribute('data-search') || '';
+          var issueTexts = '';
+          card.querySelectorAll('.issue-item').forEach(function(li) {
+            issueTexts += ' ' + li.textContent.toLowerCase();
+          });
+          matchSearch = (cardSearchText + issueTexts).indexOf(searchTerm) !== -1;
+        }
+
+        var visible = matchUrl && matchDevice && matchPriority && matchSearch;
+        card.style.display = visible ? '' : 'none';
+        if (visible) visibleCards++;
+      });
+
+      document.getElementById('pageResultsCount').textContent = '(' + visibleCards + ')';
+
+      // Filter issue table rows
+      var tableRows = document.querySelectorAll('#issueTable tbody tr');
+      var visibleRows = 0;
+      tableRows.forEach(function(row) {
+        var matchUrl = !urlFilter || row.getAttribute('data-url') === urlFilter;
+        var matchDevice = !deviceFilter || row.getAttribute('data-device') === deviceFilter;
+        var matchPriority = !priorityFilter || row.getAttribute('data-severity') === priorityFilter;
+        var matchSearch = true;
+        if (searchTerm) {
+          var rowSearch = row.getAttribute('data-search') || '';
+          matchSearch = rowSearch.indexOf(searchTerm) !== -1;
+        }
+        var visible = matchUrl && matchDevice && matchPriority && matchSearch;
+        row.style.display = visible ? '' : 'none';
+        if (visible) visibleRows++;
+      });
+      document.getElementById('issueTableCount').textContent = '(' + visibleRows + ')';
+
+      // Filter visual QA findings table
+     
+    };
+
+    // ── Gallery Filter ───────────────────────────────────────────────────
+    window.filterGallery = function() {
+      var device = document.getElementById('galleryDeviceFilter').value;
+      var page = document.getElementById('galleryPageFilter').value;
+
+      filteredGalleryIndices = [];
+      var items = document.querySelectorAll('#galleryGrid .gallery-item');
+      var count = 0;
+      items.forEach(function(item, idx) {
+        var matchDevice = !device || item.getAttribute('data-device') === device;
+        var matchPage = !page || item.getAttribute('data-page') === page;
+        var visible = matchDevice && matchPage;
+        item.style.display = visible ? '' : 'none';
+        if (visible) {
+          filteredGalleryIndices.push(parseInt(item.getAttribute('data-index')));
+          count++;
+        }
+      });
+      document.getElementById('galleryCount').textContent = '(' + count + ')';
+    };
+
+    // ── Lightbox / Viewer ────────────────────────────────────────────────
+    window.openViewer = function(src) {
+      // Find index in gallery data
+      var idx = -1;
+      for (var i = 0; i < galleryData.length; i++) {
+        if (galleryData[i].fullSrc === src || galleryData[i].thumbSrc === src) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx === -1) idx = 0;
+      openGalleryViewer(idx);
+    };
+
+    window.openGalleryViewer = function(idx) {
+      viewerState.zoom = 1;
+      viewerState.baseWidth = 0;
+      viewerState.baseHeight = 0;
+      viewerState.x = 0;
+      viewerState.y = 0;
+      viewerState.lastX = 0;
+      viewerState.lastY = 0;
+      currentViewerIndex = idx;
+
+      var item = galleryData[idx];
+      if (!item) return;
+      var viewerImg = document.getElementById('viewerImg');
+      if (!viewerImg) return;
+      viewerImg.style.width = '';
+      viewerImg.style.height = '';
+      viewerImg.style.maxWidth = 'none';
+      viewerImg.style.maxHeight = 'none';
+      viewerImg.style.transform = '';
+      viewerImg.src = item.fullSrc;
+      document.getElementById('viewerInfo').textContent =
+        item.file + ' — ' + item.device + ' • ' + item.page;
+      document.getElementById('viewer').classList.add('open');
+      document.getElementById('viewer').setAttribute('aria-hidden', 'false');
+
+      viewerImg.onload = function() {
+        if (viewerImg.decode) {
+          viewerImg.decode().then(layoutViewerImage).catch(layoutViewerImage);
+        } else {
+          layoutViewerImage();
+        }
+      };
+      if (viewerImg.complete && viewerImg.naturalWidth) {
+        layoutViewerImage();
+      }
+    };
+
+    window.closeViewer = function() {
+      document.getElementById('viewer').classList.remove('open');
+      document.getElementById('viewer').setAttribute('aria-hidden', 'true');
+      currentViewerIndex = -1;
+    };
+
+    window.navigateViewer = function(dir) {
+      if (filteredGalleryIndices.length === 0) return;
+      var currentPos = filteredGalleryIndices.indexOf(currentViewerIndex);
+      if (currentPos === -1) currentPos = 0;
+      var nextPos = (currentPos + dir + filteredGalleryIndices.length) % filteredGalleryIndices.length;
+      openGalleryViewer(filteredGalleryIndices[nextPos]);
+    };
+
+    window.toggleFullscreen = function() {
+      var viewer = document.getElementById('viewer');
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } else {
+        if (viewer.requestFullscreen) viewer.requestFullscreen();
+        else if (viewer.webkitRequestFullscreen) viewer.webkitRequestFullscreen();
+      }
+    };
+
+    // Close on backdrop click
+    var viewer = document.getElementById('viewer');
+    if (viewer) {
+      viewer.addEventListener('click', function(e) {
+        if (e.target === this || e.target.id === 'viewerInner') {
+          closeViewer();
+        }
+      });
+    }
+
+
+    // ── Drag / Pan Support ─────────────────────────────
+    var viewerImg = document.getElementById('viewerImg');
+    var viewerInner = document.getElementById('viewerInner');
+
+    if (viewerImg) {
+      viewerImg.addEventListener('mousedown', function(e) {
+        if (viewerState.zoom <= 1) return;
+        viewerState.dragging = true;
+        viewerState.startX = e.clientX - viewerState.x;
+        viewerState.startY = e.clientY - viewerState.y;
+        viewerState.lastX = e.clientX;
+        viewerState.lastY = e.clientY;
+        if (viewerInner) viewerInner.style.cursor = 'grabbing';
+      });
+    }
+
+    document.addEventListener('mousemove', function(e) {
+      if (!viewerState.dragging) return;
+      viewerState.lastX = e.clientX;
+      viewerState.lastY = e.clientY;
+      viewerState.x = e.clientX - viewerState.startX;
+      viewerState.y = e.clientY - viewerState.startY;
+      clampPan();
+      scheduleUpdate();
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (!viewerState.dragging) return;
+      viewerState.dragging = false;
+      if (viewerInner) viewerInner.style.cursor = 'grab';
+    });
+
+    // ── Mouse Wheel Zoom ────────────────────────────────
+    if (viewerInner) {
+      viewerInner.addEventListener('wheel', function(e) {
+        if (!document.getElementById('viewer').classList.contains('open')) return;
+        e.preventDefault();
+
+        var rect = viewerInner.getBoundingClientRect();
+        var anchorX = e.clientX - rect.left;
+        var anchorY = e.clientY - rect.top;
+
+        var dir = e.deltaY > 0 ? -1 : 1;
+        var newZoom = viewerState.zoom + dir * ZOOM_STEP;
+        if (dir > 0) {
+          newZoom = Math.ceil((viewerState.zoom + 0.001) / ZOOM_STEP) * ZOOM_STEP + ZOOM_STEP;
+        } else {
+          newZoom = Math.floor((viewerState.zoom - 0.001) / ZOOM_STEP) * ZOOM_STEP - ZOOM_STEP;
+        }
+
+        zoomTo(newZoom, e.clientX, e.clientY);
+      }, { passive: false });
+    }
+
+    // ── Double-Click Zoom ──────────────────────────────
+    if (viewerImg) {
+      viewerImg.addEventListener('dblclick', function(e) {
+        if (viewerState.zoom <= 1) {
+          zoomTo(2, e.clientX, e.clientY);
+        } else {
+          resetZoom();
+        }
+      });
+    }
+
+    // ── Touch / Pinch Support ──────────────────────────
+    var touchCount = 0;
+    if (viewerInner) {
+      viewerInner.addEventListener('touchstart', function(e) {
+        touchCount = e.touches.length;
+        if (touchCount === 1 && viewerState.zoom > 1) {
+          var t = e.touches[0];
+          viewerState.dragging = true;
+          viewerState.startX = t.clientX - viewerState.x;
+          viewerState.startY = t.clientY - viewerState.y;
+          viewerState.lastX = t.clientX;
+          viewerState.lastY = t.clientY;
+        } else if (touchCount === 2) {
+          viewerState.dragging = false;
+          var t1 = e.touches[0], t2 = e.touches[1];
+          viewerState.pinchStartDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          viewerState.pinchStartZoom = viewerState.zoom;
+          viewerState.pinchCenterX = (t1.clientX + t2.clientX) / 2;
+          viewerState.pinchCenterY = (t1.clientY + t2.clientY) / 2;
+        }
+      }, { passive: true });
+
+      viewerInner.addEventListener('touchmove', function(e) {
+        if (touchCount === 2 && e.touches.length === 2) {
+          var t1 = e.touches[0], t2 = e.touches[1];
+          var dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          var scale = dist / viewerState.pinchStartDist;
+          var newZoom = clampZoom(viewerState.pinchStartZoom * scale);
+          var cx = (t1.clientX + t2.clientX) / 2;
+          var cy = (t1.clientY + t2.clientY) / 2;
+          zoomTo(newZoom, cx, cy);
+        }
+      }, { passive: true });
+
+      viewerInner.addEventListener('touchend', function() {
+        if (viewerState.dragging) {
+          viewerState.dragging = false;
+        }
+        touchCount = 0;
+      }, { passive: true });
+    }
+
+    function relayoutOpenViewer() {
+      if (document.getElementById('viewer').classList.contains('open')) {
+        layoutViewerImage();
+      }
+    }
+
+    window.addEventListener('resize', relayoutOpenViewer);
+    document.addEventListener('fullscreenchange', relayoutOpenViewer);
+    document.addEventListener('webkitfullscreenchange', relayoutOpenViewer);
+
+    // ── Print handlers ─────────────────────────────────
+    window.addEventListener('beforeprint', function() {
+      // Force-load lazy images before printing by removing lazy attribute
+      var allImgs = document.querySelectorAll('.print-shot-img-wrap img[loading="lazy"]');
+      for (var pi = 0; pi < allImgs.length; pi++) {
+        allImgs[pi].removeAttribute('loading');
+      }
+    });
+
+    // ── Keyboard Navigation ─────────────────────────────
+    document.addEventListener('keydown', function(e) {
+      if (!document.getElementById('viewer').classList.contains('open')) return;
+      if (e.key === 'Escape') closeViewer();
+      else if (e.key === 'ArrowLeft') navigateViewer(-1);
+      else if (e.key === 'ArrowRight') navigateViewer(1);
+      else if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      else if (e.key === '+' || e.key === '=') { zoomTo(viewerState.zoom + ZOOM_STEP); }
+      else if (e.key === '-') { zoomTo(viewerState.zoom - ZOOM_STEP); }
+      else if (e.key === '0') { resetZoom(); }
+    });
+
+    // ── PDF Generation ──────────────────────────────────────────────────
+    window.generatePDF = function() {
+      var content = document.getElementById('reportContent');
+      if (!content) { alert('Report content not found.'); return; }
+
+      // Show loading indicator
+      var loadingDiv = document.createElement('div');
+      loadingDiv.id = 'pdfLoading';
+      loadingDiv.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99999;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-family:Inter,sans-serif;';
+      loadingDiv.textContent = '⏳ Generating PDF, please wait...';
+      document.body.appendChild(loadingDiv);
+
+      // Check if libraries are loaded
+      var checkLibs = setInterval(function() {
+        if (window.html2canvas && window.jspdf) {
+          clearInterval(checkLibs);
+          doGeneratePDF(content, loadingDiv);
+        }
+      }, 200);
+
+      // Timeout after 10s
+      setTimeout(function() {
+        clearInterval(checkLibs);
+        var el = document.getElementById('pdfLoading');
+        if (el) {
+          el.remove();
+          if (!window.html2canvas || !window.jspdf) {
+            alert('PDF libraries failed to load. Please check your internet connection and try again.');
+          }
+        }
+      }, 10000);
+    };
+
+    function doGeneratePDF(content, loadingDiv) {
+      // Hide interactive elements for PDF
+      var filterBar = document.getElementById('filterBar');
+      var viewer = document.getElementById('viewer');
+      if (filterBar) filterBar.style.display = 'none';
+      if (viewer) viewer.style.display = 'none';
+
+      // Temporarily adjust styles for PDF capture
+      content.style.maxWidth = '1200px';
+      content.style.margin = '0 auto';
+      content.style.padding = '10px';
+      content.style.background = '#0b1224';
+
+      window.html2canvas(content, {
+        backgroundColor: '#0b1224',
+        scale: 1.5,
+        useCORS: true,
+        logging: false,
+        windowWidth: 1200,
+        scrollY: 0
+      }).then(function(canvas) {
+        var jsPDF = window.jspdf.jsPDF;
+        var imgWidth = 190;
+        var pageHeight = 277;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
+        var heightLeft = imgHeight;
+        var position = 10;
+        var imgData = canvas.toDataURL('image/jpeg', 0.85);
+        var pdf = new jsPDF('p', 'mm', 'a4');
+        pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight + 10;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        pdf.save('QA-Report-' + new Date().toISOString().slice(0, 10) + '.pdf');
+
+        // Restore elements
+        if (filterBar) filterBar.style.display = '';
+        if (viewer) viewer.style.display = '';
+        content.style.maxWidth = '';
+        content.style.margin = '';
+        content.style.padding = '';
+        content.style.background = '';
+        loadingDiv.remove();
+      }).catch(function(err) {
+        console.error('PDF generation failed:', err);
+        if (filterBar) filterBar.style.display = '';
+        if (viewer) viewer.style.display = '';
+        content.style.maxWidth = '';
+        content.style.margin = '';
+        content.style.padding = '';
+        content.style.background = '';
+        loadingDiv.remove();
+        alert('PDF generation failed: ' + err.message);
+      });
+    }
+
+  })();
+  </script>
+</body>
+</html>

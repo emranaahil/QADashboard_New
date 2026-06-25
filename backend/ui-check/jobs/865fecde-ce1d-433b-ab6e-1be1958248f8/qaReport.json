@@ -1,0 +1,191 @@
+[
+  {
+    "page": "iPhone13_Landscape",
+    "url": "https://google.com",
+    "device": "iPhone13_Landscape",
+    "issues": [
+      {
+        "id": "QA-0001",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782372747011.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:32:27.075Z"
+      }
+    ],
+    "screenshot": "final-1782372747095.png",
+    "timestamp": "2026-06-25T07:32:27.158Z"
+  },
+  {
+    "page": "iPhone15_Plus_Portrait",
+    "url": "https://google.com",
+    "device": "iPhone15_Plus_Portrait",
+    "issues": [
+      {
+        "id": "QA-0002",
+        "type": "Distorted Images",
+        "count": 1,
+        "screenshot": "distorted-images-1782372772785.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:32:52.820Z"
+      },
+      {
+        "id": "QA-0003",
+        "type": "Small Touch Targets",
+        "count": 5,
+        "screenshot": "small-buttons-1782372772824.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:32:52.849Z"
+      },
+      {
+        "id": "QA-0004",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "CLS Score: 0.1994",
+        "timestamp": "2026-06-25T07:32:52.864Z"
+      }
+    ],
+    "screenshot": "final-1782372772868.png",
+    "timestamp": "2026-06-25T07:32:52.907Z"
+  },
+  {
+    "page": "iPhone15_Plus_Landscape",
+    "url": "https://google.com",
+    "device": "iPhone15_Plus_Landscape",
+    "issues": [
+      {
+        "id": "QA-0005",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782372798548.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:33:18.609Z"
+      }
+    ],
+    "screenshot": "final-1782372798625.png",
+    "timestamp": "2026-06-25T07:33:18.690Z"
+  },
+  {
+    "page": "S21_Portrait",
+    "url": "https://google.com",
+    "device": "S21_Portrait",
+    "issues": [
+      {
+        "id": "QA-0006",
+        "type": "Console Error",
+        "count": 0,
+        "screenshot": null,
+        "severity": "minor",
+        "details": "Failed to load resource: the server responded with a status of 503 ()",
+        "timestamp": "2026-06-25T07:33:21.757Z"
+      },
+      {
+        "id": "QA-0007",
+        "type": "Horizontal Scroll Detected",
+        "count": 0,
+        "screenshot": "horizontal-scroll-1782372823817.png",
+        "severity": "major",
+        "details": "Page content causes horizontal scrolling",
+        "timestamp": "2026-06-25T07:33:43.862Z"
+      },
+      {
+        "id": "QA-0008",
+        "type": "Content Overflow",
+        "count": 14,
+        "screenshot": "overflow-1782372823872.png",
+        "severity": "major",
+        "details": null,
+        "timestamp": "2026-06-25T07:33:43.917Z"
+      },
+      {
+        "id": "QA-0009",
+        "type": "Distorted Images",
+        "count": 1,
+        "screenshot": "distorted-images-1782372823929.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:33:43.981Z"
+      },
+      {
+        "id": "QA-0010",
+        "type": "Small Touch Targets",
+        "count": 5,
+        "screenshot": "small-buttons-1782372823987.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:33:44.029Z"
+      }
+    ],
+    "screenshot": "final-1782372824050.png",
+    "timestamp": "2026-06-25T07:33:44.095Z"
+  },
+  {
+    "page": "S21_Landscape",
+    "url": "https://google.com",
+    "device": "S21_Landscape",
+    "issues": [
+      {
+        "id": "QA-0011",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782372849071.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:34:09.135Z"
+      }
+    ],
+    "screenshot": "final-1782372849155.png",
+    "timestamp": "2026-06-25T07:34:09.220Z"
+  },
+  {
+    "page": "Tablet_Portrait",
+    "url": "https://google.com",
+    "device": "Tablet_Portrait",
+    "issues": [
+      {
+        "id": "QA-0012",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782372874092.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:34:34.139Z"
+      },
+      {
+        "id": "QA-0013",
+        "type": "Layout Shift (CLS)",
+        "count": 0,
+        "screenshot": null,
+        "severity": "major",
+        "details": "CLS Score: 0.3159",
+        "timestamp": "2026-06-25T07:34:34.155Z"
+      }
+    ],
+    "screenshot": "final-1782372874158.png",
+    "timestamp": "2026-06-25T07:34:34.221Z"
+  },
+  {
+    "page": "Tablet_Landscape",
+    "url": "https://google.com",
+    "device": "Tablet_Landscape",
+    "issues": [
+      {
+        "id": "QA-0014",
+        "type": "Small Touch Targets",
+        "count": 2,
+        "screenshot": "small-buttons-1782372899075.png",
+        "severity": "minor",
+        "details": null,
+        "timestamp": "2026-06-25T07:34:59.124Z"
+      }
+    ],
+    "screenshot": "final-1782372899148.png",
+    "timestamp": "2026-06-25T07:34:59.191Z"
+  }
+]

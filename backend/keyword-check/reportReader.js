@@ -1,6 +1,9 @@
 const path = require('path');
 const fs = require('fs-extra');
 const { safeReadJson, listFilesByMtime, toReportMeta } = require('../shared/reportUtils');
+const stateService = require('./stateService');
+const { scanTitleFromData } = require('./scanFilename');
+const { renderKeywordCheckHtml } = require('../shared/radarReportHtml');
 
 const { keywordStorageDir } = require('../shared/storagePaths');
 const SCANS_DIR = keywordStorageDir('scans');
@@ -8,22 +11,32 @@ const REPORTS_DIR = keywordStorageDir('reports');
 
 async function listReports() {
   const scans = await listFilesByMtime(SCANS_DIR, { extension: '.json' });
-  return scans.map(f => {
-    const id = f.name.replace('.json', '');
-    return toReportMeta({
+  const reports = [];
+
+  for (const f of scans) {
+    const data = await safeReadJson(f.path);
+    if (!data) continue;
+
+    const id = data.id || f.name.replace('.json', '');
+    const pdfPath = path.join(REPORTS_DIR, `keyword-audit-report-${id}.pdf`);
+    const hasPdf = await fs.pathExists(pdfPath);
+
+    reports.push(toReportMeta({
       id,
       type: 'scan',
-      title: `Scan ${id.slice(0, 8)}…`,
-      generatedAt: f.mtime.toISOString(),
+      title: scanTitleFromData(data, f.name),
+      generatedAt: data.completedAt || data.startedAt || f.mtime.toISOString(),
       size: f.size,
-      hasPdf: true
-    });
-  });
+      hasPdf,
+      hasHtml: true
+    }));
+  }
+
+  return reports;
 }
 
 async function getReport(reportId) {
-  const scanPath = path.join(SCANS_DIR, `${reportId}.json`);
-  const data = await safeReadJson(scanPath);
+  const data = await stateService.getScanState(reportId);
   if (!data) return { error: 'NOT_FOUND', message: 'Scan report not found' };
 
   const pdfPath = path.join(REPORTS_DIR, `keyword-audit-report-${reportId}.pdf`);
@@ -33,6 +46,7 @@ async function getReport(reportId) {
     meta: {
       id: reportId,
       type: 'scan',
+      title: scanTitleFromData(data),
       generatedAt: data.completedAt || data.startedAt,
       hasPdf
     },
@@ -45,17 +59,21 @@ async function getLatestReport() {
   if (!scans.length) return { error: 'NO_REPORTS', message: 'No keyword scan reports found' };
 
   for (const scan of scans) {
-    const id = scan.name.replace('.json', '');
-    const result = await getReport(id);
+    const data = await safeReadJson(scan.path);
+    if (!data?.id) continue;
+    const result = await getReport(data.id);
     if (!result.error && result.data?.status === 'completed') return result;
   }
 
-  const latestId = scans[0].name.replace('.json', '');
+  const latestData = await safeReadJson(scans[0].path);
+  const latestId = latestData?.id || scans[0].name.replace('.json', '');
   return getReport(latestId);
 }
 
-async function getHtmlForReport() {
-  return { error: 'NOT_AVAILABLE', message: 'Keyword check uses PDF reports. Use the PDF endpoint.' };
+async function getHtmlForReport(reportId) {
+  const result = reportId ? await getReport(reportId) : await getLatestReport();
+  if (result.error) return result;
+  return { html: renderKeywordCheckHtml(result.data) };
 }
 
 async function getPdfPath(reportId) {

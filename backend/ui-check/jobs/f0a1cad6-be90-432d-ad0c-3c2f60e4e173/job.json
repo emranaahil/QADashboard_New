@@ -1,0 +1,35 @@
+{
+  "id": "f0a1cad6-be90-432d-ad0c-3c2f60e4e173",
+  "moduleId": "ui-check",
+  "testType": "single-page",
+  "modelId": "google.com",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://google.com/",
+  "options": {
+    "devices": [
+      "desktop"
+    ],
+    "browser": "chrome",
+    "_resolvedDevices": [
+      {
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      }
+    ]
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T17:29:48.978Z",
+  "startedAt": "2026-06-25T17:29:49.016Z",
+  "completedAt": "2026-06-25T17:30:19.159Z",
+  "durationMs": 30143,
+  "reportPath": "jobs/f0a1cad6-be90-432d-ad0c-3c2f60e4e173/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 0,
+  "currentPage": 0,
+  "currentUrl": ""
+}

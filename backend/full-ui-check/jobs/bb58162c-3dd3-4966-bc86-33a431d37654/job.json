@@ -1,0 +1,36 @@
+{
+  "id": "bb58162c-3dd3-4966-bc86-33a431d37654",
+  "moduleId": "full-ui-check",
+  "testType": "full-website",
+  "modelId": "stagedev.geniuswholesale.club",
+  "status": "completed",
+  "progress": 100,
+  "message": "Completed",
+  "url": "https://stagedev.geniuswholesale.club/",
+  "options": {
+    "devices": [
+      "desktop"
+    ],
+    "browser": "chrome",
+    "maxPages": 50,
+    "_resolvedDevices": [
+      {
+        "label": "Desktop",
+        "width": 1440,
+        "height": 900
+      }
+    ]
+  },
+  "user": "anonymous",
+  "createdAt": "2026-06-25T17:58:17.782Z",
+  "startedAt": "2026-06-25T17:58:17.818Z",
+  "completedAt": "2026-06-25T18:08:16.878Z",
+  "durationMs": 599060,
+  "reportPath": "jobs/bb58162c-3dd3-4966-bc86-33a431d37654/qa-report.html",
+  "reportAvailable": true,
+  "error": null,
+  "logs": [],
+  "totalPages": 18,
+  "currentPage": 18,
+  "currentUrl": "https://stagedev.geniuswholesale.club/reset-password"
+}

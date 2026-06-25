@@ -3,16 +3,15 @@
  * Wraps config.js device arrays — does not replace config files.
  */
 
+const fs = require('fs-extra');
+const path = require('path');
+
 const PRESET_CATALOG = [
   { id: 'desktop', label: 'Desktop', width: 1440, height: 900 },
-  { id: 'iphone13_portrait', label: 'iPhone13 Portrait', width: 390, height: 844 },
-  { id: 'iphone13_landscape', label: 'iPhone13 Landscape', width: 844, height: 390 },
-  { id: 'iphone15_plus_portrait', label: 'iPhone15 Plus Portrait', width: 430, height: 932 },
-  { id: 'iphone15_plus_landscape', label: 'iPhone15 Plus Landscape', width: 932, height: 430 },
-  { id: 's21_portrait', label: 'S21 Portrait', width: 360, height: 800 },
-  { id: 's21_landscape', label: 'S21 Landscape', width: 800, height: 360 },
-  { id: 'tablet_portrait', label: 'Tablet Portrait', width: 768, height: 1024 },
-  { id: 'tablet_landscape', label: 'Tablet Landscape', width: 1024, height: 768 }
+  { id: 'iphone13_portrait', label: 'iPhone13', width: 390, height: 844 },
+  { id: 'iphone15_plus_portrait', label: 'iPhone15 Plus', width: 430, height: 932 },
+  { id: 's21_portrait', label: 'S21', width: 360, height: 800 },
+  { id: 'tablet_portrait', label: 'Tablet', width: 768, height: 1024 }
 ];
 
 function slugifyLabel(name) {
@@ -52,13 +51,14 @@ function resolveDevices(selected) {
       continue;
     }
     if (item && typeof item === 'object') {
+      const displayName = String(item.name || item.label || '').trim();
       const w = Number(item.width);
       const h = Number(item.height);
-      if (!item.name || !Number.isFinite(w) || !Number.isFinite(h) || w < 1 || h < 1) {
+      if (!displayName || !Number.isFinite(w) || !Number.isFinite(h) || w < 1 || h < 1) {
         throw new Error('Invalid custom device: name, width, and height are required');
       }
       out.push({
-        label: slugifyLabel(item.name),
+        label: slugifyLabel(displayName),
         width: Math.round(w),
         height: Math.round(h)
       });
@@ -71,9 +71,15 @@ function resolveDevices(selected) {
   return out;
 }
 
-function applyDevicesToEnv(devices) {
-  if (devices?.length) {
-    process.env.QA_DEVICES_JSON = JSON.stringify(devices);
+async function applyDevicesToEnv(devices) {
+  if (!devices?.length) return;
+
+  process.env.QA_DEVICES_JSON = JSON.stringify(devices);
+
+  const jobDir = process.env.QA_JOB_DIR ? path.resolve(process.env.QA_JOB_DIR) : null;
+  if (jobDir) {
+    await fs.ensureDir(jobDir);
+    await fs.writeJson(path.join(jobDir, 'devices.runtime.json'), devices, { spaces: 2 });
   }
 }
 

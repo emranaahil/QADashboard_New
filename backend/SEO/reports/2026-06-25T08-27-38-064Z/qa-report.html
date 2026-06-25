@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SEO Audit Report</title>
+<style>
+  :root{--bg:#0b1220;--card:#121b2f;--text:#e7eefc;--muted:#a9b6d6;--border:rgba(255,255,255,.10);--good:#22c55e;--minor:#f59e0b;--critical:#ef4444;}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(135deg,#0b1220,#0f1b33);color:var(--text)}
+  .wrap{max-width:1200px;margin:0 auto;padding:24px}
+  header{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+  .brand{font-weight:800;font-size:18px}
+  .sub{color:var(--muted);margin-top:6px;font-size:13px}
+  .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  .stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .stat .k{color:var(--muted);font-size:12px}
+  .stat .v{font-size:18px;font-weight:800;margin-top:6px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  button{cursor:pointer;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:12px;font-weight:700}
+  button:hover{background:rgba(255,255,255,.10)}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--border)}
+  .good{color:var(--good)} .minor{color:var(--minor)} .critical{color:var(--critical)}
+  table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.03)}
+  th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+  th{font-size:12px;color:var(--muted);text-align:left;background:rgba(255,255,255,.03)}
+  tr:last-child td{border-bottom:none}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;font-size:12px}
+  .pageCard{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:14px}
+  .pageHeader{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+  .pageUrl{font-weight:800}
+  .pageMeta{color:var(--muted);font-size:13px;margin-top:6px}
+  .sectionGrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+  @media(min-width:900px){.sectionGrid{grid-template-columns:repeat(3,1fr)}}
+  details{background:rgba(0,0,0,.15);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 12px}
+  summary{cursor:pointer;font-weight:800}
+  ul{margin:10px 0 0 18px;padding:0}
+  li{margin:6px 0}
+  code{color:#dbe6ff}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand">QA Report By MD IMRAN</div>
+        <div class="sub">Main URL: <b class="mono">https://wholesalehealthclub.com</b></div>
+        <div class="sub">Scan date: <b>2026-06-25T08:26:53.590Z</b></div>
+      </div>
+      <div class="controls">
+        <button onclick="window.print()">Print report</button>
+        <button onclick="window.print()">Download PDF</button>
+      </div>
+    </header>
+
+    <div class="summary">
+  <div class="stat">
+    <span class="k">Total Pages :</span>
+    <span class="v">22</span>
+  </div>
+
+  <div class="stat">
+    <span class="k">🔴 Total Critical Issues :</span>
+    <span class="v" style="color:var(--critical)">
+      111
+    </span>
+  </div>
+
+  <div class="stat">
+    <span class="k">🟡 Total Minor Issues :</span>
+    <span class="v" style="color:var(--minor)">
+      22
+    </span>
+  </div>
+
+  <div class="stat">
+    <span class="k">🔵 Total Hidden Issues :</span>
+    <span class="v">
+      0
+    </span>
+  </div>
+</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>URL</th>
+          <th>Title</th>
+          <th>H1</th>
+          <th>Hierarchy</th>
+          <th>Issues</th>
+          <th>href#</th>
+          <th>JS Void</th>
+          <th>Img Alt Missing</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com</td>
+        <td>Wholesale Health Club</td>
+        <td>1</td>
+        <td>NO (Broken heading hierarchy: h2 -> h2 (expected +1 step))</td>
+        <td>🔴 4 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>17</td>
+        <td><span class="pill minor">🟡 Minor 57</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/discount</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>59</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/supplements</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>21</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/gummies</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>18</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/skincare</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>15</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/blue-forrest-beauty</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>12</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/emma-bean-skin-care</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>10</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/healthy-living-products</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>13</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/total-life-nutrition</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>14</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/the-complete-life</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>15</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/shop/tru-body-supplements</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>11</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/create-membership</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h3 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>18</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/faq</td>
+        <td>Wholesale Health Club</td>
+        <td>1</td>
+        <td>NO (Broken heading hierarchy: h2 -> h2 (expected +1 step))</td>
+        <td>🔴 4 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill minor">🟡 Minor 57</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/term-and-condition</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/privacy-policy</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h3 (expected h1))</td>
+        <td>🔴 6 | 🟡 1</td>
+        <td>1</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 37</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/citations</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (No h1-h4 headings found in source)</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/contact-us</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/v1</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/v2</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/v1t</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 6 | 🟡 1</td>
+        <td>0</td>
+        <td>1</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 37</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/v2t</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (First heading is h2 (expected h1))</td>
+        <td>🔴 6 | 🟡 1</td>
+        <td>0</td>
+        <td>1</td>
+        <td>8</td>
+        <td><span class="pill critical">🔴 Critical 37</span></td>
+      </tr>
+
+      <tr>
+        <td class="mono">https://wholesalehealthclub.com/cs</td>
+        <td>Wholesale Health Club</td>
+        <td>0</td>
+        <td>NO (No h1-h4 headings found in source)</td>
+        <td>🔴 5 | 🟡 1</td>
+        <td>0</td>
+        <td>0</td>
+        <td>6</td>
+        <td><span class="pill critical">🔴 Critical 47</span></td>
+      </tr>
+      </tbody>
+    </table>
+
+    
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill minor">Score 57</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (4)</summary>
+            <ul><li><code>Images without ALT: Found 17 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: Broken heading hierarchy: h2 -> h2 (expected +1 step)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/discount</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 59 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/supplements</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 21 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/gummies</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 18 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/skincare</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 15 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/blue-forrest-beauty</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 12 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/emma-bean-skin-care</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 10 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/healthy-living-products</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 13 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/total-life-nutrition</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 14 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/the-complete-life</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 15 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/shop/tru-body-supplements</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 11 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/create-membership</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 18 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h3 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/faq</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill minor">Score 57</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (4)</summary>
+            <ul><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: Broken heading hierarchy: h2 -> h2 (expected +1 step)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/term-and-condition</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/privacy-policy</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 37</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (6)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Bad links: href="#": Found 1 href="#" link(s).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h3 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/citations</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: No h1-h4 headings found in source</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/contact-us</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/v1</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/v2</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/v1t</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 37</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (6)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Bad links: javascript:void(0): Found 1 javascript:void(0) link(s).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/v2t</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 37</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (6)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Bad links: javascript:void(0): Found 1 javascript:void(0) link(s).</code></li><li><code>Images without ALT: Found 8 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: First heading is h2 (expected h1)</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+
+      <div class="pageCard">
+        <div class="pageHeader">
+          <div>
+            <div class="pageUrl mono">https://wholesalehealthclub.com/cs</div>
+            <div class="pageMeta">Title: <b>Wholesale Health Club</b></div>
+          </div>
+          <div>
+            <span class="pill critical">Score 47</span>
+          </div>
+        </div>
+
+        <div class="sectionGrid">
+          <details open>
+            <summary>🔴 Critical Issues (5)</summary>
+            <ul><li><code>Missing <h1>: No h1 tag found in source (visible/hidden/commented).</code></li><li><code>Images without ALT: Found 6 image(s) without alt (visible).</code></li><li><code>Broken heading hierarchy: No h1-h4 headings found in source</code></li><li><code>Duplicate title across pages (CRITICAL)</code></li><li><code>Duplicate description across pages (CRITICAL)</code></li></ul>
+          </details>
+          <details open>
+            <summary>🟡 Minor Issues (1)</summary>
+            <ul><li><code>Missing canonical: No canonical link tag found in source.</code></li></ul>
+          </details>
+          <details open>
+            <summary>🔵 Hidden Issues (0)</summary>
+            <ul><li>—</li></ul>
+          </details>
+        </div>
+      </div>
+  </div>
+</body>
+</html>

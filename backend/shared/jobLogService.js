@@ -36,6 +36,7 @@ async function renderJobLogsHtml(moduleId, jobId) {
   if (!payload) return null;
 
   const { job, lines } = payload;
+  const isRunning = !jobStore.TERMINAL_STATUSES.has(job.status);
   return renderLogHtml({
     title: 'Execution Logs',
     subtitle: job.url,
@@ -43,9 +44,11 @@ async function renderJobLogsHtml(moduleId, jobId) {
       Module: moduleId,
       'Job ID': jobId,
       Status: job.status,
-      Progress: `${job.progress ?? 0}%`
+      Progress: `${job.progress ?? 0}%`,
+      Message: job.message || ''
     },
-    lines
+    lines,
+    autoRefreshSec: isRunning ? 5 : 0
   });
 }
 

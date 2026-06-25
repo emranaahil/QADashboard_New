@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge, statusBadgeVariant } from "@/components/ui/badge";
 import { api } from "@/lib/api";
-import { openJobReport } from "@/lib/report";
+import { canViewReport, openRunReport } from "@/lib/report";
 import {
   buildSearchResults,
   mapRunsToResults,
@@ -15,11 +16,18 @@ import {
 } from "@/lib/global-search";
 import { cn, truncateUrl } from "@/lib/utils";
 
+type PanelPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
+
 export function GlobalSearch() {
   const listboxId = useId();
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -28,6 +36,11 @@ export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [error, setError] = useState<string | null>(null);
+  const [panelPos, setPanelPos] = useState<PanelPosition | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query.trim()), 300);
@@ -68,15 +81,46 @@ export function GlobalSearch() {
     setActiveIndex(results.length ? 0 : -1);
   }, [results]);
 
+  const updatePanelPosition = useCallback(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const width = Math.min(384, window.innerWidth - 20);
+    const left = Math.max(10, Math.min(rect.right - width, window.innerWidth - width - 10));
+    setPanelPos({
+      top: rect.bottom + 8,
+      left,
+      width,
+    });
+  }, []);
+
+  const showPanel = open && (loading || !!debouncedQuery || !!error);
+
+  useLayoutEffect(() => {
+    if (!showPanel) {
+      setPanelPos(null);
+      return;
+    }
+    updatePanelPosition();
+    window.addEventListener("resize", updatePanelPosition);
+    window.addEventListener("scroll", updatePanelPosition, true);
+    return () => {
+      window.removeEventListener("resize", updatePanelPosition);
+      window.removeEventListener("scroll", updatePanelPosition, true);
+    };
+  }, [showPanel, updatePanelPosition, debouncedQuery, results.length, loading]);
+
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      const panel = document.getElementById(listboxId);
+      if (panel?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", onPointerDown);
     return () => document.removeEventListener("mousedown", onPointerDown);
-  }, []);
+  }, [listboxId]);
 
   function selectResult(result: SearchResult) {
     setOpen(false);
@@ -89,8 +133,14 @@ export function GlobalSearch() {
       return;
     }
 
-    if (result.reportAvailable && result.status === "completed") {
-      openJobReport(result.moduleId, result.id);
+    if (
+      result.kind === "run" &&
+      canViewReport({
+        status: result.status,
+        reportAvailable: result.reportAvailable,
+      })
+    ) {
+      openRunReport(result.moduleId, result.id);
       return;
     }
 
@@ -137,11 +187,81 @@ export function GlobalSearch() {
     }
   }
 
-  const showPanel = open && (loading || !!debouncedQuery || !!error);
+  const panelContent = showPanel && panelPos && (
+    <div
+      id={listboxId}
+      role="listbox"
+      style={{
+        position: "fixed",
+        top: panelPos.top,
+        left: panelPos.left,
+        width: panelPos.width,
+        zIndex: 9999,
+      }}
+      className="overflow-hidden rounded-[14px] border border-border bg-background-elevated text-foreground shadow-2xl"
+    >
+      {loading && (
+        <div className="px-4 py-3 text-sm text-foreground/80">Searching…</div>
+      )}
+
+      {!loading && error && (
+        <div className="border-b border-border px-4 py-3 text-sm text-destructive">{error}</div>
+      )}
+
+      {!loading && !results.length && debouncedQuery && (
+        <div className="px-4 py-3 text-sm text-foreground/80">
+          No results for &ldquo;{debouncedQuery}&rdquo;. Press Enter to view history.
+        </div>
+      )}
+
+      {!loading && results.length > 0 && (
+        <ul className="max-h-80 overflow-auto py-1">
+          {results.map((result, index) => (
+            <li key={`${result.kind}-${result.id}`} role="presentation">
+              <button
+                type="button"
+                role="option"
+                aria-selected={index === activeIndex}
+                className={cn(
+                  "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors",
+                  index === activeIndex ? "bg-primary/20" : "hover:bg-primary/12"
+                )}
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => selectResult(result)}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {result.kind === "run" ? truncateUrl(result.label, 42) : result.label}
+                  </p>
+                  <p className="truncate text-xs text-foreground/70">{result.description}</p>
+                </div>
+                {result.kind === "run" && (
+                  <Badge variant={statusBadgeVariant(result.status)} className="shrink-0">
+                    {result.status}
+                  </Badge>
+                )}
+                {result.kind === "page" && (
+                  <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Page
+                  </span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {debouncedQuery && (
+        <div className="border-t border-border bg-[#081a13] px-4 py-2 text-xs text-foreground/75">
+          Press Enter to search history for &ldquo;{debouncedQuery}&rdquo;
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div ref={rootRef} className="relative w-full sm:w-auto">
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         ref={inputRef}
         type="search"
@@ -161,70 +281,7 @@ export function GlobalSearch() {
         aria-autocomplete="list"
       />
 
-      {showPanel && (
-        <div
-          id={listboxId}
-          role="listbox"
-          className="absolute right-0 z-50 mt-2 w-[min(24rem,calc(100vw-2.5rem))] overflow-hidden rounded-[14px] border border-border bg-card shadow-xl"
-        >
-          {loading && (
-            <div className="px-4 py-3 text-sm text-muted-foreground">Searching…</div>
-          )}
-
-          {!loading && error && (
-            <div className="border-b border-border px-4 py-3 text-sm text-destructive">{error}</div>
-          )}
-
-          {!loading && !results.length && debouncedQuery && (
-            <div className="px-4 py-3 text-sm text-muted-foreground">
-              No results for &ldquo;{debouncedQuery}&rdquo;. Press Enter to view history.
-            </div>
-          )}
-
-          {!loading && results.length > 0 && (
-            <ul className="max-h-80 overflow-auto py-1">
-              {results.map((result, index) => (
-                <li key={`${result.kind}-${result.id}`} role="presentation">
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={index === activeIndex}
-                    className={cn(
-                      "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors",
-                      index === activeIndex ? "bg-elevated/80" : "hover:bg-elevated/60"
-                    )}
-                    onMouseEnter={() => setActiveIndex(index)}
-                    onClick={() => selectResult(result)}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
-                        {result.kind === "run" ? truncateUrl(result.label, 42) : result.label}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">{result.description}</p>
-                    </div>
-                    {result.kind === "run" && (
-                      <Badge variant={statusBadgeVariant(result.status)} className="shrink-0">
-                        {result.status}
-                      </Badge>
-                    )}
-                    {result.kind === "page" && (
-                      <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                        Page
-                      </span>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {debouncedQuery && (
-            <div className="border-t border-border px-4 py-2 text-xs text-muted-foreground">
-              Press Enter to search history for &ldquo;{debouncedQuery}&rdquo;
-            </div>
-          )}
-        </div>
-      )}
+      {mounted && panelContent ? createPortal(panelContent, document.body) : null}
     </div>
   );
 }
