@@ -20,14 +20,8 @@ terminals
 *.md
 !README.md
 
-# Runtime data (mount volumes in production)
-backend/**/jobs
-backend/**/reports
-backend/keyword-check/storage
-backend/shared/data
-jobs
-reports
-storage
+# Bundled module reports live under backend/ and are seeded into STORAGE_ROOT on Render.
+# Do not exclude backend/**/jobs or reports — they must ship in the image for first deploy.
 
 # Logs & env secrets
 *.log

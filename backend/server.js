@@ -19,6 +19,7 @@ const jobQueue = require('./shared/jobQueue');
 const errorCheckService = require('./error-check/errorCheckService');
 const stateService = require('./keyword-check/stateService');
 const { ensureStorageDirs } = require('./shared/storagePaths');
+const { seedBundledStorageSync } = require('./shared/seedBundledStorage');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ const WEB_APP_URL = rawWebAppUrl ? rawWebAppUrl.replace(/\/$/, '') : 'http://loc
 let server = null;
 const SERVER_STARTED_AT = new Date().toISOString();
 
+seedBundledStorageSync();
 ensureStorageDirs();
 
 app.set('trust proxy', 1);
