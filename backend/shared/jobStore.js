@@ -5,7 +5,7 @@ const { normalizeUrl } = require('./urlSecurity');
 const { getModule } = require('./moduleRegistry');
 const { deriveModelId } = require('./modelUtils');
 const { moduleDataRoot, moduleJobsDir } = require('./storagePaths');
-const ephemeralLiveReports = require('./ephemeralLiveReports');
+const ephemeralLiveReportsConfig = require('./ephemeralLiveReportsConfig');
 
 const RUNNABLE_MODULES = new Set(['seo', 'ui-check', 'full-ui-check']);
 const TERMINAL_STATUSES = new Set(['completed', 'failed', 'cancelled']);
@@ -132,7 +132,7 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous' }) {
     reportPath: null,
     reportAvailable: false,
     error: null,
-    ...(ephemeralLiveReports.isEnabled() ? { reportSource: 'live' } : {}),
+    ...(ephemeralLiveReportsConfig.isEnabled() ? { reportSource: 'live' } : {}),
     expiresAt: null,
     logs: [],
     totalPages: 0,
@@ -179,10 +179,10 @@ async function updateJob(moduleId, jobId, patch) {
         updated.durationMs = new Date(updated.completedAt) - new Date(job.startedAt);
       }
       if (
-        ephemeralLiveReports.isEnabled() &&
+        ephemeralLiveReportsConfig.isEnabled() &&
         updated.reportSource === 'live'
       ) {
-        updated.expiresAt = ephemeralLiveReports.getExpiresAt(updated.completedAt);
+        updated.expiresAt = ephemeralLiveReportsConfig.getExpiresAt(updated.completedAt);
       }
     }
 
