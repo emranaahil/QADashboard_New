@@ -9,7 +9,12 @@ export function parseMaxPagesInput(value: string): number {
   return parsed;
 }
 
-export function isJobHeartbeatStale(lastHeartbeatAt?: string | null): boolean {
-  if (!lastHeartbeatAt) return false;
-  return Date.now() - new Date(lastHeartbeatAt).getTime() > JOB_STALE_MS;
+export function isJobHeartbeatStale(job: {
+  lastHeartbeatAt?: string | null;
+  startedAt?: string | null;
+  createdAt?: string | null;
+}): boolean {
+  const heartbeat = job.lastHeartbeatAt || job.startedAt || job.createdAt;
+  if (!heartbeat) return false;
+  return Date.now() - new Date(heartbeat).getTime() > JOB_STALE_MS;
 }

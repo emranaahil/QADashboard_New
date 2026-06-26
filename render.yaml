@@ -42,7 +42,9 @@ services:
       - key: FULL_UI_MAX_PAGES_CAP
         value: "12"
       - key: JOB_STALE_MS
-        value: "180000"
+        value: "600000"
+      - key: JOB_HEARTBEAT_MS
+        value: "45000"
 
     # Persistent disk for reports/jobs (survives redeploys)
     disk:

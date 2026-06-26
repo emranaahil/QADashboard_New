@@ -147,11 +147,11 @@ async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> 
       },
     });
   } catch {
-    throw new ApiError(
-      "Cannot reach QA API. Start the backend: npm run dev (port 3000)",
-      "NETWORK_ERROR",
-      0
-    );
+    const devHint =
+      process.env.NODE_ENV !== "production"
+        ? " Start the backend: npm run dev (port 3000)."
+        : " Please refresh in a moment or try again.";
+    throw new ApiError(`Cannot reach QA API.${devHint}`, "NETWORK_ERROR", 0);
   }
 
   const ct = res.headers.get("content-type") || "";
@@ -160,7 +160,9 @@ async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> 
   if (!isJson) {
     const snippet = (await res.text()).slice(0, 120);
     if (res.status === 404) {
-      throw new ApiError("API endpoint not found. Is the backend running on port 3000?", "NOT_FOUND", 404);
+      const devHint =
+        process.env.NODE_ENV !== "production" ? " Is the backend running on port 3000?" : "";
+      throw new ApiError(`API endpoint not found.${devHint}`, "NOT_FOUND", 404);
     }
     throw new ApiError(
       res.ok

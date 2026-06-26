@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
 const RETRY_DELAYS_MS = [0, 2000, 4000, 8000];
+const IS_DEV = process.env.NODE_ENV !== "production";
 
 export function ApiBanner() {
   const [ok, setOk] = useState(true);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    if (!IS_DEV) return;
     let alive = true;
 
     const check = async () => {
@@ -50,7 +52,7 @@ export function ApiBanner() {
     };
   }, []);
 
-  if (!checked || ok) return null;
+  if (!IS_DEV || !checked || ok) return null;
 
   return (
     <div className="border-b border-amber-500/30 bg-amber-500/10 px-6 py-2 text-center text-xs text-amber-200">

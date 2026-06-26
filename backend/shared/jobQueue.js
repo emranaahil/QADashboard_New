@@ -11,8 +11,49 @@ const { backendModuleDir } = require('./storagePaths');
 const activeProcesses = new Map();
 const cancellingJobs = new Set();
 const killTimers = new Map();
+const heartbeatTimers = new Map();
 const moduleQueues = new Map();
 let initialized = false;
+
+const HEARTBEAT_MS = Number(process.env.JOB_HEARTBEAT_MS || 45_000);
+
+const NOISY_STDOUT_PATTERNS = [
+  /^PROGRESS:/,
+  /^🧹 Cleared old QA logs/,
+  /^✅ UI CHECKS RUNNING/
+];
+
+function shouldLogChildLine(line) {
+  const trimmed = line.trim();
+  if (!trimmed) return false;
+  return !NOISY_STDOUT_PATTERNS.some((pattern) => pattern.test(trimmed));
+}
+
+function clearHeartbeat(key) {
+  const timer = heartbeatTimers.get(key);
+  if (timer) {
+    clearInterval(timer);
+    heartbeatTimers.delete(key);
+  }
+}
+
+function startHeartbeat(moduleId, jobId) {
+  const key = `${moduleId}:${jobId}`;
+  clearHeartbeat(key);
+  const timer = setInterval(() => {
+    jobStore.getJob(moduleId, jobId).then((job) => {
+      if (!job || jobStore.TERMINAL_STATUSES.has(job.status)) {
+        clearHeartbeat(key);
+        return;
+      }
+      return jobStore.updateJob(moduleId, jobId, {
+        message: job.message || 'Running...'
+      });
+    }).catch(() => {});
+  }, HEARTBEAT_MS);
+  if (typeof timer.unref === 'function') timer.unref();
+  heartbeatTimers.set(key, timer);
+}
 
 function getRunJobScript(moduleId) {
   return path.join(backendModuleDir(moduleId), 'runJob.js');
@@ -64,11 +105,12 @@ async function runJob(moduleId, jobId) {
   activeProcesses.set(key, child);
   const abortController = new AbortController();
   executionLock.registerExecution(moduleId, jobId, { process: child, abortController });
+  startHeartbeat(moduleId, jobId);
 
   child.stdout.on('data', (buf) => {
     const text = buf.toString();
     text.split('\n').forEach(line => {
-      if (!line.trim()) return;
+      if (!shouldLogChildLine(line)) return;
       logJob(moduleId, jobId, 'info', line.trim());
       const structured = line.match(/^PROGRESS:(\d+)\|(\d+)\|(\d+)\|([^|]*)\|(.*)$/);
       if (structured) {
@@ -115,6 +157,7 @@ async function runJob(moduleId, jobId) {
       clearTimeout(timer);
       killTimers.delete(key);
     }
+    clearHeartbeat(key);
     activeProcesses.delete(key);
     executionLock.clearExecution(moduleId, jobId);
     const job = await jobStore.getJob(moduleId, jobId);
