@@ -17,6 +17,7 @@ const {
   DEFAULT_MAX_PAGES
 } = require('../shared/fullUiCheckLimits');
 const { canMarkJobInterrupted, markJobInterrupted } = require('../shared/staleJobService');
+const { assertBrowserRunnable } = require('../shared/services/browserService');
 
 const router = express.Router();
 
@@ -45,6 +46,10 @@ router.post('/:moduleId/jobs', validateModule, async (req, res) => {
       }
     }
 
+    if (['ui-check', 'full-ui-check'].includes(req.params.moduleId) && execOptions.browser) {
+      assertBrowserRunnable(execOptions.browser);
+    }
+
     const sessionId = getSessionIdFromRequest(req);
     const job = await executionService.startExecution(req.params.moduleId, {
       url,
@@ -60,6 +65,12 @@ router.post('/:moduleId/jobs', validateModule, async (req, res) => {
         error: err.code,
         message: err.message,
         job: err.job
+      });
+    }
+    if (err.code === 'BROWSER_COMING_SOON') {
+      return res.status(400).json({
+        error: err.code,
+        message: err.message
       });
     }
     res.status(400).json({ error: 'JOB_CREATE_FAILED', message: err.message });

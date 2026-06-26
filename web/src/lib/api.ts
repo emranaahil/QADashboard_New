@@ -199,7 +199,14 @@ export const api = {
     if (opts?.scope) params.set("scope", opts.scope);
     const qs = params.toString();
     return fetchJson<{
-      browsers: Array<{ id: string; label: string; warning?: boolean; hint?: string }>;
+      browsers: Array<{
+        id: string;
+        label: string;
+        warning?: boolean;
+        hint?: string;
+        comingSoon?: boolean;
+        available?: boolean;
+      }>;
     }>(`/api/config/browsers${qs ? `?${qs}` : ""}`);
   },
 

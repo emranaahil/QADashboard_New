@@ -131,7 +131,9 @@ export function UiTestingWorkspace({
     if (historyJob?.url) setUrl(historyJob.url);
     const historyBrowser = historyJob?.options?.browser;
     if (typeof historyBrowser === "string" && ["chrome", "firefox", "safari"].includes(historyBrowser)) {
-      setSelectedBrowser(historyBrowser);
+      const liveOnlyChrome =
+        process.env.NODE_ENV === "production" && historyBrowser !== "chrome";
+      setSelectedBrowser(liveOnlyChrome ? "chrome" : historyBrowser);
     }
   }, [historyJob]);
 

@@ -37,6 +37,16 @@ const BROWSER_CATALOG = [
 
 const UI_BROWSER_IDS = new Set(BROWSER_CATALOG.filter((b) => b.ui).map((b) => b.id));
 const VALID_IDS = new Set(BROWSER_CATALOG.map(b => b.id));
+const UI_COMING_SOON_IN_PRODUCTION = new Set(['firefox', 'safari']);
+
+function isProductionHost() {
+  return process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
+}
+
+function isUiBrowserComingSoon(browserId) {
+  const id = String(browserId || '').toLowerCase();
+  return isProductionHost() && UI_COMING_SOON_IN_PRODUCTION.has(id);
+}
 
 const CHROMIUM_ARGS = [
   '--no-sandbox',
@@ -46,12 +56,28 @@ const CHROMIUM_ARGS = [
 ];
 
 function toPublicBrowser(entry) {
+  const comingSoon = Boolean(entry.ui && isUiBrowserComingSoon(entry.id));
   return {
     id: entry.id,
     label: entry.label,
     warning: entry.warning,
-    hint: entry.hint || null
+    hint: comingSoon
+      ? 'Coming soon on the live dashboard — Chrome is available today.'
+      : (entry.hint || null),
+    comingSoon,
+    available: !comingSoon
   };
+}
+
+function assertBrowserRunnable(browserType) {
+  const type = String(browserType || 'chrome').toLowerCase();
+  if (!isUiBrowserComingSoon(type)) return;
+  const spec = getBrowserSpec(type);
+  const err = new Error(
+    `${spec.label} testing is coming soon on the live dashboard. Please use Chrome for production runs.`
+  );
+  err.code = 'BROWSER_COMING_SOON';
+  throw err;
 }
 
 function getCatalog({ scope } = {}) {
@@ -191,9 +217,13 @@ function applyBrowserToEnv(browserType) {
 module.exports = {
   BROWSER_CATALOG,
   UI_BROWSER_IDS,
+  UI_COMING_SOON_IN_PRODUCTION,
+  isProductionHost,
+  isUiBrowserComingSoon,
   getCatalog,
   normalizeBrowserType,
   getBrowserSpec,
+  assertBrowserRunnable,
   buildLaunchOptions,
   buildContextOptions,
   getBrowserRestartEvery,
