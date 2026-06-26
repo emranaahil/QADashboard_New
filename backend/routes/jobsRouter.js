@@ -16,7 +16,7 @@ const {
   getHardCap,
   DEFAULT_MAX_PAGES
 } = require('../shared/fullUiCheckLimits');
-const { isStaleJob, markJobInterrupted } = require('../shared/staleJobService');
+const { canMarkJobInterrupted, markJobInterrupted } = require('../shared/staleJobService');
 
 const router = express.Router();
 
@@ -83,7 +83,7 @@ router.get('/:moduleId/jobs/:jobId', validateModule, async (req, res) => {
     jobStore.validateJobId(req.params.jobId);
     let job = await jobStore.getJob(req.params.moduleId, req.params.jobId);
     if (!job) return res.status(404).json({ error: 'NOT_FOUND', message: 'Job not found' });
-    if (isStaleJob(job)) {
+    if (canMarkJobInterrupted(req.params.moduleId, job)) {
       job = await markJobInterrupted(req.params.moduleId, job);
     }
     res.json({ job: await jobStore.enrichJob(req.params.moduleId, job) });
@@ -107,7 +107,7 @@ router.get('/:moduleId/jobs/:jobId/events', validateModule, async (req, res) => 
         res.write(`data: ${JSON.stringify({ error: 'NOT_FOUND' })}\n\n`);
         return false;
       }
-      if (isStaleJob(raw)) {
+      if (canMarkJobInterrupted(req.params.moduleId, raw)) {
         raw = await markJobInterrupted(req.params.moduleId, raw);
       }
       const job = await jobStore.enrichJob(req.params.moduleId, raw);

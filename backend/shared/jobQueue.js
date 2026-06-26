@@ -15,7 +15,7 @@ const heartbeatTimers = new Map();
 const moduleQueues = new Map();
 let initialized = false;
 
-const HEARTBEAT_MS = Number(process.env.JOB_HEARTBEAT_MS || 45_000);
+const HEARTBEAT_MS = Number(process.env.JOB_HEARTBEAT_MS || 30_000);
 
 const NOISY_STDOUT_PATTERNS = [
   /^PROGRESS:/,
@@ -307,10 +307,15 @@ async function recoverOnStartup() {
   return cleanupOnStartup();
 }
 
+function isProcessActive(moduleId, jobId) {
+  return activeProcesses.has(`${moduleId}:${jobId}`);
+}
+
 module.exports = {
   enqueue,
   cancelJob,
   cleanupOnStartup,
   recoverOnStartup,
+  isProcessActive,
   activeProcesses
 };

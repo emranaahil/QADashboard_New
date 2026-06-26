@@ -44,7 +44,7 @@ services:
       - key: JOB_STALE_MS
         value: "600000"
       - key: JOB_HEARTBEAT_MS
-        value: "45000"
+        value: "30000"
 
     # Persistent disk for reports/jobs (survives redeploys)
     disk:

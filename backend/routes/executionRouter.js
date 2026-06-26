@@ -5,7 +5,7 @@ const jobStore = require('../shared/jobStore');
 const { getModule } = require('../shared/moduleRegistry');
 const { getSessionIdFromRequest } = require('../shared/sessionUtils');
 const { isJobVisibleToSession } = require('../shared/reportVisibility');
-const { isStaleJob, markJobInterrupted } = require('../shared/staleJobService');
+const { canMarkJobInterrupted, markJobInterrupted } = require('../shared/staleJobService');
 
 const router = express.Router();
 const RUNNABLE_MODULES = ['full-ui-check', 'ui-check', 'seo'];
@@ -21,15 +21,6 @@ function validateModule(moduleId) {
 router.get('/active', async (req, res) => {
   try {
     const sessionId = getSessionIdFromRequest(req);
-
-    for (const moduleId of RUNNABLE_MODULES) {
-      const jobs = await jobStore.listJobs(moduleId, 20);
-      for (const candidate of jobs) {
-        if (!isStaleJob(candidate)) continue;
-        if (!isJobVisibleToSession(candidate, moduleId, sessionId)) continue;
-        await markJobInterrupted(moduleId, candidate);
-      }
-    }
 
     const locked = executionLock.getActiveExecution();
     if (locked?.moduleId && locked?.jobId) {
@@ -52,6 +43,15 @@ router.get('/active', async (req, res) => {
       );
       if (running) {
         return res.json({ active: true, job: await jobStore.enrichJob(moduleId, running) });
+      }
+    }
+
+    for (const moduleId of RUNNABLE_MODULES) {
+      const jobs = await jobStore.listJobs(moduleId, 20);
+      for (const candidate of jobs) {
+        if (!canMarkJobInterrupted(moduleId, candidate)) continue;
+        if (!isJobVisibleToSession(candidate, moduleId, sessionId)) continue;
+        await markJobInterrupted(moduleId, candidate);
       }
     }
 
