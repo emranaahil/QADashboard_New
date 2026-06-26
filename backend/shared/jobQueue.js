@@ -110,9 +110,10 @@ async function runJob(moduleId, jobId) {
   child.stdout.on('data', (buf) => {
     const text = buf.toString();
     text.split('\n').forEach(line => {
-      if (!shouldLogChildLine(line)) return;
-      logJob(moduleId, jobId, 'info', line.trim());
-      const structured = line.match(/^PROGRESS:(\d+)\|(\d+)\|(\d+)\|([^|]*)\|(.*)$/);
+      const trimmed = line.trim();
+      if (!trimmed) return;
+
+      const structured = trimmed.match(/^PROGRESS:(\d+)\|(\d+)\|(\d+)\|([^|]*)\|(.*)$/);
       if (structured) {
         let currentUrl = structured[4] || '';
         try {
@@ -130,9 +131,9 @@ async function runJob(moduleId, jobId) {
         return;
       }
 
-      const m = line.match(/PROGRESS:(\d+)/);
+      const m = trimmed.match(/^PROGRESS:(\d+)\s*(.*)$/);
       if (m) {
-        const message = line.replace(/PROGRESS:\d+\s*/, '').trim() || 'Running...';
+        const message = m[2]?.trim() || 'Running...';
         const patch = {
           progress: parseInt(m[1], 10),
           message
@@ -143,7 +144,11 @@ async function runJob(moduleId, jobId) {
           patch.totalPages = parseInt(urlProgress[2], 10) || 0;
         }
         jobStore.updateJob(moduleId, jobId, patch).catch(() => {});
+        return;
       }
+
+      if (!shouldLogChildLine(trimmed)) return;
+      logJob(moduleId, jobId, 'info', trimmed);
     });
   });
 

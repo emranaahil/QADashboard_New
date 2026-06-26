@@ -25,7 +25,7 @@ const FALLBACK_BROWSERS: BrowserOption[] = [
     id: "firefox",
     label: "Firefox",
     warning: true,
-    hint: "Layout results may differ from Chrome.",
+    hint: "Slower on live hosting — use one device; Chrome is more reliable on small servers.",
   },
   {
     id: "safari",

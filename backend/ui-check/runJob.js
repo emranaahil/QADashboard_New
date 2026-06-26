@@ -16,15 +16,17 @@ function emitProgress(pct, msg, meta = {}) {
     meta.totalPages != null ||
     meta.currentUrl != null;
 
-  if (hasMeta) {
-    const currentPage = meta.currentPage != null ? meta.currentPage : 0;
-    const totalPages = meta.totalPages != null ? meta.totalPages : 0;
-    const currentUrl = encodeURIComponent(meta.currentUrl || '');
-    process.stdout.write(`PROGRESS:${pct}|${currentPage}|${totalPages}|${currentUrl}|${msg}\n`);
-    return;
-  }
+  const line = hasMeta
+    ? (() => {
+      const currentPage = meta.currentPage != null ? meta.currentPage : 0;
+      const totalPages = meta.totalPages != null ? meta.totalPages : 0;
+      const currentUrl = encodeURIComponent(meta.currentUrl || '');
+      return `PROGRESS:${pct}|${currentPage}|${totalPages}|${currentUrl}|${msg}\n`;
+    })()
+    : `PROGRESS:${pct} ${msg}\n`;
 
-  process.stdout.write(`PROGRESS:${pct} ${msg}\n`);
+  // Piped stdout is block-buffered — use sync write so the parent receives updates immediately.
+  fs.writeSync(1, line);
 }
 
 function resolveJobUrls(job) {
@@ -64,21 +66,14 @@ async function main() {
   process.on('SIGINT', handleCancel);
 
   try {
-    emitProgress(5, 'Launching browser...', {
-      currentPage: 0,
-      totalPages: totalUrls,
-      currentUrl: urls[0]
-    });
-
     const config = require('./config');
     const { launchBrowser } = require('./browser');
     const {
       buildContextOptions,
-      getNavigationTimeout
+      getNavigationTimeout,
+      getBrowserSpec
     } = require('../shared/services/browserService');
     const { ensureDir, saveJson } = require('./utils/reportUtils');
-    const generateReport = require('./generateReport');
-    const uiChecks = require('./uiChecks');
 
     const runFolder = jobDir;
     const reportFile = path.join(runFolder, 'qaReport.json');
@@ -90,8 +85,18 @@ async function main() {
     saveJson(reportFile, []);
 
     const browserType = job.options?.browser || process.env.QA_BROWSER_TYPE || 'chrome';
+    const browserSpec = getBrowserSpec(browserType);
     const navTimeout = getNavigationTimeout(config.timeout, browserType);
+
+    emitProgress(5, `Launching ${browserSpec.label}...`, {
+      currentPage: 0,
+      totalPages: totalUrls,
+      currentUrl: urls[0]
+    });
+
     const browser = await launchBrowser();
+    const uiChecks = require('./uiChecks');
+    const generateReport = require('./generateReport');
     const devices = config.devices || [];
     if (!devices.length) {
       throw new Error('No devices configured for UI check');

@@ -35,6 +35,9 @@ ENV PLAYWRIGHT_CHROMIUM_SANDBOX=false
 
 RUN mkdir -p /app/data
 
+# Verify Playwright browsers shipped with the base image (Chromium, Firefox, WebKit).
+RUN node -e "const pw=require('playwright'); Promise.all([pw.chromium.launch().then(b=>b.close()),pw.firefox.launch().then(b=>b.close()),pw.webkit.launch().then(b=>b.close())]).then(()=>console.log('Playwright browsers OK')).catch(e=>{console.error(e);process.exit(1)})"
+
 EXPOSE 10000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \

@@ -22,7 +22,7 @@ const BROWSER_CATALOG = [
     channel: null,
     warning: true,
     ui: true,
-    hint: 'Layout results may differ from Chrome.'
+    hint: 'Slower on live hosting — use one device; Chrome is more reliable on small servers.'
   },
   {
     id: 'safari',
@@ -83,10 +83,19 @@ function buildLaunchOptions(baseLaunchOptions = {}, browserType = 'chrome') {
   if (spec.engine === 'firefox') {
     return {
       headless,
+      timeout: Number(process.env.PLAYWRIGHT_LAUNCH_TIMEOUT_MS || 120_000),
       firefoxUserPrefs: {
         'dom.ipc.processCount': 1,
         'media.navigator.enabled': false,
-        'devtools.console.stdout.chrome': false
+        'devtools.console.stdout.chrome': false,
+        'browser.cache.disk.enable': false,
+        'browser.cache.memory.enable': false
+      },
+      env: {
+        ...process.env,
+        MOZ_HEADLESS: '1',
+        HOME: process.env.HOME || '/tmp',
+        TMPDIR: process.env.TMPDIR || '/tmp'
       }
     };
   }
@@ -152,15 +161,25 @@ async function launchBrowser(baseLaunchOptions = {}, browserType = 'chrome') {
   const type = normalizeBrowserType(process.env.QA_BROWSER_TYPE || browserType);
   const spec = getBrowserSpec(type);
   const pw = getPlaywright();
-  const launchOpts = buildLaunchOptions(baseLaunchOptions, type);
+  const launchOpts = {
+    ...buildLaunchOptions(baseLaunchOptions, type),
+    timeout: Number(process.env.PLAYWRIGHT_LAUNCH_TIMEOUT_MS || 120_000)
+  };
 
-  if (spec.engine === 'firefox') {
-    return pw.firefox.launch(launchOpts);
+  try {
+    if (spec.engine === 'firefox') {
+      return await pw.firefox.launch(launchOpts);
+    }
+    if (spec.engine === 'webkit') {
+      return await pw.webkit.launch(launchOpts);
+    }
+    return await pw.chromium.launch(launchOpts);
+  } catch (err) {
+    const hint = spec.engine === 'firefox'
+      ? ' Firefox needs more memory than Chrome on live hosting — try Chrome or fewer devices.'
+      : '';
+    throw new Error(`Failed to launch ${spec.label}: ${err.message || err}.${hint}`);
   }
-  if (spec.engine === 'webkit') {
-    return pw.webkit.launch(launchOpts);
-  }
-  return pw.chromium.launch(launchOpts);
 }
 
 function applyBrowserToEnv(browserType) {
