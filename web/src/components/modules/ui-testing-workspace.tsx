@@ -20,6 +20,12 @@ import { api, type Job } from "@/lib/api";
 import { fallbackSummary, loadUiTestSummary, type UiTestSummary } from "@/lib/ui-testing-summary";
 import { canViewLogs } from "@/lib/logs";
 import { MAX_URL_LENGTH, normalizeUrl, validateUrl } from "@/lib/url-validation";
+import {
+  DEFAULT_MAX_PAGES,
+  LIVE_HARD_CAP,
+  WARN_ABOVE_PAGES,
+  parseMaxPagesInput,
+} from "@/lib/full-ui-limits";
 import { toast } from "sonner";
 
 type Mode = "single" | "full";
@@ -56,6 +62,7 @@ export function UiTestingWorkspace({
   const [selectedDeviceIds, setSelectedDeviceIds] = useState<string[]>([]);
   const [customDevices, setCustomDevices] = useState<CustomDevice[]>([]);
   const [devicesReady, setDevicesReady] = useState(false);
+  const [maxPages, setMaxPages] = useState(String(DEFAULT_MAX_PAGES));
   const moduleId = mode === "full" ? "full-ui-check" : "ui-check";
   const globalBusy = useGlobalWorkBusy();
   const deviceSelectorRef = useRef<DeviceSelectorHandle>(null);
@@ -139,12 +146,23 @@ export function UiTestingWorkspace({
     const devices = deviceSelectorRef.current?.getDevicesForRun();
     if (!devices?.length) return;
 
+    let pages = DEFAULT_MAX_PAGES;
+    if (mode === "full") {
+      pages = parseMaxPagesInput(maxPages);
+      if (pages > WARN_ABOVE_PAGES) {
+        toast.warning(
+          `Testing more than ${WARN_ABOVE_PAGES} pages may not complete on the live server. ` +
+            `${LIVE_HARD_CAP} is the maximum on production.`
+        );
+      }
+    }
+
     onHistoryJobClear();
     setSummary(null);
     runner.start(normalizeUrl(url), {
       devices,
       browser: "chrome",
-      ...(mode === "full" ? { maxPages: 50 } : {}),
+      ...(mode === "full" ? { maxPages: pages } : {}),
     });
   };
 
@@ -178,6 +196,27 @@ export function UiTestingWorkspace({
           maxLength={MAX_URL_LENGTH}
           className="mb-0 h-11 w-full rounded-lg text-sm"
         />
+
+        {mode === "full" && (
+          <div className="mt-4">
+            <label className="mb-2 block text-xs font-semibold text-muted-foreground">
+              Max pages to test
+            </label>
+            <Input
+              type="number"
+              min={1}
+              max={LIVE_HARD_CAP}
+              value={maxPages}
+              onChange={(e) => setMaxPages(e.target.value)}
+              disabled={globalBusy}
+              className="mb-0 h-11 w-full max-w-[200px] rounded-lg text-sm"
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Default {DEFAULT_MAX_PAGES} pages. More than {WARN_ABOVE_PAGES} may fail on live hosting
+              (max {LIVE_HARD_CAP} on production).
+            </p>
+          </div>
+        )}
 
         <div className="mt-4">
           <DeviceSelector

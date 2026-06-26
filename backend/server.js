@@ -22,6 +22,7 @@ const { ensureStorageDirs } = require('./shared/storagePaths');
 const { seedBundledStorageSync } = require('./shared/seedBundledStorage');
 const { refreshBundledManifestSync } = require('./shared/bundledReportsManifest');
 const ephemeralLiveReports = require('./shared/ephemeralLiveReports');
+const { reconcileStaleJobs } = require('./shared/staleJobService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -181,6 +182,26 @@ async function runStartupCleanup() {
             `(startup removed ${ephemeral.removedJobs} job(s), ${ephemeral.removedArtifacts} artifact group(s))`
         );
     }
+
+    const stale = await reconcileStaleJobs();
+    if (stale.marked > 0) {
+        console.log(`Stale job cleanup: marked ${stale.marked} interrupted job(s)`);
+    }
+    startStaleJobSchedule();
+}
+
+let staleJobTimer = null;
+
+function startStaleJobSchedule() {
+    if (staleJobTimer) return;
+    const tick = () => {
+        reconcileStaleJobs().catch((err) => {
+            console.error('Stale job sweep failed:', err.message);
+        });
+    };
+    tick();
+    staleJobTimer = setInterval(tick, 60_000);
+    if (typeof staleJobTimer.unref === 'function') staleJobTimer.unref();
 }
 
 function shutdown(signal) {

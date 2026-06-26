@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { api, type Job } from "@/lib/api";
 import { startVisibleInterval } from "@/lib/polling";
 import { useDashboardStore } from "@/store/dashboard-store";
+import { isJobHeartbeatStale } from "@/lib/full-ui-limits";
 import { normalizeUrl, validateUrl } from "@/lib/url-validation";
 import { useScanStore } from "@/store/scan-store";
 
@@ -90,10 +91,28 @@ function extractJobFields(job: Job) {
   };
 }
 
+function withStaleFailure(job: Job): Job {
+  if (
+    (job.status === "running" || job.status === "pending") &&
+    isJobHeartbeatStale(job.lastHeartbeatAt)
+  ) {
+    return {
+      ...job,
+      status: "failed",
+      message: "Interrupted — connection or server issue",
+      error:
+        job.error ||
+        "The test stopped responding (often due to server restart or memory limits). Try fewer pages (≤8 recommended on live).",
+    };
+  }
+  return job;
+}
+
 function watchJob(moduleId: string, jobId: string, get: () => ExecutionStore, set: (p: Partial<ExecutionStore>) => void) {
   stopWatching();
 
-  const applyJob = (j: Job) => {
+  const applyJob = (raw: Job) => {
+    const j = withStaleFailure(raw);
     const status = mapJobStatus(j.status);
     set({ ...extractJobFields(j), status, isCancelling: false });
 
@@ -136,7 +155,8 @@ export const useExecutionStore = create<ExecutionStore>((set, get) => ({
     if (status === "running") return;
 
     try {
-      const { job } = await api.getActiveJob();
+      const { job: activeJob } = await api.getActiveJob();
+      const job = activeJob ? withStaleFailure(activeJob) : null;
       if (!job || !["pending", "running"].includes(job.status)) return;
 
       set({

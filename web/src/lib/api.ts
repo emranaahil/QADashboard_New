@@ -17,6 +17,7 @@ export type Job = {
   currentUrl?: string;
   createdAt: string;
   completedAt?: string;
+  lastHeartbeatAt?: string;
   durationMs?: number;
   testType?: "single-page" | "full-website";
   options?: {

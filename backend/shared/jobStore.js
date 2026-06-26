@@ -171,6 +171,11 @@ async function updateJob(moduleId, jobId, patch) {
     if (!job) throw new Error('Job not found');
 
     const updated = { ...job, ...patch };
+    const isActive = !TERMINAL_STATUSES.has(updated.status) &&
+      (updated.status === 'pending' || updated.status === 'running');
+    if (isActive) {
+      updated.lastHeartbeatAt = new Date().toISOString();
+    }
     if (patch.status === 'running' && !job.startedAt) {
       updated.startedAt = new Date().toISOString();
     }

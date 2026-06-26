@@ -47,9 +47,9 @@ async function main() {
   const { applyJobRuntimeEnv } = require('../shared/services/executionService');
   await applyJobRuntimeEnv(job);
 
-  if (job.options?.maxPages) {
-    process.env.QA_MAX_PAGES = String(job.options.maxPages);
-  }
+  const { normalizeMaxPages } = require('../shared/fullUiCheckLimits');
+  const maxPages = normalizeMaxPages(job.options?.maxPages);
+  process.env.QA_MAX_PAGES = String(maxPages);
 
   let progressInterval = null;
 
@@ -75,10 +75,8 @@ async function main() {
     const { updateTracker } = require('./tracker');
     const crawlConfig = require('./crawlConfig');
     const crawlOverrides = {};
-    if (job.options?.maxPages) {
-      crawlOverrides.maxPagesToScan = Number(job.options.maxPages);
-      crawlOverrides.maxUrls = Number(job.options.maxPages);
-    }
+    crawlOverrides.maxPagesToScan = maxPages;
+    crawlOverrides.maxUrls = maxPages;
     if (job.options?.ignorePaths?.length) {
       crawlOverrides.ignorePaths = job.options.ignorePaths;
     }
@@ -104,9 +102,12 @@ async function main() {
       crawlConfig: mergedCrawlConfig
     });
 
+    const { prioritizeUrlQueue } = require('./prioritizeUrlQueue');
+    prioritizeUrlQueue(urlQueuePath, job.url);
+
     const totalPages = countUrlsInQueue(urlQueuePath) || discovery?.discovered || 0;
     await executionProgress.lockTotalPages(MODULE_ID, jobId, totalPages);
-    emitProgress(25, `Found ${totalPages} URLs — scanning...`);
+    emitProgress(25, `Found ${totalPages} URLs — scanning (important pages first)...`);
 
     progressInterval = setInterval(async () => {
       try {

@@ -10,6 +10,13 @@ const executionService = require('../shared/services/executionService');
 const executionController = require('../shared/executionController');
 const jobLogService = require('../shared/jobLogService');
 const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+const {
+  normalizeMaxPages,
+  wasCapped,
+  getHardCap,
+  DEFAULT_MAX_PAGES
+} = require('../shared/fullUiCheckLimits');
+const { isStaleJob, markJobInterrupted } = require('../shared/staleJobService');
 
 const router = express.Router();
 
@@ -26,12 +33,22 @@ function validateModule(req, res, next) {
 
 router.post('/:moduleId/jobs', validateModule, async (req, res) => {
   try {
-    const { url, options, user } = req.body || {};
+    const { url, options = {}, user } = req.body || {};
+    const execOptions = { ...options };
+
+    if (req.params.moduleId === 'full-ui-check') {
+      const requested = execOptions.maxPages ?? DEFAULT_MAX_PAGES;
+      execOptions.maxPages = normalizeMaxPages(requested);
+      if (wasCapped(requested)) {
+        execOptions._maxPagesCapped = true;
+        execOptions._maxPagesCap = getHardCap();
+      }
+    }
 
     const sessionId = getSessionIdFromRequest(req);
     const job = await executionService.startExecution(req.params.moduleId, {
       url,
-      options,
+      options: execOptions,
       user,
       sessionId
     });
@@ -64,8 +81,11 @@ router.get('/:moduleId/jobs', validateModule, async (req, res) => {
 router.get('/:moduleId/jobs/:jobId', validateModule, async (req, res) => {
   try {
     jobStore.validateJobId(req.params.jobId);
-    const job = await jobStore.getJob(req.params.moduleId, req.params.jobId);
+    let job = await jobStore.getJob(req.params.moduleId, req.params.jobId);
     if (!job) return res.status(404).json({ error: 'NOT_FOUND', message: 'Job not found' });
+    if (isStaleJob(job)) {
+      job = await markJobInterrupted(req.params.moduleId, job);
+    }
     res.json({ job: await jobStore.enrichJob(req.params.moduleId, job) });
   } catch (err) {
     res.status(400).json({ error: 'INVALID_REQUEST', message: err.message });
@@ -82,10 +102,13 @@ router.get('/:moduleId/jobs/:jobId/events', validateModule, async (req, res) => 
     res.flushHeaders?.();
 
     const send = async () => {
-      const raw = await jobStore.getJob(req.params.moduleId, req.params.jobId);
+      let raw = await jobStore.getJob(req.params.moduleId, req.params.jobId);
       if (!raw) {
         res.write(`data: ${JSON.stringify({ error: 'NOT_FOUND' })}\n\n`);
         return false;
+      }
+      if (isStaleJob(raw)) {
+        raw = await markJobInterrupted(req.params.moduleId, raw);
       }
       const job = await jobStore.enrichJob(req.params.moduleId, raw);
       res.write(`data: ${JSON.stringify({ job })}\n\n`);

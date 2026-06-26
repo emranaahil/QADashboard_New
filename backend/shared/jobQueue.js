@@ -223,15 +223,9 @@ async function cleanupOnStartup() {
         recovered++;
         logJob(moduleId, job.id, 'info', 'Job re-queued after server restart');
       } else {
-        const updated = await jobStore.updateJob(moduleId, job.id, {
-          status: 'cancelled',
-          progress: job.progress || 0,
-          message: 'Stopped — server restarted',
-          error: null,
-          completedAt: new Date().toISOString()
-        });
-        await testStatusService.syncExecutionFromJob(moduleId, updated);
-        logJob(moduleId, job.id, 'info', 'Job cancelled on startup (not auto-resumed)');
+        const { markJobInterrupted } = require('./staleJobService');
+        await markJobInterrupted(moduleId, job);
+        logJob(moduleId, job.id, 'info', 'Job marked interrupted on startup (not auto-resumed)');
         cancelled++;
       }
     }
