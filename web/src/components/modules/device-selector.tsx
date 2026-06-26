@@ -43,6 +43,7 @@ type DeviceSelectorProps = {
   onCustomDevicesChange: (devices: CustomDevice[]) => void;
   disabled?: boolean;
   showMultiDeviceWarning?: boolean;
+  compact?: boolean;
 };
 
 export function parsePendingCustomDevice(pending: PendingCustomDevice): CustomDevice | null {
@@ -81,10 +82,12 @@ export const DeviceSelector = forwardRef<DeviceSelectorHandle, DeviceSelectorPro
       onCustomDevicesChange,
       disabled = false,
       showMultiDeviceWarning = false,
+      compact = false,
     },
     ref
   ) {
     const [catalog, setCatalog] = useState<DevicePreset[]>([]);
+    const [customOpen, setCustomOpen] = useState(false);
     const [customName, setCustomName] = useState("");
     const [customWidth, setCustomWidth] = useState("");
     const [customHeight, setCustomHeight] = useState("");
@@ -174,10 +177,15 @@ export const DeviceSelector = forwardRef<DeviceSelectorHandle, DeviceSelectorPro
     );
 
     return (
-      <div className="flex flex-col gap-3">
+      <div className={cn("flex flex-col", compact ? "gap-2" : "gap-3")}>
         <div>
-          <label className="mb-2 block text-xs font-semibold text-muted-foreground">Devices</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="mb-1.5 flex items-center justify-between gap-2">
+            <label className="text-xs font-semibold text-muted-foreground">Devices</label>
+            <span className="rounded-md border border-border bg-background px-2 py-0.5 text-[0.68rem] font-medium text-muted-foreground">
+              {totalSelected} selected
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
             {catalog.map((device) => {
               const active = selectedSet.has(device.id);
               return (
@@ -227,19 +235,34 @@ export const DeviceSelector = forwardRef<DeviceSelectorHandle, DeviceSelectorPro
               </span>
             ) : null}
           </div>
-          <p className="mt-2 text-[0.7rem] text-muted-foreground">
-            {totalSelected} device{totalSelected === 1 ? "" : "s"} selected — each runs with its viewport during the test.
-          </p>
+          {!compact ? (
+            <p className="mt-2 text-[0.7rem] text-muted-foreground">
+              Each selected device runs at its own viewport during the test.
+            </p>
+          ) : null}
           {showMultiDeviceWarning && totalSelected > 1 ? (
             <p className="mt-1 text-[0.7rem] text-amber-500">
-              Multiple devices increase runtime. For full-site scans, one device at a time is more reliable.
+              Multiple devices increase runtime — one device is more reliable for full-site scans.
             </p>
           ) : null}
         </div>
 
-        <div className="rounded-lg border border-border bg-background-elevated p-3">
-          <p className="mb-2 text-xs font-semibold text-muted-foreground">Custom viewport</p>
-          <div className="grid gap-2 sm:grid-cols-[1fr_88px_88px_auto]">
+        <div className={compact ? "border-t border-border/60 pt-2" : ""}>
+          {compact ? (
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => setCustomOpen((open) => !open)}
+              className="flex w-full items-center justify-between rounded-lg px-1 py-1 text-left text-xs font-semibold text-muted-foreground hover:text-foreground"
+            >
+              <span>Custom viewport</span>
+              <span className="text-[0.65rem] font-normal">{customOpen ? "Hide" : "Add"}</span>
+            </button>
+          ) : (
+            <p className="mb-2 text-xs font-semibold text-muted-foreground">Custom viewport</p>
+          )}
+          {(!compact || customOpen) && (
+          <div className={cn("grid gap-2 sm:grid-cols-[1fr_88px_88px_auto]", compact ? "mt-1.5" : "")}>
             <Input
               placeholder="Device name"
               value={customName}
@@ -292,6 +315,7 @@ export const DeviceSelector = forwardRef<DeviceSelectorHandle, DeviceSelectorPro
               Add
             </button>
           </div>
+          )}
         </div>
       </div>
     );

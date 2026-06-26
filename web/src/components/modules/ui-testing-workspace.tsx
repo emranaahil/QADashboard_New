@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { RunModuleButton } from "@/components/execution/run-module-button";
 import { StatusWithReport } from "@/components/execution/status-with-report";
 import { ViewLogButton } from "@/components/execution/view-log-button";
+import { BrowserSelector } from "@/components/modules/browser-selector";
 import {
   DeviceSelector,
   type CustomDevice,
@@ -19,7 +20,8 @@ import { useJobRunner } from "@/hooks/use-job-runner";
 import { api, type Job } from "@/lib/api";
 import { fallbackSummary, loadUiTestSummary, type UiTestSummary } from "@/lib/ui-testing-summary";
 import { canViewLogs } from "@/lib/logs";
-import { MAX_URL_LENGTH, normalizeUrl, validateUrl } from "@/lib/url-validation";
+import { parseUrlListInput, validateUrlListInput } from "@/lib/parse-url-list";
+import { MAX_URL_LENGTH, validateUrl } from "@/lib/url-validation";
 import {
   DEFAULT_MAX_PAGES,
   LIVE_HARD_CAP,
@@ -63,6 +65,7 @@ export function UiTestingWorkspace({
   const [customDevices, setCustomDevices] = useState<CustomDevice[]>([]);
   const [devicesReady, setDevicesReady] = useState(false);
   const [maxPages, setMaxPages] = useState(String(DEFAULT_MAX_PAGES));
+  const [selectedBrowser, setSelectedBrowser] = useState("chrome");
   const moduleId = mode === "full" ? "full-ui-check" : "ui-check";
   const globalBusy = useGlobalWorkBusy();
   const deviceSelectorRef = useRef<DeviceSelectorHandle>(null);
@@ -126,6 +129,10 @@ export function UiTestingWorkspace({
 
   useEffect(() => {
     if (historyJob?.url) setUrl(historyJob.url);
+    const historyBrowser = historyJob?.options?.browser;
+    if (typeof historyBrowser === "string" && ["chrome", "firefox", "safari"].includes(historyBrowser)) {
+      setSelectedBrowser(historyBrowser);
+    }
   }, [historyJob]);
 
   useEffect(() => {
@@ -137,7 +144,8 @@ export function UiTestingWorkspace({
   }, [workflow, activeJob, displayModuleId, loadSummary]);
 
   const handleRun = () => {
-    const validationError = validateUrl(url);
+    const validationError =
+      mode === "single" ? validateUrlListInput(url) : validateUrl(url);
     if (validationError) {
       toast.error(validationError);
       return;
@@ -147,6 +155,12 @@ export function UiTestingWorkspace({
     if (!devices?.length) return;
 
     let pages = DEFAULT_MAX_PAGES;
+    let startUrl = url.trim();
+    const runOptions: Record<string, unknown> = {
+      devices,
+      browser: selectedBrowser,
+    };
+
     if (mode === "full") {
       pages = parseMaxPagesInput(maxPages);
       if (pages > WARN_ABOVE_PAGES) {
@@ -155,20 +169,25 @@ export function UiTestingWorkspace({
             `${LIVE_HARD_CAP} is the maximum on production.`
         );
       }
+      runOptions.maxPages = pages;
+    } else {
+      const parsed = parseUrlListInput(url);
+      startUrl = parsed.primaryUrl;
+      if (parsed.urls.length > 1) {
+        runOptions.urls = parsed.urls;
+      }
     }
 
     onHistoryJobClear();
     setSummary(null);
-    runner.start(normalizeUrl(url), {
-      devices,
-      browser: "chrome",
-      ...(mode === "full" ? { maxPages: pages } : {}),
-    });
+    runner.start(startUrl, runOptions);
   };
 
   const pagesLabel =
     runner.totalPages > 0
-      ? `${runner.currentPage} / ${runner.totalPages} Pages`
+      ? mode === "single" && runner.totalPages > 1
+        ? `URL ${runner.currentPage} / ${runner.totalPages}`
+        : `${runner.currentPage} / ${runner.totalPages} Pages`
       : runner.running
         ? `${runner.progress}%`
         : "—";
@@ -183,42 +202,83 @@ export function UiTestingWorkspace({
           {mode === "full" ? "Full Website UI Check" : "Single Page UI Check"}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Enter a URL and run visual QA checks across your selected devices.
+          {mode === "full"
+            ? "Enter a URL and run visual QA checks across your selected devices."
+            : "Enter one URL, or several separated by commas — all tested in one run with a single report."}
         </p>
 
-        <label className="mb-2 mt-4 block text-xs font-semibold text-muted-foreground">URL</label>
+        <label className="mb-2 mt-4 block text-xs font-semibold text-muted-foreground">
+          {mode === "single" ? "URL(s)" : "URL"}
+        </label>
         <Input
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://example.com"
+          placeholder={
+            mode === "single"
+              ? "https://example.com, example.com/login, example.com/about"
+              : "https://example.com"
+          }
           disabled={globalBusy}
           maxLength={MAX_URL_LENGTH}
           className="mb-0 h-11 w-full rounded-lg text-sm"
         />
 
-        {mode === "full" && (
-          <div className="mt-4">
-            <label className="mb-2 block text-xs font-semibold text-muted-foreground">
-              Max pages to test
-            </label>
-            <Input
-              type="number"
-              min={1}
-              max={LIVE_HARD_CAP}
-              value={maxPages}
-              onChange={(e) => setMaxPages(e.target.value)}
-              disabled={globalBusy}
-              className="mb-0 h-11 w-full max-w-[200px] rounded-lg text-sm"
-            />
-            <p className="mt-2 text-xs text-muted-foreground">
-              Default {DEFAULT_MAX_PAGES} pages. More than {WARN_ABOVE_PAGES} may fail on live hosting
-              (max {LIVE_HARD_CAP} on production).
-            </p>
-          </div>
-        )}
+        <div className="mt-4 space-y-4 rounded-xl border border-border bg-background-elevated/40 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Run configuration
+          </p>
 
-        <div className="mt-4">
+          {mode === "full" && (
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="text-xs font-semibold text-muted-foreground">Max pages</label>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[DEFAULT_MAX_PAGES, WARN_ABOVE_PAGES, LIVE_HARD_CAP].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      disabled={globalBusy}
+                      onClick={() => setMaxPages(String(preset))}
+                      className={`rounded-lg border px-2.5 py-1 text-[0.68rem] font-medium transition-colors ${
+                        maxPages === String(preset)
+                          ? "border-primary bg-primary/10 text-foreground"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                  <Input
+                    type="number"
+                    min={1}
+                    max={LIVE_HARD_CAP}
+                    value={maxPages}
+                    onChange={(e) => setMaxPages(e.target.value)}
+                    disabled={globalBusy}
+                    aria-label="Max pages to test"
+                    className="mb-0 h-8 w-[4.5rem] rounded-lg px-2 text-center text-sm"
+                  />
+                </div>
+              </div>
+              <p className="text-[0.68rem] text-muted-foreground">
+                Default {DEFAULT_MAX_PAGES} pages. More than {WARN_ABOVE_PAGES} may fail on live hosting.
+              </p>
+            </div>
+          )}
+
+          {mode === "full" ? <div className="border-t border-border/60" /> : null}
+
+          <BrowserSelector
+            value={selectedBrowser}
+            onChange={setSelectedBrowser}
+            disabled={globalBusy}
+            mode={mode}
+            compact
+          />
+
+          <div className="border-t border-border/60" />
+
           <DeviceSelector
             ref={deviceSelectorRef}
             selectedIds={selectedDeviceIds}
@@ -227,6 +287,7 @@ export function UiTestingWorkspace({
             onCustomDevicesChange={setCustomDevices}
             disabled={globalBusy}
             showMultiDeviceWarning={mode === "full"}
+            compact
           />
         </div>
 

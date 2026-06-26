@@ -9,7 +9,8 @@ router.get('/devices', (req, res) => {
 });
 
 router.get('/browsers', (req, res) => {
-  res.json({ browsers: browserService.getCatalog() });
+  const scope = String(req.query.scope || '').toLowerCase();
+  res.json({ browsers: browserService.getCatalog({ scope: scope === 'ui' ? 'ui' : undefined }) });
 });
 
 router.post('/devices/resolve', (req, res) => {

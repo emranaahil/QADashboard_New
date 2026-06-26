@@ -21,10 +21,35 @@ function safeWriteReport(filePath, report) {
   try {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-    const tmpFile = `${filePath}.tmp`;
+    const tmpFile = `${filePath}.${process.pid}.${Date.now()}.tmp`;
     fs.writeFileSync(tmpFile, JSON.stringify(report, null, 2));
-    fs.renameSync(tmpFile, filePath);
 
+    const commit = () => {
+      try {
+        fs.renameSync(tmpFile, filePath);
+      } catch (err) {
+        if (process.platform === 'win32' && ['EPERM', 'EACCES', 'EBUSY'].includes(err?.code)) {
+          fs.copyFileSync(tmpFile, filePath);
+          try { fs.unlinkSync(tmpFile); } catch { /* ignore */ }
+          return;
+        }
+        throw err;
+      }
+    };
+
+    let lastErr = null;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      try {
+        commit();
+        return;
+      } catch (err) {
+        lastErr = err;
+        if (!['EPERM', 'EACCES', 'EBUSY'].includes(err?.code) || attempt === 7) break;
+        const waitUntil = Date.now() + 35 * (attempt + 1);
+        while (Date.now() < waitUntil) { /* spin */ }
+      }
+    }
+    throw lastErr;
   } catch (err) {
     console.error('⚠️ Failed to write report:', err.message);
   }

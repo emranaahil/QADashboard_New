@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { uuidv4, validateUuid } = require('./uuidUtils');
 const { normalizeUrl } = require('./urlSecurity');
+const { parseUrlList, normalizeUrlList } = require('./parseUrlList');
 const { getModule } = require('./moduleRegistry');
 const { deriveModelId } = require('./modelUtils');
 const { moduleDataRoot, moduleJobsDir } = require('./storagePaths');
@@ -25,12 +26,42 @@ async function withJobLock(moduleId, jobId, fn) {
   return next;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function commitTempJsonFile(tmp, filePath) {
+  const maxAttempts = 8;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      await fs.move(tmp, filePath, { overwrite: true });
+      return;
+    } catch (err) {
+      const retryable = err && ['EPERM', 'EACCES', 'EBUSY'].includes(err.code);
+      if (!retryable || attempt === maxAttempts - 1) {
+        if (process.platform === 'win32' && retryable) {
+          await fs.copy(tmp, filePath, { overwrite: true });
+          await fs.remove(tmp).catch(() => {});
+          return;
+        }
+        throw err;
+      }
+      await sleep(35 * (attempt + 1));
+    }
+  }
+}
+
 async function atomicWriteJson(filePath, data) {
   const dir = path.dirname(filePath);
   await fs.ensureDir(dir);
   const tmp = path.join(dir, `.${path.basename(filePath)}.${process.pid}.${Date.now()}.tmp`);
   await fs.writeJson(tmp, data, { spaces: 2 });
-  await fs.move(tmp, filePath, { overwrite: true });
+  try {
+    await commitTempJsonFile(tmp, filePath);
+  } catch (err) {
+    await fs.remove(tmp).catch(() => {});
+    throw err;
+  }
 }
 
 function getModuleJobsDir(moduleId) {
@@ -105,7 +136,23 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous', sess
   if (!RUNNABLE_MODULES.has(moduleId)) {
     throw new Error('Module does not support job execution');
   }
-  const cleanUrl = validateUrl(url);
+  let cleanUrl = validateUrl(url);
+  let resolvedUrls = null;
+  const execOptions = { ...options };
+
+  if (moduleId === 'ui-check') {
+    if (Array.isArray(execOptions.urls) && execOptions.urls.length) {
+      const parsed = normalizeUrlList(execOptions.urls);
+      cleanUrl = parsed.primaryUrl;
+      resolvedUrls = parsed.urls;
+    } else {
+      const parsed = parseUrlList(url);
+      cleanUrl = parsed.primaryUrl;
+      resolvedUrls = parsed.urls;
+    }
+    execOptions.urls = resolvedUrls;
+  }
+
   const id = uuidv4();
   const now = new Date().toISOString();
   const jobDir = getJobDir(moduleId, id);
@@ -121,9 +168,12 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous', sess
     modelId: deriveModelId(cleanUrl),
     status: 'pending',
     progress: 0,
-    message: 'Queued',
+    message: resolvedUrls && resolvedUrls.length > 1
+      ? `Queued — ${resolvedUrls.length} URLs`
+      : 'Queued',
     url: cleanUrl,
-    options,
+    ...(resolvedUrls ? { urls: resolvedUrls } : {}),
+    options: execOptions,
     user,
     sessionId: sessionId || null,
     createdAt: now,

@@ -15,7 +15,7 @@
     "dev:web": "npm run dev --prefix web",
     "dev:all": "npm run dev",
     "build:web": "npm run build --prefix web",
-    "playwright": "npx playwright install chromium",
+    "playwright": "npx playwright install chromium firefox webkit",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",

@@ -3,9 +3,6 @@ node_modules
 web/node_modules
 backend/**/node_modules
 
-# Legacy static frontend — superseded by web/ (Next.js)
-frontend
-
 # Next.js build artifacts (rebuilt inside Docker)
 web/.next
 web/out

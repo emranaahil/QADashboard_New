@@ -14,6 +14,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      { source: "/modules/ui-check", destination: "/ui-testing", permanent: true },
+      { source: "/modules/full-ui-check", destination: "/ui-testing", permanent: true },
+      { source: "/modules/seo", destination: "/seo-testing", permanent: true },
+      { source: "/modules/keyword-check", destination: "/keyword-radar", permanent: true },
+      { source: "/modules/error-check", destination: "/link-radar", permanent: true },
+      { source: "/linkradar", destination: "/link-radar", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

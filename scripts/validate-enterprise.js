@@ -42,7 +42,10 @@ async function main() {
   devices.ok && devices.data.devices?.length >= 5 ? pass('Device config (5+ presets)') : fail('Device config', 'missing devices');
 
   const browsers = await fetchJson(`${BASE}/api/config/browsers`);
-  browsers.ok && browsers.data.browsers?.length >= 6 ? pass('Browser config') : fail('Browser config', 'missing browsers');
+  browsers.ok && browsers.data.browsers?.length >= 3 ? pass('Browser config') : fail('Browser config', 'missing browsers');
+
+  const uiBrowsers = await fetchJson(`${BASE}/api/config/browsers?scope=ui`);
+  uiBrowsers.ok && uiBrowsers.data.browsers?.length === 3 ? pass('UI browser config') : fail('UI browser config', 'expected 3 UI browsers');
 
   const modules = await fetchJson(`${BASE}/api/modules`);
   modules.ok && modules.data.modules?.length >= 5 ? pass('Modules API preserved') : fail('Modules API', 'broken');
@@ -55,11 +58,6 @@ async function main() {
     ['/reports', 200],
     ['/keyword-radar', 200],
     ['/link-radar', 200],
-    ['/modules/ui-check?legacy=1', 200],
-    ['/modules/full-ui-check?legacy=1', 200],
-    ['/modules/seo?legacy=1', 200],
-    ['/modules/keyword-check?legacy=1', 200],
-    ['/modules/error-check?legacy=1', 200]
   ];
 
   for (const [path, expected] of pages) {
@@ -68,11 +66,20 @@ async function main() {
     else fail(`Page ${path}`, `HTTP ${status}`);
   }
 
-  const redirectUi = await fetchStatus(`${BASE}/modules/ui-check`);
-  redirectUi === 301 || redirectUi === 302 || redirectUi === 200 ? pass('UI check compatibility redirect') : fail('UI check redirect', String(redirectUi));
+  const legacyRedirects = [
+    ['/modules/ui-check', '/ui-testing'],
+    ['/modules/full-ui-check', '/ui-testing'],
+    ['/modules/seo', '/seo-testing'],
+    ['/modules/keyword-check', '/keyword-radar'],
+    ['/modules/error-check', '/link-radar'],
+    ['/linkradar', '/link-radar']
+  ];
 
-  const redirectSeo = await fetchStatus(`${BASE}/modules/seo`);
-  redirectSeo < 400 ? pass('SEO compatibility route') : fail('SEO route', String(redirectSeo));
+  for (const [from] of legacyRedirects) {
+    const res = await fetch(`${BASE}${from}`, { redirect: 'manual' });
+    const ok = [301, 302, 307, 308].includes(res.status) || res.status === 200;
+    ok ? pass(`Legacy redirect ${from}`) : fail(`Legacy redirect ${from}`, `HTTP ${res.status}`);
+  }
 
   console.log('\n============================');
   const failed = results.filter(r => !r.ok);

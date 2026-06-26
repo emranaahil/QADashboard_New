@@ -70,12 +70,37 @@ async function runJob(moduleId, jobId) {
     text.split('\n').forEach(line => {
       if (!line.trim()) return;
       logJob(moduleId, jobId, 'info', line.trim());
+      const structured = line.match(/^PROGRESS:(\d+)\|(\d+)\|(\d+)\|([^|]*)\|(.*)$/);
+      if (structured) {
+        let currentUrl = structured[4] || '';
+        try {
+          currentUrl = decodeURIComponent(currentUrl);
+        } catch {
+          /* keep raw */
+        }
+        jobStore.updateJob(moduleId, jobId, {
+          progress: parseInt(structured[1], 10),
+          currentPage: parseInt(structured[2], 10) || 0,
+          totalPages: parseInt(structured[3], 10) || 0,
+          currentUrl,
+          message: structured[5]?.trim() || 'Running...'
+        }).catch(() => {});
+        return;
+      }
+
       const m = line.match(/PROGRESS:(\d+)/);
       if (m) {
-        jobStore.updateJob(moduleId, jobId, {
+        const message = line.replace(/PROGRESS:\d+\s*/, '').trim() || 'Running...';
+        const patch = {
           progress: parseInt(m[1], 10),
-          message: line.replace(/PROGRESS:\d+\s*/, '').trim() || 'Running...'
-        }).catch(() => {});
+          message
+        };
+        const urlProgress = message.match(/URL\s+(\d+)\s*\/\s*(\d+)/i);
+        if (urlProgress) {
+          patch.currentPage = parseInt(urlProgress[1], 10) || 0;
+          patch.totalPages = parseInt(urlProgress[2], 10) || 0;
+        }
+        jobStore.updateJob(moduleId, jobId, patch).catch(() => {});
       }
     });
   });

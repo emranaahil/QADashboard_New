@@ -50,6 +50,12 @@ function isRetryableError(e) {
 
 async function runSingleUrl({ browser, url, runId, runFolder, screenshotFolder }) {
   const reportFile = path.join(runFolder, 'qaReport.json');
+  const {
+    buildContextOptions,
+    getNavigationTimeout
+  } = require('../shared/services/browserService');
+  const browserType = process.env.QA_BROWSER_TYPE || 'chrome';
+  const navTimeout = getNavigationTimeout(config.timeout, browserType);
 
   // IMPORTANT: do not keep multiple pages open; also keep one browser per run.
   const devices = config.devices || [];
@@ -63,11 +69,12 @@ async function runSingleUrl({ browser, url, runId, runFolder, screenshotFolder }
     const screenshotDirForUrl = path.join(screenshotFolder, urlFolderName);
     ensureDir(screenshotDirForUrl);
 
+    const context = await browser.newContext(buildContextOptions(browserType, viewport));
     let page;
     try {
       console.log(`[TEST]   Loading page (${device.label}): ${url}`);
-      page = await browser.newPage({ viewport });
-      const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: config.timeout });
+      page = await context.newPage();
+      const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: navTimeout });
       console.log(`[TEST]   Running checks (${device.label}): ${url}`);
 
       const result = await uiChecks(page, {
@@ -88,8 +95,6 @@ async function runSingleUrl({ browser, url, runId, runFolder, screenshotFolder }
         status: issues.length ? 'failed' : 'passed'
       });
 
-      await page.close().catch(() => {});
-      page = null;
     } catch (e) {
       const reason = e?.message || String(e);
       allIssuesForUrl.push({
@@ -100,8 +105,9 @@ async function runSingleUrl({ browser, url, runId, runFolder, screenshotFolder }
         timestamp: new Date().toISOString(),
         status: 'failed'
       });
-
+    } finally {
       if (page) await page.close().catch(() => {});
+      await context.close().catch(() => {});
       page = null;
     }
   }
@@ -323,7 +329,11 @@ async function processUrlQueue({
         }
       }
 
-      const restartEvery = config.browserRestartEvery || 50;
+      const { getBrowserRestartEvery } = require('../shared/services/browserService');
+      const restartEvery = getBrowserRestartEvery(
+        process.env.QA_BROWSER_TYPE || 'chrome',
+        config.browserRestartEvery || 50
+      );
       if (processedCount > 0 && processedCount % restartEvery === 0) {
         if (browser) await browser.close().catch(() => {});
         browser = await openBrowser();

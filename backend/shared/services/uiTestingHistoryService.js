@@ -81,7 +81,11 @@ async function listUiTestingHistory({ type, q, limit = 100, sessionId } = {}) {
     jobs.map(async (job) => {
       const tt = deriveTestType(job, moduleId);
       let title = job.url;
-      try { title = new URL(job.url).hostname; } catch { /* keep url */ }
+      try {
+        const host = new URL(job.url).hostname;
+        const urlCount = Array.isArray(job.urls) ? job.urls.length : 0;
+        title = urlCount > 1 ? `${host} (+${urlCount - 1} URL${urlCount > 2 ? 's' : ''})` : host;
+      } catch { /* keep url */ }
       const hasQaIssues =
         job.status === 'completed' ? await jobHasQaIssues(moduleId, job.id) : false;
       return {

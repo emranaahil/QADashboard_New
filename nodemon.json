@@ -7,7 +7,6 @@
     "backend/keyword-check/storage/**",
     "backend/error-check/reports/**",
     "backend/shared/data/**",
-    "frontend/**",
     "web/**",
     "node_modules/**",
     "**/*.log",

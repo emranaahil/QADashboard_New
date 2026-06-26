@@ -27,7 +27,7 @@ function getCatalog() {
 }
 
 /**
- * Resolve frontend selection into runtime device array for config injection.
+ * Resolve UI device selection into runtime device array for config injection.
  * @param {Array<string|{name:string,width:number,height:number}>} selected
  */
 function resolveDevices(selected) {

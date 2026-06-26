@@ -123,6 +123,23 @@ function priorityLabel(severity) {
   return 'Minor';
 }
 
+/** Human-friendly page label — prefer URL path when page name is just the device label. */
+function entryDisplayName(entry) {
+  const page = entry.page || 'Page';
+  const url = entry.url || '';
+  if (!url) return page;
+  try {
+    const parsed = new URL(url);
+    const pathLabel = parsed.pathname && parsed.pathname !== '/'
+      ? parsed.pathname
+      : parsed.hostname;
+    if (page === entry.device || page === 'unknown') return pathLabel;
+    return page;
+  } catch {
+    return url;
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SCREENSHOT HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -262,13 +279,13 @@ if (report.length) {
   console.log(JSON.stringify(report[0], null, 2));
 }
 
-  // ── Normalize entries (group by page+device) ──────────────────────────────
+  // ── Normalize entries (group by url+device; page label alone is not unique for multi-URL runs) ──
   const byKey = new Map();
   for (const entry of report) {
     const page = entry.page || 'Page';
     const url = entry.url || '';
     const device = entry.device || 'device';
-    const key = page + '__' + device;
+    const key = (url || page) + '__' + device;
 
     if (!byKey.has(key)) {
       byKey.set(key, {
@@ -432,7 +449,7 @@ if (fs.existsSync(resolvedScreenshotFolder)) {
            data-has-issues="${hasIssues}" data-search="${escapeHtml((e.page + ' ' + e.url + ' ' + e.device).toLowerCase())}">
         <div class="page-card-header">
           <div class="page-card-info">
-            <div class="page-card-name">${escapeHtml(e.page)}</div>
+            <div class="page-card-name">${escapeHtml(entryDisplayName(e))}</div>
             <div class="page-card-url">${escapeHtml(e.url)}</div>
             <div class="page-card-device">Device: <b>${escapeHtml(e.device)}</b></div>
            
@@ -461,10 +478,10 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
 
   const galleryHtml = galleryItems.length > 0
     ? galleryItems.map((s, idx) => `
-        <div class="thumb gallery-item" data-device="${escapeHtml(s.device)}" data-page="${escapeHtml(s.page)}"
+        <div class="thumb gallery-item" data-device="${escapeHtml(s.device)}" data-page="${escapeHtml(s.page)}" data-url="${escapeHtml(s.url)}"
              onclick="openGalleryViewer(${idx})" data-index="${idx}">
           <img src="${escapeHtml(s.thumbSrc)}" alt="${escapeHtml(s.file)}" loading="lazy" />
-          <div class="t">${escapeHtml(s.file)}<br><small style="color:var(--text);">${escapeHtml(s.device)} • ${escapeHtml(s.page)}</small></div>
+          <div class="t">${escapeHtml(s.file)}<br><small style="color:var(--text);">${escapeHtml(s.device)} • ${escapeHtml(s.url || s.page)}</small></div>
         </div>`).join('')
     : '<div class="empty-state">No screenshots available.</div>';
 
@@ -475,7 +492,7 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
       return '<div class="print-screenshot-page">' +
         '<div class="print-shot-meta">Screenshot: ' + escapeHtml(s.file) + '</div>' +
         '<div class="print-shot-meta">Device: ' + escapeHtml(s.device) + '</div>' +
-        '<div class="print-shot-meta">Page: ' + escapeHtml(s.page) + '</div>' +
+        '<div class="print-shot-meta">URL: ' + escapeHtml(s.url || s.page) + '</div>' +
         '<div class="print-shot-img-wrap">' +
           '<img src="' + escapeHtml(s.fullSrc) + '" alt="' + escapeHtml(s.file) + '" />' +
         '</div>' +
@@ -1239,7 +1256,7 @@ function scheduleUpdate() {
       var count = 0;
       items.forEach(function(item, idx) {
         var matchDevice = !device || item.getAttribute('data-device') === device;
-        var matchPage = !page || item.getAttribute('data-page') === page;
+        var matchPage = !page || item.getAttribute('data-url') === page;
         var visible = matchDevice && matchPage;
         item.style.display = visible ? '' : 'none';
         if (visible) {

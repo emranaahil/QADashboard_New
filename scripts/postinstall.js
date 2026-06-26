@@ -13,8 +13,8 @@ if (skip) {
 }
 
 try {
-  console.log('[postinstall] Installing Playwright Chromium…');
-  execSync('npx playwright install chromium', { stdio: 'inherit' });
+  console.log('[postinstall] Installing Playwright browsers (Chromium, Firefox, WebKit)…');
+  execSync('npx playwright install chromium firefox webkit', { stdio: 'inherit' });
 } catch (err) {
   console.warn('[postinstall] Playwright install failed — run: npm run playwright');
   console.warn(err.message);

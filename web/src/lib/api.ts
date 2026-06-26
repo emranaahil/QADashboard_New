@@ -10,6 +10,7 @@ export type Job = {
   progress: number;
   message?: string;
   url: string;
+  urls?: string[];
   error?: string;
   reportAvailable?: boolean;
   totalPages?: number;
@@ -191,10 +192,14 @@ export const api = {
       "/api/config/devices"
     ),
 
-  getBrowsers: () =>
-    fetchJson<{ browsers: Array<{ id: string; label: string; warning?: boolean }> }>(
-      "/api/config/browsers"
-    ),
+  getBrowsers: (opts?: { scope?: "ui" }) => {
+    const params = new URLSearchParams();
+    if (opts?.scope) params.set("scope", opts.scope);
+    const qs = params.toString();
+    return fetchJson<{
+      browsers: Array<{ id: string; label: string; warning?: boolean; hint?: string }>;
+    }>(`/api/config/browsers${qs ? `?${qs}` : ""}`);
+  },
 
   getHistory: (opts?: { limit?: number; moduleId?: string; q?: string }) => {
     const params = new URLSearchParams();
