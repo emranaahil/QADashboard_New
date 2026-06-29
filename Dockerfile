@@ -40,7 +40,7 @@ RUN node -e "const pw=require('playwright'); Promise.all([pw.chromium.launch().t
 
 EXPOSE 10000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
   CMD node scripts/healthcheck.js
 
 CMD ["node", "scripts/start-production.js"]

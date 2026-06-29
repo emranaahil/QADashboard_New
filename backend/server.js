@@ -32,10 +32,6 @@ const WEB_APP_URL = rawWebAppUrl ? rawWebAppUrl.replace(/\/$/, '') : 'http://loc
 let server = null;
 const SERVER_STARTED_AT = new Date().toISOString();
 
-seedBundledStorageSync();
-if (process.env.STORAGE_ROOT) {
-    refreshBundledManifestSync();
-}
 ensureStorageDirs();
 
 app.set('trust proxy', 1);
@@ -237,13 +233,26 @@ process.on('uncaughtException', (err) => {
     console.error('Uncaught exception:', err);
 });
 
-server = app.listen(PORT, '0.0.0.0', async () => {
-    try {
-        await runStartupCleanup();
-    } catch (err) {
+function scheduleBackgroundStartup() {
+    setImmediate(() => {
+        try {
+            seedBundledStorageSync();
+            if (process.env.STORAGE_ROOT) {
+                refreshBundledManifestSync();
+            }
+        } catch (err) {
+            console.error('Storage seed failed:', err.message);
+        }
+    });
+
+    runStartupCleanup().catch((err) => {
         console.error('Startup cleanup failed:', err.message);
-    }
+    });
+}
+
+server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`API server running on port ${PORT} (started ${SERVER_STARTED_AT})`);
+    scheduleBackgroundStartup();
     if (!IS_PRODUCTION) {
         console.log(`UI dashboard: ${WEB_APP_URL}`);
         console.log('Dev tip: use http://localhost:3001 — production port will not show latest UI changes.');

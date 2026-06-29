@@ -49,33 +49,67 @@ function normalizeReportUrl(url) {
   }
 }
 
-async function findSeoReportForJob(job) {
-  if (!job?.url) return null;
-
+async function buildSeoReportIndex() {
   const reportsRoot = getReportsRoot();
-  if (!(await fs.pathExists(reportsRoot))) return null;
+  const index = new Map();
+  if (!(await fs.pathExists(reportsRoot))) return index;
 
-  const jobUrl = normalizeReportUrl(job.url);
-  const completedAt = job.completedAt ? new Date(job.completedAt).getTime() : null;
-  let best = null;
-
-  const entries = await fs.readdir(reportsRoot);
-  for (const runId of entries) {
+  for (const runId of await fs.readdir(reportsRoot)) {
     if (!runId || runId.startsWith('.')) continue;
     const { htmlPath, jsonPath, reportPath } = getRunArtifacts(runId);
     if (!(await fs.pathExists(htmlPath))) continue;
 
     const data = await fs.readJson(jsonPath).catch(() => null);
     if (!data?.mainUrl) continue;
-    if (normalizeReportUrl(data.mainUrl) !== jobUrl) continue;
 
+    const key = normalizeReportUrl(data.mainUrl);
     const scanAt = data.scanDate ? new Date(data.scanDate).getTime() : null;
-    const distance = completedAt != null && scanAt != null
-      ? Math.abs(scanAt - completedAt)
-      : Number.MAX_SAFE_INTEGER;
+    const list = index.get(key) || [];
+    list.push({ runId, reportPath, scanAt });
+    index.set(key, list);
+  }
 
-    if (!best || distance < best.distance) {
-      best = { runId, reportPath, distance };
+  return index;
+}
+
+async function findSeoReportForJob(job, index = null) {
+  if (!job?.url) return null;
+
+  const jobUrl = normalizeReportUrl(job.url);
+  const completedAt = job.completedAt ? new Date(job.completedAt).getTime() : null;
+  let best = null;
+
+  const candidates = index?.get(jobUrl) || null;
+  if (candidates) {
+    for (const entry of candidates) {
+      const distance = completedAt != null && entry.scanAt != null
+        ? Math.abs(entry.scanAt - completedAt)
+        : Number.MAX_SAFE_INTEGER;
+      if (!best || distance < best.distance) {
+        best = { runId: entry.runId, reportPath: entry.reportPath, distance };
+      }
+    }
+  } else {
+    const reportsRoot = getReportsRoot();
+    if (!(await fs.pathExists(reportsRoot))) return null;
+
+    for (const runId of await fs.readdir(reportsRoot)) {
+      if (!runId || runId.startsWith('.')) continue;
+      const { htmlPath, jsonPath, reportPath } = getRunArtifacts(runId);
+      if (!(await fs.pathExists(htmlPath))) continue;
+
+      const data = await fs.readJson(jsonPath).catch(() => null);
+      if (!data?.mainUrl) continue;
+      if (normalizeReportUrl(data.mainUrl) !== jobUrl) continue;
+
+      const scanAt = data.scanDate ? new Date(data.scanDate).getTime() : null;
+      const distance = completedAt != null && scanAt != null
+        ? Math.abs(scanAt - completedAt)
+        : Number.MAX_SAFE_INTEGER;
+
+      if (!best || distance < best.distance) {
+        best = { runId, reportPath, distance };
+      }
     }
   }
 
@@ -92,6 +126,8 @@ async function repairSeoJobReportLinks() {
   const stats = { scanned: 0, repaired: 0 };
 
   if (!(await fs.pathExists(jobsRoot))) return stats;
+
+  const reportIndex = await buildSeoReportIndex();
 
   for (const entry of await fs.readdir(jobsRoot)) {
     const jobFile = path.join(jobsRoot, entry, 'job.json');
@@ -113,7 +149,7 @@ async function repairSeoJobReportLinks() {
       if (await fs.pathExists(htmlPath)) continue;
     }
 
-    const discovered = await findSeoReportForJob(job);
+    const discovered = await findSeoReportForJob(job, reportIndex);
     if (!discovered) continue;
 
     await fs.writeJson(jobFile, {
@@ -222,6 +258,7 @@ module.exports = {
   getRunArtifacts,
   writeRunArtifacts,
   normalizeReportUrl,
+  buildSeoReportIndex,
   findSeoReportForJob,
   repairSeoJobReportLinks,
   cleanupLegacySeoReports,
