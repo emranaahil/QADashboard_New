@@ -24,9 +24,10 @@ export function StatusWithReport({
   className,
   badgeClassName,
 }: StatusWithReportProps) {
+  const reportCheckStatus = reportStatus ?? status;
   const showViewReport =
     canViewReport({
-      status: reportStatus ?? status,
+      status: reportCheckStatus,
       reportAvailable,
     }) && !!moduleId && !!jobId;
 

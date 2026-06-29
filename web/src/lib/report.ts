@@ -9,13 +9,13 @@ type ReportAvailability = {
   id?: string;
 };
 
-const NON_REPORT_STATUSES = new Set(["cancelled", "running", "pending", "starting"]);
+const ACTIVE_STATUSES = new Set(["running", "pending", "starting"]);
 
 export function canViewReport(job?: Job | ReportAvailability | null): boolean {
   if (job?.reportAvailable !== true) return false;
   const status = (job?.status || "").toLowerCase();
   if (!status || status === "cancelled") return false;
-  if (NON_REPORT_STATUSES.has(status)) return false;
+  if (ACTIVE_STATUSES.has(status)) return false;
   return true;
 }
 

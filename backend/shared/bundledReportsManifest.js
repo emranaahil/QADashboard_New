@@ -69,7 +69,7 @@ function collectBundledSnapshot() {
     }
 
     walkFilesSync(srcRoot, (relPath) => {
-      paths.add(toPosixRelative([...destPrefix, relPath]));
+      paths.add(toPosixRelative([...dest, relPath]));
     });
   }
 

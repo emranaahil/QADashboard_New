@@ -168,12 +168,16 @@ async function runJob(moduleId, jobId) {
     const job = await jobStore.getJob(moduleId, jobId);
     if (!job) return;
 
-    if (job.status === 'cancelled') {
+    if (job.status === 'cancelled' || jobStore.TERMINAL_STATUSES.has(job.status)) {
       processModuleQueue(moduleId);
       return;
     }
 
-    const reportOk = await jobStore.reportExists(moduleId, jobId);
+    let reportOk = await jobStore.reportExists(moduleId, jobId);
+    if (code === 0 && !reportOk) {
+      await new Promise((r) => setTimeout(r, 250));
+      reportOk = await jobStore.reportExists(moduleId, jobId);
+    }
     if (code === 0 && reportOk) {
       const completed = await jobStore.updateJob(moduleId, jobId, {
         status: 'completed',

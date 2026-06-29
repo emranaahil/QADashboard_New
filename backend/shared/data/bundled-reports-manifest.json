@@ -1,14 +1,25 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-25T19:04:59.234Z",
+  "updatedAt": "2026-06-29T14:48:53.043Z",
   "jobs": {
     "ui-check": [
+      "093830f1-153c-483f-b259-038c101367b5",
       "099bd551-745f-4602-9bc5-3ca1c4ef5805",
+      "181312d3-2951-480d-a4d4-8f86c77ace98",
+      "393bd554-5304-4584-8842-39e07493304d",
+      "4c916cec-e3a6-4c7c-8e07-634247cce2a2",
+      "607f2743-7c66-43d7-abca-a98e3301b85d",
       "865fecde-ce1d-433b-ab6e-1be1958248f8",
+      "c1bff963-280b-4b90-8ee5-b6f6ad2857c5",
+      "e592bef5-9a5e-411b-aeb8-75a85ed90f13",
       "f0a1cad6-be90-432d-ad0c-3c2f60e4e173"
     ],
     "full-ui-check": [
-      "bb58162c-3dd3-4966-bc86-33a431d37654"
+      "0d29b679-3815-4743-b3cc-fdfd49336401",
+      "516782f1-a576-45dd-96f7-436754e2be02",
+      "65387e9e-7881-418c-b8d3-8eb08287ba8a",
+      "bb58162c-3dd3-4966-bc86-33a431d37654",
+      "e9061aff-91fa-4eeb-b59c-80cddc9e5273"
     ],
     "seo": [
       "6fba01e3-9533-45f8-998b-d76ff8b4a485",
@@ -19,24 +30,24 @@
     ]
   },
   "paths": [
-    "error-check/error-check-stagedev.geniuswholesale.club-2026-06-25T09-34-21-362Z.json",
-    "keyword-check/checkpoints/f18a6e74-79c0-4d45-9b08-e1f5a155d0d5.json",
-    "keyword-check/reports/keyword-audit-report-c62647be-8e1b-4637-b48d-1dc9cb65ec70.pdf",
-    "keyword-check/scans/stagedev.geniuswholesale.club-2026-06-25T09-17-25-778Z.json",
-    "seo/2026-06-25T07-39-27-087Z/qa-report.html",
-    "seo/2026-06-25T07-39-27-087Z/seoReport.json",
-    "seo/2026-06-25T07-58-13-340Z/qa-report.html",
-    "seo/2026-06-25T07-58-13-340Z/seoReport.json",
-    "seo/2026-06-25T08-25-18-293Z/qa-report.html",
-    "seo/2026-06-25T08-25-18-293Z/seoReport.json",
-    "seo/2026-06-25T08-27-38-064Z/qa-report.html",
-    "seo/2026-06-25T08-27-38-064Z/seoReport.json",
-    "seo/2026-06-25T08-29-33-501Z/qa-report.html",
-    "seo/2026-06-25T08-29-33-501Z/seoReport.json",
+    "error-check/reports/error-check-stagedev.geniuswholesale.club-2026-06-25T09-34-21-362Z.json",
+    "keyword-check/storage/checkpoints/f18a6e74-79c0-4d45-9b08-e1f5a155d0d5.json",
+    "keyword-check/storage/reports/keyword-audit-report-c62647be-8e1b-4637-b48d-1dc9cb65ec70.pdf",
+    "keyword-check/storage/scans/stagedev.geniuswholesale.club-2026-06-25T09-17-25-778Z.json",
     "seo/reports/2026-06-25T07-39-27-087Z",
+    "seo/reports/2026-06-25T07-39-27-087Z/qa-report.html",
+    "seo/reports/2026-06-25T07-39-27-087Z/seoReport.json",
     "seo/reports/2026-06-25T07-58-13-340Z",
+    "seo/reports/2026-06-25T07-58-13-340Z/qa-report.html",
+    "seo/reports/2026-06-25T07-58-13-340Z/seoReport.json",
     "seo/reports/2026-06-25T08-25-18-293Z",
+    "seo/reports/2026-06-25T08-25-18-293Z/qa-report.html",
+    "seo/reports/2026-06-25T08-25-18-293Z/seoReport.json",
     "seo/reports/2026-06-25T08-27-38-064Z",
-    "seo/reports/2026-06-25T08-29-33-501Z"
+    "seo/reports/2026-06-25T08-27-38-064Z/qa-report.html",
+    "seo/reports/2026-06-25T08-27-38-064Z/seoReport.json",
+    "seo/reports/2026-06-25T08-29-33-501Z",
+    "seo/reports/2026-06-25T08-29-33-501Z/qa-report.html",
+    "seo/reports/2026-06-25T08-29-33-501Z/seoReport.json"
   ]
 }

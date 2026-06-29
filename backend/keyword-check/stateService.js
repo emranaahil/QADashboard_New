@@ -179,6 +179,7 @@ async function listScans() {
         const data = await fs.readJson(path.join(SCANS_DIR, file));
         scans.push({
           id: data.id,
+          sessionId: data.sessionId || null,
           url: data.url,
           status: data.status,
           startedAt: data.startedAt,

@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { RunModuleButton } from "@/components/execution/run-module-button";
 import { ViewLogButton } from "@/components/execution/view-log-button";
+import { ViewReportButton } from "@/components/execution/view-report-button";
 import { StatusWithReport } from "@/components/execution/status-with-report";
+import { canViewReport } from "@/lib/report";
 import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
 import { useJobRunner } from "@/hooks/use-job-runner";
 import type { Job } from "@/lib/api";
@@ -116,6 +118,12 @@ export function SeoTestingWorkspace({
         : "—";
 
   const showViewLog = canViewLogs(displayStatus) && !!activeJob?.id;
+  const showViewReport =
+    canViewReport({
+      status: activeJob?.status ?? displayStatus,
+      reportAvailable: activeJob?.reportAvailable,
+    }) &&
+    !!activeJob?.id;
 
   return (
     <div className="ui-check-container flex w-full flex-col gap-6">
@@ -228,6 +236,9 @@ export function SeoTestingWorkspace({
           )}
 
           <div className="flex flex-wrap gap-3">
+            {showViewReport && (
+              <ViewReportButton moduleId={MODULE_ID} jobId={activeJob.id} className="h-11 rounded-lg" />
+            )}
             {showViewLog && (
               <ViewLogButton kind="job" moduleId={MODULE_ID} jobId={activeJob.id} className="h-11 rounded-lg" />
             )}

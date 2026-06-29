@@ -62,6 +62,13 @@ async function collectJobRuns(sessionId) {
   return runs;
 }
 
+async function keywordReportAvailable(scan) {
+  const status = normalizeStatus(scan.status);
+  if (status !== 'completed') return false;
+  const data = await stateService.getScanState(scan.id);
+  return Boolean(data);
+}
+
 async function collectKeywordRuns(sessionId) {
   const scans = await stateService.listScans();
   const runs = [];
@@ -69,7 +76,7 @@ async function collectKeywordRuns(sessionId) {
   for (const scan of scans) {
     if (!isKeywordScanVisible(scan, sessionId)) continue;
     const status = normalizeStatus(scan.status);
-    const reportAvailable = status === 'completed';
+    const reportAvailable = await keywordReportAvailable(scan);
 
     const total = scan.stats?.urlsDiscovered || 0;
     const current = scan.stats?.urlsProcessed || 0;

@@ -49,9 +49,13 @@ async function main() {
     const saved = await writeRunArtifacts(runId, { seoReport, html });
 
     await jobStore.updateJob(MODULE_ID, jobId, {
+      status: 'completed',
+      progress: 100,
+      message: 'Completed',
       reportPath: saved.reportPath,
       reportRunId: runId,
-      message: 'Report saved'
+      reportAvailable: true,
+      error: null
     });
 
     emitProgress(100, 'Completed');

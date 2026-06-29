@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { RunModuleButton } from "@/components/execution/run-module-button";
 import { StatusWithReport } from "@/components/execution/status-with-report";
 import { ViewLogButton } from "@/components/execution/view-log-button";
+import { ViewReportButton } from "@/components/execution/view-report-button";
+import { canViewReport } from "@/lib/report";
 import { BrowserSelector } from "@/components/modules/browser-selector";
 import {
   DeviceSelector,
@@ -196,6 +198,13 @@ export function UiTestingWorkspace({
 
   const showViewLog =
     canViewLogs(displayStatus) && !!displayModuleId && !!activeJob?.id;
+  const showViewReport =
+    canViewReport({
+      status: activeJob?.status ?? displayStatus,
+      reportAvailable: activeJob?.reportAvailable,
+    }) &&
+    !!displayModuleId &&
+    !!activeJob?.id;
 
   return (
     <div className="ui-check-container flex w-full flex-col gap-6">
@@ -378,6 +387,13 @@ export function UiTestingWorkspace({
           )}
 
           <div className="flex flex-wrap gap-3">
+            {showViewReport && (
+              <ViewReportButton
+                moduleId={displayModuleId}
+                jobId={activeJob.id}
+                className="h-11 rounded-lg"
+              />
+            )}
             {showViewLog && (
               <ViewLogButton
                 kind="job"

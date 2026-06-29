@@ -295,8 +295,13 @@ async function reportExists(moduleId, jobId) {
 /** Attach live report availability from disk — never trust stale job.json alone. */
 async function enrichJob(moduleId, job) {
   if (!job) return null;
-  const hasFile = await reportExists(moduleId, job.id);
-  const reportAvailable = job.status === 'completed' && hasFile;
+  let hasFile = await reportExists(moduleId, job.id);
+  if (!hasFile && job.reportPath && typeof job.reportPath === 'string') {
+    const alt = path.join(moduleDataRoot(moduleId), job.reportPath);
+    hasFile = await fs.pathExists(alt);
+  }
+  const isCompleted = job.status === 'completed' || job.status === 'done';
+  const reportAvailable = isCompleted && hasFile;
   const totalPages = job.totalPages || 0;
   const currentPage = job.currentPage || 0;
   const progressPercent = job.progress || 0;

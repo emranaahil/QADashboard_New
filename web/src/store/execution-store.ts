@@ -100,6 +100,21 @@ function watchJob(moduleId: string, jobId: string, get: () => ExecutionStore, se
 
     if (["completed", "failed", "cancelled"].includes(j.status)) {
       stopWatching();
+      if (j.status === "completed" && j.reportAvailable !== true) {
+        setTimeout(() => {
+          api
+            .getJob(moduleId, jobId)
+            .then(({ job: fresh }) => {
+              if (fresh?.reportAvailable) {
+                set({
+                  ...extractJobFields(fresh),
+                  status: mapJobStatus(fresh.status),
+                });
+              }
+            })
+            .catch(() => {});
+        }, 1200);
+      }
       useDashboardStore.getState().bumpRefresh();
       const { successMessage, source } = get();
       if (j.status === "completed") {
