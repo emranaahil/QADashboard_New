@@ -118,6 +118,37 @@ function getReportPath(moduleId, jobId) {
   return path.join(getJobDir(moduleId, jobId), 'qa-report.html');
 }
 
+async function resolveReportLocation(moduleId, jobId, job) {
+  const resolvedJob = job || await getJob(moduleId, jobId);
+  if (!resolvedJob) return null;
+
+  const primary = resolveReportAbsolutePath(moduleId, jobId, resolvedJob);
+  if (await fs.pathExists(primary)) {
+    return {
+      absolutePath: primary,
+      reportPath: resolvedJob.reportPath || inferReportRelativePath(moduleId, jobId, resolvedJob),
+      reportRunId: resolvedJob.reportRunId || null
+    };
+  }
+
+  if (moduleId === 'seo') {
+    const { findSeoReportForJob } = require('../SEO/seoReportStorage');
+    const discovered = await findSeoReportForJob(resolvedJob);
+    if (discovered?.reportPath) {
+      const discoveredPath = path.join(moduleDataRoot(moduleId), discovered.reportPath);
+      if (await fs.pathExists(discoveredPath)) {
+        return {
+          absolutePath: discoveredPath,
+          reportPath: discovered.reportPath,
+          reportRunId: discovered.reportRunId
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
 function validateJobId(jobId) {
   if (!jobId || typeof jobId !== 'string' || !validateUuid(jobId)) {
     throw new Error('Invalid job ID');
@@ -286,7 +317,8 @@ async function listJobs(moduleId, limit = 50) {
 
 async function reportExists(moduleId, jobId) {
   try {
-    return await fs.pathExists(getReportPath(moduleId, jobId));
+    const location = await resolveReportLocation(moduleId, jobId);
+    return Boolean(location);
   } catch {
     return false;
   }
@@ -295,11 +327,22 @@ async function reportExists(moduleId, jobId) {
 /** Attach live report availability from disk — never trust stale job.json alone. */
 async function enrichJob(moduleId, job) {
   if (!job) return null;
-  let hasFile = await reportExists(moduleId, job.id);
-  if (!hasFile && job.reportPath && typeof job.reportPath === 'string') {
-    const alt = path.join(moduleDataRoot(moduleId), job.reportPath);
-    hasFile = await fs.pathExists(alt);
+  const location = await resolveReportLocation(moduleId, job.id, job);
+  const hasFile = Boolean(location);
+
+  if (
+    hasFile &&
+    moduleId === 'seo' &&
+    location.reportPath &&
+    (job.reportPath !== location.reportPath || job.reportRunId !== location.reportRunId)
+  ) {
+    updateJob(moduleId, job.id, {
+      reportPath: location.reportPath,
+      reportRunId: location.reportRunId,
+      reportAvailable: true
+    }).catch(() => {});
   }
+
   const isCompleted = job.status === 'completed' || job.status === 'done';
   const reportAvailable = isCompleted && hasFile;
   const totalPages = job.totalPages || 0;
@@ -310,7 +353,8 @@ async function enrichJob(moduleId, job) {
     ...job,
     testType: job.testType || MODULE_TEST_TYPE[moduleId] || null,
     reportAvailable,
-    reportPath: reportAvailable ? (job.reportPath || `jobs/${job.id}/qa-report.html`) : null,
+    reportPath: reportAvailable ? (location?.reportPath || job.reportPath || `jobs/${job.id}/qa-report.html`) : null,
+    reportRunId: location?.reportRunId || job.reportRunId || null,
     executionState: {
       status: job.status === 'pending' ? 'running' : job.status,
       progress: { current: currentPage, total: totalPages },

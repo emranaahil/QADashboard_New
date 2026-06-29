@@ -153,7 +153,7 @@ async function runStartupCleanup() {
 
     let seoMigration = null;
     try {
-        const { migrateSeoReportLayoutOnce } = require('./SEO/seoReportStorage');
+        const { migrateSeoReportLayoutOnce, repairSeoJobReportLinks } = require('./SEO/seoReportStorage');
         seoMigration = await migrateSeoReportLayoutOnce();
         if (seoMigration && !seoMigration.skipped) {
             console.log(
@@ -161,6 +161,12 @@ async function runStartupCleanup() {
                 `${seoMigration.removed.flatFiles} flat file(s), ` +
                 `${seoMigration.removed.jobArtifacts} job artifact(s), ` +
                 `${seoMigration.removed.jobsUpdated} job record(s) updated`
+            );
+        }
+        const seoRepair = await repairSeoJobReportLinks();
+        if (seoRepair.repaired > 0) {
+            console.log(
+                `SEO report repair: relinked ${seoRepair.repaired} completed job(s) to on-disk reports`
             );
         }
     } catch (err) {

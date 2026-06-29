@@ -37,9 +37,100 @@ async function writeRunArtifacts(runId, { seoReport, html }) {
   return { runId, folder, jsonPath, htmlPath, reportPath };
 }
 
+function normalizeReportUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  try {
+    const parsed = new URL(url.trim());
+    const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+    const pathPart = parsed.pathname.replace(/\/+$/, '') || '';
+    return `${host}${pathPart}`;
+  } catch {
+    return url.trim().toLowerCase().replace(/\/+$/, '');
+  }
+}
+
+async function findSeoReportForJob(job) {
+  if (!job?.url) return null;
+
+  const reportsRoot = getReportsRoot();
+  if (!(await fs.pathExists(reportsRoot))) return null;
+
+  const jobUrl = normalizeReportUrl(job.url);
+  const completedAt = job.completedAt ? new Date(job.completedAt).getTime() : null;
+  let best = null;
+
+  const entries = await fs.readdir(reportsRoot);
+  for (const runId of entries) {
+    if (!runId || runId.startsWith('.')) continue;
+    const { htmlPath, jsonPath, reportPath } = getRunArtifacts(runId);
+    if (!(await fs.pathExists(htmlPath))) continue;
+
+    const data = await fs.readJson(jsonPath).catch(() => null);
+    if (!data?.mainUrl) continue;
+    if (normalizeReportUrl(data.mainUrl) !== jobUrl) continue;
+
+    const scanAt = data.scanDate ? new Date(data.scanDate).getTime() : null;
+    const distance = completedAt != null && scanAt != null
+      ? Math.abs(scanAt - completedAt)
+      : Number.MAX_SAFE_INTEGER;
+
+    if (!best || distance < best.distance) {
+      best = { runId, reportPath, distance };
+    }
+  }
+
+  if (!best) return null;
+  return {
+    reportRunId: best.runId,
+    reportPath: best.reportPath
+  };
+}
+
+async function repairSeoJobReportLinks() {
+  const { moduleJobsDir } = require('../shared/storagePaths');
+  const jobsRoot = moduleJobsDir('seo');
+  const stats = { scanned: 0, repaired: 0 };
+
+  if (!(await fs.pathExists(jobsRoot))) return stats;
+
+  for (const entry of await fs.readdir(jobsRoot)) {
+    const jobFile = path.join(jobsRoot, entry, 'job.json');
+    if (!(await fs.pathExists(jobFile))) continue;
+
+    let job;
+    try {
+      job = await fs.readJson(jobFile);
+    } catch {
+      continue;
+    }
+
+    if (job.status !== 'completed') continue;
+    stats.scanned++;
+
+    const hasPointer = job.reportPath && job.reportRunId;
+    if (hasPointer) {
+      const htmlPath = path.join(getReportsRoot(), job.reportRunId, REPORT_HTML);
+      if (await fs.pathExists(htmlPath)) continue;
+    }
+
+    const discovered = await findSeoReportForJob(job);
+    if (!discovered) continue;
+
+    await fs.writeJson(jobFile, {
+      ...job,
+      reportPath: discovered.reportPath,
+      reportRunId: discovered.reportRunId,
+      reportAvailable: true
+    }, { spaces: 2 });
+    stats.repaired++;
+  }
+
+  return stats;
+}
+
 async function cleanupLegacySeoReports() {
   const reportsRoot = getReportsRoot();
-  const { moduleJobsDir } = require('../shared/storagePaths');
+  const { moduleJobsDir, moduleDataRoot } = require('../shared/storagePaths');
   const jobsRoot = moduleJobsDir('seo');
   const removed = { flatFiles: 0, jobArtifacts: 0, jobsUpdated: 0 };
 
@@ -73,18 +164,34 @@ async function cleanupLegacySeoReports() {
 
       const job = await fs.readJson(jobFile);
       let changed = false;
-      if (job.reportPath) {
-        job.reportPath = null;
-        changed = true;
+
+      // Keep valid reports/{runId}/ pointers; only strip broken or legacy job-dir paths.
+      if (job.reportPath?.startsWith('reports/')) {
+        const htmlPath = path.join(moduleDataRoot('seo'), job.reportPath);
+        if (!(await fs.pathExists(htmlPath))) {
+          job.reportPath = null;
+          job.reportRunId = null;
+          changed = true;
+        }
+      } else {
+        if (job.reportPath) {
+          job.reportPath = null;
+          changed = true;
+        }
+        if (job.reportRunId) {
+          const htmlPath = path.join(getReportsRoot(), job.reportRunId, REPORT_HTML);
+          if (!(await fs.pathExists(htmlPath))) {
+            job.reportRunId = null;
+            changed = true;
+          }
+        }
       }
-      if (job.reportRunId) {
-        job.reportRunId = null;
-        changed = true;
-      }
-      if (job.reportAvailable) {
+
+      if (job.reportAvailable && !job.reportPath && !job.reportRunId) {
         job.reportAvailable = false;
         changed = true;
       }
+
       if (changed) {
         await fs.writeJson(jobFile, job, { spaces: 2 });
         removed.jobsUpdated++;
@@ -114,6 +221,9 @@ module.exports = {
   getRunFolder,
   getRunArtifacts,
   writeRunArtifacts,
+  normalizeReportUrl,
+  findSeoReportForJob,
+  repairSeoJobReportLinks,
   cleanupLegacySeoReports,
   migrateSeoReportLayoutOnce
 };
