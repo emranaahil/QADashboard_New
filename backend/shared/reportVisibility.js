@@ -26,6 +26,8 @@ function isJobVisibleToSession(job, moduleId, sessionId) {
   if (!job) return false;
   if (!shouldFilterBySession(sessionId)) return true;
   if (isProtectedJob(moduleId, job.id)) return true;
+  // Legacy runs saved before session tracking — visible to all browsers.
+  if (!job.sessionId) return true;
   return job.sessionId === sessionId;
 }
 
@@ -33,13 +35,17 @@ function isKeywordScanVisible(scan, sessionId) {
   if (!scan) return false;
   if (!shouldFilterBySession(sessionId)) return true;
   if (isProtectedKeywordScanPath(scan.storageFilename)) return true;
+  // Legacy scans without sessionId (common on persistent production disk).
+  if (!scan.sessionId) return true;
   return scan.sessionId === sessionId;
 }
 
 function isErrorReportVisible(reportRelativePath, reportData, sessionId) {
   if (!shouldFilterBySession(sessionId)) return true;
   if (isProtectedErrorReportPath(reportRelativePath)) return true;
-  return reportData?.sessionId === sessionId;
+  // Legacy reports without sessionId (common on persistent production disk).
+  if (!reportData?.sessionId) return true;
+  return reportData.sessionId === sessionId;
 }
 
 function filterJobsForSession(jobs, moduleId, sessionId) {
