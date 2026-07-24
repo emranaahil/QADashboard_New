@@ -37,7 +37,7 @@ router.post('/:moduleId/jobs', validateModule, async (req, res) => {
     const { url, options = {}, user } = req.body || {};
     const execOptions = { ...options };
 
-    if (req.params.moduleId === 'full-ui-check') {
+    if (req.params.moduleId === 'full-ui-check' && !execOptions.urlListMode) {
       const requested = execOptions.maxPages ?? DEFAULT_MAX_PAGES;
       execOptions.maxPages = normalizeMaxPages(requested);
       if (wasCapped(requested)) {
@@ -183,6 +183,18 @@ router.get('/:moduleId/jobs/:jobId/logs', validateModule, async (req, res) => {
 router.get('/:moduleId/jobs/:jobId/report', validateModule, async (req, res) => {
   try {
     jobStore.validateJobId(req.params.jobId);
+
+    if (req.params.moduleId === 'seo') {
+      const { getHtmlForReport } = require('../SEO/reportReader');
+      const result = await getHtmlForReport(`job:${req.params.jobId}`);
+      if (result?.error) {
+        const status = result.error === 'NOT_FOUND' || result.error === 'REPORT_NOT_AVAILABLE' ? 404 : 400;
+        return res.status(status).json(result);
+      }
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.send(result.html);
+    }
+
     const reportPath = jobStore.getReportPath(req.params.moduleId, req.params.jobId);
     if (!await fs.pathExists(reportPath)) {
       return res.status(404).json({ error: 'REPORT_NOT_AVAILABLE', message: 'Report not available' });

@@ -58,6 +58,9 @@ async function main() {
     ['/reports', 200],
     ['/keyword-radar', 200],
     ['/link-radar', 200],
+    ['/sitemap-check', 200],
+    ['/image-audit', 200],
+    ['/security-audit', 200],
   ];
 
   for (const [path, expected] of pages) {
@@ -72,6 +75,9 @@ async function main() {
     ['/modules/seo', '/seo-testing'],
     ['/modules/keyword-check', '/keyword-radar'],
     ['/modules/error-check', '/link-radar'],
+    ['/modules/sitemap-check', '/sitemap-check'],
+    ['/modules/image-audit', '/image-audit'],
+    ['/modules/security-audit', '/security-audit'],
     ['/linkradar', '/link-radar']
   ];
 

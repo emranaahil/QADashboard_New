@@ -1,6 +1,9 @@
 export const DEFAULT_MAX_PAGES = 8;
 export const WARN_ABOVE_PAGES = 10;
 export const LIVE_HARD_CAP = 12;
+export const SINGLE_UI_CHECK_MAX_URLS = 20;
+/** Bulk URL list cap for Full Website UI Check (paste from SEO, etc.). */
+export const FULL_UI_CHECK_MAX_URL_LIST = 600;
 export const JOB_STALE_MS = 10 * 60 * 1000;
 
 export function parseMaxPagesInput(value: string): number {

@@ -7,12 +7,22 @@ const { chromium } = require('playwright');
 const keywordService = require('./keywordService');
 const queueService = require('./queueService');
 const stateService = require('./stateService');
+const {
+    createCrawlScope,
+    extractInternalLinksFromHrefs,
+    fetchSitemapSeedUrls
+} = require('./urlDiscovery');
+const {
+    gotoWithHashSupport,
+    DEFAULT_NAVIGATION_TIMEOUT
+} = require('../shared/crawlNavigation');
 
 const BATCH_SIZE = 50;
 const MAX_CONCURRENT = 1;  // IMPORTANT for 450MB RAM devices: Use 1. 2+ can easily exceed available memory.
-const MAX_URLS = 3000;     // Hard safety limit for low-memory environments
+const MAX_URLS = 5000;     // Hard safety limit for low-memory environments
+const MAX_CRAWL_DEPTH = 25; // Generous depth for full-site keyword QA
 const PAGE_TIMEOUT = 30000;
-const NAVIGATION_TIMEOUT = 60000;
+const NAVIGATION_TIMEOUT = DEFAULT_NAVIGATION_TIMEOUT;
 
 // Single browser instance for memory efficiency
 let browser = null;
@@ -81,117 +91,9 @@ async function launchBrowser() {
 }
 
 /**
- * Extract internal links from page content
- */
-function extractInternalLinks(html, baseUrl) {
-    const links = [];
-    
-    try {
-        const baseUrlObj = new URL(baseUrl);
-        const domain = baseUrlObj.hostname;
-        
-        // Match href attributes
-        const hrefRegex = /href=["']([^"']+)["']/gi;
-        let match;
-        
-        while ((match = hrefRegex.exec(html)) !== null) {
-            let href = match[1];
-            
-            // Skip anchors, javascript, mailto, tel
-            if (href.startsWith('#') || 
-                href.startsWith('javascript:') || 
-                href.startsWith('mailto:') ||
-                href.startsWith('tel:')) {
-                continue;
-            }
-            
-            // Handle relative URLs
-            if (href.startsWith('/')) {
-                href = baseUrlObj.origin + href;
-            } else if (!href.startsWith('http')) {
-                // Skip relative paths that aren't absolute
-                continue;
-            }
-            
-            try {
-                const linkUrl = new URL(href);
-                
-                // Only include same domain links
-                if (linkUrl.hostname === domain) {
-                    // Normalize URL (remove trailing slash except for root)
-                    let normalizedUrl = linkUrl.href;
-                    if (normalizedUrl.endsWith('/') && normalizedUrl.length > linkUrl.origin.length + 1) {
-                        normalizedUrl = normalizedUrl.slice(0, -1);
-                    }
-                    links.push(normalizedUrl);
-                }
-            } catch (e) {
-                // Invalid URL, skip
-            }
-        }
-    } catch (error) {
-        console.error('Error extracting links:', error);
-    }
-    
-    return [...new Set(links)]; // Deduplicate
-}
-
-/**
- * Extract internal links from an array of hrefs (memory-efficient version)
- */
-function extractInternalLinksFromHrefs(rawHrefs, baseUrl) {
-    const links = [];
-    
-    try {
-        const baseUrlObj = new URL(baseUrl);
-        const domain = baseUrlObj.hostname;
-        
-        for (let href of rawHrefs) {
-            if (!href) continue;
-            
-            // Skip anchors, javascript, mailto, tel
-            if (href.startsWith('#') || 
-                href.startsWith('javascript:') || 
-                href.startsWith('mailto:') ||
-                href.startsWith('tel:')) {
-                continue;
-            }
-            
-            // Handle relative URLs
-            if (href.startsWith('/')) {
-                href = baseUrlObj.origin + href;
-            } else if (!href.startsWith('http')) {
-                // Skip relative paths that aren't absolute
-                continue;
-            }
-            
-            try {
-                const linkUrl = new URL(href);
-                
-                // Only include same domain links
-                if (linkUrl.hostname === domain) {
-                    // Normalize URL (remove trailing slash except for root)
-                    let normalizedUrl = linkUrl.href;
-                    if (normalizedUrl.endsWith('/') && normalizedUrl.length > linkUrl.origin.length + 1) {
-                        normalizedUrl = normalizedUrl.slice(0, -1);
-                    }
-                    links.push(normalizedUrl);
-                }
-            } catch (e) {
-                // Invalid URL, skip
-            }
-        }
-    } catch (error) {
-        console.error('Error extracting links from hrefs:', error);
-    }
-    
-    return [...new Set(links)]; // Deduplicate
-}
-
-/**
  * Process a single page with page state protection
  */
-async function processPage(page, url, keywords) {
+async function processPage(page, url, keywords, caseSensitiveKeywords, crawlScope) {
     const result = {
         url,
         links: [],
@@ -211,10 +113,11 @@ async function processPage(page, url, keywords) {
             return result;
         }
         
-        // Navigate to page with timeout and capture response
-        const response = await page.goto(url, {
-            waitUntil: 'networkidle',
-            timeout: NAVIGATION_TIMEOUT
+        const response = await gotoWithHashSupport(page, url, {
+            navigationTimeout: NAVIGATION_TIMEOUT,
+            onHashRetry: (targetUrl, navError) => {
+                console.warn(`Hash navigation retry for ${targetUrl}: ${navError.message}`);
+            }
         });
         
         const statusCode = response ? response.status() : 0;
@@ -305,11 +208,15 @@ async function processPage(page, url, keywords) {
         result.isError = isErrorPage;
         result.errorType = errorType;
         
-        // Extract internal links from href array
-        result.links = extractInternalLinksFromHrefs(pageData.hrefs, url);
+        // Extract same-domain visitable page links from anchor hrefs
+        result.links = extractInternalLinksFromHrefs(pageData.hrefs, url, crawlScope);
         
-        // Search for keywords on extracted text
-        const foundKeywords = keywordService.searchKeywords(pageData.text, keywords);
+        // Search for keywords on extracted text (case-insensitive + optional case-sensitive)
+        const foundKeywords = keywordService.searchAllKeywords(
+            pageData.text,
+            keywords,
+            caseSensitiveKeywords
+        );
         
         // Record matches
         for (const keyword of Object.keys(foundKeywords)) {
@@ -340,15 +247,20 @@ async function processPage(page, url, keywords) {
 /**
  * Process a batch of URLs with concurrency control
  */
-async function processBatch(urls, keywords) {
+async function processBatch(batchItems, keywords, caseSensitiveKeywords, crawlScope, scanId) {
     const browser = await getBrowser();
     const results = [];
     
     // Process in chunks of MAX_CONCURRENT
-    for (let i = 0; i < urls.length; i += MAX_CONCURRENT) {
-        const chunk = urls.slice(i, i + MAX_CONCURRENT);
+    for (let i = 0; i < batchItems.length; i += MAX_CONCURRENT) {
+        const chunk = batchItems.slice(i, i + MAX_CONCURRENT);
         
-        const chunkPromises = chunk.map(async (url) => {
+        const chunkPromises = chunk.map(async (item) => {
+            if (scanId) {
+                await stateService.appendScanLog(scanId, `[CHECK] ${item.url}`);
+                await stateService.updateScanStatus(scanId, 'running', { currentUrl: item.url });
+            }
+
             const context = await browser.newContext({
                 userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
                 viewport: { width: 1366, height: 768 },  // smaller viewport = less memory
@@ -360,7 +272,27 @@ async function processBatch(urls, keywords) {
             const page = await context.newPage();
             
             try {
-                const result = await processPage(page, url, keywords);
+                const result = await processPage(
+                    page,
+                    item.url,
+                    keywords,
+                    caseSensitiveKeywords,
+                    crawlScope
+                );
+                result.depth = item.depth;
+
+                if (scanId) {
+                    const matchCount = result.matches?.length || 0;
+                    const statusPart = result.isError
+                        ? `error (${result.errorType || result.error || 'unknown'})`
+                        : `HTTP ${result.statusCode || 0}`;
+                    const matchPart = matchCount ? ` — ${matchCount} match(es)` : '';
+                    await stateService.appendScanLog(
+                        scanId,
+                        `[DONE] ${item.url} — ${statusPart}${matchPart}`
+                    );
+                }
+
                 return result;
             } finally {
                 await context.close();
@@ -377,15 +309,45 @@ async function processBatch(urls, keywords) {
 /**
  * Start crawl process
  */
-async function startCrawl(scanId, startUrl, keywords) {
+async function startCrawl(scanId, startUrl, keywords, caseSensitiveKeywords = []) {
+    const csKeywords = Array.isArray(caseSensitiveKeywords) ? caseSensitiveKeywords : [];
     console.log(`Starting crawl for ${scanId}: ${startUrl}`);
-    
+
     try {
+        await stateService.appendScanLog(
+            scanId,
+            `[START] ${startUrl} — ${keywords.length} keyword(s)` +
+                (csKeywords.length ? `, ${csKeywords.length} case-sensitive` : '')
+        );
+        if (csKeywords.length) {
+            await stateService.appendScanLog(
+                scanId,
+                `[CASE-SENSITIVE] ${csKeywords.join(', ')}`
+            );
+        }
+
         // Update status to running
-        await stateService.updateScanStatus(scanId, 'running');
-        
-        // Initialize queue
-        queueService.initialize(startUrl);
+        await stateService.updateScanStatus(scanId, 'running', { currentUrl: startUrl });
+
+        const crawlScope = createCrawlScope(startUrl);
+        const normalizedStartUrl = crawlScope.normalizeStartUrl(startUrl) || startUrl;
+
+        let sitemapSeedUrls = [];
+        try {
+            sitemapSeedUrls = await fetchSitemapSeedUrls(normalizedStartUrl, crawlScope);
+            if (sitemapSeedUrls.length > 0) {
+                console.log(`Sitemap seed: ${sitemapSeedUrls.length} same-domain page URLs`);
+            }
+        } catch (error) {
+            console.warn(`Sitemap seed skipped for ${scanId}: ${error.message}`);
+        }
+
+        // Initialize queue with normalized start URL, sitemap seeds, and duplicate-safe filters
+        queueService.initialize(normalizedStartUrl, {
+            seedUrls: sitemapSeedUrls,
+            normalizeUrl: (url) => crawlScope.normalizeQueuedUrl(url),
+            maxDepth: MAX_CRAWL_DEPTH
+        });
         
         // Get scan data
         let scanData = await stateService.getScanState(scanId);
@@ -395,11 +357,14 @@ async function startCrawl(scanId, startUrl, keywords) {
         if (checkpoint && checkpoint.queueState) {
             console.log(`Resuming from checkpoint for ${scanId}`);
             queueService.deserialize(checkpoint.queueState);
+            queueService.normalizeUrl = (url) => crawlScope.normalizeQueuedUrl(url);
+            queueService.maxDepth = MAX_CRAWL_DEPTH;
         }
         
         let batchNumber = 0;
         let allMatches = checkpoint?.matches || [];
         let totalProcessed = checkpoint?.completed || 0;
+        let limitReached = false;
 
         // Track all checked URLs with richer data (for error detection + keyword matching)
         // Structure: { matchedKeywords: [], statusCode, isError, errorType }
@@ -436,12 +401,21 @@ async function startCrawl(scanId, startUrl, keywords) {
             // Hard limit to protect low-memory devices
             if (totalProcessed >= MAX_URLS) {
                 console.log(`Reached MAX_URLS limit (${MAX_URLS}). Stopping crawl.`);
+                limitReached = true;
                 break;
             }
             const remaining = MAX_URLS - totalProcessed;
             const limitedBatch = batch.slice(0, remaining);
+            const batchUrls = limitedBatch.map((item) => item.url);
             
             console.log(`Batch ${batchNumber}: Processing ${limitedBatch.length} URLs`);
+            await stateService.appendScanLog(
+                scanId,
+                `[BATCH ${batchNumber}] Checking ${limitedBatch.length} URL(s)`
+            );
+            for (const item of limitedBatch) {
+                await stateService.appendScanLog(scanId, `  → ${item.url}`);
+            }
             
             // Update stats + announce the URLs in this batch (for live display)
             await stateService.updateScanStatus(scanId, 'running', {
@@ -449,13 +423,36 @@ async function startCrawl(scanId, startUrl, keywords) {
                     urlsDiscovered: queueService.getTotalDiscovered(),
                     urlsProcessed: totalProcessed,
                     matchesFound: allMatches.length,
-                    currentBatch: batchNumber
+                    currentBatch: batchNumber,
+                    maxUrls: MAX_URLS,
+                    maxDepth: MAX_CRAWL_DEPTH
                 },
-                recentUrls: limitedBatch   // show these URLs below "Current Batch" while processing
+                recentUrls: batchUrls   // show these URLs below "Current Batch" while processing
             });
             
-            // Process batch
-            const results = await processBatch(limitedBatch, keywords);
+            // Process batch — never abort the whole scan because one batch failed
+            let results;
+            try {
+                results = await processBatch(
+                    limitedBatch,
+                    keywords,
+                    csKeywords,
+                    crawlScope,
+                    scanId
+                );
+            } catch (batchError) {
+                console.error(`Batch ${batchNumber} failed, continuing crawl:`, batchError.message);
+                results = limitedBatch.map((item) => ({
+                    url: item.url,
+                    links: [],
+                    matches: [],
+                    statusCode: 0,
+                    isError: true,
+                    errorType: 'batch-error',
+                    error: batchError.message,
+                    depth: item.depth
+                }));
+            }
             
             // Process results
             const newLinks = [];
@@ -483,20 +480,22 @@ async function startCrawl(scanId, startUrl, keywords) {
                 
                 if (result.error) {
                     console.log(`Error on ${result.url}: ${result.error}`);
-                } else {
-                    // Add found matches
+                }
+
+                // Record matches and discover links unless navigation completely failed
+                if (!result.error || (result.matches?.length > 0 || result.links?.length > 0)) {
                     if (result.matches && result.matches.length > 0) {
                         allMatches.push(...result.matches);
-                        
+
                         result.matches.forEach(m => {
                             if (!urlData.matchedKeywords.includes(m.keyword)) {
                                 urlData.matchedKeywords.push(m.keyword);
                             }
                         });
                     }
-                    
-                    // Add new links to queue
-                    const added = queueService.addUrls(result.links);
+
+                    const childDepth = Number.isFinite(result.depth) ? result.depth + 1 : 1;
+                    const added = queueService.addUrls(result.links || [], childDepth);
                     newLinks.push(added);
                 }
             }
@@ -535,6 +534,10 @@ async function startCrawl(scanId, startUrl, keywords) {
             });
             
             console.log(`Batch ${batchNumber} complete. Total: ${totalProcessed}, Matches: ${allMatches.length}`);
+            await stateService.appendScanLog(
+                scanId,
+                `[BATCH ${batchNumber} DONE] processed=${totalProcessed} matches=${allMatches.length}`
+            );
         }
         
         // Update final state
@@ -547,6 +550,7 @@ async function startCrawl(scanId, startUrl, keywords) {
         }));
         
         if (await isCancelled()) {
+            await stateService.appendScanLog(scanId, '[CANCELLED] Scan stopped by user');
             await stateService.updateScanStatus(scanId, 'cancelled', {
                 stats: {
                     urlsDiscovered: queueService.getTotalDiscovered(),
@@ -565,13 +569,22 @@ async function startCrawl(scanId, startUrl, keywords) {
             return;
         }
 
+        await stateService.appendScanLog(
+            scanId,
+            `[COMPLETE] processed=${totalProcessed} matches=${allMatches.length}` +
+                (limitReached ? ' (URL limit reached)' : '')
+        );
         await stateService.updateScanStatus(scanId, 'completed', {
+            currentUrl: '',
             stats: {
                 urlsDiscovered: queueService.getTotalDiscovered(),
                 urlsProcessed: totalProcessed,
                 matchesFound: allMatches.length,
                 currentBatch: batchNumber,
-                totalBatches: batchNumber
+                totalBatches: batchNumber,
+                maxUrls: MAX_URLS,
+                maxDepth: MAX_CRAWL_DEPTH,
+                limitReached
             },
             matches: allMatches,
             results: finalResults
@@ -585,8 +598,10 @@ async function startCrawl(scanId, startUrl, keywords) {
         
     } catch (error) {
         console.error(`Crawl failed for ${scanId}:`, error);
+        await stateService.appendScanLog(scanId, `[ERROR] ${error.message}`, 'error');
         await stateService.updateScanStatus(scanId, 'failed', {
-            error: error.message
+            error: error.message,
+            currentUrl: ''
         });
         throw error;
     }

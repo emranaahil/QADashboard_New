@@ -46,10 +46,12 @@ async function main() {
   const seoReport = {
     mainUrl: report.meta.mainUrl,
     scanDate,
-    sitemapUsed: report.meta.sitemapUsed,
+    discoveryMethod: report.meta.discoveryMethod,
+    sitemapUsed: null,
     urlsAttempted: report.meta.urlsAttempted,
     concurrency: report.meta.concurrency,
     timeoutMs: report.meta.timeoutMs,
+    siteChecks: report.siteChecks || { critical: [], minor: [] },
     pages: report.pages,
     summary: report.summary
   };

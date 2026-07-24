@@ -281,6 +281,7 @@ module.exports = {
   registerArtifact,
   registerErrorCheckReport,
   registerKeywordScan,
+  deleteLiveJob,
   cleanupExpiredReports,
   startCleanupSchedule
 };

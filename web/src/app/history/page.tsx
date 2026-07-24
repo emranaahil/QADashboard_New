@@ -14,6 +14,7 @@ import { canViewLogs } from "@/lib/logs";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { useHistoryStartRefresh } from "@/hooks/use-history-start-refresh";
 import { truncateUrl } from "@/lib/utils";
+import { DeleteReportButton } from "@/components/execution/delete-report-button";
 
 function HistoryPageFallback() {
   return (
@@ -110,6 +111,13 @@ function HistoryPageContent() {
                       {canViewLogs(run.status) && (
                         <ViewLogButton kind="job" moduleId={run.moduleId} jobId={run.id} size="sm" />
                       )}
+                      <DeleteReportButton
+                        moduleId={run.moduleId}
+                        reportId={run.id}
+                        label=""
+                        className="px-2"
+                        onDeleted={() => loadHistory({ silent: true })}
+                      />
                       <StatusWithReport
                         status={run.status}
                         moduleId={run.moduleId}

@@ -1,3 +1,4 @@
+require('./shared/loadEnv');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -15,10 +16,11 @@ const reportCenterRouter = require('./routes/reportCenterRouter');
 const executionRouter = require('./routes/executionRouter');
 const uiTestingRouter = require('./routes/uiTestingRouter');
 const seoTestingRouter = require('./routes/seoTestingRouter');
+const securityAuditRouter = require('./routes/securityAuditRouter');
 const jobQueue = require('./shared/jobQueue');
 const errorCheckService = require('./error-check/errorCheckService');
 const stateService = require('./keyword-check/stateService');
-const { ensureStorageDirs } = require('./shared/storagePaths');
+const { ensureStorageDirs, BACKEND_ROOT, STORAGE_ROOT, moduleDataRoot } = require('./shared/storagePaths');
 const { seedBundledStorageSync } = require('./shared/seedBundledStorage');
 const { refreshBundledManifestSync } = require('./shared/bundledReportsManifest');
 const ephemeralLiveReports = require('./shared/ephemeralLiveReports');
@@ -72,11 +74,13 @@ app.use('/api/reports-center', reportCenterRouter);
 app.use('/api/execution', executionRouter);
 app.use('/api/ui-testing', uiTestingRouter);
 app.use('/api/seo-testing', seoTestingRouter);
+app.use('/api/security-audit', securityAuditRouter);
 app.use('/api/modules', jobsRouter);
 app.use('/api/modules', modulesRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+    const { isParallelExecutionEnabled } = require('./shared/executionEnv');
     res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
@@ -84,7 +88,10 @@ app.get('/api/health', (req, res) => {
         uptime: process.uptime(),
         ui: IS_PRODUCTION ? 'next' : WEB_APP_URL,
         api: `http://localhost:${PORT}/api`,
-        mode: IS_PRODUCTION ? 'production' : 'development'
+        mode: IS_PRODUCTION ? 'production' : 'development',
+        parallelModules: isParallelExecutionEnabled(),
+        dataRoot: process.env.QA_DATA_ROOT || STORAGE_ROOT || BACKEND_ROOT,
+        seoDataPath: moduleDataRoot('seo')
     });
 });
 
@@ -107,7 +114,7 @@ if (!IS_PRODUCTION) {
     }
 
     app.get('/', redirectToWebApp);
-    app.get(['/dashboard', '/ui-testing', '/seo-testing', '/keyword-radar', '/linkradar', '/link-radar', '/history', '/reports'], redirectToWebApp);
+    app.get(['/dashboard', '/ui-testing', '/seo-testing', '/keyword-radar', '/linkradar', '/link-radar', '/sitemap-check', '/image-audit', '/security-audit', '/history', '/reports'], redirectToWebApp);
     app.get(/^\/modules\/.*/, redirectToWebApp);
     app.get('*', (req, res) => {
         if (req.path.startsWith('/api')) {
@@ -259,6 +266,9 @@ server = app.listen(PORT, '0.0.0.0', () => {
         console.log('Restart anytime: npm run dev:restart');
     }
     console.log(`API base: http://localhost:${PORT}/api`);
+    const dataRoot = process.env.QA_DATA_ROOT || STORAGE_ROOT || BACKEND_ROOT;
+    console.log(`Data root: ${dataRoot}`);
+    console.log(`SEO reports: ${moduleDataRoot('seo')}`);
 });
 
 server.on('error', (err) => {

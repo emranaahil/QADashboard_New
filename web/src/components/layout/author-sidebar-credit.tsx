@@ -3,7 +3,7 @@ import { AUTHOR } from "@/lib/author";
 
 export function AuthorSidebarCredit() {
   return (
-    <div className="shrink-0 border-t border-border pt-3">
+    <div className="shrink-0">
       <a
         href={AUTHOR.linkedInUrl}
         target="_blank"

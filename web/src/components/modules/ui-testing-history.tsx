@@ -32,6 +32,7 @@ type Props = {
   testType: TestType;
   onTestTypeChange: (type: TestType) => void;
   onSelectReport: (item: UiTestingHistoryItem) => void;
+  onReportDeleted?: (jobId: string) => void;
   refreshKey?: number;
   selectedJobId?: string | null;
 };
@@ -67,6 +68,7 @@ export function UiTestingHistoryPanel({
   testType,
   onTestTypeChange,
   onSelectReport,
+  onReportDeleted,
   refreshKey = 0,
   selectedJobId = null,
 }: Props) {
@@ -225,6 +227,10 @@ export function UiTestingHistoryPanel({
                         meta={meta}
                         selected={selectedJobId === item.id}
                         onSelect={() => onSelectReport(item)}
+                        onDeleted={() => {
+                          onReportDeleted?.(item.id);
+                          void load({ silent: true });
+                        }}
                       />
                     );
                   })}

@@ -1,9 +1,10 @@
 /**
- * Global execution lock — idempotent cancel + single active execution guard.
- * Wrapper only; does not replace jobQueue / Playwright pipelines.
+ * Execution lock — single active job in production; per-module parallel jobs in local dev.
  */
+const { isParallelExecutionEnabled } = require('./executionEnv');
 
-let activeExecution = null;
+/** @type {Map<string, object>} */
+const activeExecutions = new Map();
 let isCancelling = false;
 const cancellingKeys = new Set();
 
@@ -13,7 +14,7 @@ function makeKey(moduleId, jobId) {
 
 function registerExecution(moduleId, jobId, meta = {}) {
   const key = makeKey(moduleId, jobId);
-  activeExecution = {
+  activeExecutions.set(key, {
     id: key,
     moduleId,
     jobId,
@@ -22,25 +23,53 @@ function registerExecution(moduleId, jobId, meta = {}) {
     process: meta.process || null,
     browser: meta.browser || null,
     queue: meta.queue || null
-  };
+  });
 }
 
 function clearExecution(moduleId, jobId) {
-  if (!activeExecution) return;
-  const key = makeKey(moduleId, jobId);
-  if (activeExecution.id === key) {
-    activeExecution = null;
-  }
+  activeExecutions.delete(makeKey(moduleId, jobId));
 }
 
-function hasActiveExecution() {
-  return (
-    activeExecution !== null &&
-    (activeExecution.status === 'running' || activeExecution.status === 'cancelling')
+function getActiveExecutions() {
+  return [...activeExecutions.values()].filter(
+    (exec) => exec.status === 'running' || exec.status === 'cancelling'
   );
 }
 
-function assertCanStart() {
+function getActiveExecutionForModule(moduleId) {
+  if (!moduleId) return null;
+  for (const exec of activeExecutions.values()) {
+    if (
+      exec.moduleId === moduleId &&
+      (exec.status === 'running' || exec.status === 'cancelling')
+    ) {
+      return exec;
+    }
+  }
+  return null;
+}
+
+function hasActiveExecution(moduleId = null) {
+  if (moduleId) {
+    return getActiveExecutionForModule(moduleId) !== null;
+  }
+  return getActiveExecutions().length > 0;
+}
+
+function getActiveExecution() {
+  return getActiveExecutions()[0] || null;
+}
+
+function assertCanStart(moduleId = null) {
+  if (isParallelExecutionEnabled()) {
+    if (moduleId && hasActiveExecution(moduleId)) {
+      const err = new Error(`A test is already running for module ${moduleId}`);
+      err.code = 'EXECUTION_ACTIVE';
+      throw err;
+    }
+    return;
+  }
+
   if (hasActiveExecution()) {
     const err = new Error('Execution already running');
     err.code = 'EXECUTION_ACTIVE';
@@ -59,9 +88,6 @@ async function safeCloseBrowser(browser) {
 
 /**
  * Idempotent cancel — safe for multiple concurrent requests.
- * @param {string} moduleId
- * @param {string} jobId
- * @param {() => Promise<object>} executeCancel — calls existing jobQueue.cancelJob
  */
 async function safeCancelExecution(moduleId, jobId, executeCancel) {
   const key = makeKey(moduleId, jobId);
@@ -70,38 +96,34 @@ async function safeCancelExecution(moduleId, jobId, executeCancel) {
     return { ok: true, message: 'Cancel already in progress', idempotent: true };
   }
 
-  if (isCancelling) {
+  if (isCancelling && !isParallelExecutionEnabled()) {
     return { ok: true, message: 'Cancel already in progress', idempotent: true };
-  }
-
-  if (activeExecution && activeExecution.id !== key) {
-    // Allow cancelling a specific job even if lock tracks another (e.g. queued job)
-    // but log mismatch for the active process lock
   }
 
   isCancelling = true;
   cancellingKeys.add(key);
 
   try {
-    if (activeExecution && activeExecution.id === key) {
-      activeExecution.status = 'cancelling';
-      if (activeExecution.abortController) {
-        activeExecution.abortController.abort();
+    const active = activeExecutions.get(key);
+    if (active) {
+      active.status = 'cancelling';
+      if (active.abortController) {
+        active.abortController.abort();
       }
-      if (activeExecution.process && !activeExecution.process.killed) {
+      if (active.process && !active.process.killed) {
         try {
-          activeExecution.process.kill('SIGTERM');
+          active.process.kill('SIGTERM');
         } catch (err) {
           console.warn('Process kill failed:', err.message);
         }
       }
-      await safeCloseBrowser(activeExecution.browser);
+      await safeCloseBrowser(active.browser);
     }
 
     const job = await executeCancel();
 
-    if (activeExecution && activeExecution.id === key) {
-      activeExecution.status = 'cancelled';
+    if (active) {
+      active.status = 'cancelled';
     }
 
     return { ok: true, job };
@@ -111,22 +133,19 @@ async function safeCancelExecution(moduleId, jobId, executeCancel) {
   } finally {
     isCancelling = false;
     cancellingKeys.delete(key);
-    if (activeExecution && activeExecution.id === key) {
-      activeExecution = null;
-    }
+    activeExecutions.delete(key);
   }
-}
-
-function getActiveExecution() {
-  return activeExecution;
 }
 
 module.exports = {
   registerExecution,
   clearExecution,
   hasActiveExecution,
+  getActiveExecution,
+  getActiveExecutionForModule,
+  getActiveExecutions,
   assertCanStart,
   safeCancelExecution,
   safeCloseBrowser,
-  getActiveExecution
+  isParallelExecutionEnabled
 };

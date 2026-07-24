@@ -1,27 +1,54 @@
 # QA Dashboard
 
-A multi-module website QA toolkit: keyword search, broken-link detection, SEO audits, and Playwright-based visual UI testing — with a Next.js dashboard and Express API.
+Multi-module website QA toolkit with a **Next.js** dashboard and **Express** API. Crawl, audit, and report on SEO/GEO, links, keywords, UI, images, sitemaps, and security — using **Playwright** for browser automation.
 
-## Features
+For architecture, storage paths, and maintainer notes, see **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)**.
 
-| Module | Page | Description |
-|--------|------|-------------|
-| **Keyword Radar** | `/keyword-radar` | Crawl a site and find keyword matches (PDF export) |
-| **Link Radar** | `/link-radar` | Detect 404s and broken internal links |
-| **SEO Testing** | `/seo-testing` | Single-page or full-site SEO audit |
-| **UI Testing** | `/ui-testing` | Single-page (incl. comma-separated URLs) or full-site visual QA |
-| **Dashboard** | `/dashboard` | Stats overview |
-| **History** | `/history` | Past runs |
-| **Reports** | `/reports` | Report center |
+---
+
+## Features (modules)
+
+| UI name | Route | Module ID | Description |
+|---------|-------|-----------|-------------|
+| **Keyword Radar** | `/keyword-radar` | `keyword-check` | Crawl a site and find keyword matches (JSON / HTML / PDF) |
+| **Link Radar** | `/link-radar` | `error-check` | Detect 404s and broken internal links |
+| **Seo/Geo Audit** | `/seo-testing` | `seo` | On-page SEO, GEO (structured data), security headers, optional PageSpeed & Google Rich Results |
+| **UI Testing** | `/ui-testing` | `ui-check` / `full-ui-check` | Single-page (multi-URL) or full-site visual QA |
+| **Sitemap Audit** | `/sitemap-check` | `sitemap-check` | Walk sitemap tree, check page HTTP status (pass = final 200) |
+| **Image Audit** | `/image-audit` | `image-audit` | Duplicates, CDN, optimization, accessibility, SEO |
+| **Security Audit** | `/security-audit` | `security-audit` | PageSpeed, W3C HTML, robots.txt, redirects, SSL Labs |
+| **Dashboard** | `/dashboard` | — | Overview stats |
+| **Reports** | `/reports` | — | Report center |
+
+> **History** may still be available at `/history` in some builds; it is not always listed in the main sidebar.
+
+---
+
+## Seo/Geo Audit (highlights)
+
+| Area | What it does |
+|------|----------------|
+| **SEO** | Titles, H1, hierarchy, meta, Open Graph, bad links, alt text, score |
+| **GEO** | Schema.org / JSON-LD, Microdata/RDFa, GeoJSON/maps, FAQ, freshness, semantic HTML — issues tagged **Critical / Minor / Warning** |
+| **Security headers** | CSP, HSTS, XFO, etc. — Critical / Minor / Warning (local HTTP checks) |
+| **Google PageSpeed** | Optional toggle — official **PageSpeed Insights API** (set `PAGESPEED_API_KEY`) |
+| **Google Rich Results** | Optional toggle — deep link + best-effort Playwright screenshot of [Rich Results Test](https://search.google.com/test/rich-results) (**main URL only**). Google often blocks headless automation (login wall); **local Schema/GEO remains the source of truth**. Manual browser / incognito usually works for the same tool URL. |
+| **Reports** | HTML QA report with audit cards, CSV export (pages + issues) |
+
+**Job options (examples):** `mode: "single" | "full"`, `includePageSpeed`, `includeRichResults`.
+
+---
 
 ## Tech stack
 
-- **UI:** Next.js 15, React, Tailwind CSS (`web/`)
-- **API:** Node.js, Express (`backend/`)
-- **Automation:** Playwright (Chromium, Firefox, WebKit)
-- **Storage:** JSON files under `backend/` (jobs, scans, reports)
+| Layer | Technology |
+|-------|------------|
+| UI | Next.js 15, React, Tailwind (`web/`) |
+| API | Node.js 18+, Express (`backend/`) |
+| Automation | Playwright (Chromium, Firefox, WebKit) |
+| Storage | JSON / HTML / PDF under module folders (or `STORAGE_ROOT` in production) |
 
-See **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)** for architecture, storage paths, and production notes.
+---
 
 ## Quick start
 
@@ -29,77 +56,117 @@ See **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)** for architecture, storage paths, 
 
 ```bash
 npm install
-npm run playwright    # installs Chromium, Firefox, WebKit locally
+npm run playwright    # Chromium, Firefox, WebKit for local runs
 npm run dev
 ```
 
-| Service | Dev URL |
-|---------|---------|
-| **Dashboard (use this)** | http://localhost:3001 |
-| API | http://localhost:3000 |
+| Service | Dev URL (default) |
+|---------|-------------------|
+| **Dashboard** | http://localhost:3011 (`npm run dev` uses `-p 3011`) |
+| **API** | http://localhost:3000 |
+
+Next.js rewrites `/api/*` → Express. Use the **UI port** in the browser, not the API alone.
 
 ```bash
-npm run dev:restart   # kill ports 3000/3001 and restart
-npm run build:web && npm start   # production
+npm run dev:restart              # free ports / restart stack
+npm run build:web && npm start   # production (API + standalone Next)
 ```
+
+Copy env template and set keys as needed:
+
+```bash
+cp .env.example .env
+# Optional: PAGESPEED_API_KEY for Google PageSpeed in Seo/Geo or Security Audit
+```
+
+---
 
 ## Project structure
 
 ```
 project-root/
-├── web/                     # Next.js dashboard (primary UI)
-│   └── src/app/             # dashboard, ui-testing, seo-testing, …
+├── web/                      # Next.js dashboard (primary UI)
+│   └── src/app/              # App Router pages
 ├── backend/
-│   ├── server.js            # Express API
-│   ├── shared/              # jobStore, moduleRegistry, browserService, …
-│   ├── routes/              # API routers
-│   ├── keyword-check/       # Keyword crawl engine
-│   ├── error-check/         # Link / broken page engine
-│   ├── SEO/                 # SEO audit jobs
-│   ├── ui-check/            # Single-page UI jobs
-│   └── full-ui-check/       # Full-site UI crawl jobs
-├── scripts/                 # start-production, report purge, healthcheck
-├── .github/workflows/       # CI (lint + build on push)
+│   ├── server.js             # Express API
+│   ├── shared/               # jobStore, moduleRegistry, services, report helpers
+│   ├── routes/               # API routers
+│   ├── keyword-check/
+│   ├── error-check/
+│   ├── SEO/                  # Seo/Geo engine (uiseocheck, runJob, reports)
+│   ├── ui-check/
+│   ├── full-ui-check/
+│   ├── sitemap-check/
+│   ├── image-audit/
+│   └── security-audit/
+├── scripts/                  # production start, report purge, healthcheck
+├── .github/workflows/        # CI
 ├── package.json
 ├── Dockerfile
-└── render.yaml
+├── render.yaml
+├── README.md
+└── PROJECT_GUIDE.md
 ```
+
+---
 
 ## Adding a new module
 
 1. Register in `backend/shared/moduleRegistry.js`
-2. Add backend engine + `reportReader.js` in `backend/<module-id>/`
-3. Add a Next.js page under `web/src/app/<route>/`
+2. Add engine + `reportReader.js` under `backend/<module-id>/`
+3. Add UI page under `web/src/app/<route>/` and label in `web/src/lib/modules.ts`
+4. Wire job runner / routes if the module is job-based
+
+---
+
+## Environment variables (common)
+
+| Variable | Purpose |
+|----------|---------|
+| `PORT` / `API_PORT` | Production UI / internal API ports |
+| `STORAGE_ROOT` | Persistent data root (Docker / Render) |
+| `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD` | `true` in Docker (browsers in image) |
+| `JOB_RECOVER_ON_STARTUP` | Job recovery on process start |
+| `PAGESPEED_API_KEY` | Google PageSpeed Insights (optional) |
+| `W3C_VALIDATOR_*` | Security Audit W3C checks |
+| `SSL_LABS_*` | Security Audit SSL Labs (optional) |
+
+See `.env.example` for the full list.
+
+---
 
 ## Maintenance
 
 ```bash
-npm run reports:purge-test        # Remove cancelled + example.com artifacts
-npm run reports:purge-cancelled   # Remove all cancelled jobs/scans
-npm run reports:clear             # Remove all report artifacts (destructive)
+npm run reports:purge-test        # cancelled + example.com-style artifacts
+npm run reports:purge-cancelled   # all cancelled jobs
+npm run reports:clear             # all report artifacts (destructive)
 ```
+
+---
 
 ## Deployment (Render / Docker)
 
 - **Dockerfile** uses Playwright base image; UI built from `web/`
 - Set `STORAGE_ROOT=/app/data` and attach a persistent disk
-- Health check: `GET /api/health`
+- Health: `GET /api/health`
 
-| Variable | Purpose |
-|----------|---------|
-| `STORAGE_ROOT` | Persistent data root |
-| `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD` | `true` in Docker (browsers pre-installed) |
-| `JOB_RECOVER_ON_STARTUP` | `false` recommended on production |
+```bash
+npm run docker:build
+npm run docker:up
+```
+
+---
 
 ## CI
 
-GitHub Actions runs on every push/PR to `main`:
+GitHub Actions on push/PR to `main` (see `.github/workflows/ci.yml`):
 
 - `npm ci` (root + web)
-- `npm run lint` (web)
+- Web lint
 - `npm run build:web`
 
-Workflow: `.github/workflows/ci.yml`
+---
 
 ## License
 

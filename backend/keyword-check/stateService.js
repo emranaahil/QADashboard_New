@@ -126,6 +126,9 @@ async function updateScanStatus(scanId, status, extra = {}) {
     if (!data.recentUrls) data.recentUrls = [];
     data.recentUrls = [...data.recentUrls, ...extra.recentUrls].slice(-20);
   }
+  if (extra.currentUrl !== undefined) {
+    data.currentUrl = extra.currentUrl;
+  }
 
   await saveScanState(scanId, data);
 
@@ -301,10 +304,30 @@ async function cleanupStaleScansOnStartup() {
   return count;
 }
 
+const MAX_SCAN_LOG_ENTRIES = 2000;
+
+async function appendScanLog(scanId, message, level = 'info') {
+  const data = await getScanState(scanId);
+  if (!data) return;
+
+  if (!Array.isArray(data.logs)) data.logs = [];
+  data.logs.push({
+    at: new Date().toISOString(),
+    level,
+    message: String(message || '')
+  });
+  if (data.logs.length > MAX_SCAN_LOG_ENTRIES) {
+    data.logs = data.logs.slice(-MAX_SCAN_LOG_ENTRIES);
+  }
+
+  await saveScanState(scanId, data);
+}
+
 module.exports = {
   saveScanState,
   getScanState,
   updateScanStatus,
+  appendScanLog,
   saveCheckpoint,
   loadCheckpoint,
   deleteCheckpoint,

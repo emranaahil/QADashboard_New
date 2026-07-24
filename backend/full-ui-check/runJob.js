@@ -14,19 +14,7 @@ function emitProgress(pct, msg) {
   process.stdout.write(`PROGRESS:${pct} ${msg}\n`);
 }
 
-function countUrlsInQueue(urlQueuePath) {
-  if (!fs.existsSync(urlQueuePath)) return 0;
-  let count = 0;
-  for (const line of fs.readFileSync(urlQueuePath, 'utf8').split('\n')) {
-    const trimmed = String(line || '').trim();
-    if (!trimmed) continue;
-    try {
-      const obj = JSON.parse(trimmed);
-      if (obj?.url) count++;
-    } catch { /* skip */ }
-  }
-  return count;
-}
+const { countUrlsInQueue } = require('./queueManager');
 
 async function main() {
   const jobId = process.argv[2] || process.env.JOB_ID;
@@ -70,7 +58,7 @@ async function main() {
     emitProgress(5, 'Initializing full site UI check...');
 
     const { ensureDir } = require('./uichecksfull/utils/reportUtils');
-    const { discoverURL } = require('./discoverURL');
+    const { discoverURL, seedUrlQueueFromList } = require('./discoverURL');
     const { processUrlQueue } = require('./queueManager');
     const { updateTracker } = require('./tracker');
     const crawlConfig = require('./crawlConfig');
@@ -89,25 +77,47 @@ async function main() {
     ensureDir(runFolder);
     ensureDir(screenshotFolder);
 
-    emitProgress(10, 'Discovering URLs...');
-    updateTracker({ runId: jobId, lastProcessedUrl: '', status: 'queued', delta: { pending: 0 } });
+    const urlList =
+      (Array.isArray(job.urls) && job.urls.length ? job.urls : null) ||
+      (Array.isArray(job.options?.urls) && job.options.urls.length ? job.options.urls : null);
+    const useUrlList = Boolean(job.options?.urlListMode && urlList?.length);
 
-    if (cancelSignal.isCancelled(jobDir)) await handleCancel();
+    let discovery;
+    if (useUrlList) {
+      process.env.QA_BULK_URL_LIST = '1';
+      if (urlList.length > 100) {
+        process.env.QA_BROWSER_RESTART_EVERY = String(
+          Math.min(Number(process.env.QA_BROWSER_RESTART_EVERY) || 50, 40)
+        );
+      }
+      emitProgress(10, `Preparing ${urlList.length} URL(s) from list...`);
+      updateTracker({ runId: jobId, lastProcessedUrl: '', status: 'queued', delta: { pending: 0 } });
+      if (cancelSignal.isCancelled(jobDir)) await handleCancel();
+      discovery = seedUrlQueueFromList(urlList, urlQueuePath, runFolder);
+    } else {
+      emitProgress(10, 'Discovering URLs...');
+      updateTracker({ runId: jobId, lastProcessedUrl: '', status: 'queued', delta: { pending: 0 } });
+      if (cancelSignal.isCancelled(jobDir)) await handleCancel();
+      discovery = await discoverURL({
+        seedUrl: job.url,
+        runId: jobId,
+        urlQueuePath,
+        runFolder,
+        crawlConfig: mergedCrawlConfig
+      });
+    }
 
-    const discovery = await discoverURL({
-      seedUrl: job.url,
-      runId: jobId,
-      urlQueuePath,
-      runFolder,
-      crawlConfig: mergedCrawlConfig
-    });
-
-    const { prioritizeUrlQueue } = require('./prioritizeUrlQueue');
-    prioritizeUrlQueue(urlQueuePath, job.url);
+    if (!useUrlList) {
+      const { prioritizeUrlQueue } = require('./prioritizeUrlQueue');
+      prioritizeUrlQueue(urlQueuePath, job.url);
+    }
 
     const totalPages = countUrlsInQueue(urlQueuePath) || discovery?.discovered || 0;
     await executionProgress.lockTotalPages(MODULE_ID, jobId, totalPages);
-    emitProgress(25, `Found ${totalPages} URLs — scanning (important pages first)...`);
+    const scanMsg = useUrlList
+      ? `Testing ${totalPages} URL(s) from list...`
+      : `Found ${totalPages} URLs — scanning (important pages first)...`;
+    emitProgress(25, scanMsg);
 
     progressInterval = setInterval(async () => {
       try {

@@ -1,0 +1,155 @@
+/**
+ * Security Audit history — server-side filter by test type (mode) and search query.
+ */
+const jobStore = require('../jobStore');
+const { filterJobsForSession } = require('../reportVisibility');
+const { securityJobHasCriticalIssues } = require('./qaReportUtils');
+const { formatDisplayDate } = require('../dateFormat');
+
+const MODULE_ID = 'security-audit';
+
+const TYPE_TO_MODE = {
+  'single-page': 'single',
+  'full-website': 'full'
+};
+
+const MODE_TO_TYPE = {
+  single: 'single-page',
+  full: 'full-website'
+};
+
+const TYPE_HEADINGS = {
+  'single-page': 'Security Audit History',
+  'full-website': 'Security Audit History'
+};
+
+function normalizeTestType(type) {
+  const t = String(type || '').toLowerCase().trim();
+  if (!TYPE_TO_MODE[t]) {
+    const err = new Error(`Invalid test type. Use: ${Object.keys(TYPE_TO_MODE).join(', ')}`);
+    err.code = 'INVALID_TYPE';
+    throw err;
+  }
+  return t;
+}
+
+function deriveTestType(job) {
+  if (job.testType && TYPE_TO_MODE[job.testType]) return job.testType;
+  const mode = job.options?.mode || 'single';
+  return MODE_TO_TYPE[mode] || 'single-page';
+}
+
+function matchesMode(job, testType) {
+  const mode = TYPE_TO_MODE[testType];
+  const jobMode = job.options?.mode || 'single';
+  return jobMode === mode;
+}
+
+function matchesSearch(item, q) {
+  if (!q) return true;
+  const needle = q.toLowerCase();
+  const host = (() => {
+    try { return new URL(item.url).hostname.toLowerCase(); }
+    catch { return ''; }
+  })();
+  return (
+    (item.url || '').toLowerCase().includes(needle) ||
+    host.includes(needle) ||
+    (item.id || '').toLowerCase().includes(needle) ||
+    (item.title || '').toLowerCase().includes(needle)
+  );
+}
+
+function groupByIsoDate(items) {
+  const groups = new Map();
+  for (const item of items) {
+    const raw = item.completedAt || item.createdAt;
+    const iso = raw ? new Date(raw).toISOString().slice(0, 10) : 'unknown';
+    if (!groups.has(iso)) {
+      groups.set(iso, {
+        date: iso,
+        dateLabel: iso === 'unknown' ? 'Unknown' : formatDisplayDate(`${iso}T12:00:00`, { dateOnly: true }),
+        reports: []
+      });
+    }
+    groups.get(iso).reports.push(item);
+  }
+  return [...groups.values()].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+function shouldFilterHistoryBySession() {
+  return (
+    process.env.NODE_ENV === 'production' &&
+    process.env.QA_SESSION_FILTER !== 'false'
+  );
+}
+
+function jobsForHistory(rawJobs, sessionId) {
+  if (!shouldFilterHistoryBySession()) return rawJobs;
+  return filterJobsForSession(rawJobs, MODULE_ID, sessionId);
+}
+
+async function listSecurityAuditHistory({ type, q, limit = 100, sessionId } = {}) {
+  const testType = normalizeTestType(type);
+  const search = String(q || '').trim();
+  const cap = Math.min(Math.max(parseInt(limit, 10) || 100, 1), 500);
+
+  const rawJobs = await jobStore.listJobs(MODULE_ID, cap);
+  const jobs = await jobStore.enrichJobs(
+    MODULE_ID,
+    jobsForHistory(rawJobs, sessionId)
+  );
+
+  const items = (await Promise.all(
+    jobs
+      .filter((job) => matchesMode(job, testType))
+      .map(async (job) => {
+        const tt = deriveTestType(job);
+        let title = job.url;
+        try { title = new URL(job.url).hostname; } catch { /* keep url */ }
+        const hasQaIssues =
+          job.status === 'completed'
+            ? await securityJobHasCriticalIssues(MODULE_ID, job.id, job)
+            : false;
+        return {
+          id: job.id,
+          url: job.url,
+          title,
+          testType: tt,
+          moduleId: MODULE_ID,
+          status: job.status,
+          hasQaIssues,
+          createdAt: job.createdAt,
+          completedAt: job.completedAt,
+          durationMs: job.durationMs,
+          reportAvailable: job.reportAvailable,
+          message: job.message,
+          error: job.error,
+          progress: job.progress,
+          totalPages: job.totalPages,
+          currentPage: job.currentPage
+        };
+      })
+  ))
+    .filter(item => item.testType === testType)
+    .filter(item => matchesSearch(item, search));
+
+  return {
+    testType,
+    moduleId: MODULE_ID,
+    heading: TYPE_HEADINGS[testType],
+    total: items.length,
+    grouped: groupByIsoDate(items),
+    items
+  };
+}
+
+module.exports = {
+  MODULE_ID,
+  TYPE_TO_MODE,
+  MODE_TO_TYPE,
+  TYPE_HEADINGS,
+  normalizeTestType,
+  deriveTestType,
+  listSecurityAuditHistory
+};

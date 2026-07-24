@@ -11,32 +11,58 @@ class QueueService {
         this.isProcessing = false;
         this.batchSize = 50;
         this.concurrency = 5;
+        this.normalizeUrl = null;
+        this.maxDepth = null;
     }
 
-    // Initialize queue with a starting URL
-    initialize(startUrl) {
-        this.queue = [startUrl];
+    // Initialize queue with a starting URL and optional seed URLs
+    initialize(startUrl, options = {}) {
+        const { seedUrls = [], normalizeUrl = null, maxDepth = null } = options;
+        this.normalizeUrl = typeof normalizeUrl === 'function' ? normalizeUrl : null;
+        this.maxDepth = Number.isFinite(maxDepth) ? maxDepth : null;
+
+        const normalizedStart = this._normalize(startUrl);
+        this.queue = normalizedStart ? [{ url: normalizedStart, depth: 0 }] : [];
         this.visited = new Set();
         this.discovered = new Set();
-        this.discovered.add(startUrl);
+
+        if (normalizedStart) {
+            this.discovered.add(normalizedStart);
+        }
+
+        for (const seedUrl of seedUrls) {
+            this.addUrl(seedUrl, 1);
+        }
+
         this.isProcessing = false;
     }
 
+    _normalize(url) {
+        if (!url) return null;
+        if (this.normalizeUrl) {
+            return this.normalizeUrl(url);
+        }
+        return url;
+    }
+
     // Add URL to queue if not already visited or queued
-    addUrl(url) {
-        if (this.visited.has(url)) return false;
-        if (this.discovered.has(url)) return false;
-        
-        this.discovered.add(url);
-        this.queue.push(url);
+    addUrl(url, depth = 0) {
+        const normalized = this._normalize(url);
+        if (!normalized) return false;
+        if (this.maxDepth != null && depth > this.maxDepth) return false;
+        if (this.visited.has(normalized)) return false;
+        if (this.discovered.has(normalized)) return false;
+
+        this.discovered.add(normalized);
+        this.queue.push({ url: normalized, depth });
         return true;
     }
 
     // Add multiple URLs at once
-    addUrls(urls) {
+    addUrls(urls, depth = 0) {
         let count = 0;
         for (const url of urls) {
-            if (this.addUrl(url)) {
+            if (this.addUrl(url, depth)) {
                 count++;
             }
         }
@@ -47,21 +73,24 @@ class QueueService {
     getNextBatch() {
         const batch = [];
         const batchSize = Math.min(this.batchSize, this.queue.length);
-        
+
         for (let i = 0; i < batchSize; i++) {
-            const url = this.queue.shift();
-            if (url) {
-                batch.push(url);
+            const item = this.queue.shift();
+            if (item && item.url) {
+                batch.push(item);
             }
         }
-        
+
         return batch;
     }
 
     // Mark URLs as visited
     markVisited(urls) {
-        for (const url of urls) {
-            this.visited.add(url);
+        for (const entry of urls) {
+            const url = typeof entry === 'string' ? entry : entry?.url;
+            if (!url) continue;
+            const normalized = this._normalize(url) || url;
+            this.visited.add(normalized);
         }
     }
 
@@ -97,17 +126,28 @@ class QueueService {
             visited: Array.from(this.visited),
             discovered: Array.from(this.discovered),
             batchSize: this.batchSize,
-            concurrency: this.concurrency
+            concurrency: this.concurrency,
+            maxDepth: this.maxDepth
         };
     }
 
     // Deserialize state from checkpoint
     deserialize(state) {
-        this.queue = state.queue || [];
+        this.queue = (state.queue || []).map((item) => {
+            if (typeof item === 'string') {
+                return { url: item, depth: 0 };
+            }
+            return {
+                url: item.url,
+                depth: Number.isFinite(item.depth) ? item.depth : 0
+            };
+        }).filter((item) => item.url);
+
         this.visited = new Set(state.visited || []);
         this.discovered = new Set(state.discovered || []);
         this.batchSize = state.batchSize || 50;
         this.concurrency = state.concurrency || 5;
+        this.maxDepth = Number.isFinite(state.maxDepth) ? state.maxDepth : this.maxDepth;
     }
 
     // Reset the queue
@@ -116,6 +156,8 @@ class QueueService {
         this.visited = new Set();
         this.discovered = new Set();
         this.isProcessing = false;
+        this.normalizeUrl = null;
+        this.maxDepth = null;
     }
 }
 

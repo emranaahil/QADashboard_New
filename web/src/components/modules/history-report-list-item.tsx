@@ -1,6 +1,7 @@
 "use client";
 
 import { StatusWithReport } from "@/components/execution/status-with-report";
+import { DeleteReportButton } from "@/components/execution/delete-report-button";
 import { cn } from "@/lib/utils";
 
 type HistoryReportListItemProps = {
@@ -14,6 +15,7 @@ type HistoryReportListItemProps = {
   meta?: string;
   selected?: boolean;
   onSelect: () => void;
+  onDeleted?: () => void;
 };
 
 export function HistoryReportListItem({
@@ -27,6 +29,7 @@ export function HistoryReportListItem({
   meta,
   selected = false,
   onSelect,
+  onDeleted,
 }: HistoryReportListItemProps) {
   return (
     <div
@@ -44,14 +47,23 @@ export function HistoryReportListItem({
           <div className="mt-0.5 text-[0.68rem] text-muted-foreground/80">{meta}</div>
         ) : null}
       </button>
-      <StatusWithReport
-        status={status}
-        reportStatus={reportStatus}
-        moduleId={moduleId}
-        jobId={id}
-        reportAvailable={reportAvailable}
-        className="ml-auto"
-      />
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        <StatusWithReport
+          status={status}
+          reportStatus={reportStatus}
+          moduleId={moduleId}
+          jobId={id}
+          reportAvailable={reportAvailable}
+        />
+        <DeleteReportButton
+          moduleId={moduleId}
+          reportId={id}
+          label=""
+          size="sm"
+          className="px-2"
+          onDeleted={onDeleted}
+        />
+      </div>
     </div>
   );
 }

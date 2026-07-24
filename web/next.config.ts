@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
       { source: "/modules/seo", destination: "/seo-testing", permanent: true },
       { source: "/modules/keyword-check", destination: "/keyword-radar", permanent: true },
       { source: "/modules/error-check", destination: "/link-radar", permanent: true },
+      { source: "/modules/sitemap-check", destination: "/sitemap-check", permanent: true },
+      { source: "/modules/image-audit", destination: "/image-audit", permanent: true },
+      { source: "/modules/security-audit", destination: "/security-audit", permanent: true },
       { source: "/linkradar", destination: "/link-radar", permanent: true },
     ];
   },

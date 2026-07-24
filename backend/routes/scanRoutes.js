@@ -8,6 +8,7 @@ const { MAX_URL_LENGTH } = require('../shared/urlSecurity');
 const reportService = require('../keyword-check/reportService');
 const stateService = require('../keyword-check/stateService');
 const errorCheckService = require('../error-check/errorCheckService');
+const { normalizeErrorCheckOptions } = require('../shared/errorCheckLimits');
 const scanLogService = require('../shared/scanLogService');
 const { normalizeUrl } = require('../shared/urlSecurity');
 const { getSessionIdFromRequest } = require('../shared/sessionUtils');
@@ -25,26 +26,43 @@ router.post('/scan/start', async (req, res) => {
             });
         }
 
-        const globalActive = await stateService.findAnyActiveScan();
-        if (globalActive && globalActive.sessionId && globalActive.sessionId !== sessionId) {
-            return res.status(409).json({
-                error: 'SERVER_BUSY',
-                message: 'The server is running another user\'s scan. Please try again shortly.'
-            });
+        const { isParallelExecutionEnabled } = require('../shared/executionEnv');
+        if (!isParallelExecutionEnabled()) {
+            const globalActive = await stateService.findAnyActiveScan();
+            if (globalActive && globalActive.sessionId && globalActive.sessionId !== sessionId) {
+                return res.status(409).json({
+                    error: 'SERVER_BUSY',
+                    message: 'The server is running another user\'s scan. Please try again shortly.'
+                });
+            }
         }
 
-        const { url, keywords } = req.body;
+        const { url, keywords, caseSensitiveKeywords } = req.body;
 
         // Validate input
         if (!url || !url.trim()) {
-            return res.status(400).json({ error: 'Website URL is required' });
+            return res.status(400).json({ error: 'MISSING_URL', message: 'Website URL is required' });
         }
 
-        if (!keywords || !Array.isArray(keywords) || keywords.length === 0) {
-            return res.status(400).json({ error: 'At least one keyword is required' });
+        const MAX_KEYWORDS = 50;
+        const cleanKeywords = Array.isArray(keywords)
+            ? keywords.map((k) => String(k).trim()).filter(Boolean)
+            : [];
+        const cleanCaseSensitiveKeywords = Array.isArray(caseSensitiveKeywords)
+            ? caseSensitiveKeywords.map((k) => String(k).trim()).filter(Boolean)
+            : [];
+
+        if (!cleanKeywords.length && !cleanCaseSensitiveKeywords.length) {
+            return res.status(400).json({
+                error: 'MISSING_KEYWORDS',
+                message: 'Enter at least one keyword (standard or case-sensitive)'
+            });
         }
-        if (keywords.length > 50) {
-            return res.status(400).json({ error: 'Maximum 50 keywords allowed' });
+        if (cleanKeywords.length + cleanCaseSensitiveKeywords.length > MAX_KEYWORDS) {
+            return res.status(400).json({
+                error: 'TOO_MANY_KEYWORDS',
+                message: `Maximum ${MAX_KEYWORDS} keywords total (standard + case-sensitive)`
+            });
         }
         if (String(url).trim().length > MAX_URL_LENGTH) {
             return res.status(400).json({ error: `URL must be ${MAX_URL_LENGTH} characters or less` });
@@ -54,20 +72,16 @@ router.post('/scan/start', async (req, res) => {
         try {
             cleanUrl = normalizeUrl(url);
         } catch (e) {
-            return res.status(400).json({ error: e.message });
+            return res.status(400).json({ error: 'INVALID_URL', message: e.message });
         }
 
-        // Clean keywords
-        const cleanKeywords = keywords
-            .map(k => k.trim())
-            .filter(k => k.length > 0);
-
-        if (cleanKeywords.length === 0) {
-            return res.status(400).json({ error: 'At least one valid keyword is required' });
-        }
-        for (const kw of cleanKeywords) {
+        const allKeywords = [...cleanKeywords, ...cleanCaseSensitiveKeywords];
+        for (const kw of allKeywords) {
             if (kw.length > 200) {
-                return res.status(400).json({ error: 'Each keyword must be 200 characters or less' });
+                return res.status(400).json({
+                    error: 'KEYWORD_TOO_LONG',
+                    message: 'Each keyword must be 200 characters or less'
+                });
             }
         }
 
@@ -78,7 +92,14 @@ router.post('/scan/start', async (req, res) => {
             sessionId: sessionId || null,
             url: cleanUrl,
             keywords: cleanKeywords,
+            caseSensitiveKeywords: cleanCaseSensitiveKeywords,
             status: 'starting',
+            currentUrl: cleanUrl,
+            logs: [{
+                at: new Date().toISOString(),
+                level: 'info',
+                message: `[QUEUED] Scan created for ${cleanUrl}`
+            }],
             startedAt: new Date().toISOString(),
             completedAt: null,
             stats: {
@@ -96,7 +117,7 @@ router.post('/scan/start', async (req, res) => {
         await stateService.saveScanState(scanId, scanData);
 
         // Start crawl in background (non-blocking)
-        crawlerService.startCrawl(scanId, cleanUrl, cleanKeywords).catch(err => {
+        crawlerService.startCrawl(scanId, cleanUrl, cleanKeywords, cleanCaseSensitiveKeywords).catch(err => {
             console.error(`Scan ${scanId} failed:`, err);
             stateService.updateScanStatus(scanId, 'failed', { error: err.message });
         });
@@ -106,7 +127,8 @@ router.post('/scan/start', async (req, res) => {
             status: 'started',
             message: 'Scan started successfully',
             url: cleanUrl,
-            keywords: cleanKeywords
+            keywords: cleanKeywords,
+            caseSensitiveKeywords: cleanCaseSensitiveKeywords
         });
 
     } catch (error) {
@@ -170,7 +192,8 @@ router.get('/scan/:scanId/status', async (req, res) => {
             startedAt: scanData.startedAt,
             completedAt: scanData.completedAt,
             error: scanData.error,
-            recentUrls: scanData.recentUrls || []   // live processed URLs for UI
+            currentUrl: scanData.currentUrl || '',
+            recentUrls: scanData.recentUrls || []
         });
 
     } catch (error) {
@@ -278,7 +301,10 @@ router.post('/check-broken-pages', async (req, res) => {
             return res.status(400).json({ error: 'URL is required' });
         }
         if (String(url).trim().length > MAX_URL_LENGTH) {
-            return res.status(400).json({ error: `URL must be ${MAX_URL_LENGTH} characters or less` });
+            return res.status(400).json({
+                error: 'URL_TOO_LONG',
+                message: `URL must be ${MAX_URL_LENGTH} characters or less`
+            });
         }
 
         let cleanUrl;
@@ -288,11 +314,7 @@ router.post('/check-broken-pages', async (req, res) => {
             return res.status(400).json({ error: e.message });
         }
 
-        const options = {
-            maxUrls: Math.min(Math.max(parseInt(maxUrls, 10) || 100, 1), 500),
-            delay: Math.min(Math.max(parseInt(delay, 10) || 400, 100), 5000),
-            maxDepth: Math.min(Math.max(parseInt(maxDepth, 10) || 5, 1), 20)
-        };
+        const options = normalizeErrorCheckOptions({ maxUrls, delay, maxDepth });
 
         const { runId } = errorCheckService.startCheck(cleanUrl, options, sessionId);
         res.json({
@@ -409,11 +431,20 @@ router.get('/scans', async (req, res) => {
 router.delete('/scan/:scanId', async (req, res) => {
     try {
         const { scanId } = req.params;
-        await stateService.deleteScan(scanId);
-        res.json({ message: 'Scan deleted successfully' });
+        const reportDeleteService = require('../shared/services/reportDeleteService');
+        const result = await reportDeleteService.deleteReport(
+            'keyword-check',
+            scanId,
+            getSessionIdFromRequest(req)
+        );
+        res.json({ message: 'Scan deleted successfully', ...result });
     } catch (error) {
         console.error('Error deleting scan:', error);
-        res.status(500).json({ error: 'Failed to delete scan', message: error.message });
+        const msg = error.message || 'Failed to delete scan';
+        const status = msg.includes('permission') || msg.includes('demo report') ? 403
+            : msg.toLowerCase().includes('not found') ? 404
+            : 500;
+        res.status(status).json({ error: 'Failed to delete scan', message: msg });
     }
 });
 

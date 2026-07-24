@@ -9,7 +9,7 @@ const executionProgress = require('./executionProgress');
 const executionLock = require('./executionLock');
 
 async function startExecution(moduleId, payload) {
-  executionLock.assertCanStart();
+  executionLock.assertCanStart(moduleId);
   return executionService.startExecution(moduleId, payload);
 }
 

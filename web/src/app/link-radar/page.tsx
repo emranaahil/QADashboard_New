@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { RunModuleButton } from "@/components/execution/run-module-button";
+import { RunTestActionsPanel } from "@/components/execution/run-test-actions-panel";
 import { ViewLogButton } from "@/components/execution/view-log-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,17 +11,20 @@ import { Input } from "@/components/ui/input";
 import { cn, formatDateTime } from "@/lib/utils";
 import { MAX_URL_LENGTH, validateUrl } from "@/lib/url-validation";
 import { RadarReportPanel } from "@/components/modules/radar-report-panel";
+import { DeleteReportButton } from "@/components/execution/delete-report-button";
 import {
   collectErrorCheckLinks,
   copyTextToClipboard,
   exportErrorCheckCsv,
 } from "@/lib/radar-report-utils";
-import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
+import { useModuleWorkBusy } from "@/hooks/use-global-work-busy";
 import { useScanStore } from "@/store/scan-store";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { toast } from "sonner";
+import { getErrorCheckLimits, normalizeErrorCheckOptions } from "@/lib/error-check-limits";
 
 const MODULE_ID = "error-check";
+const crawlLimits = getErrorCheckLimits();
 
 type BrokenPage = {
   url: string;
@@ -88,14 +92,23 @@ export default function LinkRadarPage() {
   const startErrorCheck = useScanStore((s) => s.startErrorCheck);
   const cancelScan = useScanStore((s) => s.cancelScan);
   const dashboardRefreshKey = useDashboardStore((s) => s.refreshKey);
-  const globalBusy = useGlobalWorkBusy();
+  const moduleBusy = useModuleWorkBusy("error-check");
   const showProgress =
     isLinkActive &&
     (scanStatus === "running" ||
       scanStatus === "success" ||
+      scanStatus === "cancelled" ||
       isCancelling ||
       statusLine === "Starting check…" ||
       statusLine === "Checking pages…");
+  const showViewLog =
+    isLinkActive &&
+    (scanStatus === "running" ||
+      scanStatus === "success" ||
+      scanStatus === "cancelled" ||
+      scanStatus === "failed" ||
+      isCancelling ||
+      Boolean(errorMessage));
 
   const loadReports = useCallback(async (selectFirst = false) => {
     try {
@@ -143,8 +156,10 @@ export default function LinkRadarPage() {
       toast.error(urlError);
       return;
     }
-    const maxUrls = Math.min(Math.max(parseInt(maxPages, 10) || 100, 1), 500);
-    const depth = Math.min(Math.max(parseInt(maxDepth, 10) || 5, 1), 20);
+    const { maxUrls, maxDepth: depth } = normalizeErrorCheckOptions({
+      maxUrls: parseInt(maxPages, 10),
+      maxDepth: parseInt(maxDepth, 10),
+    });
     await startErrorCheck(url, { maxUrls, maxDepth: depth });
   };
 
@@ -162,33 +177,48 @@ export default function LinkRadarPage() {
                 <Input
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  disabled={globalBusy}
+                  disabled={moduleBusy}
                   maxLength={MAX_URL_LENGTH}
                   placeholder="https://example.com"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Max Pages</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Max Pages
+                  {crawlLimits.bulk ? (
+                    <span className="ml-1 text-[0.65rem] font-normal text-emerald-500">(local · up to {crawlLimits.maxUrls.toLocaleString()})</span>
+                  ) : null}
+                </label>
                 <Input
                   type="number"
                   value={maxPages}
                   onChange={(e) => setMaxPages(e.target.value)}
-                  disabled={globalBusy}
+                  disabled={moduleBusy}
+                  min={1}
+                  max={crawlLimits.maxUrls}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-muted-foreground">Max Depth</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Max Depth
+                  {crawlLimits.bulk ? (
+                    <span className="ml-1 text-[0.65rem] font-normal text-emerald-500">(local · up to {crawlLimits.maxDepth})</span>
+                  ) : null}
+                </label>
                 <Input
                   type="number"
                   value={maxDepth}
                   onChange={(e) => setMaxDepth(e.target.value)}
-                  disabled={globalBusy}
+                  disabled={moduleBusy}
+                  min={1}
+                  max={crawlLimits.maxDepth}
                 />
               </div>
             </div>
-            <div className="run-test-actions flex flex-wrap gap-3">
+            <RunTestActionsPanel className="mt-0">
               <RunModuleButton
                 kind="link-check"
+                busyModuleId="error-check"
                 label="Start Check"
                 loadingLabel="Checking…"
                 loading={running && !isCancelling}
@@ -206,7 +236,10 @@ export default function LinkRadarPage() {
                   {isCancelling ? "Cancelling…" : "Stop Check"}
                 </Button>
               ) : null}
-            </div>
+              {showViewLog ? (
+                <ViewLogButton kind="error-check" className="h-11 rounded-lg" />
+              ) : null}
+            </RunTestActionsPanel>
             {statusLine ? <p className="text-xs text-muted-foreground">{statusLine}</p> : null}
           </CardContent>
         </Card>
@@ -229,6 +262,11 @@ export default function LinkRadarPage() {
               </div>
               {currentUrl ? (
                 <p className="text-xs text-muted-foreground">Checking: {currentUrl}</p>
+              ) : null}
+              {showViewLog ? (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <ViewLogButton kind="error-check" size="sm" />
+                </div>
               ) : null}
             </CardContent>
           </Card>
@@ -262,24 +300,41 @@ export default function LinkRadarPage() {
             <CardContent className="flex flex-col gap-2 p-4 pt-0">
               {reports.length ? (
                 reports.map((r) => (
-                  <button
+                  <div
                     key={r.id}
-                    type="button"
-                    onClick={() => setActiveReportId(r.id)}
                     className={cn(
-                      "rounded-lg border px-3 py-2 text-left text-xs transition-colors",
+                      "flex items-start gap-1 rounded-lg border px-2 py-2 transition-colors",
                       activeReportId === r.id
-                        ? "border-primary bg-primary/10 font-semibold"
+                        ? "border-primary bg-primary/10"
                         : "border-border hover:border-primary/50"
                     )}
                   >
-                    <span className="block break-all">{r.title || r.id}</span>
-                    {r.generatedAt ? (
-                      <span className="mt-0.5 block text-[0.7rem] text-muted-foreground">
-                        {formatDateTime(r.generatedAt)}
-                      </span>
-                    ) : null}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveReportId(r.id)}
+                      className="min-w-0 flex-1 px-1 text-left text-xs"
+                    >
+                      <span className="block break-all font-medium">{r.title || r.id}</span>
+                      {r.generatedAt ? (
+                        <span className="mt-0.5 block text-[0.7rem] text-muted-foreground">
+                          {formatDateTime(r.generatedAt)}
+                        </span>
+                      ) : null}
+                    </button>
+                    <DeleteReportButton
+                      moduleId={MODULE_ID}
+                      reportId={r.id}
+                      label=""
+                      className="px-2"
+                      onDeleted={() => {
+                        if (activeReportId === r.id) {
+                          setActiveReportId(null);
+                          setReportData(null);
+                        }
+                        void loadReports();
+                      }}
+                    />
+                  </div>
                 ))
               ) : (
                 <p className="text-xs text-muted-foreground">No saved reports. Run a scan to generate one.</p>

@@ -27,7 +27,7 @@ const MODULES = [
   },
   {
     id: 'seo',
-    name: 'SEO Check',
+    name: 'Seo/Geo Audit',
     description: 'Audit meta tags, headings, Open Graph, and SEO best practices.',
     icon: '📈',
     route: '/modules/seo',
@@ -54,6 +54,36 @@ const MODULES = [
     hasRunner: true,
     reportTypes: ['json', 'html'],
     reader: () => require('../full-ui-check/reportReader')
+  },
+  {
+    id: 'sitemap-check',
+    name: 'Sitemap Audit',
+    description: 'Parse sitemap.xml and verify HTTP status and page health for every URL.',
+    icon: '🗺️',
+    route: '/modules/sitemap-check',
+    hasRunner: true,
+    reportTypes: ['json', 'html'],
+    reader: () => require('../sitemap-check/reportReader')
+  },
+  {
+    id: 'image-audit',
+    name: 'Image Audit',
+    description: 'Audit images for duplicates, CDN, optimization, accessibility, and SEO.',
+    icon: '🖼️',
+    route: '/modules/image-audit',
+    hasRunner: true,
+    reportTypes: ['json', 'html', 'csv'],
+    reader: () => require('../image-audit/reportReader')
+  },
+  {
+    id: 'security-audit',
+    name: 'Security Audit',
+    description: 'PageSpeed, W3C HTML validation, robots.txt, redirects, and SSL Labs.',
+    icon: '🛡️',
+    route: '/modules/security-audit',
+    hasRunner: true,
+    reportTypes: ['json', 'html'],
+    reader: () => require('../security-audit/reportReader')
   }
 ];
 

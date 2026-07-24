@@ -2,17 +2,24 @@ const fs = require('fs-extra');
 const path = require('path');
 const { uuidv4, validateUuid } = require('./uuidUtils');
 const { normalizeUrl } = require('./urlSecurity');
-const { parseUrlList, normalizeUrlList } = require('./parseUrlList');
+const {
+  DEFAULT_MAX_URLS,
+  FULL_UI_CHECK_MAX_URL_LIST,
+  parseUrlList,
+  normalizeUrlList
+} = require('./parseUrlList');
 const { getModule } = require('./moduleRegistry');
 const { deriveModelId } = require('./modelUtils');
 const { moduleDataRoot, moduleJobsDir } = require('./storagePaths');
 const ephemeralLiveReportsConfig = require('./ephemeralLiveReportsConfig');
 
-const RUNNABLE_MODULES = new Set(['seo', 'ui-check', 'full-ui-check']);
+const RUNNABLE_MODULES = new Set(['seo', 'ui-check', 'full-ui-check', 'sitemap-check', 'image-audit', 'security-audit']);
 const TERMINAL_STATUSES = new Set(['completed', 'failed', 'cancelled']);
 const MODULE_TEST_TYPE = {
   'ui-check': 'single-page',
-  'full-ui-check': 'full-website'
+  'full-ui-check': 'full-website',
+  'sitemap-check': 'sitemap',
+  'image-audit': 'image-audit'
 };
 const jobLocks = new Map();
 
@@ -171,17 +178,52 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous', sess
   let resolvedUrls = null;
   const execOptions = { ...options };
 
-  if (moduleId === 'ui-check') {
+  if (
+    moduleId === 'ui-check' ||
+    ((moduleId === 'image-audit' || moduleId === 'security-audit') && execOptions.mode !== 'full')
+  ) {
+    const urlCap = moduleId === 'ui-check' ? DEFAULT_MAX_URLS : undefined;
     if (Array.isArray(execOptions.urls) && execOptions.urls.length) {
-      const parsed = normalizeUrlList(execOptions.urls);
+      const parsed = normalizeUrlList(execOptions.urls, { maxUrls: urlCap });
+      cleanUrl = parsed.primaryUrl;
+      resolvedUrls = parsed.urls;
+    } else if (moduleId === 'image-audit' || moduleId === 'security-audit' || String(url).includes(',')) {
+      const parsed = parseUrlList(url, { maxUrls: urlCap });
       cleanUrl = parsed.primaryUrl;
       resolvedUrls = parsed.urls;
     } else {
-      const parsed = parseUrlList(url);
+      const parsed = parseUrlList(url, { maxUrls: urlCap });
       cleanUrl = parsed.primaryUrl;
       resolvedUrls = parsed.urls;
     }
-    execOptions.urls = resolvedUrls;
+    if (moduleId === 'ui-check' || (resolvedUrls && resolvedUrls.length > 1)) {
+      execOptions.urls = resolvedUrls;
+    }
+  } else if (moduleId === 'full-ui-check') {
+    if (Array.isArray(execOptions.urls) && execOptions.urls.length) {
+      const parsed = normalizeUrlList(execOptions.urls, { maxUrls: FULL_UI_CHECK_MAX_URL_LIST });
+      cleanUrl = parsed.primaryUrl;
+      resolvedUrls = parsed.urls;
+      execOptions.urls = resolvedUrls;
+      execOptions.urlListMode = true;
+    } else if (String(url).includes(',')) {
+      try {
+        const parsed = parseUrlList(url, { maxUrls: FULL_UI_CHECK_MAX_URL_LIST });
+        if (parsed.urls.length > 1) {
+          cleanUrl = parsed.primaryUrl;
+          resolvedUrls = parsed.urls;
+          execOptions.urls = resolvedUrls;
+          execOptions.urlListMode = true;
+        }
+      } catch {
+        /* single URL with comma in query — keep crawl mode */
+      }
+    }
+  }
+
+  if (moduleId === 'image-audit' && execOptions.viewports != null) {
+    const { resolveAuditViewports } = require('../image-audit/viewportConfig');
+    execOptions.viewports = resolveAuditViewports(execOptions);
   }
 
   const id = uuidv4();
@@ -192,10 +234,9 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous', sess
   const job = {
     id,
     moduleId,
-    testType: MODULE_TEST_TYPE[moduleId]
-      || (moduleId === 'seo'
-        ? (options.mode === 'full' ? 'full-website' : 'single-page')
-        : null),
+    testType: (moduleId === 'seo' || moduleId === 'image-audit' || moduleId === 'security-audit')
+      ? (options.mode === 'full' ? 'full-website' : 'single-page')
+      : (MODULE_TEST_TYPE[moduleId] || null),
     modelId: deriveModelId(cleanUrl),
     status: 'pending',
     progress: 0,

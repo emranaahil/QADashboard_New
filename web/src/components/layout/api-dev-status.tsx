@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { isParallelExecutionEnabled } from "@/lib/parallel-execution";
 import { cn, formatDateTime } from "@/lib/utils";
 
 type Health = {
@@ -9,6 +10,7 @@ type Health = {
   startedAt?: string;
   ui?: string;
   mode?: string;
+  parallelModules?: boolean;
 };
 
 export function ApiDevStatus() {
@@ -70,7 +72,9 @@ export function ApiDevStatus() {
       }
     >
       <span className={cn("h-1.5 w-1.5 rounded-full", reachable ? "bg-emerald-400" : "bg-destructive")} />
-      {reachable ? `Dev API${startedLabel ? ` · ${startedLabel}` : ""}` : "API offline"}
+      {reachable
+        ? `Dev API${health?.parallelModules || isParallelExecutionEnabled() ? " · parallel" : ""}${startedLabel ? ` · ${startedLabel}` : ""}`
+        : "API offline"}
     </div>
   );
 }

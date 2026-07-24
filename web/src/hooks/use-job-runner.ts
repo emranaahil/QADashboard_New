@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { useExecutionStore, type ExecSource, type ExecStatus } from "@/store/execution-store";
+import {
+  useExecutionStore,
+  useModuleJob,
+  type ExecSource,
+  type ExecStatus,
+} from "@/store/execution-store";
 
 type UseJobRunnerOptions = {
   moduleId: string;
@@ -16,31 +21,36 @@ export function useJobRunner({
   source = "ui_test",
   onComplete,
 }: UseJobRunnerOptions) {
-  const storeModuleId = useExecutionStore((s) => s.moduleId);
-  const status = useExecutionStore((s) => s.status);
-  const job = useExecutionStore((s) => s.job);
-  const currentPage = useExecutionStore((s) => s.currentPage);
-  const totalPages = useExecutionStore((s) => s.totalPages);
-  const progress = useExecutionStore((s) => s.progress);
-  const message = useExecutionStore((s) => s.message);
-  const isCancelling = useExecutionStore((s) => s.isCancelling);
+  const moduleState = useModuleJob(moduleId);
+  const status = moduleState.status;
+  const job = moduleState.job;
+  const currentPage = moduleState.currentPage;
+  const totalPages = moduleState.totalPages;
+  const progress = moduleState.progress;
+  const message = moduleState.message;
+  const isCancelling = moduleState.isCancelling;
   const startJob = useExecutionStore((s) => s.startJob);
   const cancelJob = useExecutionStore((s) => s.cancelJob);
+  const setDrawerModule = useExecutionStore((s) => s.setDrawerModule);
 
-  const isActive = storeModuleId === moduleId;
-  const running = isActive && (status === "running" || isCancelling);
-  const globalRunning = status === "running" || isCancelling;
+  const isActive = status !== "idle";
+  const running = status === "running" || isCancelling;
+  const globalRunning = useExecutionStore((s) =>
+    Object.values(s.moduleJobs).some((slice) => slice.status === "running" || slice.isCancelling)
+  );
 
   const prevStatusRef = useRef<ExecStatus>("idle");
 
   useEffect(() => {
+    if (running) {
+      setDrawerModule(moduleId);
+    }
+  }, [running, moduleId, setDrawerModule]);
+
+  useEffect(() => {
     const prev = prevStatusRef.current;
     prevStatusRef.current = status;
-    if (
-      isActive &&
-      prev === "running" &&
-      (status === "success" || status === "failed" || status === "cancelled")
-    ) {
+    if (isActive && prev === "running" && (status === "success" || status === "failed" || status === "cancelled")) {
       onComplete?.();
     }
   }, [status, isActive, onComplete]);
@@ -53,8 +63,8 @@ export function useJobRunner({
   );
 
   const cancel = useCallback(async () => {
-    if (isActive) await cancelJob();
-  }, [isActive, cancelJob]);
+    await cancelJob(moduleId);
+  }, [moduleId, cancelJob]);
 
   const activeJob = isActive ? job : null;
 
@@ -63,7 +73,7 @@ export function useJobRunner({
     running,
     globalRunning,
     isActive,
-    isCancelling: isActive && isCancelling,
+    isCancelling,
     start,
     cancel,
     currentPage: isActive ? currentPage : 0,

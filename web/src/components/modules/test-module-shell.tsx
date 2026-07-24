@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
-import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
+import { useModuleWorkBusy } from "@/hooks/use-global-work-busy";
 import { canViewLogs } from "@/lib/logs";
 import { canViewReport } from "@/lib/report";
 import type { Job } from "@/lib/api";
@@ -51,8 +51,8 @@ export function TestModuleShell({
   showExecution = false,
   isCancelling = false,
 }: TestModuleShellProps) {
-  const globalBusy = useGlobalWorkBusy();
-  const formLocked = globalBusy || running || isCancelling;
+  const moduleBusy = useModuleWorkBusy(moduleId);
+  const formLocked = moduleBusy || running || isCancelling;
   const showViewReport = canViewReport(job) && !!moduleId && !!job?.id;
   const showViewLog = canViewLogs(status) && !!moduleId && !!job?.id;
   const showRerun =
@@ -90,7 +90,7 @@ export function TestModuleShell({
             {showViewReport && <ViewReportButton moduleId={moduleId!} jobId={job!.id} />}
             {showViewLog && <ViewLogButton kind="job" moduleId={moduleId!} jobId={job!.id} />}
             {showRerun && (
-              <Button variant="secondary" disabled={globalBusy} onClick={onRun}>
+              <Button variant="secondary" disabled={moduleBusy} onClick={onRun}>
                 Re-run Test
               </Button>
             )}

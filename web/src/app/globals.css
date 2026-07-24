@@ -106,6 +106,38 @@ body {
   transform: translateY(-2px);
 }
 
+/* Privacy dialog — slim themed scrollbar (hidden until hover) */
+.privacy-dialog-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.privacy-dialog-scroll:hover {
+  scrollbar-color: rgba(29, 191, 115, 0.35) transparent;
+}
+
+.privacy-dialog-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.privacy-dialog-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.privacy-dialog-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+
+.privacy-dialog-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(29, 191, 115, 0.35);
+}
+
+.privacy-dialog-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 191, 115, 0.55);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -113,9 +145,11 @@ body {
   }
 }
 
-/* UI Testing & SEO Testing page spacing system */
+/* Module page spacing system (UI / SEO / Image Audit) */
 .ui-testing-page,
-.seo-testing-page {
+.seo-testing-page,
+.image-audit-page,
+.security-audit-page {
   --space-xs: 8px;
   --space-sm: 12px;
   --space-md: 16px;
@@ -125,6 +159,8 @@ body {
 
 .ui-testing-stack,
 .seo-testing-stack,
+.image-audit-stack,
+.security-audit-stack,
 .ui-check-container,
 .history-container {
   width: 100%;
@@ -135,7 +171,9 @@ body {
 
 @media (max-width: 1199px) {
   .ui-testing-page,
-  .seo-testing-page {
+  .seo-testing-page,
+  .image-audit-page,
+  .security-audit-page {
     padding-left: 24px;
     padding-right: 24px;
   }
@@ -143,7 +181,9 @@ body {
 
 @media (max-width: 767px) {
   .ui-testing-page,
-  .seo-testing-page {
+  .seo-testing-page,
+  .image-audit-page,
+  .security-audit-page {
     padding-left: 16px;
     padding-right: 16px;
   }

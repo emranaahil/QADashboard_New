@@ -13,6 +13,9 @@ function resolveModuleFolder(moduleId) {
 }
 
 function getStorageRoot() {
+  if (process.env.QA_DATA_ROOT) {
+    return path.resolve(process.env.QA_DATA_ROOT);
+  }
   if (process.env.STORAGE_ROOT) {
     return path.resolve(process.env.STORAGE_ROOT);
   }
@@ -22,6 +25,9 @@ function getStorageRoot() {
 const STORAGE_ROOT = getStorageRoot();
 
 function moduleDataRoot(moduleId) {
+  if (process.env.QA_DATA_ROOT) {
+    return path.join(path.resolve(process.env.QA_DATA_ROOT), resolveModuleFolder(moduleId));
+  }
   if (process.env.STORAGE_ROOT) {
     return path.join(STORAGE_ROOT, moduleId);
   }
@@ -37,6 +43,9 @@ function moduleReportsDir(moduleId) {
 }
 
 function keywordStorageDir(...parts) {
+  if (process.env.QA_DATA_ROOT) {
+    return path.join(path.resolve(process.env.QA_DATA_ROOT), 'keyword-check', 'storage', ...parts);
+  }
   if (process.env.STORAGE_ROOT) {
     return path.join(STORAGE_ROOT, 'keyword-check', 'storage', ...parts);
   }
@@ -44,6 +53,9 @@ function keywordStorageDir(...parts) {
 }
 
 function sharedDataPath(...parts) {
+  if (process.env.QA_DATA_ROOT) {
+    return path.join(path.resolve(process.env.QA_DATA_ROOT), 'shared', 'data', ...parts);
+  }
   if (process.env.STORAGE_ROOT) {
     return path.join(STORAGE_ROOT, 'shared', 'data', ...parts);
   }
@@ -67,6 +79,12 @@ function ensureStorageDirs() {
     moduleReportsDir('ui-check'),
     moduleJobsDir('full-ui-check'),
     moduleReportsDir('full-ui-check'),
+    moduleJobsDir('sitemap-check'),
+    moduleReportsDir('sitemap-check'),
+    moduleJobsDir('image-audit'),
+    moduleReportsDir('image-audit'),
+    moduleJobsDir('security-audit'),
+    moduleReportsDir('security-audit'),
     sharedDataPath()
   ];
   dirs.forEach(d => fs.ensureDirSync(d));

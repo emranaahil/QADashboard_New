@@ -4,7 +4,80 @@ const path = require('path');
 const { renderLogHtml } = require('../shared/logViewUtils');
 
 const NAVIGATION_TIMEOUT = 30000;
+const RATE_LIMIT_STATUSES = new Set([429, 503]);
+const RATE_LIMIT_RETRY_DELAYS_MS = [4000, 8000, 16000];
+const RATE_LIMIT_MAX_RETRIES = 3;
+
+function isCloudflareChallengeUrl(url) {
+  return String(url || '').includes('__cf_chl');
+}
+
+function isRateLimitStatus(statusCode) {
+  return RATE_LIMIT_STATUSES.has(statusCode);
+}
+
+async function gotoWithRateLimitRetry(page, url, sleepFn) {
+  let lastStatus = 0;
+  let lastFinalUrl = url;
+  let lastError = null;
+
+  for (let attempt = 0; attempt <= RATE_LIMIT_MAX_RETRIES; attempt += 1) {
+    try {
+      const resp = await page.goto(url, {
+        waitUntil: 'domcontentloaded',
+        timeout: NAVIGATION_TIMEOUT
+      });
+      lastStatus = resp ? resp.status() : 0;
+      lastFinalUrl = page.url();
+
+      const challenged = isCloudflareChallengeUrl(lastFinalUrl);
+      const rateLimited = isRateLimitStatus(lastStatus) || challenged;
+
+      if (rateLimited && attempt < RATE_LIMIT_MAX_RETRIES) {
+        const waitMs = RATE_LIMIT_RETRY_DELAYS_MS[attempt] || 16000;
+        console.warn(
+          `Rate limited (${lastStatus || 'challenge'}) for ${url} — retry ${attempt + 1}/${RATE_LIMIT_MAX_RETRIES} in ${waitMs}ms`
+        );
+        await sleepFn(waitMs);
+        continue;
+      }
+
+      return {
+        ok: true,
+        statusCode: lastStatus,
+        finalUrl: lastFinalUrl,
+        rateLimited: rateLimited && attempt >= RATE_LIMIT_MAX_RETRIES,
+        challenged
+      };
+    } catch (err) {
+      lastError = err;
+      if (attempt < RATE_LIMIT_MAX_RETRIES) {
+        const waitMs = RATE_LIMIT_RETRY_DELAYS_MS[attempt] || 8000;
+        await sleepFn(waitMs);
+        continue;
+      }
+      return {
+        ok: false,
+        statusCode: lastStatus,
+        finalUrl: lastFinalUrl,
+        rateLimited: false,
+        challenged: isCloudflareChallengeUrl(lastFinalUrl),
+        error: err
+      };
+    }
+  }
+
+  return {
+    ok: false,
+    statusCode: lastStatus,
+    finalUrl: lastFinalUrl,
+    rateLimited: isRateLimitStatus(lastStatus) || isCloudflareChallengeUrl(lastFinalUrl),
+    challenged: isCloudflareChallengeUrl(lastFinalUrl),
+    error: lastError
+  };
+}
 const { moduleReportsDir } = require('../shared/storagePaths');
+const { normalizeErrorCheckOptions } = require('../shared/errorCheckLimits');
 const ephemeralLiveReports = require('../shared/ephemeralLiveReports');
 const REPORTS_DIR = moduleReportsDir('error-check');
 
@@ -53,8 +126,14 @@ let cancelRequested = false;
 let activeRunPromise = null;
 let activeBrowser = null;
 
+const MAX_LAST_RUN_LOG_ENTRIES = 250;
+
 function appendLastRunLog(message) {
+  if (!Array.isArray(lastRun.logs)) lastRun.logs = [];
   lastRun.logs.push({ at: new Date().toISOString(), message });
+  if (lastRun.logs.length > MAX_LAST_RUN_LOG_ENTRIES) {
+    lastRun.logs = lastRun.logs.slice(-MAX_LAST_RUN_LOG_ENTRIES);
+  }
 }
 
 function beginLastRun(startUrl, sessionId = null) {
@@ -158,21 +237,25 @@ const ERROR_TEXT_PATTERNS = [
 ];
 
 async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
-  const maxUrls = options.maxUrls || 500;
-  const delay = options.delay || 400;
-  const maxDepth = options.maxDepth || 5;
+  const normalized = normalizeErrorCheckOptions(options);
+  const maxUrls = normalized.maxUrls;
+  const delay = normalized.delay;
+  const maxDepth = normalized.maxDepth;
 
   if (!runOpts.skipBegin) beginLastRun(startUrl);
   if (!runOpts.skipProgressInit) beginProgress(maxUrls);
   appendLastRunLog(`Options: maxUrls=${maxUrls}, delay=${delay}ms, maxDepth=${maxDepth}`);
+  appendLastRunLog(`Starting error content check for ${startUrl}`);
   console.log(`Starting error content check for ${startUrl} (max: ${maxUrls}, delay: ${delay}ms, depth: ${maxDepth})`);
 
   try {
+    appendLastRunLog('Launching browser…');
     const browser = await chromium.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     activeBrowser = browser;
+    appendLastRunLog('Browser ready — crawling pages for broken links/content');
 
     const context = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -190,6 +273,7 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
     const pageData = new Map();
     const brokenPages = [];
     const brokenLinks = [];
+    const rateLimitedPages = [];
     let checked = 0;
 
     const baseHost = new URL(startUrl).hostname;
@@ -264,7 +348,12 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       progress.urlsProcessed = checked;
       progress.errorCount = progress.errorCount || 0;
 
-      console.log(`Processing ${checked}/${maxUrls}: ${url} (depth ${depth}) - Queue: ${queue.length}, Discovered: ${seen.size}`);
+      const progressMsg = `Processing ${checked}/${maxUrls}: ${url} (depth ${depth}) — queue ${queue.length}, discovered ${seen.size}`;
+      console.log(progressMsg);
+      // Log every page for the first few, then every 5th, so View Log stays useful while running
+      if (checked <= 5 || checked % 5 === 0 || checked === maxUrls) {
+        appendLastRunLog(progressMsg);
+      }
 
       let isBroken = false;
       let detectedErrors = [];
@@ -273,54 +362,73 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       let finalUrl = url;
 
       try {
-        // Use 'domcontentloaded' instead of 'networkidle' - more reliable for many sites
-        // and less likely to timeout on JS-heavy or tracking-heavy pages
-        const resp = await page.goto(url, {
-          waitUntil: 'domcontentloaded',
-          timeout: NAVIGATION_TIMEOUT
-        });
-        statusCode = resp ? resp.status() : 0;
-        finalUrl = page.url();
+        const nav = await gotoWithRateLimitRetry(page, url, sleep);
+        statusCode = nav.statusCode || 0;
+        finalUrl = nav.finalUrl || url;
 
-        // Give the page more time for client-side rendering of product grids
-        await sleep(1500);
-        if (cancelRequested) break;
-
-        const evalResult = await page.evaluate(() => {
-          const text = document.body ? document.body.innerText.toLowerCase() : '';
-          return { text };
-        });
-
-        const title = await page.title();
-        const fullText = (title.toLowerCase() + ' ' + evalResult.text).toLowerCase();
-
-        for (const pat of ERROR_TEXT_PATTERNS) {
-          if (fullText.includes(pat)) detectedErrors.push(pat);
+        if (nav.rateLimited) {
+          rateLimitedPages.push({
+            url,
+            statusCode,
+            finalUrl,
+            note: 'Rate limited by server (HTTP 429/503 or Cloudflare) — page not marked broken'
+          });
+          pageData.set(url, {
+            isBroken: false,
+            detectedErrors: ['rate limited (skipped)'],
+            outgoingLinks: [],
+            statusCode,
+            finalUrl,
+            rateLimited: true
+          });
+          if (queue.length > 0) {
+            await sleep(Math.max(delay, 800));
+          }
+          continue;
         }
 
-        if (detectedErrors.length > 0) isBroken = true;
-
-        if (statusCode >= 400) {
-          detectedErrors.push('http ' + statusCode);
+        if (!nav.ok) {
           isBroken = true;
-        }
+          detectedErrors.push('page failed to load');
+          console.warn(`Failed to load ${url}: ${nav.error?.message || 'navigation failed'}`);
+        } else {
+          await sleep(1500);
+          if (cancelRequested) break;
 
-        // collect outgoing
-        const hrefs = await page.evaluate(() =>
-          Array.from(document.querySelectorAll('a[href]')).map(a => a.getAttribute('href')).filter(Boolean)
-        );
+          const evalResult = await page.evaluate(() => {
+            const text = document.body ? document.body.innerText.toLowerCase() : '';
+            return { text };
+          });
 
-        for (let h of hrefs) {
-          const norm = normalizeAndValidate(h, url);
-          if (norm) {
-            outgoing.push(norm);
-            if (!seen.has(norm)) {
-              seen.add(norm);
-              queue.push({ url: norm, depth: depth + 1 });
+          const title = await page.title();
+          const fullText = (title.toLowerCase() + ' ' + evalResult.text).toLowerCase();
+
+          for (const pat of ERROR_TEXT_PATTERNS) {
+            if (fullText.includes(pat)) detectedErrors.push(pat);
+          }
+
+          if (detectedErrors.length > 0) isBroken = true;
+
+          if (statusCode >= 400 && !isRateLimitStatus(statusCode)) {
+            detectedErrors.push('http ' + statusCode);
+            isBroken = true;
+          }
+
+          const hrefs = await page.evaluate(() =>
+            Array.from(document.querySelectorAll('a[href]')).map(a => a.getAttribute('href')).filter(Boolean)
+          );
+
+          for (let h of hrefs) {
+            const norm = normalizeAndValidate(h, url);
+            if (norm) {
+              outgoing.push(norm);
+              if (!seen.has(norm)) {
+                seen.add(norm);
+                queue.push({ url: norm, depth: depth + 1 });
+              }
             }
           }
         }
-
       } catch (e) {
         if (cancelRequested) break;
         isBroken = true;
@@ -337,13 +445,17 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       });
 
       if (isBroken) {
+        const errs = [...new Set(detectedErrors)];
         brokenPages.push({
           url,
-          detectedErrors: [...new Set(detectedErrors)],
+          detectedErrors: errs,
           statusCode,
           finalUrl
         });
         progress.errorCount = (progress.errorCount || 0) + 1;
+        appendLastRunLog(
+          `Broken page: ${url} (HTTP ${statusCode || '—'}) — ${errs.join(', ') || 'error'}`
+        );
       }
 
       if (queue.length > 0) {
@@ -365,6 +477,7 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
         cancelled: true,
         brokenPages: brokenPages.sort((a, b) => a.url.localeCompare(b.url)),
         brokenLinks: [],
+        rateLimitedPages: [],
         allCheckedUrls: []
       };
     }
@@ -404,6 +517,7 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       checked,
       brokenPages: brokenPages.sort((a,b) => a.url.localeCompare(b.url)),
       brokenLinks: uniqueBL.sort((a,b) => a.foundIn.localeCompare(b.foundIn)),
+      rateLimitedPages: rateLimitedPages.sort((a, b) => a.url.localeCompare(b.url)),
       allCheckedUrls: allChecked
     };
 
@@ -466,16 +580,20 @@ function isCheckRunningGlobally() {
 }
 
 function startCheck(startUrl, options = {}, sessionId = null) {
-  if (isCheckRunningGlobally()) {
+  const { isParallelExecutionEnabled } = require('../shared/executionEnv');
+  const blocked = isParallelExecutionEnabled()
+    ? isCheckRunning(sessionId)
+    : isCheckRunningGlobally();
+  if (blocked) {
     const err = new Error('An error check is already running');
     err.code = 'SCAN_ALREADY_RUNNING';
     throw err;
   }
   beginLastRun(startUrl, sessionId);
-  const maxUrls = Math.min(Math.max(parseInt(options.maxUrls, 10) || 100, 1), 500);
-  beginProgress(maxUrls);
+  const normalized = normalizeErrorCheckOptions(options);
+  beginProgress(normalized.maxUrls);
   const runId = lastRun.id;
-  activeRunPromise = checkForBrokenPages(startUrl, options, { skipBegin: true, skipProgressInit: true })
+  activeRunPromise = checkForBrokenPages(startUrl, normalized, { skipBegin: true, skipProgressInit: true })
     .catch((err) => {
       if (!cancelRequested) throw err;
       return { checked: progress.checked || 0, cancelled: true };

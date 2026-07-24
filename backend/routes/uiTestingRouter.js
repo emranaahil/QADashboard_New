@@ -45,7 +45,13 @@ router.delete('/history/:jobId', async (req, res) => {
 
     const testType = uiTestingHistoryService.normalizeTestType(type);
     const moduleId = uiTestingHistoryService.TYPE_TO_MODULE[testType];
-    const result = await historyService.deleteHistoryEntry(moduleId, req.params.jobId);
+    const reportDeleteService = require('../shared/services/reportDeleteService');
+    const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+    const result = await reportDeleteService.deleteReport(
+      moduleId,
+      req.params.jobId,
+      getSessionIdFromRequest(req)
+    );
     res.json(result);
   } catch (err) {
     res.status(400).json({ error: 'DELETE_FAILED', message: err.message });

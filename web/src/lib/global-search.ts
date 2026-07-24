@@ -24,9 +24,12 @@ export type SearchResult = SearchNavItem | SearchRunItem;
 export const SEARCH_NAV_ITEMS: SearchNavItem[] = [
   { kind: "page", id: "dashboard", label: "Dashboard", href: "/dashboard", description: "Overview and quick actions" },
   { kind: "page", id: "ui-testing", label: "UI Testing", href: "/ui-testing", description: "Single page and full website UI checks" },
-  { kind: "page", id: "seo-testing", label: "SEO Testing", href: "/seo-testing", description: "SEO audits and reports" },
+  { kind: "page", id: "seo-testing", label: "Seo/Geo Audit", href: "/seo-testing", description: "Seo and geo audits and reports" },
   { kind: "page", id: "keyword-radar", label: "Keyword Radar", href: "/keyword-radar", description: "Keyword crawl and PDF reports" },
   { kind: "page", id: "link-radar", label: "Link Radar", href: "/link-radar", description: "Broken links and error checks" },
+  { kind: "page", id: "sitemap-check", label: "Sitemap Audit", href: "/sitemap-check", description: "Verify every sitemap URL status and health" },
+  { kind: "page", id: "image-audit", label: "Image Audit", href: "/image-audit", description: "Audit images for CDN, optimization, accessibility, and SEO" },
+  { kind: "page", id: "security-audit", label: "Security Audit", href: "/security-audit", description: "PageSpeed, W3C HTML validation, robots.txt, and redirect tracing" },
   { kind: "page", id: "history", label: "History", href: "/history", description: "All execution history" },
   { kind: "page", id: "reports", label: "Reports", href: "/reports", description: "Reports center" },
 ];
@@ -37,6 +40,9 @@ function moduleHref(moduleId: string) {
   if (moduleId === "full-ui-check") return "/ui-testing?mode=full";
   if (moduleId === "keyword-check") return "/keyword-radar";
   if (moduleId === "error-check") return "/link-radar";
+  if (moduleId === "sitemap-check") return "/sitemap-check";
+  if (moduleId === "image-audit") return "/image-audit";
+  if (moduleId === "security-audit") return "/security-audit";
   return "/history";
 }
 

@@ -1,22 +1,34 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Link2, Monitor, Radar, Search } from "lucide-react";
+import { ImageIcon, Link2, Map, Monitor, Radar, Search, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
+import { useModuleWorkBusy } from "@/hooks/use-global-work-busy";
 import { cn } from "@/lib/utils";
 
-export type RunModuleKind = "ui-test" | "seo-test" | "keyword-scan" | "link-check";
+export type RunModuleKind =
+  | "ui-test"
+  | "seo-test"
+  | "keyword-scan"
+  | "link-check"
+  | "sitemap-check"
+  | "image-audit"
+  | "security-audit";
 
 const MODULE_ICONS: Record<RunModuleKind, LucideIcon> = {
   "ui-test": Monitor,
   "seo-test": Search,
   "keyword-scan": Radar,
   "link-check": Link2,
+  "sitemap-check": Map,
+  "image-audit": ImageIcon,
+  "security-audit": Shield,
 };
 
 type RunModuleButtonProps = {
   kind: RunModuleKind;
+  /** Job or scan module id — enables per-module busy lock in local parallel mode. */
+  busyModuleId?: string;
   label: string;
   loadingLabel: string;
   loading?: boolean;
@@ -27,6 +39,7 @@ type RunModuleButtonProps = {
 
 export function RunModuleButton({
   kind,
+  busyModuleId,
   label,
   loadingLabel,
   loading = false,
@@ -35,8 +48,8 @@ export function RunModuleButton({
   className,
 }: RunModuleButtonProps) {
   const Icon = MODULE_ICONS[kind];
-  const globalBusy = useGlobalWorkBusy();
-  const blocked = globalBusy && !loading;
+  const moduleBusy = useModuleWorkBusy(busyModuleId);
+  const blocked = moduleBusy && !loading;
 
   return (
     <Button

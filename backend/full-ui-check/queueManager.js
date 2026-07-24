@@ -20,16 +20,43 @@ function sleep(ms) {
 function countUrlsInQueue(urlQueuePath) {
   if (!fs.existsSync(urlQueuePath)) return 0;
   let count = 0;
-  const lines = fs.readFileSync(urlQueuePath, 'utf8').split('\n');
-  for (const line of lines) {
-    const trimmed = String(line || '').trim();
-    if (!trimmed) continue;
-    try {
-      const obj = JSON.parse(trimmed);
-      if (obj?.url) count++;
-    } catch {
-      // skip invalid lines
+  const chunk = 64 * 1024;
+  const fd = fs.openSync(urlQueuePath, 'r');
+  try {
+    let buffer = '';
+    let position = 0;
+    const size = fs.fstatSync(fd).size;
+    while (position < size) {
+      const toRead = Math.min(chunk, size - position);
+      const slice = Buffer.alloc(toRead);
+      fs.readSync(fd, slice, 0, toRead, position);
+      position += toRead;
+      buffer += slice.toString('utf8');
+      let newlineIdx;
+      while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, newlineIdx);
+        buffer = buffer.slice(newlineIdx + 1);
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        try {
+          const obj = JSON.parse(trimmed);
+          if (obj?.url) count++;
+        } catch {
+          /* skip invalid lines */
+        }
+      }
     }
+    const tail = buffer.trim();
+    if (tail) {
+      try {
+        const obj = JSON.parse(tail);
+        if (obj?.url) count++;
+      } catch {
+        /* skip */
+      }
+    }
+  } finally {
+    fs.closeSync(fd);
   }
   return count;
 }
@@ -357,5 +384,6 @@ async function processUrlQueue({
 }
 
 module.exports = {
+  countUrlsInQueue,
   processUrlQueue
 };

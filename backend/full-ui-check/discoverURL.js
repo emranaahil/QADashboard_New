@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { normalizeUrl } = require('../shared/urlSecurity');
 const { launchBrowser } = require('./uichecksfull/browser');
 const {
   getSameDomainKey,
@@ -136,6 +137,42 @@ function isSameDomain(seedUrl, candidateUrl) {
   const seedKey = getSameDomainKey(seedUrl);
   const candKey = getSameDomainKey(candidateUrl);
   return seedKey && candKey && seedKey === candKey;
+}
+
+/**
+ * Seed urlQueue.jsonl from a pasted URL list (skip crawl). Used for bulk SEO URL runs.
+ */
+function seedUrlQueueFromList(urls, urlQueuePath, runFolder) {
+  if (!Array.isArray(urls) || !urls.length) {
+    throw new Error('At least one URL is required');
+  }
+
+  ensureDir(runFolder);
+  if (fs.existsSync(urlQueuePath)) fs.unlinkSync(urlQueuePath);
+
+  const seenPath = getSeenPath(runFolder);
+  if (fs.existsSync(seenPath)) fs.unlinkSync(seenPath);
+
+  const seen = new Set();
+  const queueLines = [];
+
+  for (const raw of urls) {
+    const clean = normalizeUrl(raw);
+    if (!clean || seen.has(clean)) continue;
+    seen.add(clean);
+    queueLines.push(JSON.stringify({ url: clean }));
+  }
+
+  if (!queueLines.length) {
+    throw new Error('No valid URLs in list');
+  }
+
+  fs.writeFileSync(urlQueuePath, `${queueLines.join('\n')}\n`, 'utf8');
+  fs.writeFileSync(seenPath, `${[...seen].join('\n')}\n`, 'utf8');
+
+  const discovered = queueLines.length;
+  console.log(`[URL-LIST] Seeded ${discovered} URL(s) — crawl skipped`);
+  return { discovered, urls: [...seen] };
 }
 
 async function discoverURL({
@@ -298,5 +335,6 @@ async function discoverURL({
 }
 
 module.exports = {
-  discoverURL
+  discoverURL,
+  seedUrlQueueFromList
 };

@@ -1,9 +1,12 @@
 export const MODULE_LABELS: Record<string, string> = {
   "keyword-check": "Keyword Radar",
   "error-check": "Link Radar",
-  seo: "SEO Testing",
+  seo: "Seo/Geo Audit",
   "ui-check": "UI Testing",
   "full-ui-check": "Full UI Testing",
+  "sitemap-check": "Sitemap Audit",
+  "image-audit": "Image Audit",
+  "security-audit": "Security Audit",
 };
 
 export function moduleLabel(moduleId: string): string {

@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 /**
- * Stops anything on ports 3000 (API) and 3001 (Next.js), then starts npm run dev.
- * Use: npm run dev:restart
+ * Stops anything on configured API/UI ports, then starts npm run dev.
+ * Ports: PORT (default 3000) and WEB_PORT (default 3001) from .env / .env.local
  */
 const { execSync, spawn } = require('child_process');
 const path = require('path');
 
+require(path.join(__dirname, '..', 'backend', 'shared', 'loadEnv'));
+
 const ROOT = path.resolve(__dirname, '..');
-const PORTS = [3000, 3001];
+const API_PORT = Number(process.env.PORT || 3000);
+const WEB_PORT = Number(process.env.WEB_PORT || 3001);
+const PORTS = [API_PORT, WEB_PORT];
 const isWin = process.platform === 'win32';
 
 function killPort(port) {
@@ -43,7 +47,7 @@ function killPort(port) {
   }
 }
 
-console.log('Restarting dev servers (API :3000, UI :3001)...');
+console.log(`Restarting dev servers (API :${API_PORT}, UI :${WEB_PORT})...`);
 for (const port of PORTS) killPort(port);
 
 const child = spawn(isWin ? 'npm.cmd' : 'npm', ['run', 'dev'], {

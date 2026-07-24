@@ -1,22 +1,27 @@
 # QA Dashboard — Project Guide
 
-Maintainer reference for architecture, storage, APIs, and dev/production workflows.
+Maintainer reference: architecture, modules, storage, APIs, Seo/Geo details, and ops.
 
 ---
 
 ## What this project is
 
+A multi-module **website QA dashboard**: crawl and audit sites, run Playwright checks, store job artifacts, and view HTML/JSON/PDF/CSV reports from a Next.js UI.
+
 | UI name | Module ID | Purpose |
 |---------|-----------|---------|
 | Keyword Radar | `keyword-check` | Crawl site, find keyword matches |
 | Link Radar | `error-check` | Broken pages & internal links |
-| SEO Testing | `seo` | Meta, headings, SEO score |
-| UI Testing (single) | `ui-check` | Single-URL visual QA (multi-URL via commas) |
+| Seo/Geo Audit | `seo` | SEO + GEO + security headers; optional PageSpeed & Rich Results |
+| UI Testing (single) | `ui-check` | Single-URL visual QA (multi-URL via list/commas) |
 | UI Testing (full site) | `full-ui-check` | Crawl + UI QA per page |
+| Sitemap Audit | `sitemap-check` | Sitemap tree walk + page status checks |
+| Image Audit | `image-audit` | Image quality, CDN, duplicates, a11y/SEO |
+| Security Audit | `security-audit` | PageSpeed, W3C, robots, redirects, SSL Labs |
 
 **Stack:** Express (`backend/`) + Next.js 15 (`web/`) + Playwright.
 
-**UI:** Only `web/` — legacy static `frontend/` was removed. Old `/modules/*` URLs redirect via `web/next.config.ts`.
+**UI:** Only `web/`. Legacy `/modules/*` URLs redirect via `web/next.config.ts`.
 
 ---
 
@@ -24,16 +29,16 @@ Maintainer reference for architecture, storage, APIs, and dev/production workflo
 
 | Environment | UI | API |
 |-------------|-----|-----|
-| Development | http://localhost:3001 | http://localhost:3000 |
-| Production | `PORT` (default `10000`) | `API_PORT` (default `3000`, internal) |
+| Development (`npm run dev`) | http://localhost:**3011** | http://localhost:**3000** |
+| Production | `PORT` (often `10000`) | `API_PORT` (default `3000`, internal) |
 
 ```bash
-npm run dev              # API + UI (hot reload)
-npm run dev:restart      # Kill 3000/3001, then dev
+npm run dev              # API + UI (concurrently)
+npm run dev:restart      # Kill busy ports, then dev
 npm run build:web && npm start
 ```
 
-Next.js rewrites `/api/*` → Express. **Open port 3001 in dev**, not 3000 alone.
+Next.js rewrites `/api/*` → Express (`API_URL` / `http://127.0.0.1:3000`). Open the **UI** port in the browser.
 
 ---
 
@@ -43,22 +48,27 @@ Next.js rewrites `/api/*` → Express. **Open port 3001 in dev**, not 3000 alone
 project-root/
 ├── web/                         # Next.js dashboard (sole UI)
 │   ├── src/app/                 # App Router pages
-│   ├── src/components/modules/  # ui-testing-workspace, device-selector, …
-│   ├── src/lib/api.ts           # API client
-│   └── next.config.ts           # API proxy + legacy redirects
+│   ├── src/components/          # modules, layout, UI kit
+│   ├── src/lib/                 # api.ts, modules, export helpers
+│   └── next.config.ts           # API proxy + redirects
 ├── backend/
 │   ├── server.js
-│   ├── shared/                  # jobStore, jobQueue, browserService, deviceService
+│   ├── shared/                  # jobStore, moduleRegistry, services, CSV/HTML helpers
 │   ├── routes/
 │   ├── keyword-check/
 │   ├── error-check/
-│   ├── SEO/
+│   ├── SEO/                     # uiseocheck.js, runJob.js, reports/
 │   ├── ui-check/
-│   └── full-ui-check/
-├── scripts/                     # start-production, purge/clear reports
-├── .github/workflows/ci.yml     # Lint + build on push
+│   ├── full-ui-check/
+│   ├── sitemap-check/
+│   ├── image-audit/
+│   └── security-audit/
+├── scripts/
+├── .github/workflows/ci.yml
 ├── Dockerfile
-└── render.yaml
+├── render.yaml
+├── README.md
+└── PROJECT_GUIDE.md
 ```
 
 ---
@@ -67,47 +77,145 @@ project-root/
 
 **File:** `backend/shared/moduleRegistry.js`
 
-Report APIs:
+Registering a module here wires report readers and listing. UI labels: `web/src/lib/modules.ts`.
+
+Typical report APIs:
 
 - `GET /api/modules/:moduleId/reports`
 - `GET /api/modules/:moduleId/jobs/:jobId/report`
-- `POST /api/modules/:moduleId/jobs` (ui-check, full-ui-check, seo)
+- `POST /api/modules/:moduleId/jobs`
 
 ---
 
-## Report storage
+## Seo/Geo Audit (`seo`) — detail
 
-| Module | Path | Formats |
-|--------|------|---------|
-| keyword-check | `backend/keyword-check/storage/` | JSON, PDF, HTML (API) |
-| error-check | `backend/error-check/reports/` | JSON, HTML (API) |
-| seo | `backend/SEO/jobs/<id>/` | JSON, HTML |
+### Engine
+
+| File | Role |
+|------|------|
+| `backend/SEO/uiseocheck.js` | Core audit + HTML report generation |
+| `backend/SEO/runJob.js` | Job runner (queue worker) |
+| `backend/SEO/reportReader.js` | Serve / regenerate reports |
+| `backend/SEO/seoReportStorage.js` | `reports/<runId>/` artifacts |
+| `backend/shared/services/pageSpeedInsights.js` | Official PageSpeed API |
+| `backend/shared/services/richResultsTest.js` | Optional Rich Results Test capture (Playwright) |
+| `backend/shared/httpSecurityHeaders.js` | HTTP security header policy |
+| `backend/shared/seoReportCsv.js` | Pages / issues CSV |
+| `backend/shared/seoReportDetailClient.js` | Lazy page detail JS in HTML |
+
+### Report cards (per page)
+
+1. **SEO** — on-page issues (critical / minor)  
+2. **GEO** — structured data / AI-readiness; severities Critical / Minor / Warning  
+3. **Security Headers** — response header checks  
+4. **Page Speed** — if `includePageSpeed` and API key configured  
+5. **Google Rich Results** — if `includeRichResults` (main URL only)
+
+### Job options
+
+| Option | Default | Behavior |
+|--------|---------|----------|
+| `mode` | `single` | `single` (one or many URLs) or `full` (crawl) |
+| `includePageSpeed` | `false` | PageSpeed Insights mobile + desktop per page (slower; concurrency 1) |
+| `includeRichResults` | `false` | Playwright open of Google Rich Results Test for **main URL**; screenshot + tool URL |
+
+### GEO severity (summary)
+
+| Severity | Examples |
+|----------|----------|
+| Critical | No Schema.org data, invalid Schema/JSON-LD, invalid GeoJSON |
+| Minor | Invalid Microdata/RDFa, missing FAQ, semantic HTML, outdated content date |
+| Warning | Map without coordinates, placeholder content, outdated copyright |
+
+GEO warnings do **not** reduce the SEO score; critical/minor GEO do.
+
+### Google PageSpeed
+
+- **Official API** + `PAGESPEED_API_KEY`  
+- Soft-fail if key missing or request errors  
+- Same pattern as optional external checks in Security Audit  
+
+### Google Rich Results (important)
+
+| Fact | Detail |
+|------|--------|
+| Tool URL | `https://search.google.com/test/rich-results?url=<encoded>` |
+| Official bulk API for arbitrary URLs | **None** (unlike PageSpeed) |
+| Automation | Playwright best-effort; waits for result UI (e.g. “Test results”) up to ~4 minutes |
+| Common failure | Google shows login / “Something went wrong — Log in and try again” to **headless** clients |
+| Manual | Same URL often works in normal or **incognito** Chrome |
+| Product rule | **Local Schema/GEO is the source of truth**; Rich Results is optional evidence + deep link |
+| Not recommended | Cookie injection, stealth browsers, CAPTCHA solvers as production path |
+| Future official path | Search Console **URL Inspection API** (`richResultsResult`) for **verified** properties only (OAuth) |
+
+Screenshots (when captured) are stored under the report folder as `rich-results/<slug>.png` and embedded in HTML (base64) when possible.
+
+### UI entry
+
+- Page: `web/src/app/seo-testing/page.tsx`  
+- Workspace: `web/src/components/modules/seo-testing-workspace.tsx`  
+- Toggles: Google PageSpeed, Google Rich Results  
+
+---
+
+## Sitemap Audit (`sitemap-check`)
+
+- Full sitemap **tree walk** (nested sitemaps + page URLs)  
+- Status checks **follow redirects**; **Pass = final HTTP 200**  
+- Summary: sitemap files, nested counts, pages found/checked, pass/fail  
+- CSV export for pages / sitemaps where implemented  
+
+---
+
+## Image Audit (`image-audit`)
+
+- Image inventory, duplicates, optimization signals, accessibility/SEO notes  
+- HTML + CSV reports; percent columns omit empty/negative noise where configured  
+
+---
+
+## Security Audit (`security-audit`)
+
+Optional checks (UI toggles): PageSpeed, W3C Nu HTML, robots.txt, redirect trace, SSL Labs.  
+Env: `PAGESPEED_API_KEY`, `W3C_VALIDATOR_*`, `SSL_LABS_*` (see `.env.example`).
+
+---
+
+## Report storage (typical)
+
+| Module | Path pattern | Formats |
+|--------|--------------|---------|
+| keyword-check | `backend/keyword-check/storage/` | JSON, PDF, HTML |
+| error-check | `backend/error-check/reports/` | JSON, HTML |
+| seo | `backend/SEO/reports/<runId>/`, jobs under `SEO/jobs/` | JSON, HTML, optional `rich-results/` |
 | ui-check | `backend/ui-check/jobs/<id>/` | JSON, HTML, screenshots |
 | full-ui-check | `backend/full-ui-check/jobs/<id>/` | JSON, HTML, screenshots |
+| sitemap-check | under module storage / jobs | JSON, HTML, CSV |
+| image-audit | under module storage | JSON, HTML, CSV |
+| security-audit | under module storage / jobs | JSON, HTML |
 
-Job state: `job.json` per folder (`pending` | `running` | `completed` | `failed` | `cancelled`).
+With `STORAGE_ROOT`, paths resolve under that root (see `backend/shared/storagePaths.js`).
 
-On Render with `STORAGE_ROOT`, data lives on the persistent disk. Live reports may expire (ephemeral TTL); bundled reports are seeded on startup.
+Job state: `job.json` — `pending` | `running` | `completed` | `failed` | `cancelled`.
 
 ---
 
 ## UI Testing specifics
 
 ### Single page — multiple URLs
-Comma-separated URLs in one job → one `qaReport.json` / `qa-report.html`.
 
-### Browsers
-`GET /api/config/browsers?scope=ui` → Chrome, Firefox, Safari.  
-Stored in `job.options.browser`; launched via `backend/shared/services/browserService.js`.
+Comma-separated or list input → one job / report where supported.
 
-### Devices
-`GET /api/config/devices` → Desktop, iPhone13, iPhone15 Plus, S21, Tablet (portrait).  
-Custom viewports supported in UI. Landscape: use custom width×height (presets planned).
+### Browsers & devices
+
+- `GET /api/config/browsers?scope=ui`  
+- `GET /api/config/devices`  
+- Launch via `backend/shared/services/browserService.js`
 
 ### Full website
-- Default 8 pages; warn above 10 on live hosting
-- URL priority queue after crawl
-- Stale job heartbeat recovery
+
+- Crawl limits / concurrency tuned in full-ui-check  
+- Stale job heartbeat recovery  
 
 ---
 
@@ -122,12 +230,13 @@ Custom viewports supported in UI. Landscape: use custom width×height (presets p
 | POST | `/api/check-broken-pages` |
 | GET | `/api/check-broken-pages/status` |
 
-### Jobs (UI + SEO)
+### Jobs (UI, SEO, sitemap, image, security, …)
 
 | Method | Route |
 |--------|-------|
 | POST | `/api/modules/:moduleId/jobs` |
 | GET | `/api/modules/:moduleId/jobs/:jobId` |
+| GET | `/api/modules/:moduleId/jobs/:jobId/report` |
 | POST | `/api/execution/cancel` |
 
 ### Config
@@ -136,7 +245,7 @@ Custom viewports supported in UI. Landscape: use custom width×height (presets p
 |--------|-------|
 | GET | `/api/config/devices` |
 | GET | `/api/config/browsers` |
-| GET | `/api/config/browsers?scope=ui` |
+| GET | `/api/health` |
 
 ---
 
@@ -145,10 +254,16 @@ Custom viewports supported in UI. Landscape: use custom width×height (presets p
 | Store | File | Role |
 |-------|------|------|
 | `useScanStore` | `web/src/store/scan-store.ts` | Keyword + Link runs |
-| `useExecutionStore` | `web/src/store/execution-store.ts` | UI + SEO jobs |
+| `useExecutionStore` | `web/src/store/execution-store.ts` | Job modules (UI, SEO, …) |
 | `useDashboardStore` | `web/src/store/dashboard-store.ts` | Dashboard refresh |
 
-Session: `web/src/lib/session.ts` — anonymous per-browser `X-QA-Session-Id` for live run isolation.
+Session: `web/src/lib/session.ts` — `X-QA-Session-Id` for live isolation where used.
+
+---
+
+## Privacy / disclaimer
+
+Collapsible/modal privacy notice near run actions (`privacy-disclaimer-notice`, run-test actions panel). Keep user-facing copy accurate when changing crawl/scan behavior.
 
 ---
 
@@ -159,17 +274,18 @@ npm run reports:clear
 npm run reports:purge-test
 npm run reports:purge-cancelled
 npm run dev:restart
-npm run playwright    # chromium firefox webkit
+npm run playwright
 ```
 
 ---
 
 ## Production checklist
 
-1. `npm install` && `npm run build:web`
-2. Env: `NODE_ENV=production`, `PORT`, `STORAGE_ROOT`, `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true`
-3. `npm start` → `scripts/start-production.js` (API + Next standalone)
-4. Optional: `npm run reports:purge-test` before deploy
+1. `npm install` && `npm run build:web`  
+2. Env: `NODE_ENV=production`, `PORT`, `STORAGE_ROOT`, `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true`  
+3. Optional: `PAGESPEED_API_KEY`, W3C / SSL Labs vars  
+4. `npm start` → `scripts/start-production.js`  
+5. Optional: purge test reports before deploy  
 
 **Docker:** `npm run docker:build` / `docker:up`
 
@@ -177,11 +293,11 @@ npm run playwright    # chromium firefox webkit
 
 ## CI
 
-`.github/workflows/ci.yml` — on push/PR to `main`:
+`.github/workflows/ci.yml` — push/PR to `main`:
 
-- Install deps (skip Playwright download)
-- `npm run lint` in `web/`
-- `npm run build:web`
+- Install deps (Playwright download may be skipped)  
+- Web lint  
+- `npm run build:web`  
 
 ---
 
@@ -189,10 +305,11 @@ npm run playwright    # chromium firefox webkit
 
 | Task | Files |
 |------|-------|
-| Add module | `moduleRegistry.js`, `web/src/app/<page>/` |
-| UI test engine | `backend/ui-check/uiChecks.js`, `generateReport.js`, `runJob.js` |
-| Job lifecycle | `backend/shared/jobStore.js`, `jobQueue.js` |
-| Browsers | `backend/shared/services/browserService.js` |
+| Add module | `moduleRegistry.js`, `web/src/lib/modules.ts`, `web/src/app/<page>/` |
+| Seo/Geo engine | `backend/SEO/uiseocheck.js`, `runJob.js` |
+| Rich Results capture | `backend/shared/services/richResultsTest.js` |
+| PageSpeed | `backend/shared/services/pageSpeedInsights.js` |
+| Job lifecycle | `backend/shared/jobStore.js`, queue / execution routes |
 | API client | `web/src/lib/api.ts` |
 
 ---
@@ -206,7 +323,21 @@ npm run playwright    # chromium firefox webkit
 | `/modules/seo` | `/seo-testing` |
 | `/modules/keyword-check` | `/keyword-radar` |
 | `/modules/error-check` | `/link-radar` |
+| `/modules/sitemap-check` | `/sitemap-check` |
+| `/modules/image-audit` | `/image-audit` |
+| `/modules/security-audit` | `/security-audit` |
 | `/linkradar` | `/link-radar` |
+
+---
+
+## Docs map
+
+| File | Audience |
+|------|----------|
+| [README.md](./README.md) | Quick start, feature list, deploy |
+| [PROJECT_GUIDE.md](./PROJECT_GUIDE.md) | This file — architecture & module details |
+| [web/README.md](./web/README.md) | Next.js UI-only notes |
+| [.env.example](./.env.example) | Environment variables |
 
 ---
 

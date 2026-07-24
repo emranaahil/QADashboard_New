@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { RunModuleButton } from "@/components/execution/run-module-button";
+import { RunTestActionsPanel } from "@/components/execution/run-test-actions-panel";
 import { StatusWithReport } from "@/components/execution/status-with-report";
 import { ViewLogButton } from "@/components/execution/view-log-button";
 import { ViewReportButton } from "@/components/execution/view-report-button";
@@ -17,16 +18,19 @@ import {
   type CustomDevice,
   type DeviceSelectorHandle,
 } from "@/components/modules/device-selector";
-import { useGlobalWorkBusy } from "@/hooks/use-global-work-busy";
+import { useModuleWorkBusy } from "@/hooks/use-global-work-busy";
 import { useJobRunner } from "@/hooks/use-job-runner";
 import { api, type Job } from "@/lib/api";
 import { fallbackSummary, loadUiTestSummary, type UiTestSummary } from "@/lib/ui-testing-summary";
 import { canViewLogs } from "@/lib/logs";
 import { parseUrlListInput, validateUrlListInput } from "@/lib/parse-url-list";
-import { MAX_URL_LENGTH, validateUrl } from "@/lib/url-validation";
+import { validateUrl } from "@/lib/url-validation";
+import { cn } from "@/lib/utils";
 import {
   DEFAULT_MAX_PAGES,
+  FULL_UI_CHECK_MAX_URL_LIST,
   LIVE_HARD_CAP,
+  SINGLE_UI_CHECK_MAX_URLS,
   WARN_ABOVE_PAGES,
   parseMaxPagesInput,
 } from "@/lib/full-ui-limits";
@@ -69,7 +73,7 @@ export function UiTestingWorkspace({
   const [maxPages, setMaxPages] = useState(String(DEFAULT_MAX_PAGES));
   const [selectedBrowser, setSelectedBrowser] = useState("chrome");
   const moduleId = mode === "full" ? "full-ui-check" : "ui-check";
-  const globalBusy = useGlobalWorkBusy();
+  const moduleBusy = useModuleWorkBusy(moduleId);
   const deviceSelectorRef = useRef<DeviceSelectorHandle>(null);
 
   const runner = useJobRunner({
@@ -147,9 +151,22 @@ export function UiTestingWorkspace({
     }
   }, [workflow, activeJob, displayModuleId, loadSummary]);
 
+  const fullUrlListMode = useMemo(() => {
+    if (mode !== "full" || !url.trim().includes(",")) return false;
+    try {
+      return parseUrlListInput(url, { maxUrls: FULL_UI_CHECK_MAX_URL_LIST }).urls.length > 1;
+    } catch {
+      return false;
+    }
+  }, [mode, url]);
+
   const handleRun = () => {
     const validationError =
-      mode === "single" ? validateUrlListInput(url) : validateUrl(url);
+      mode === "single"
+        ? validateUrlListInput(url, { maxUrls: SINGLE_UI_CHECK_MAX_URLS })
+        : fullUrlListMode
+          ? validateUrlListInput(url, { maxUrls: FULL_UI_CHECK_MAX_URL_LIST })
+          : validateUrl(url.trim().split(",")[0]?.trim() || url);
     if (validationError) {
       toast.error(validationError);
       return;
@@ -166,16 +183,29 @@ export function UiTestingWorkspace({
     };
 
     if (mode === "full") {
-      pages = parseMaxPagesInput(maxPages);
-      if (pages > WARN_ABOVE_PAGES) {
-        toast.warning(
-          `Testing more than ${WARN_ABOVE_PAGES} pages may not complete on the live server. ` +
-            `${LIVE_HARD_CAP} is the maximum on production.`
-        );
+      if (fullUrlListMode) {
+        const parsed = parseUrlListInput(url, { maxUrls: FULL_UI_CHECK_MAX_URL_LIST });
+        startUrl = parsed.primaryUrl;
+        runOptions.urls = parsed.urls;
+        runOptions.urlListMode = true;
+        if (parsed.urls.length >= 100) {
+          toast.info(
+            `Bulk run: ${parsed.urls.length} URLs with one device may take a long time locally. Keep the tab open.`,
+            { duration: 8000 }
+          );
+        }
+      } else {
+        pages = parseMaxPagesInput(maxPages);
+        if (pages > WARN_ABOVE_PAGES) {
+          toast.warning(
+            `Testing more than ${WARN_ABOVE_PAGES} pages may not complete on the live server. ` +
+              `${LIVE_HARD_CAP} is the maximum on production.`
+          );
+        }
+        runOptions.maxPages = pages;
       }
-      runOptions.maxPages = pages;
     } else {
-      const parsed = parseUrlListInput(url);
+      const parsed = parseUrlListInput(url, { maxUrls: SINGLE_UI_CHECK_MAX_URLS });
       startUrl = parsed.primaryUrl;
       if (parsed.urls.length > 1) {
         runOptions.urls = parsed.urls;
@@ -214,33 +244,51 @@ export function UiTestingWorkspace({
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {mode === "full"
-            ? "Enter a URL and run visual QA checks across your selected devices."
-            : "Enter one URL, or several separated by commas — all tested in one run with a single report."}
+            ? fullUrlListMode
+              ? `Paste up to ${FULL_UI_CHECK_MAX_URL_LIST} comma-separated URLs (e.g. from SEO) — all tested in one run.`
+              : "Enter a start URL to crawl internal links, or paste a comma-separated URL list for bulk testing."
+            : `Enter one URL, or up to ${SINGLE_UI_CHECK_MAX_URLS} comma-separated URLs — all tested in one run with a single report.`}
         </p>
 
         <label className="mb-2 mt-4 block text-xs font-semibold text-muted-foreground">
-          {mode === "single" ? "URL(s)" : "URL"}
+          {mode === "single" ? "URL(s)" : fullUrlListMode ? "URL list" : "Start URL"}
         </label>
-        <Input
-          type="url"
+        <textarea
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder={
             mode === "single"
               ? "https://example.com, example.com/login, example.com/about"
-              : "https://example.com"
+              : fullUrlListMode
+                ? "https://example.com/page-1, https://example.com/page-2, ..."
+                : "https://example.com"
           }
-          disabled={globalBusy}
-          maxLength={MAX_URL_LENGTH}
-          className="mb-0 h-11 w-full rounded-lg text-sm"
+          disabled={moduleBusy}
+          rows={mode === "full" ? 6 : 4}
+          className={cn(
+            "min-h-[96px] w-full resize-y rounded-lg border border-border bg-background-elevated px-3 py-2.5 text-sm transition-all duration-250 placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[rgba(15,143,111,0.2)] disabled:cursor-not-allowed disabled:opacity-50"
+          )}
         />
+        {mode === "single" ? (
+          <p className="mt-1.5 text-[0.68rem] text-muted-foreground">
+            Max {SINGLE_UI_CHECK_MAX_URLS} URLs per run. For larger lists, use Full Website.
+          </p>
+        ) : fullUrlListMode ? (
+          <p className="mt-1.5 text-[0.68rem] text-muted-foreground">
+            Up to {FULL_UI_CHECK_MAX_URL_LIST} URLs. Crawl is skipped — each URL is tested directly.
+          </p>
+        ) : (
+          <p className="mt-1.5 text-[0.68rem] text-muted-foreground">
+            One start URL crawls internal links. Paste comma-separated URLs for bulk testing (e.g. from SEO).
+          </p>
+        )}
 
         <div className="mt-4 space-y-4 rounded-xl border border-border bg-background-elevated/40 p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Run configuration
           </p>
 
-          {mode === "full" && (
+          {mode === "full" && !fullUrlListMode && (
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <label className="text-xs font-semibold text-muted-foreground">Max pages</label>
@@ -249,7 +297,7 @@ export function UiTestingWorkspace({
                     <button
                       key={preset}
                       type="button"
-                      disabled={globalBusy}
+                      disabled={moduleBusy}
                       onClick={() => setMaxPages(String(preset))}
                       className={`rounded-lg border px-2.5 py-1 text-[0.68rem] font-medium transition-colors ${
                         maxPages === String(preset)
@@ -266,7 +314,7 @@ export function UiTestingWorkspace({
                     max={LIVE_HARD_CAP}
                     value={maxPages}
                     onChange={(e) => setMaxPages(e.target.value)}
-                    disabled={globalBusy}
+                    disabled={moduleBusy}
                     aria-label="Max pages to test"
                     className="mb-0 h-8 w-[4.5rem] rounded-lg px-2 text-center text-sm"
                   />
@@ -283,7 +331,7 @@ export function UiTestingWorkspace({
           <BrowserSelector
             value={selectedBrowser}
             onChange={setSelectedBrowser}
-            disabled={globalBusy}
+            disabled={moduleBusy}
             mode={mode}
             compact
           />
@@ -296,15 +344,16 @@ export function UiTestingWorkspace({
             onSelectedIdsChange={setSelectedDeviceIds}
             customDevices={customDevices}
             onCustomDevicesChange={setCustomDevices}
-            disabled={globalBusy}
+            disabled={moduleBusy}
             showMultiDeviceWarning={mode === "full"}
             compact
           />
         </div>
 
-        <div className="run-test-actions mt-6 flex flex-wrap gap-3">
+        <RunTestActionsPanel>
           <RunModuleButton
             kind="ui-test"
+            busyModuleId={moduleId}
             label="Run Test"
             loadingLabel="Running…"
             loading={runner.running && !runner.isCancelling}
@@ -322,7 +371,7 @@ export function UiTestingWorkspace({
               {runner.isCancelling ? "Cancelling…" : "Cancel Test"}
             </Button>
           )}
-        </div>
+        </RunTestActionsPanel>
       </Card>
 
       {workflow === "running" && (
@@ -405,7 +454,7 @@ export function UiTestingWorkspace({
             <Button
               variant="secondary"
               className="h-11 rounded-lg px-4"
-              disabled={globalBusy}
+              disabled={moduleBusy}
               onClick={handleRun}
             >
               Re-run Test

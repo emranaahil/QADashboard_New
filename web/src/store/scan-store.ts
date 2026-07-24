@@ -4,7 +4,8 @@ import { api } from "@/lib/api";
 import { startVisibleInterval } from "@/lib/polling";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { normalizeUrl, validateUrl } from "@/lib/url-validation";
-import { useExecutionStore } from "@/store/execution-store";
+import { isParallelExecutionEnabled } from "@/lib/parallel-execution";
+import { useExecutionStore, selectAnyJobRunning } from "@/store/execution-store";
 
 export type ScanModuleId = "keyword-check" | "error-check";
 export type ScanStatus = "idle" | "running" | "success" | "failed" | "cancelled";
@@ -24,7 +25,11 @@ type ScanStore = {
   currentBatch: number;
   errorCount: number;
   currentUrl: string;
-  startKeywordScan: (url: string, keywords: string[]) => Promise<void>;
+  startKeywordScan: (
+    url: string,
+    keywords: string[],
+    caseSensitiveKeywords?: string[]
+  ) => Promise<void>;
   startErrorCheck: (url: string, options?: { maxUrls?: number; maxDepth?: number }) => Promise<void>;
   cancelScan: () => Promise<void>;
   resumeActive: () => Promise<void>;
@@ -119,7 +124,7 @@ export const useScanStore = create<ScanStore>((set, get) => ({
     }
   },
 
-  startKeywordScan: async (url, keywords) => {
+  startKeywordScan: async (url, keywords, caseSensitiveKeywords = []) => {
     const urlError = validateUrl(url);
     if (urlError) {
       toast.error(urlError);
@@ -129,10 +134,12 @@ export const useScanStore = create<ScanStore>((set, get) => ({
       toast.error("A scan is already in progress");
       return;
     }
-    const job = useExecutionStore.getState();
-    if (job.status === "running" || job.isCancelling) {
-      toast.error("A UI or SEO test is already in progress");
-      return;
+    if (!isParallelExecutionEnabled()) {
+      const exec = useExecutionStore.getState();
+      if (selectAnyJobRunning(exec)) {
+        toast.error("A UI test or Seo/Geo Audit is already in progress");
+        return;
+      }
     }
 
     stopPolling();
@@ -145,7 +152,7 @@ export const useScanStore = create<ScanStore>((set, get) => ({
     });
 
     try {
-      const { scanId } = await api.startKeywordScan(cleanUrl, keywords);
+      const { scanId } = await api.startKeywordScan(cleanUrl, keywords, caseSensitiveKeywords);
       set({ scanId, message: "Initializing…" });
       startKeywordPolling(scanId, get, set);
     } catch (err) {
@@ -165,10 +172,12 @@ export const useScanStore = create<ScanStore>((set, get) => ({
       toast.error("A check is already in progress");
       return;
     }
-    const job = useExecutionStore.getState();
-    if (job.status === "running" || job.isCancelling) {
-      toast.error("A UI or SEO test is already in progress");
-      return;
+    if (!isParallelExecutionEnabled()) {
+      const exec = useExecutionStore.getState();
+      if (selectAnyJobRunning(exec)) {
+        toast.error("A UI test or Seo/Geo Audit is already in progress");
+        return;
+      }
     }
 
     stopPolling();
@@ -237,6 +246,14 @@ function startKeywordPolling(
         : 0;
       const mapped = mapKeywordStatus(data.status);
 
+      const currentUrl = data.currentUrl || "";
+      const statusMessage =
+        mapped === "running" && currentUrl
+          ? `Checking: ${currentUrl}`
+          : mapped === "running"
+            ? "Scanning pages…"
+            : data.status || "";
+
       set({
         moduleId: "keyword-check",
         scanId,
@@ -245,8 +262,9 @@ function startKeywordPolling(
         urlsProcessed,
         matchesFound: stats.matchesFound || 0,
         currentBatch: stats.currentBatch || 0,
+        currentUrl,
         progress: mapped === "running" ? pct : mapped === "success" ? 100 : get().progress,
-        message: data.status || "",
+        message: statusMessage,
         errorMessage: mapped === "failed" ? data.error || "Scan failed" : "",
         failedScanId: mapped === "failed" ? scanId : null,
       });
@@ -260,11 +278,13 @@ function startKeywordPolling(
       }
     } catch (err) {
       stopPolling();
+      const msg = (err as Error).message || "Scan failed";
       set({
         status: "failed",
-        errorMessage: (err as Error).message || "Scan failed",
+        errorMessage: msg,
         failedScanId: scanId,
       });
+      toast.error(msg);
     }
   };
 

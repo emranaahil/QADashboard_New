@@ -3,6 +3,8 @@ import { api } from "@/lib/api";
 export type SeoTestSummary = {
   pages: number;
   criticalIssues: number;
+  minorIssues: number;
+  hiddenIssues: number;
   averageScore: number;
 };
 
@@ -10,6 +12,8 @@ type SeoReportPayload = {
   summary?: {
     totalPages?: number;
     totalCritical?: number;
+    totalMinor?: number;
+    totalHidden?: number;
     averageScore?: number;
   };
   pages?: unknown[];
@@ -20,7 +24,7 @@ export function fallbackSeoSummary(opts: {
   completed?: boolean;
 }): SeoTestSummary {
   const pages = opts.totalPages && opts.totalPages > 0 ? opts.totalPages : opts.completed ? 1 : 0;
-  return { pages, criticalIssues: 0, averageScore: 0 };
+  return { pages, criticalIssues: 0, minorIssues: 0, hiddenIssues: 0, averageScore: 0 };
 }
 
 export async function loadSeoTestSummary(
@@ -35,11 +39,13 @@ export async function loadSeoTestSummary(
       return {
         pages: summary.totalPages ?? fallback.pages,
         criticalIssues: summary.totalCritical ?? 0,
+        minorIssues: summary.totalMinor ?? 0,
+        hiddenIssues: summary.totalHidden ?? 0,
         averageScore: Math.round(summary.averageScore ?? 0),
       };
     }
     if (Array.isArray(payload?.pages) && payload.pages.length) {
-      return { pages: payload.pages.length, criticalIssues: 0, averageScore: 0 };
+      return { pages: payload.pages.length, criticalIssues: 0, minorIssues: 0, hiddenIssues: 0, averageScore: 0 };
     }
   } catch {
     /* use fallback */

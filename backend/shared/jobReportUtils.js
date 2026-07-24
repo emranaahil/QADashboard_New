@@ -6,6 +6,13 @@ const { toReportMeta, safeReadJson } = require('./reportUtils');
 
 const JOB_PREFIX = 'job:';
 
+/** Per-module job JSON artifact filenames (under jobs/<id>/). */
+const MODULE_JOB_REPORT_JSON = {
+  'image-audit': 'imageAuditReport.json',
+  'security-audit': 'securityAuditReport.json',
+  'sitemap-check': 'sitemapReport.json'
+};
+
 function parseJobReportId(reportId) {
   if (!reportId || typeof reportId !== 'string' || !reportId.startsWith(JOB_PREFIX)) return null;
   const jobId = reportId.slice(JOB_PREFIX.length);
@@ -50,15 +57,26 @@ async function getJobReport(moduleId, reportId) {
   const jobDir = jobStore.getJobDir(moduleId, jobId);
   let data = null;
 
+  const moduleJsonName = MODULE_JOB_REPORT_JSON[moduleId];
+  if (moduleJsonName) {
+    const moduleJsonPath = path.join(jobDir, moduleJsonName);
+    if (await fs.pathExists(moduleJsonPath)) {
+      data = await safeReadJson(moduleJsonPath);
+    }
+  }
+
   let seoPath = path.join(jobDir, 'seoReport.json');
   if (job.reportPath) {
     const htmlPath = path.join(moduleDataRoot(moduleId), job.reportPath);
     seoPath = path.join(path.dirname(htmlPath), 'seoReport.json');
   }
   const qaPath = path.join(jobDir, 'qaReport.json');
-  if (await fs.pathExists(seoPath)) {
+  const sitemapPath = path.join(jobDir, 'sitemapReport.json');
+  if (!data && await fs.pathExists(seoPath)) {
     data = await safeReadJson(seoPath);
-  } else if (await fs.pathExists(qaPath)) {
+  } else if (!data && await fs.pathExists(sitemapPath)) {
+    data = await safeReadJson(sitemapPath);
+  } else if (!data && await fs.pathExists(qaPath)) {
     data = await safeReadJson(qaPath);
   }
 

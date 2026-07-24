@@ -19,8 +19,8 @@ const MODE_TO_TYPE = {
 };
 
 const TYPE_HEADINGS = {
-  'single-page': 'SEO History',
-  'full-website': 'SEO History'
+  'single-page': 'Seo/Geo Audit History',
+  'full-website': 'Seo/Geo Audit History'
 };
 
 function normalizeTestType(type) {
@@ -77,6 +77,18 @@ function groupByIsoDate(items) {
   return [...groups.values()].sort((a, b) => b.date.localeCompare(a.date));
 }
 
+function shouldFilterHistoryBySession() {
+  return (
+    process.env.NODE_ENV === 'production' &&
+    process.env.QA_SESSION_FILTER !== 'false'
+  );
+}
+
+function jobsForHistory(rawJobs, sessionId) {
+  if (!shouldFilterHistoryBySession()) return rawJobs;
+  return filterJobsForSession(rawJobs, MODULE_ID, sessionId);
+}
+
 async function listSeoTestingHistory({ type, q, limit = 100, sessionId } = {}) {
   const testType = normalizeTestType(type);
   const search = String(q || '').trim();
@@ -85,7 +97,7 @@ async function listSeoTestingHistory({ type, q, limit = 100, sessionId } = {}) {
   const rawJobs = await jobStore.listJobs(MODULE_ID, cap);
   const jobs = await jobStore.enrichJobs(
     MODULE_ID,
-    filterJobsForSession(rawJobs, MODULE_ID, sessionId)
+    jobsForHistory(rawJobs, sessionId)
   );
 
   const items = (await Promise.all(

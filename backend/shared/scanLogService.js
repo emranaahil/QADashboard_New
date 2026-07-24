@@ -18,14 +18,19 @@ async function getScanLogLines(scanId) {
     );
   }
 
+  if (scan.currentUrl && (scan.status === 'running' || scan.status === 'starting')) {
+    lines.push(`[CURRENT] ${scan.currentUrl}`);
+  }
+
   for (const entry of scan.logs || []) {
     const stamp = entry.at ? `[${entry.at}] ` : '';
-    lines.push(`${stamp}${entry.message}`);
+    const level = entry.level && entry.level !== 'info' ? `[${String(entry.level).toUpperCase()}] ` : '';
+    lines.push(`${stamp}${level}${entry.message}`);
   }
 
   if (scan.recentUrls?.length) {
     lines.push('[RECENT URLS]');
-    for (const url of scan.recentUrls) lines.push(`  ${url}`);
+    for (const url of scan.recentUrls.slice(-20)) lines.push(`  ${url}`);
   }
 
   return { scan, lines };
@@ -37,16 +42,23 @@ async function renderScanLogsHtml(scanId) {
 
   const { scan, lines } = payload;
   const isRunning = scan.status === 'running' || scan.status === 'starting';
+  const keywordParts = [];
+  if (scan.keywords?.length) keywordParts.push(`Standard: ${scan.keywords.join(', ')}`);
+  if (scan.caseSensitiveKeywords?.length) {
+    keywordParts.push(`Case-sensitive: ${scan.caseSensitiveKeywords.join(', ')}`);
+  }
+
   return renderLogHtml({
     title: 'Keyword Scan Logs',
     subtitle: scan.url,
     meta: {
       'Scan ID': scanId,
       Status: scan.status,
-      Keywords: (scan.keywords || []).join(', ')
+      Keywords: keywordParts.join(' · ') || '—',
+      'Current URL': scan.currentUrl || '—'
     },
     lines,
-    autoRefreshSec: isRunning ? 5 : 0
+    autoRefreshSec: isRunning ? 3 : 0
   });
 }
 

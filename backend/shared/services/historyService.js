@@ -8,9 +8,12 @@ const { formatDisplayDate } = require('../dateFormat');
 const { filterJobsForSession } = require('../reportVisibility');
 
 const MODULE_LABELS = {
-  seo: 'SEO Testing',
+  seo: 'Seo/Geo Audit',
   'ui-check': 'UI Testing — Single Page',
-  'full-ui-check': 'UI Testing — Full Website'
+  'full-ui-check': 'UI Testing — Full Website',
+  'sitemap-check': 'Sitemap Audit',
+  'image-audit': 'Image Audit',
+  'security-audit': 'Security Audit'
 };
 
 function matchesSearch(item, q) {
@@ -40,8 +43,14 @@ async function listHistory({ limit = 100, moduleId, q, sessionId } = {}) {
 
   const items = [];
   for (const mod of modules) {
+    const filterSessions =
+      process.env.NODE_ENV === 'production' &&
+      process.env.QA_SESSION_FILTER !== 'false';
     const rawJobs = await jobStore.listJobs(mod, cap);
-    const jobs = await jobStore.enrichJobs(mod, filterJobsForSession(rawJobs, mod, sessionId));
+    const visibleJobs = filterSessions
+      ? filterJobsForSession(rawJobs, mod, sessionId)
+      : rawJobs;
+    const jobs = await jobStore.enrichJobs(mod, visibleJobs);
     for (const job of jobs) {
       const row = {
         ...job,

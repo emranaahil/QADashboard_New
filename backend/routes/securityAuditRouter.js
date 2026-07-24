@@ -1,0 +1,59 @@
+const express = require('express');
+const securityAuditHistoryService = require('../shared/services/securityAuditHistoryService');
+const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+
+const router = express.Router();
+
+router.get('/history', async (req, res) => {
+  try {
+    const type = req.query.type;
+    if (!type) {
+      return res.status(400).json({
+        error: 'TYPE_REQUIRED',
+        message: 'Query parameter "type" is required (single-page or full-website)'
+      });
+    }
+
+    const sessionId = getSessionIdFromRequest(req);
+    const result = await securityAuditHistoryService.listSecurityAuditHistory({
+      type,
+      q: req.query.q,
+      limit: req.query.limit,
+      sessionId
+    });
+
+    res.json(result);
+  } catch (err) {
+    const status = err.code === 'INVALID_TYPE' ? 400 : 500;
+    res.status(status).json({
+      error: err.code || 'HISTORY_FAILED',
+      message: err.message
+    });
+  }
+});
+
+router.delete('/history/:jobId', async (req, res) => {
+  try {
+    const type = req.query.type;
+    if (!type) {
+      return res.status(400).json({
+        error: 'TYPE_REQUIRED',
+        message: 'Query parameter "type" is required'
+      });
+    }
+
+    securityAuditHistoryService.normalizeTestType(type);
+    const reportDeleteService = require('../shared/services/reportDeleteService');
+    const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+    const result = await reportDeleteService.deleteReport(
+      securityAuditHistoryService.MODULE_ID,
+      req.params.jobId,
+      getSessionIdFromRequest(req)
+    );
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: 'DELETE_FAILED', message: err.message });
+  }
+});
+
+module.exports = router;

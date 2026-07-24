@@ -1,12 +1,15 @@
 const { normalizeUrl } = require('./urlSecurity');
 
 const DEFAULT_MAX_URLS = 20;
+/** Bulk URL list cap for Full Website UI Check (paste from SEO, etc.). */
+const FULL_UI_CHECK_MAX_URL_LIST = 600;
 
 /**
  * Parse comma-separated URL input for single-page multi-URL UI checks.
  * Single URL (no comma) behaves exactly as before.
+ * Pass maxUrls only when a module should enforce a cap (e.g. UI Testing).
  */
-function parseUrlList(input, { maxUrls = DEFAULT_MAX_URLS } = {}) {
+function parseUrlList(input, { maxUrls } = {}) {
   const raw = String(input || '').trim();
   if (!raw) {
     throw new Error('URL is required');
@@ -19,7 +22,7 @@ function parseUrlList(input, { maxUrls = DEFAULT_MAX_URLS } = {}) {
   if (!parts.length) {
     throw new Error('URL is required');
   }
-  if (parts.length > maxUrls) {
+  if (maxUrls != null && maxUrls > 0 && parts.length > maxUrls) {
     throw new Error(`Maximum ${maxUrls} URLs allowed per run`);
   }
 
@@ -36,6 +39,9 @@ function parseUrlList(input, { maxUrls = DEFAULT_MAX_URLS } = {}) {
   if (!urls.length) {
     throw new Error('URL is required');
   }
+  if (maxUrls != null && maxUrls > 0 && urls.length > maxUrls) {
+    throw new Error(`Maximum ${maxUrls} URLs allowed per run`);
+  }
 
   return {
     primaryUrl: urls[0],
@@ -43,11 +49,11 @@ function parseUrlList(input, { maxUrls = DEFAULT_MAX_URLS } = {}) {
   };
 }
 
-function normalizeUrlList(urls, { maxUrls = DEFAULT_MAX_URLS } = {}) {
+function normalizeUrlList(urls, { maxUrls } = {}) {
   if (!Array.isArray(urls) || !urls.length) {
     throw new Error('At least one URL is required');
   }
-  if (urls.length > maxUrls) {
+  if (maxUrls != null && maxUrls > 0 && urls.length > maxUrls) {
     throw new Error(`Maximum ${maxUrls} URLs allowed per run`);
   }
 
@@ -72,6 +78,7 @@ function normalizeUrlList(urls, { maxUrls = DEFAULT_MAX_URLS } = {}) {
 
 module.exports = {
   DEFAULT_MAX_URLS,
+  FULL_UI_CHECK_MAX_URL_LIST,
   parseUrlList,
   normalizeUrlList
 };

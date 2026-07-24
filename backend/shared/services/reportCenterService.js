@@ -25,7 +25,9 @@ async function listAllReports({ limit = 200, moduleId, sessionId } = {}) {
       const reports = await reader.listReports();
       for (const r of reports) {
         if (jobStore.RUNNABLE_MODULES.has(mod.id)) {
-          const job = await jobStore.getJob(mod.id, r.id);
+          const { parseJobReportId } = require('../jobReportUtils');
+          const jobId = r.jobId || parseJobReportId(r.id) || r.id;
+          const job = await jobStore.getJob(mod.id, jobId);
           if (job && !isJobVisibleToSession(job, mod.id, sessionId)) continue;
         } else if (mod.id === 'keyword-check') {
           const stateService = require('../../keyword-check/stateService');

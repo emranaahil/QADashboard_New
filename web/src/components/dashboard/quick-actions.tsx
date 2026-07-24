@@ -3,12 +3,18 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PrivacyDisclaimerNotice } from "@/components/layout/privacy-disclaimer-notice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { useExecutionStore } from "@/store/execution-store";
+import {
+  useExecutionStore,
+  useModuleJob,
+  useRunningModuleCount,
+} from "@/store/execution-store";
 import { useScanStore } from "@/store/scan-store";
+import { isParallelExecutionEnabled } from "@/lib/parallel-execution";
 import {
   MAX_URL_LENGTH,
   validateKeywords,
@@ -20,11 +26,9 @@ export function QuickActions() {
   const [url, setUrl] = useState("");
   const [keywordsText, setKeywordsText] = useState("");
 
-  const jobStatus = useExecutionStore((s) => s.status);
-  const jobModuleId = useExecutionStore((s) => s.moduleId);
-  const jobProgress = useExecutionStore((s) => s.progress);
-  const jobMessage = useExecutionStore((s) => s.message);
-  const jobCancelling = useExecutionStore((s) => s.isCancelling);
+  const uiSlice = useModuleJob("ui-check");
+  const seoSlice = useModuleJob("seo");
+  const runningJobCount = useRunningModuleCount();
   const startJob = useExecutionStore((s) => s.startJob);
   const cancelJob = useExecutionStore((s) => s.cancelJob);
 
@@ -37,14 +41,36 @@ export function QuickActions() {
   const startErrorCheck = useScanStore((s) => s.startErrorCheck);
   const cancelScan = useScanStore((s) => s.cancelScan);
 
-  const jobRunning = jobStatus === "running" || jobCancelling;
+  const parallel = isParallelExecutionEnabled();
+  const uiRunning = uiSlice.status === "running" || uiSlice.isCancelling;
+  const seoRunning = seoSlice.status === "running" || seoSlice.isCancelling;
+  const keywordRunning =
+    scanModuleId === "keyword-check" && (scanStatus === "running" || scanCancelling);
+  const linkRunning =
+    scanModuleId === "error-check" && (scanStatus === "running" || scanCancelling);
   const scanRunning = scanStatus === "running" || scanCancelling;
-  const globalRunning = jobRunning || scanRunning;
+  const anyRunning = runningJobCount > 0 || scanRunning;
 
-  const activeModuleId = jobRunning ? jobModuleId : scanRunning ? scanModuleId : null;
-  const progress = jobRunning ? jobProgress : scanProgress;
-  const message = jobRunning ? jobMessage : scanMessage;
-  const isCancelling = jobRunning ? jobCancelling : scanCancelling;
+  const activeModuleId = uiRunning
+    ? "ui-check"
+    : seoRunning
+      ? "seo"
+      : keywordRunning
+        ? "keyword-check"
+        : linkRunning
+          ? "error-check"
+          : null;
+  const progress = uiRunning
+    ? uiSlice.progress
+    : seoRunning
+      ? seoSlice.progress
+      : scanProgress;
+  const message = uiRunning ? uiSlice.message : seoRunning ? seoSlice.message : scanMessage;
+  const isCancelling = uiRunning
+    ? uiSlice.isCancelling
+    : seoRunning
+      ? seoSlice.isCancelling
+      : scanCancelling;
 
   const runIfValid = (fn: () => void) => {
     const urlError = validateUrl(url);
@@ -74,7 +100,7 @@ export function QuickActions() {
         url,
         options: { mode: "single" },
         source: "quick_actions",
-        successMessage: "SEO Test completed successfully",
+        successMessage: "Seo/Geo Audit completed successfully",
       })
     );
   };
@@ -98,9 +124,12 @@ export function QuickActions() {
   };
 
   const handleCancel = () => {
-    if (jobRunning) cancelJob();
+    if (uiRunning) cancelJob("ui-check");
+    else if (seoRunning) cancelJob("seo");
     else if (scanRunning) cancelScan();
   };
+
+  const inputLocked = parallel ? false : anyRunning;
 
   return (
     <Card className="w-full lg:w-80">
@@ -115,7 +144,7 @@ export function QuickActions() {
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://example.com"
             aria-label="Test URL"
-            disabled={globalRunning}
+            disabled={inputLocked}
             maxLength={MAX_URL_LENGTH}
           />
         </div>
@@ -128,15 +157,17 @@ export function QuickActions() {
             className="min-h-[72px] w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
             value={keywordsText}
             onChange={(e) => setKeywordsText(e.target.value)}
-            disabled={globalRunning}
+            disabled={inputLocked}
             placeholder={"brand\nproduct"}
           />
         </div>
 
+        <PrivacyDisclaimerNotice />
+
         <Button
           className="w-full"
-          loading={jobRunning && jobModuleId === "ui-check" && !isCancelling}
-          disabled={globalRunning}
+          loading={uiRunning && !uiSlice.isCancelling}
+          disabled={parallel ? uiRunning : anyRunning}
           onClick={handleUiTest}
         >
           Run UI Test
@@ -144,17 +175,17 @@ export function QuickActions() {
         <Button
           variant="secondary"
           className="w-full"
-          loading={jobRunning && jobModuleId === "seo" && !isCancelling}
-          disabled={globalRunning}
+          loading={seoRunning && !seoSlice.isCancelling}
+          disabled={parallel ? seoRunning : anyRunning}
           onClick={handleSeoTest}
         >
-          Run SEO Test
+          Run Seo/Geo Audit
         </Button>
         <Button
           variant="secondary"
           className="w-full"
-          loading={scanRunning && scanModuleId === "keyword-check" && !isCancelling}
-          disabled={globalRunning}
+          loading={keywordRunning && !scanCancelling}
+          disabled={parallel ? keywordRunning : anyRunning}
           onClick={handleKeywordScan}
         >
           Run Keyword Scan
@@ -162,18 +193,18 @@ export function QuickActions() {
         <Button
           variant="secondary"
           className="w-full"
-          loading={scanRunning && scanModuleId === "error-check" && !isCancelling}
-          disabled={globalRunning}
+          loading={linkRunning && !scanCancelling}
+          disabled={parallel ? linkRunning : anyRunning}
           onClick={handleLinkCheck}
         >
           Run Link Check
         </Button>
 
-        {globalRunning && (
+        {anyRunning && (
           <div className="flex flex-col gap-2 rounded-lg border border-border bg-background p-3">
             <Progress value={progress} />
             <p className="text-xs text-muted-foreground">
-              {progress}% · {activeModuleId}
+              {progress}% · {parallel && runningJobCount > 1 ? `${runningJobCount} jobs` : activeModuleId}
             </p>
             {message && <p className="truncate text-xs text-muted-foreground">{message}</p>}
             <Button variant="cancel" size="sm" loading={isCancelling} disabled={isCancelling} onClick={handleCancel}>

@@ -32,6 +32,15 @@ function getRunArtifacts(runId) {
 async function writeRunArtifacts(runId, { seoReport, html }) {
   const { folder, jsonPath, htmlPath, reportPath } = getRunArtifacts(runId);
   await fs.ensureDir(folder);
+
+  // Persist Rich Results PNGs beside the HTML report for easy copy/open.
+  try {
+    const { writeRichResultsScreenshotFiles } = require('../shared/services/richResultsTest');
+    await writeRichResultsScreenshotFiles(folder, seoReport?.pages || []);
+  } catch {
+    // non-fatal
+  }
+
   await fs.writeJson(jsonPath, seoReport, { spaces: 2 });
   await fs.writeFile(htmlPath, html, 'utf8');
   return { runId, folder, jsonPath, htmlPath, reportPath };

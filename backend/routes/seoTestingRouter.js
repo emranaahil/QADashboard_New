@@ -44,9 +44,12 @@ router.delete('/history/:jobId', async (req, res) => {
     }
 
     seoTestingHistoryService.normalizeTestType(type);
-    const result = await historyService.deleteHistoryEntry(
+    const reportDeleteService = require('../shared/services/reportDeleteService');
+    const { getSessionIdFromRequest } = require('../shared/sessionUtils');
+    const result = await reportDeleteService.deleteReport(
       seoTestingHistoryService.MODULE_ID,
-      req.params.jobId
+      req.params.jobId,
+      getSessionIdFromRequest(req)
     );
     res.json(result);
   } catch (err) {

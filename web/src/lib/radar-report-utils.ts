@@ -120,12 +120,14 @@ export function exportErrorCheckCsv(
 
   if (!brokenPages.length && !brokenLinks.length) return false;
 
-  let csv = "Type,URL,Detail\n";
+  let csv = "Type,Found In,Issue,Broken URL\n";
   for (const page of brokenPages) {
-    csv += `${csvEscape("Broken Page")},${csvEscape(page.url)},${csvEscape((page.detectedErrors || []).join("; "))}\n`;
+    csv += `${csvEscape("Broken Page")},${csvEscape("")},${csvEscape((page.detectedErrors || []).join("; "))},${csvEscape(page.url)}\n`;
   }
   for (const link of brokenLinks) {
-    csv += `${csvEscape("Broken Link")},${csvEscape(link.brokenUrl)},${csvEscape(link.foundIn)}\n`;
+    const page = brokenPages.find((p) => p.url === link.brokenUrl);
+    const issue = (page?.detectedErrors || []).join("; ");
+    csv += `${csvEscape("Broken Link")},${csvEscape(link.foundIn)},${csvEscape(issue)},${csvEscape(link.brokenUrl)}\n`;
   }
   downloadCsv(`${filenamePrefix}-${new Date().toISOString().slice(0, 10)}.csv`, csv);
   return true;

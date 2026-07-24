@@ -54,6 +54,12 @@ function UiTestPanel({
         testType={testType}
         onTestTypeChange={(type) => onModeChange(type === "full-website" ? "full" : "single")}
         onSelectReport={handleSelectReport}
+        onReportDeleted={(jobId) => {
+          if (selectedHistoryId === jobId) {
+            setHistoryJob(null);
+            setSelectedHistoryId(null);
+          }
+        }}
         refreshKey={historyRefreshKey}
         selectedJobId={selectedHistoryId}
       />

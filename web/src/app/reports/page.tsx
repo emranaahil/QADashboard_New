@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
 import { formatDateTime } from "@/lib/utils";
 import { openJobReport } from "@/lib/report";
+import { DeleteReportButton } from "@/components/execution/delete-report-button";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { useHistoryStartRefresh } from "@/hooks/use-history-start-refresh";
 
@@ -91,6 +92,15 @@ export default function ReportsPage() {
                     Open
                   </Button>
                 )}
+                <DeleteReportButton
+                  moduleId={r.moduleId}
+                  reportId={r.id}
+                  label="Delete"
+                  onDeleted={() => {
+                    setReports((prev) => prev.filter((x) => `${x.moduleId}:${x.id}` !== key));
+                    setPinned((prev) => prev.filter((k) => k !== key));
+                  }}
+                />
                 <Button variant="ghost" size="sm" onClick={() => togglePin(key)}>
                   {pinned.includes(key) ? "Unpin" : "Pin"}
                 </Button>

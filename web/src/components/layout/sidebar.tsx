@@ -8,7 +8,9 @@ import {
   Search,
   Radar,
   Link2,
-  History,
+  Map,
+  ImageIcon,
+  Shield,
   FileText,
 } from "lucide-react";
 import { AuthorSidebarCredit } from "@/components/layout/author-sidebar-credit";
@@ -17,10 +19,12 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/ui-testing", label: "UI Testing", icon: Monitor },
-  { href: "/seo-testing", label: "SEO Testing", icon: Search },
+  { href: "/seo-testing", label: "Seo/Geo Audit", icon: Search },
   { href: "/keyword-radar", label: "Keyword Radar", icon: Radar },
   { href: "/link-radar", label: "Link Radar", icon: Link2 },
-  { href: "/history", label: "History", icon: History },
+  { href: "/sitemap-check", label: "Sitemap Audit", icon: Map },
+  { href: "/image-audit", label: "Image Audit", icon: ImageIcon },
+  { href: "/security-audit", label: "Security Audit", icon: Shield },
   { href: "/reports", label: "Reports", icon: FileText },
 ];
 

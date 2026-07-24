@@ -20,7 +20,8 @@ function safeWriteReport(filePath, report) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
     const tmpFile = `${filePath}.tmp`;
-    fs.writeFileSync(tmpFile, JSON.stringify(report, null, 2));
+    const compact = process.env.QA_BULK_URL_LIST === '1' || (Array.isArray(report) && report.length >= 50);
+    fs.writeFileSync(tmpFile, compact ? JSON.stringify(report) : JSON.stringify(report, null, 2));
     fs.renameSync(tmpFile, filePath);
 
   } catch (err) {

@@ -18,8 +18,8 @@ function isProcessActive(moduleId, jobId) {
 function isLockedExecution(moduleId, jobId) {
   try {
     const executionLock = require('./executionLock');
-    const locked = executionLock.getActiveExecution();
-    return !!(locked && locked.moduleId === moduleId && locked.jobId === jobId);
+    const key = `${moduleId}:${jobId}`;
+    return executionLock.getActiveExecutions().some((exec) => exec.id === key);
   } catch {
     return false;
   }

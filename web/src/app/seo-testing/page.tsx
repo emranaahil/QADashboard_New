@@ -54,6 +54,12 @@ function SeoTestPanel({
         testType={testType}
         onTestTypeChange={(type) => onModeChange(type === "full-website" ? "full" : "single")}
         onSelectReport={handleSelectReport}
+        onReportDeleted={(jobId) => {
+          if (selectedHistoryId === jobId) {
+            setHistoryJob(null);
+            setSelectedHistoryId(null);
+          }
+        }}
         refreshKey={historyRefreshKey}
         selectedJobId={selectedHistoryId}
       />
@@ -70,7 +76,7 @@ export default function SeoTestingPage() {
   }, []);
 
   return (
-    <AppShell title="SEO Testing" subtitle="Meta tags, structured data, and performance audits">
+    <AppShell title="Seo/Geo Audit" subtitle="Meta tags, structured data, and performance audits">
       <div className="seo-testing-page mx-auto w-full max-w-[1100px] px-0 md:px-6">
         <div className="mb-6 flex justify-center">
           <UiTestingSegmented

@@ -6,7 +6,9 @@ import { AuthorTopBarCredit } from "@/components/layout/author-top-bar-credit";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useExecutionStore } from "@/store/execution-store";
+import { moduleLabel } from "@/lib/modules";
+import { isParallelExecutionEnabled } from "@/lib/parallel-execution";
+import { useExecutionStore, useRunningModuleCount } from "@/store/execution-store";
 import { useScanStore } from "@/store/scan-store";
 
 const statusLabels = {
@@ -26,48 +28,54 @@ export function TopBar({
   subtitle?: string;
   onMenuClick?: () => void;
 }) {
-  const jobStatus = useExecutionStore((s) => s.status);
-  const jobProgress = useExecutionStore((s) => s.progress);
-  const jobCancelling = useExecutionStore((s) => s.isCancelling);
-  const jobModuleId = useExecutionStore((s) => s.moduleId);
+  const runningJobCount = useRunningModuleCount();
+  const drawerModuleId = useExecutionStore((s) => s.drawerModuleId);
+  const moduleJobs = useExecutionStore((s) => s.moduleJobs);
 
   const scanStatus = useScanStore((s) => s.status);
   const scanProgress = useScanStore((s) => s.progress);
   const scanCancelling = useScanStore((s) => s.isCancelling);
   const scanModuleId = useScanStore((s) => s.moduleId);
 
-  const jobRunning = jobStatus === "running" || jobCancelling;
   const scanRunning = scanStatus === "running" || scanCancelling;
+  const parallel = isParallelExecutionEnabled();
+  const jobRunning = runningJobCount > 0;
+
+  const focusModuleId =
+    drawerModuleId ||
+    Object.entries(moduleJobs).find(
+      ([, slice]) => slice.status === "running" || slice.isCancelling
+    )?.[0];
+  const focusSlice = focusModuleId ? moduleJobs[focusModuleId] : null;
 
   const activeKind = jobRunning ? "job" : scanRunning ? "scan" : null;
-  const status = activeKind === "job" ? jobStatus : activeKind === "scan" ? scanStatus : "idle";
-  const progress = activeKind === "job" ? jobProgress : scanProgress;
-  const isCancelling = activeKind === "job" ? jobCancelling : scanCancelling;
-  const moduleLabel =
+  const status = activeKind === "job" ? focusSlice?.status ?? "idle" : activeKind === "scan" ? scanStatus : "idle";
+  const progress = activeKind === "job" ? focusSlice?.progress ?? 0 : scanProgress;
+  const isCancelling = activeKind === "job" ? focusSlice?.isCancelling ?? false : scanCancelling;
+
+  const activeModuleLabel =
     activeKind === "job"
-      ? jobModuleId || "test"
+      ? parallel && runningJobCount > 1
+        ? `${runningJobCount} modules`
+        : moduleLabel(focusModuleId || "test")
       : activeKind === "scan"
-        ? scanModuleId === "keyword-check"
-          ? "keyword"
-          : scanModuleId === "error-check"
-            ? "link"
-            : "scan"
+        ? moduleLabel(scanModuleId || "scan")
         : null;
 
   return (
-    <header className="glass-header mx-5 mt-5 flex shrink-0 flex-wrap items-center justify-between gap-4 overflow-visible rounded-[18px] border border-border px-5 py-4">
-      <div className="flex min-w-0 items-center gap-3">
+    <header className="glass-header mx-5 mt-5 flex shrink-0 flex-col gap-3 overflow-visible rounded-[18px] border border-border px-5 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
+      <div className="flex min-w-0 items-center gap-3 lg:max-w-[45%] lg:flex-1 xl:max-w-none">
         <Button
           type="button"
           variant="outline"
           size="icon"
-          className="lg:hidden"
+          className="shrink-0 lg:hidden"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
         >
           <Menu className="h-4 w-4" />
         </Button>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-bold tracking-tight md:text-2xl">{title}</h1>
           {subtitle && (
             <p className="truncate text-sm text-muted-foreground">{subtitle}</p>
@@ -75,14 +83,14 @@ export function TopBar({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-3 lg:shrink-0">
         <GlobalSearch />
         <ApiDevStatus />
         <AuthorTopBarCredit />
 
         <div className="flex items-center gap-2">
-          {moduleLabel ? (
-            <span className="hidden text-xs text-muted-foreground sm:inline">{moduleLabel}</span>
+          {activeModuleLabel ? (
+            <span className="hidden text-xs text-muted-foreground sm:inline">{activeModuleLabel}</span>
           ) : null}
           <Badge
             variant={

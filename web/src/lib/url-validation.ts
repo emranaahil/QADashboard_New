@@ -77,22 +77,89 @@ export function validateUrl(value: string): string | null {
   return null;
 }
 
-export function validateKeywords(raw: string): { keywords: string[]; error: string | null } {
-  const keywords = raw
+function parseKeywordLines(raw: string): string[] {
+  return raw
     .split("\n")
     .map((k) => k.trim())
     .filter(Boolean);
+}
+
+function validateKeywordList(keywords: string[], label = "keyword"): string | null {
+  if (keywords.length > MAX_KEYWORDS) {
+    return `Maximum ${MAX_KEYWORDS} ${label}s allowed`;
+  }
+  for (const kw of keywords) {
+    if (kw.length > MAX_KEYWORD_LENGTH) {
+      return `Each ${label} must be ${MAX_KEYWORD_LENGTH} characters or less`;
+    }
+  }
+  return null;
+}
+
+export function validateKeywords(raw: string): { keywords: string[]; error: string | null } {
+  const keywords = parseKeywordLines(raw);
 
   if (!keywords.length) {
     return { keywords: [], error: "Enter at least one keyword" };
   }
-  if (keywords.length > MAX_KEYWORDS) {
-    return { keywords: [], error: `Maximum ${MAX_KEYWORDS} keywords allowed` };
-  }
-  for (const kw of keywords) {
-    if (kw.length > MAX_KEYWORD_LENGTH) {
-      return { keywords: [], error: `Each keyword must be ${MAX_KEYWORD_LENGTH} characters or less` };
-    }
+  const listError = validateKeywordList(keywords);
+  if (listError) {
+    return { keywords: [], error: listError };
   }
   return { keywords, error: null };
+}
+
+/** Optional case-sensitive keywords — empty input is valid. */
+export function validateOptionalKeywords(raw: string): { keywords: string[]; error: string | null } {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return { keywords: [], error: null };
+  }
+  const keywords = parseKeywordLines(raw);
+  const listError = validateKeywordList(keywords, "case-sensitive keyword");
+  if (listError) {
+    return { keywords: [], error: listError };
+  }
+  return { keywords, error: null };
+}
+
+export function validateKeywordScanInput(
+  keywordsText: string,
+  caseSensitiveKeywordsText: string
+): {
+  keywords: string[];
+  caseSensitiveKeywords: string[];
+  error: string | null;
+} {
+  const { keywords: caseSensitiveKeywords, error: csError } =
+    validateOptionalKeywords(caseSensitiveKeywordsText);
+  if (csError) {
+    return { keywords: [], caseSensitiveKeywords: [], error: csError };
+  }
+
+  let keywords: string[] = [];
+  if (keywordsText.trim()) {
+    const standard = validateKeywords(keywordsText);
+    if (standard.error) {
+      return { keywords: [], caseSensitiveKeywords: [], error: standard.error };
+    }
+    keywords = standard.keywords;
+  }
+
+  if (!keywords.length && !caseSensitiveKeywords.length) {
+    return {
+      keywords: [],
+      caseSensitiveKeywords: [],
+      error: "Enter at least one keyword (standard or case-sensitive)",
+    };
+  }
+  if (keywords.length + caseSensitiveKeywords.length > MAX_KEYWORDS) {
+    return {
+      keywords: [],
+      caseSensitiveKeywords: [],
+      error: `Maximum ${MAX_KEYWORDS} keywords total (standard + case-sensitive)`,
+    };
+  }
+
+  return { keywords, caseSensitiveKeywords, error: null };
 }

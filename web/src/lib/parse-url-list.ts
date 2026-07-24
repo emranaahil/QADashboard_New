@@ -1,6 +1,11 @@
-import { MAX_URL_LENGTH, normalizeUrl, validateUrl } from "@/lib/url-validation";
+import { normalizeUrl, validateUrl } from "@/lib/url-validation";
 
-export const MAX_URLS_PER_RUN = 20;
+export type ParseUrlListOptions = {
+  /** When set, caps how many comma-separated URLs are accepted. */
+  maxUrls?: number;
+  /** When set, caps total pasted input length. Omit for unlimited bulk paste. */
+  maxInputLength?: number;
+};
 
 export type ParsedUrlList = {
   primaryUrl: string;
@@ -8,7 +13,7 @@ export type ParsedUrlList = {
 };
 
 /** Parse comma-separated URLs for single-page multi-URL runs. */
-export function parseUrlListInput(value: string): ParsedUrlList {
+export function parseUrlListInput(value: string, options: ParseUrlListOptions = {}): ParsedUrlList {
   const raw = value.trim();
   if (!raw) {
     throw new Error("URL is required");
@@ -21,8 +26,8 @@ export function parseUrlListInput(value: string): ParsedUrlList {
   if (!parts.length) {
     throw new Error("URL is required");
   }
-  if (parts.length > MAX_URLS_PER_RUN) {
-    throw new Error(`Maximum ${MAX_URLS_PER_RUN} URLs allowed per run`);
+  if (options.maxUrls != null && options.maxUrls > 0 && parts.length > options.maxUrls) {
+    throw new Error(`Maximum ${options.maxUrls} URLs allowed per run`);
   }
 
   const urls: string[] = [];
@@ -40,20 +45,24 @@ export function parseUrlListInput(value: string): ParsedUrlList {
   if (!urls.length) {
     throw new Error("URL is required");
   }
+  if (options.maxUrls != null && options.maxUrls > 0 && urls.length > options.maxUrls) {
+    throw new Error(`Maximum ${options.maxUrls} URLs allowed per run`);
+  }
 
   return { primaryUrl: urls[0], urls };
 }
 
 /** Returns error message or null if valid (single or comma-separated). */
-export function validateUrlListInput(value: string): string | null {
+export function validateUrlListInput(value: string, options: ParseUrlListOptions = {}): string | null {
   const raw = value.trim();
   if (!raw) return "URL is required";
-  if (raw.length > MAX_URL_LENGTH) {
-    return `URL input must be ${MAX_URL_LENGTH} characters or less`;
+
+  if (options.maxInputLength != null && raw.length > options.maxInputLength) {
+    return `URL input must be ${options.maxInputLength} characters or less`;
   }
 
   try {
-    parseUrlListInput(raw);
+    parseUrlListInput(raw, options);
     return null;
   } catch (err) {
     return err instanceof Error ? err.message : "Invalid URL list";

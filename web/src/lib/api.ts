@@ -27,6 +27,14 @@ export type Job = {
     _resolvedDevices?: Array<{ label: string; width: number; height: number }>;
     maxPages?: number;
     mode?: string;
+    includePageSpeed?: boolean;
+    includeRichResults?: boolean;
+    includeW3cValidator?: boolean;
+    includeRobotsTxt?: boolean;
+    includeRedirectTrace?: boolean;
+    includeSslLabs?: boolean;
+    urls?: string[];
+    maxUrls?: number;
   };
   executionState?: {
     currentPage: number;
@@ -98,6 +106,38 @@ export type SeoTestingHistoryResponse = {
     reports: SeoTestingHistoryItem[];
   }>;
   items: SeoTestingHistoryItem[];
+};
+
+export type SecurityAuditHistoryItem = {
+  id: string;
+  url: string;
+  title?: string;
+  testType: "single-page" | "full-website";
+  moduleId: "security-audit";
+  status: string;
+  createdAt: string;
+  completedAt?: string;
+  durationMs?: number;
+  reportAvailable?: boolean;
+  hasQaIssues?: boolean;
+  message?: string;
+  error?: string;
+  progress?: number;
+  totalPages?: number;
+  currentPage?: number;
+};
+
+export type SecurityAuditHistoryResponse = {
+  testType: "single-page" | "full-website";
+  moduleId: "security-audit";
+  heading: string;
+  total: number;
+  grouped: Array<{
+    date: string;
+    dateLabel: string;
+    reports: SecurityAuditHistoryItem[];
+  }>;
+  items: SecurityAuditHistoryItem[];
 };
 
 export type DashboardStats = {
@@ -251,6 +291,33 @@ export const api = {
     );
   },
 
+  getSecurityAuditHistory: (opts: { type: "single-page" | "full-website"; q?: string; limit?: number }) => {
+    const params = new URLSearchParams({ type: opts.type });
+    if (opts.q) params.set("q", opts.q);
+    if (opts.limit) params.set("limit", String(opts.limit));
+    return fetchJson<SecurityAuditHistoryResponse>(`/api/security-audit/history?${params}`);
+  },
+
+  deleteSecurityAuditHistory: (jobId: string, type: "single-page" | "full-website") => {
+    const params = new URLSearchParams({ type });
+    return fetchJson<{ ok: boolean }>(
+      `/api/security-audit/history/${encodeURIComponent(jobId)}?${params}`,
+      { method: "DELETE" }
+    );
+  },
+
+  deleteReport: (moduleId: string, reportId: string) =>
+    fetchJson<{ moduleId: string; reportId: string; deleted: boolean }>(
+      `/api/reports-center/${encodeURIComponent(moduleId)}/${encodeURIComponent(reportId)}`,
+      { method: "DELETE" }
+    ),
+
+  deleteHistoryEntry: (moduleId: string, jobId: string) =>
+    fetchJson<{ moduleId: string; reportId: string; deleted: boolean }>(
+      `/api/history/${encodeURIComponent(moduleId)}/${encodeURIComponent(jobId)}`,
+      { method: "DELETE" }
+    ),
+
   getReportsCenter: (opts?: { limit?: number }) => {
     const params = new URLSearchParams();
     if (opts?.limit) params.set("limit", String(opts.limit));
@@ -283,7 +350,19 @@ export const api = {
     fetchJson<{ job: Job }>(`/api/modules/${moduleId}/jobs/${jobId}`),
 
   getActiveJob: () =>
-    fetchJson<{ active: boolean; job: Job | null }>("/api/execution/active"),
+    fetchJson<{ active: boolean; job: Job | null; jobs?: Job[]; parallel?: boolean }>(
+      "/api/execution/active"
+    ),
+
+  getActiveJobs: async () => {
+    const data = await api.getActiveJob();
+    return {
+      active: data.active,
+      job: data.job,
+      jobs: data.jobs?.length ? data.jobs : data.job ? [data.job] : [],
+      parallel: data.parallel ?? false,
+    };
+  },
 
   cancelExecution: (moduleId: string, jobId: string) =>
     fetchJson<{ job: Job }>("/api/execution/cancel", {
@@ -317,11 +396,19 @@ export const api = {
       stats?: Record<string, number>;
     }>("/api/scan/active"),
 
-  startKeywordScan: (url: string, keywords: string[]) =>
+  startKeywordScan: (
+    url: string,
+    keywords: string[],
+    caseSensitiveKeywords?: string[]
+  ) =>
     fetchJson<{ scanId: string }>("/api/scan/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, keywords }),
+      body: JSON.stringify({
+        url,
+        keywords,
+        caseSensitiveKeywords: caseSensitiveKeywords || [],
+      }),
     }),
 
   getKeywordScanStatus: (scanId: string) =>
@@ -334,6 +421,8 @@ export const api = {
         matchesFound?: number;
         currentBatch?: number;
       };
+      currentUrl?: string;
+      recentUrls?: string[];
       error?: string;
     }>(`/api/scan/${encodeURIComponent(scanId)}/status`),
 

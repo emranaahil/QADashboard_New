@@ -1,5 +1,6 @@
 const express = require('express');
 const historyService = require('../shared/services/historyService');
+const reportDeleteService = require('../shared/services/reportDeleteService');
 const { getSessionIdFromRequest } = require('../shared/sessionUtils');
 
 const router = express.Router();
@@ -23,10 +24,19 @@ router.get('/', async (req, res) => {
 
 router.delete('/:moduleId/:jobId', async (req, res) => {
   try {
-    const result = await historyService.deleteHistoryEntry(req.params.moduleId, req.params.jobId);
+    const sessionId = getSessionIdFromRequest(req);
+    const result = await reportDeleteService.deleteReport(
+      req.params.moduleId,
+      req.params.jobId,
+      sessionId
+    );
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: 'DELETE_FAILED', message: err.message });
+    const msg = err.message || 'Delete failed';
+    const status = msg.includes('permission') || msg.includes('demo report') ? 403
+      : msg.toLowerCase().includes('not found') ? 404
+      : 400;
+    res.status(status).json({ error: 'DELETE_FAILED', message: msg });
   }
 });
 

@@ -14,8 +14,8 @@ import { formatDateTime } from "@/lib/utils";
 type TestType = "single-page" | "full-website";
 
 const EMPTY_MESSAGES: Record<TestType, string> = {
-  "single-page": "No Single Page SEO reports found",
-  "full-website": "No Full Website SEO reports found",
+  "single-page": "No single-page audit reports found",
+  "full-website": "No full-website audit reports found",
 };
 
 const HISTORY_TYPE_OPTIONS = [
@@ -27,6 +27,7 @@ type Props = {
   testType: TestType;
   onTestTypeChange: (type: TestType) => void;
   onSelectReport: (item: SeoTestingHistoryItem) => void;
+  onReportDeleted?: (jobId: string) => void;
   refreshKey?: number;
   selectedJobId?: string | null;
 };
@@ -62,6 +63,7 @@ export function SeoTestingHistoryPanel({
   testType,
   onTestTypeChange,
   onSelectReport,
+  onReportDeleted,
   refreshKey = 0,
   selectedJobId = null,
 }: Props) {
@@ -113,8 +115,8 @@ export function SeoTestingHistoryPanel({
   const stats = useMemo(() => computeHistoryStats(data?.items || []), [data?.items]);
 
   const subheading = useMemo(() => {
-    if (!stats.total) return "Past SEO test runs";
-    return `${stats.total} saved SEO report${stats.total === 1 ? "" : "s"}`;
+    if (!stats.total) return "Past Seo/Geo Audit runs";
+    return `${stats.total} saved audit report${stats.total === 1 ? "" : "s"}`;
   }, [stats.total]);
 
   const toggleDate = (date: string) => {
@@ -135,7 +137,7 @@ export function SeoTestingHistoryPanel({
     <Card className="history-container w-full rounded-[20px]">
       <CardContent className="flex flex-col gap-6 p-8">
         <div>
-          <h2 className="text-lg font-bold leading-tight">SEO History</h2>
+          <h2 className="text-lg font-bold leading-tight">Seo/Geo Audit History</h2>
           <p className="mt-2 text-sm text-muted-foreground">{subheading}</p>
         </div>
 
@@ -219,6 +221,10 @@ export function SeoTestingHistoryPanel({
                         meta={meta}
                         selected={selectedJobId === item.id}
                         onSelect={() => onSelectReport(item)}
+                        onDeleted={() => {
+                          onReportDeleted?.(item.id);
+                          void load({ silent: true });
+                        }}
                       />
                     );
                   })}
