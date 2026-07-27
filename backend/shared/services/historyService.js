@@ -13,7 +13,8 @@ const MODULE_LABELS = {
   'full-ui-check': 'UI Testing — Full Website',
   'sitemap-check': 'Sitemap Audit',
   'image-audit': 'Image Audit',
-  'security-audit': 'Security Audit'
+  'security-audit': 'Security Audit',
+  'visual-twin': 'Visual Twin'
 };
 
 function matchesSearch(item, q) {

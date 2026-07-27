@@ -7,6 +7,7 @@ export const MODULE_LABELS: Record<string, string> = {
   "sitemap-check": "Sitemap Audit",
   "image-audit": "Image Audit",
   "security-audit": "Security Audit",
+  "visual-twin": "Visual Twin",
 };
 
 export function moduleLabel(moduleId: string): string {

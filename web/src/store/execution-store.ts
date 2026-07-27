@@ -16,6 +16,7 @@ export type ExecSource =
   | "sitemap_check"
   | "image_audit"
   | "security_audit"
+  | "visual_twin"
   | null;
 
 export type ModuleJobSlice = {

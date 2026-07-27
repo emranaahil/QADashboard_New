@@ -12,6 +12,7 @@ import {
   ImageIcon,
   Shield,
   FileText,
+  Copy,
 } from "lucide-react";
 import { AuthorSidebarCredit } from "@/components/layout/author-sidebar-credit";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/ui-testing", label: "UI Testing", icon: Monitor },
+  { href: "/visual-twin", label: "Visual Twin", icon: Copy },
   { href: "/seo-testing", label: "Seo/Geo Audit", icon: Search },
   { href: "/keyword-radar", label: "Keyword Radar", icon: Radar },
   { href: "/link-radar", label: "Link Radar", icon: Link2 },

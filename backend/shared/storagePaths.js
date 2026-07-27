@@ -85,6 +85,8 @@ function ensureStorageDirs() {
     moduleReportsDir('image-audit'),
     moduleJobsDir('security-audit'),
     moduleReportsDir('security-audit'),
+    moduleJobsDir('visual-twin'),
+    moduleReportsDir('visual-twin'),
     sharedDataPath()
   ];
   dirs.forEach(d => fs.ensureDirSync(d));

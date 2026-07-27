@@ -34,6 +34,8 @@ export type Job = {
     includeSecurityHeaders?: boolean;
     includeContactHyperlinks?: boolean;
     phoneDigitLength?: number | string;
+    referenceUrl?: string;
+    candidateUrl?: string;
     includeW3cValidator?: boolean;
     includeRobotsTxt?: boolean;
     includeRedirectTrace?: boolean;

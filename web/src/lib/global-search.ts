@@ -24,6 +24,7 @@ export type SearchResult = SearchNavItem | SearchRunItem;
 export const SEARCH_NAV_ITEMS: SearchNavItem[] = [
   { kind: "page", id: "dashboard", label: "Dashboard", href: "/dashboard", description: "Overview and quick actions" },
   { kind: "page", id: "ui-testing", label: "UI Testing", href: "/ui-testing", description: "Single page and full website UI checks" },
+  { kind: "page", id: "visual-twin", label: "Visual Twin", href: "/visual-twin", description: "Compare reference site vs clone page by page" },
   { kind: "page", id: "seo-testing", label: "Seo/Geo Audit", href: "/seo-testing", description: "Seo and geo audits and reports" },
   { kind: "page", id: "keyword-radar", label: "Keyword Radar", href: "/keyword-radar", description: "Keyword crawl and PDF reports" },
   { kind: "page", id: "link-radar", label: "Link Radar", href: "/link-radar", description: "Broken links and error checks" },
@@ -38,6 +39,7 @@ function moduleHref(moduleId: string) {
   if (moduleId === "seo") return "/seo-testing";
   if (moduleId === "ui-check") return "/ui-testing?mode=single";
   if (moduleId === "full-ui-check") return "/ui-testing?mode=full";
+  if (moduleId === "visual-twin") return "/visual-twin";
   if (moduleId === "keyword-check") return "/keyword-radar";
   if (moduleId === "error-check") return "/link-radar";
   if (moduleId === "sitemap-check") return "/sitemap-check";

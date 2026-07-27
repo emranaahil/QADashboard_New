@@ -84,6 +84,16 @@ const MODULES = [
     hasRunner: true,
     reportTypes: ['json', 'html'],
     reader: () => require('../security-audit/reportReader')
+  },
+  {
+    id: 'visual-twin',
+    name: 'Visual Twin',
+    description: 'Compare reference site vs candidate clone — headings, text, images, layout.',
+    icon: '🪞',
+    route: '/modules/visual-twin',
+    hasRunner: true,
+    reportTypes: ['json', 'html'],
+    reader: () => require('../visual-twin/reportReader')
   }
 ];
 

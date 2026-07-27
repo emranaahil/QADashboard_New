@@ -13,13 +13,22 @@ const { deriveModelId } = require('./modelUtils');
 const { moduleDataRoot, moduleJobsDir } = require('./storagePaths');
 const ephemeralLiveReportsConfig = require('./ephemeralLiveReportsConfig');
 
-const RUNNABLE_MODULES = new Set(['seo', 'ui-check', 'full-ui-check', 'sitemap-check', 'image-audit', 'security-audit']);
+const RUNNABLE_MODULES = new Set([
+  'seo',
+  'ui-check',
+  'full-ui-check',
+  'sitemap-check',
+  'image-audit',
+  'security-audit',
+  'visual-twin'
+]);
 const TERMINAL_STATUSES = new Set(['completed', 'failed', 'cancelled']);
 const MODULE_TEST_TYPE = {
   'ui-check': 'single-page',
   'full-ui-check': 'full-website',
   'sitemap-check': 'sitemap',
-  'image-audit': 'image-audit'
+  'image-audit': 'image-audit',
+  'visual-twin': 'single-page'
 };
 const jobLocks = new Map();
 
@@ -234,9 +243,15 @@ async function createJob(moduleId, { url, options = {}, user = 'anonymous', sess
   const job = {
     id,
     moduleId,
-    testType: (moduleId === 'seo' || moduleId === 'image-audit' || moduleId === 'security-audit')
-      ? (options.mode === 'full' ? 'full-website' : 'single-page')
-      : (MODULE_TEST_TYPE[moduleId] || null),
+    testType:
+      moduleId === 'seo' ||
+      moduleId === 'image-audit' ||
+      moduleId === 'security-audit' ||
+      moduleId === 'visual-twin'
+        ? options.mode === 'full'
+          ? 'full-website'
+          : 'single-page'
+        : MODULE_TEST_TYPE[moduleId] || null,
     modelId: deriveModelId(cleanUrl),
     status: 'pending',
     progress: 0,

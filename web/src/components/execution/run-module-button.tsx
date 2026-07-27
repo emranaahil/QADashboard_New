@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { ImageIcon, Link2, Map, Monitor, Radar, Search, Shield } from "lucide-react";
+import { Copy, ImageIcon, Link2, Map, Monitor, Radar, Search, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useModuleWorkBusy } from "@/hooks/use-global-work-busy";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,8 @@ export type RunModuleKind =
   | "link-check"
   | "sitemap-check"
   | "image-audit"
-  | "security-audit";
+  | "security-audit"
+  | "visual-twin";
 
 const MODULE_ICONS: Record<RunModuleKind, LucideIcon> = {
   "ui-test": Monitor,
@@ -23,6 +24,7 @@ const MODULE_ICONS: Record<RunModuleKind, LucideIcon> = {
   "sitemap-check": Map,
   "image-audit": ImageIcon,
   "security-audit": Shield,
+  "visual-twin": Copy,
 };
 
 type RunModuleButtonProps = {
