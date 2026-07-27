@@ -5,7 +5,15 @@ const { deriveModelId, validateModelId } = require('./modelUtils');
 
 const { sharedDataPath } = require('./storagePaths');
 const INDEX_PATH = sharedDataPath('test-executions.json');
-const TEST_TYPES = new Set(['seo', 'ui-check', 'full-ui-check', 'sitemap-check', 'image-audit', 'security-audit']);
+const TEST_TYPES = new Set([
+  'seo',
+  'ui-check',
+  'full-ui-check',
+  'sitemap-check',
+  'image-audit',
+  'security-audit',
+  'visual-twin'
+]);
 
 function validateTestType(testType) {
   if (!TEST_TYPES.has(testType)) {
