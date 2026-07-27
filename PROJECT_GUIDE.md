@@ -11,8 +11,8 @@ A multi-module **website QA dashboard**: crawl and audit sites, run Playwright c
 | UI name | Module ID | Purpose |
 |---------|-----------|---------|
 | Keyword Radar | `keyword-check` | Crawl site, find keyword matches |
-| Link Radar | `error-check` | Broken pages & internal links |
-| Seo/Geo Audit | `seo` | SEO + GEO + security headers; optional PageSpeed & Rich Results |
+| Link Radar | `error-check` | Broken pages & links; plain-English issues; CSV/Excel export |
+| Seo/Geo Audit | `seo` | Toggleable SEO / GEO / security headers; optional PageSpeed & Rich Results |
 | UI Testing (single) | `ui-check` | Single-URL visual QA (multi-URL via list/commas) |
 | UI Testing (full site) | `full-ui-check` | Crawl + UI QA per page |
 | Sitemap Audit | `sitemap-check` | Sitemap tree walk + page status checks |
@@ -105,9 +105,11 @@ Typical report APIs:
 
 ### Report cards (per page)
 
-1. **SEO** — on-page issues (critical / minor)  
-2. **GEO** — structured data / AI-readiness; severities Critical / Minor / Warning  
-3. **Security Headers** — response header checks  
+Cards render only for modules enabled on that run (`page.auditModules` / legacy defaults).
+
+1. **SEO** — on-page issues (critical / minor) when `includeSeo`  
+2. **GEO** — structured data / AI-readiness; Critical / Minor / Warning when `includeGeo`  
+3. **Security Headers** — response header checks when `includeSecurityHeaders`  
 4. **Page Speed** — if `includePageSpeed` and API key configured  
 5. **Google Rich Results** — if `includeRichResults` (main URL only)
 
@@ -116,8 +118,13 @@ Typical report APIs:
 | Option | Default | Behavior |
 |--------|---------|----------|
 | `mode` | `single` | `single` (one or many URLs) or `full` (crawl) |
+| `includeSeo` | `true` (if omitted) | On-page SEO rules, robots.txt site check, cross-page duplicates |
+| `includeGeo` | `true` (if omitted) | GEO / structured-data audit |
+| `includeSecurityHeaders` | `true` (if omitted) | Per-page + site HTTP security headers |
 | `includePageSpeed` | `false` | PageSpeed Insights mobile + desktop per page (slower; concurrency 1) |
 | `includeRichResults` | `false` | Playwright open of Google Rich Results Test for **main URL**; screenshot + tool URL |
+
+UI: `web/src/components/modules/seo-testing-workspace.tsx` — core toggles default **on**; optional PageSpeed / Rich Results default **off**.
 
 ### GEO severity (summary)
 
@@ -154,7 +161,38 @@ Screenshots (when captured) are stored under the report folder as `rich-results/
 
 - Page: `web/src/app/seo-testing/page.tsx`  
 - Workspace: `web/src/components/modules/seo-testing-workspace.tsx`  
-- Toggles: Google PageSpeed, Google Rich Results  
+- Toggles: SEO, GEO, Security headers, Google PageSpeed, Google Rich Results  
+
+---
+
+## Link Radar (`error-check`)
+
+| File | Role |
+|------|------|
+| `backend/error-check/errorCheckService.js` | Crawl + detect broken pages/links |
+| `backend/shared/linkRadarIssueExplain.js` | Plain-English issue explanations |
+| `backend/shared/linkRadarCsv.js` | CSV / Excel export builders |
+| `backend/shared/radarReportHtml.js` | HTML report (+ Download CSV / Excel buttons) |
+| `web/src/lib/radar-report-utils.ts` | Dashboard CSV + formatted Excel download |
+| `web/src/app/link-radar/page.tsx` | UI |
+
+**Export columns:** `Main URL` · `URL` · `Issues` (plain language + what it means / what to do).
+
+**Limits:** `backend/shared/errorCheckLimits.js` — production ~500 URLs; local bulk up to ~10k when `NODE_ENV !== production` (or `QA_ERROR_CHECK_BULK=1`).
+
+---
+
+## Local parallel execution
+
+| File | Role |
+|------|------|
+| `backend/shared/executionEnv.js` | `isParallelExecutionEnabled()` |
+| `backend/shared/executionLock.js` | Single vs per-module job lock |
+| `web/src/lib/parallel-execution.ts` | Frontend parallel flag |
+
+Default: parallel **on** in development, **off** in production. Override with `QA_PARALLEL_MODULES` / `NEXT_PUBLIC_QA_PARALLEL_MODULES`.
+
+Full laptop restore: [LOCAL_SETUP.md](./LOCAL_SETUP.md).
 
 ---
 
@@ -330,12 +368,22 @@ npm run playwright
 
 ---
 
+## Bundled sample reports
+
+Manifest: `backend/shared/data/bundled-reports-manifest.json`  
+Seeding: `backend/shared/seedBundledStorage.js` (when `STORAGE_ROOT` is set)
+
+Keep only **small reference** jobs/reports in git (SEO samples, one Link Radar sample, keyword sample, a few UI jobs). Do not commit every local scan.
+
+---
+
 ## Docs map
 
 | File | Audience |
 |------|----------|
 | [README.md](./README.md) | Quick start, feature list, deploy |
 | [PROJECT_GUIDE.md](./PROJECT_GUIDE.md) | This file — architecture & module details |
+| [LOCAL_SETUP.md](./LOCAL_SETUP.md) | New machine / local parallel / remotes |
 | [web/README.md](./web/README.md) | Next.js UI-only notes |
 | [.env.example](./.env.example) | Environment variables |
 

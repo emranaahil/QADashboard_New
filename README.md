@@ -2,7 +2,10 @@
 
 Multi-module website QA toolkit with a **Next.js** dashboard and **Express** API. Crawl, audit, and report on SEO/GEO, links, keywords, UI, images, sitemaps, and security — using **Playwright** for browser automation.
 
-For architecture, storage paths, and maintainer notes, see **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)**.
+| Doc | Purpose |
+|-----|---------|
+| **[PROJECT_GUIDE.md](./PROJECT_GUIDE.md)** | Architecture, storage, APIs, module details |
+| **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** | Clone on a new machine, local parallel mode, sample reports |
 
 ---
 
@@ -11,8 +14,8 @@ For architecture, storage paths, and maintainer notes, see **[PROJECT_GUIDE.md](
 | UI name | Route | Module ID | Description |
 |---------|-------|-----------|-------------|
 | **Keyword Radar** | `/keyword-radar` | `keyword-check` | Crawl a site and find keyword matches (JSON / HTML / PDF) |
-| **Link Radar** | `/link-radar` | `error-check` | Detect 404s and broken internal links |
-| **Seo/Geo Audit** | `/seo-testing` | `seo` | On-page SEO, GEO (structured data), security headers, optional PageSpeed & Google Rich Results |
+| **Link Radar** | `/link-radar` | `error-check` | Broken pages & internal links; plain-English issues; CSV/Excel export |
+| **Seo/Geo Audit** | `/seo-testing` | `seo` | Toggleable SEO, GEO, security headers; optional PageSpeed & Rich Results |
 | **UI Testing** | `/ui-testing` | `ui-check` / `full-ui-check` | Single-page (multi-URL) or full-site visual QA |
 | **Sitemap Audit** | `/sitemap-check` | `sitemap-check` | Walk sitemap tree, check page HTTP status (pass = final 200) |
 | **Image Audit** | `/image-audit` | `image-audit` | Duplicates, CDN, optimization, accessibility, SEO |
@@ -24,18 +27,39 @@ For architecture, storage paths, and maintainer notes, see **[PROJECT_GUIDE.md](
 
 ---
 
+## Local vs production (same code)
+
+One codebase. Behavior changes with env:
+
+| Mode | Parallel multi-module runs | Link Radar URL cap (approx.) |
+|------|----------------------------|------------------------------|
+| **Local** (`NODE_ENV=development`) | Yes | Up to ~10 000 |
+| **Production** (`NODE_ENV=production`) | No (unless `QA_PARALLEL_MODULES=1`) | ~500 |
+
+See **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** for a full laptop restore.
+
+---
+
 ## Seo/Geo Audit (highlights)
 
 | Area | What it does |
 |------|----------------|
-| **SEO** | Titles, H1, hierarchy, meta, Open Graph, bad links, alt text, score |
-| **GEO** | Schema.org / JSON-LD, Microdata/RDFa, GeoJSON/maps, FAQ, freshness, semantic HTML — issues tagged **Critical / Minor / Warning** |
-| **Security headers** | CSP, HSTS, XFO, etc. — Critical / Minor / Warning (local HTTP checks) |
-| **Google PageSpeed** | Optional toggle — official **PageSpeed Insights API** (set `PAGESPEED_API_KEY`) |
-| **Google Rich Results** | Optional toggle — deep link + best-effort Playwright screenshot of [Rich Results Test](https://search.google.com/test/rich-results) (**main URL only**). Google often blocks headless automation (login wall); **local Schema/GEO remains the source of truth**. Manual browser / incognito usually works for the same tool URL. |
-| **Reports** | HTML QA report with audit cards, CSV export (pages + issues) |
+| **SEO** (toggle, default on) | Titles, H1, hierarchy, meta, Open Graph, bad links, alt text, score |
+| **GEO** (toggle, default on) | Schema.org / JSON-LD, Microdata/RDFa, GeoJSON/maps, FAQ, freshness — **Critical / Minor / Warning** |
+| **Security headers** (toggle, default on) | CSP, HSTS, XFO, etc. — Critical / Minor / Warning |
+| **Google PageSpeed** (optional) | Official **PageSpeed Insights API** (`PAGESPEED_API_KEY`) |
+| **Google Rich Results** (optional) | Best-effort Playwright screenshot of [Rich Results Test](https://search.google.com/test/rich-results) (**main URL only**). Headless often login-walled; **local Schema/GEO is source of truth**. |
+| **Reports** | HTML cards only for **enabled** modules; CSV export (pages + issues) |
 
-**Job options (examples):** `mode: "single" | "full"`, `includePageSpeed`, `includeRichResults`.
+**Job options:** `mode`, `includeSeo`, `includeGeo`, `includeSecurityHeaders`, `includePageSpeed`, `includeRichResults` (core modules default **on** if omitted).
+
+---
+
+## Link Radar (highlights)
+
+- Flags bad **HTTP status** (404, 410, …) and high-confidence error content  
+- Plain-English **What it means / What to do** in the HTML report (including “looks fine but HTTP 410”)  
+- **Download CSV** and **Download Excel (formatted)** — columns: `Main URL` · `URL` · `Issues`
 
 ---
 
@@ -123,6 +147,10 @@ project-root/
 
 | Variable | Purpose |
 |----------|---------|
+| `NODE_ENV` | `development` = local parallel + bulk caps; `production` = live defaults |
+| `QA_PARALLEL_MODULES` | `1` / `0` force parallel on/off (backend) |
+| `NEXT_PUBLIC_QA_PARALLEL_MODULES` | `1` / `0` force parallel UI |
+| `QA_ERROR_CHECK_BULK` | `1` / `0` force Link Radar bulk limits |
 | `PORT` / `API_PORT` | Production UI / internal API ports |
 | `STORAGE_ROOT` | Persistent data root (Docker / Render) |
 | `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD` | `true` in Docker (browsers in image) |

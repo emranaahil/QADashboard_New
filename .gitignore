@@ -18,6 +18,14 @@ Thumbs.db
 # Local dev / agent artifacts (not for repo)
 terminals/
 agent-tools/
+mcps/
+tmp-*/
+tmp-*.js
+push-err.txt
+push-out.txt
+backend/SEO/_checkHtml.js
+backend/SEO/_rr-debug.*
+backend/**/_rr-debug.*
 
 # Misc
 *.tsbuildinfo

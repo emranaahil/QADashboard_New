@@ -1,0 +1,3765 @@
+{
+  "url": "https://matsunnutrition.com/",
+  "sessionId": "0d98118f-1f08-4341-93b7-516e02a22469",
+  "generatedAt": "2026-07-27T12:00:01.387Z",
+  "checked": 587,
+  "brokenPages": [
+    {
+      "url": "https://matsunnutrition.com/designing-content-for-your-supplement-business",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/designing-content-for-your-supplement-business"
+    },
+    {
+      "url": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "detectedErrors": [
+        "http 410"
+      ],
+      "statusCode": 410,
+      "finalUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer/"
+    },
+    {
+      "url": "https://matsunnutrition.com/herbal-supplement-manufacturer",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/herbal-supplement-manufacturer"
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/liquid-supplements",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/product-category/liquid-supplements"
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/usda-organic-certified",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/product-category/usda-organic-certified"
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-gummies-omega-3-69-vitamin",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/product/private-label-gummies-omega-3-69-vitamin"
+    },
+    {
+      "url": "https://matsunnutrition.com/sell-supplements-amazon",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/sell-supplements-amazon"
+    },
+    {
+      "url": "https://www.matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer"
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404,
+      "finalUrl": "https://matsunnutrition.com/supplement-manufacturers-private-label-why"
+    }
+  ],
+  "brokenLinks": [
+    {
+      "brokenUrl": "https://matsunnutrition.com/herbal-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/bodybuilding-workout-supplement-manufacturers"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "foundIn": "https://matsunnutrition.com/custom-liquid-vitamin-manufacturers"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "foundIn": "https://matsunnutrition.com/custom-supplements"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/custom-supplements-manufacturing"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/designing-content-for-your-supplement-business",
+      "foundIn": "https://matsunnutrition.com/designing-content-for-your-supplement-business"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "foundIn": "https://matsunnutrition.com/gmp-manufacturing-the-facts"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/gummy-supplement-manufacturer"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/gummy-vitamins-for-women-business-opportunity"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/herbal-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/herbal-supplement-manufacturer"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/designing-content-for-your-supplement-business",
+      "foundIn": "https://matsunnutrition.com/how-to-create-a-unique-supplement-brand"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/how-to-start-private-label-gummy-vitamin-brand"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/manufacturing-near-me"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer",
+      "foundIn": "https://matsunnutrition.com/private-label-natural-cat-supplements"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/product-category/liquid-supplements",
+      "foundIn": "https://matsunnutrition.com/product-category/liquid-supplements"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/product-category/private-label-gummy-vitamins-and-supplements"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/product/private-label-gummies-omega-3-69-vitamin",
+      "foundIn": "https://matsunnutrition.com/product-category/private-label-gummy-vitamins-and-supplements"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/product-category/usda-organic-certified",
+      "foundIn": "https://matsunnutrition.com/product-category/usda-organic-certified"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/product/private-label-gummies-omega-3-69-vitamin",
+      "foundIn": "https://matsunnutrition.com/product/private-label-gummies-omega-3-69-vitamin"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/sell-supplements-amazon",
+      "foundIn": "https://matsunnutrition.com/sell-supplements-amazon"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/sports-nutrition-manufacturing-opportunities-for-emerging-brands"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/sell-supplements-amazon",
+      "foundIn": "https://matsunnutrition.com/things-to-avoid-when-looking-for-private-label-supplement-manufacturers"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/product-category/liquid-supplements",
+      "foundIn": "https://matsunnutrition.com/top-mistakes-to-avoid-in-private-labeling-liquid-vitamin-supplements"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/product-category/usda-organic-certified",
+      "foundIn": "https://matsunnutrition.com/top-mistakes-to-avoid-in-private-labeling-liquid-vitamin-supplements"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "foundIn": "https://matsunnutrition.com/usa-liquid-vitamin-manufacturers"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/usa-vs-global-supplement-manufacturer"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/vitamin-manufacturer"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer",
+      "foundIn": "https://matsunnutrition.com/wholesale-supplement-manufacturing"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://matsunnutrition.com/why-gummy-supplements-dominate"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer",
+      "foundIn": "https://www.matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer"
+    },
+    {
+      "brokenUrl": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "foundIn": "https://www.matsunnutrition.com/manufacturing-near-me"
+    },
+    {
+      "brokenUrl": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "foundIn": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why"
+    }
+  ],
+  "rateLimitedPages": [],
+  "allCheckedUrls": [
+    {
+      "url": "https://matsunnutrition.com/",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/my-account",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-formulation",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/liquid-vitamin-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/low-moq-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/nutraceutical-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/pet-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/powder-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/contract-manufacturing-dietary-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-liquid-multivitamins",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-liquid-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-liquid-pet-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-vitamin-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-vitamin-shots",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-powder-vitamins-and-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-sea-moss-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/usda-organic-certified-vitamin-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wholesale-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/pet-vitamins-supplements-wholesale",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-manufacturer-services",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-rendering",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/sell-supplements-on-amazon",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-fulfillment",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-label-design",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-packaging",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/about-us",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/certifications",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/our-facility",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/quality-and-compliance",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/blog",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/contact-us",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/get-quote",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/request-quote",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/contract-manufacturing/fda-cgmp-compliance",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-contract-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-liquid-vitamins",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-pet-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/privacy-policy",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/faq",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/research-development",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/supplement-manufacturing-equipment",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-apple-cider-vinegar-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-calcium-gummies-with-vitamin-d3",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-collagen-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-collagen-powder-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-daily-immunity-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-fiber-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-greens-powder-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-gummies-multivitamin-for-adult",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-hair-vitamin-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-2oz-immune-support-shot-quercetin-echinacea-elderberry-zinc-vitamin-c",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-joint-care-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-vegani-iron-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-vitamin-b-complex",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-nitric-oxide-supplement-powder",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-mushroom-powder",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop/page/2",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop/page/3",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop/page/4",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop/page/5",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop/page/6",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/my-account/lost-password",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-supplements-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/made-in-usa",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-formulation-services-for-your-supplement-brand",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/best-liquid-vitamin-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/organic-supplement-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/capabilities/branding",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wholesale-supplement-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-vs-stock-supplement-formulation",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-chaga-tincture-chaga-mushroom-extract",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-co-q10-drops-cardiovascular-support-heart-health",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-cordyceps-tincture-cordyceps-mushroom-extract",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-immune-support-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-lable-liquid-ionic-zinc",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-biotin-collagen-drops-hair-skin-nail-joint-support",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/dietary-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-k9-glucosamine-for-dogs",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-k9-liquid-glucosamine-for-dogs",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-k9-vegetarian-multivitamin-for-hip-and-joint",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-omega-3-fish-oil-for-cats",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-lable-omega-3-fish-oil-for-dogs",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-multivitamin-for-dogs",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-creatine-monohydrate-powder-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-hydration-powder",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-magnesium-powder-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/advanced-complete-multivitamin-2",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-multivitamin-for-family",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-attention-30-oz",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-bariatric-multivitamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-lable-liquid-vitamins-for-mental-health",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-calcium-and-magnesium-multivitamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-childrens-multivitamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/glucosamine-chondroitin-multivitamin-hip-joint",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-mens-premium-multivitamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-prenatal-postnatal-multivitamins-w-dha",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-womens-multivitamin-30-oz",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/multi-mineral-multivitamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-2oz-focus-shot-lions-mane-bacopa-monnieri-l-theanine-caffeine-gaba-thiamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-2oz-libido-boost-shot-tribulus-terrestris-fenugreek-ashwagandha-maca",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-ashwagandha-tincture-mood-relaxation-stress",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-bacopa-monnieri-tincture",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-irish-sea-moss-drops-bladderwrack-burdock-root",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-liquid-supplements/page/2",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-liquid-supplements/page/3",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-lable-liquid-glucosamine-joint-formula-for-small-dog",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-glucosamine-for-cats",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-ear-cleaner-for-dogs",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/anagain-nu-hair-growth-stimulator",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-organic-usda-b-complex",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-lions-mane-tincture-lions-mane-mushroom-extract",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/liquid-chlorophyll-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-collagen-hair-skin-nail",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/introducing-liquid-melatonin-drops-your-natural-solution-for-a-restful-nights-sleep",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-mullein-leaf-liquid-extract-respiratory-support",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-vitamin-drops/page/2",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-plant-protein-powder",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-bcaa-power-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-beet-root-powder-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-whey-protein-powder",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/organic-nascent-vegan-iodine-liquid-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/organic-elderberry-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/organic-vitamin-b12-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-gummy-vitamins-and-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/gummy-supplement-manufacturer",
+      "isBroken": true,
+      "detectedErrors": [
+        "http 410"
+      ],
+      "statusCode": 410
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/alabama",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/alaska",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/arizona",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/arkansas",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/california",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/colorado",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/connecticut",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/delaware",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/district-of-columbia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/florida",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/georgia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/hawaii",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/idaho",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/illinois",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/indiana",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/iowa",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/kansas",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/kentucky",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/louisiana",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/maine",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/maryland",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/massachusetts",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/michigan",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/minnesota",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/mississippi",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/missouri",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/montana",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/nebraska",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/nevada",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/new-hampshire",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/new-jersey",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/new-mexico",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/new-york",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/north-carolina",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/north-dakota",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/ohio",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/oklahoma",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/oregon",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/pennsylvania",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/rhode-island",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/south-carolina",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/south-dakota",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/tennessee",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/texas",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/utah",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/vermont",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/virginia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/washington",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/west-virginia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/wisconsin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-near-me/wyoming",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/nutraceutical-contract-manufacturing-guide",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-health-supplements-on-a-budget",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/white-label-supplements-vs-custom",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/choosing-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/hiring-vitamin-manufacturer-mistakes",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/questions-to-ask-herbal-supplement-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/bodybuilding-workout-supplement-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/pet-supplements-market",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-differentiate-pet-supplement-brand",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/sea-moss-benefits-guide",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/gummy-vitamins-for-women-business-opportunity",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/dietary-supplement-regulations-guide",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/shop",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/my-account",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/private-label-liquid-multivitamins",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/private-label-liquid-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/private-label-liquid-pet-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/private-label-vitamin-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/private-label-vitamin-shots",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/private-label-powder-vitamins-and-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-category/usda-organic-certified-vitamin-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-manufacturer-services",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/blog",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/contact-us",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/get-quote",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/private-label-liquid-vitamins",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/private-label-pet-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-rendering",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-label-design",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-packaging",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/wholesale-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/privacy-policy",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/faq",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/certifications",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/our-facility",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/quality-and-compliance",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/research-development",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-manufacturing-equipment",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-AppleCiderVinegarGummies-MN-7x3in-VP-19-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-AppleCiderVinegarGummies-MN-7x3in-VP-19-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-CalciumVitaminD3Gummies-MN-7x3in-VP-09-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-CalciumVitaminD3Gummies-MN-7x3in-VP-09-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-CollagenGummies-MN-7x3in-VP-04-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-CollagenGummies-MN-7x3in-VP-04-Sept-2024-V01-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-CollagenPowderMockup-MN-11.5x3.125in-VP-15-Aug-2024-V01-R01-Mockup-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-CollagenPowderMockup-MN-11.5x3.125in-VP-15-Aug-2024-V01-R01-1-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-DailyImmunityGummies-MN-7x3in-VP-16-Sept-2024-V01-R01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-DailyImmunityGummies-MN-7x3in-VP-16-Sept-2024-V01-R01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-FiberGummies-MN-7x3in-VP-16-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-FiberGummies-MN-7x3in-VP-16-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-UltraGreensPowderMatrix-MN-11.5x3.125in-VP-29-Aug-2024-V01-R01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-UltraGreensPowderMatrix-MN-11.5x3.125in-VP-23-Aug-2024-V01-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-AdultMultivitaminGummies-MN-7x3in-VP-18-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-AdultMultivitaminGummies-MN-7x3in-VP-18-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-HairGrowthGummies-MN-7x3in-VP-05-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-HairGrowthGummies-MN-7x3in-VP-05-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Immune_Support_Shot_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7207-2oz-Immune-Support-Shot-Quercetin-Echinacea-Elderberry-Zinc-Vitamin-C.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-JointCareGummies-MN-7x3in-VP-13-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-JointCareGummies-MN-7x3in-VP-13-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/07/Marketinglh-FerrochelIron18mg15oz-2000X2000px-VP-SHA-27-June-2024-V01-R1-Mockup-02.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/07/Marketinglh-FerrochelIron18mg15oz-11x5in-VP-SHA-27-June-2024-V01-R1-01_1-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelB-Complex-2000x2000px-VP-SHA-28-Jun-2024-V1-Mockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelB-Complex-11x5in-VP-29-Apr-2024-V01-R01-01-1-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-NitricOxidePre-WorkoutPowderMatrix-MN-11.5x3.125in-VP-19-Aug-2024-V01-Mockup-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/NitricOxidePre-WorkoutPowderMatrix-supplementFact-1-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-MushroomPowderComplex-MN-11.5x3.125in-VP-20-Aug-2024-V01-Mockup-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-MushroomPowderComplex-MN-11.5x3.125in-VP-20-Aug-2024-V01-1-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-ashwaganda-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-gummies-omega-3-6-9-vitamin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/shop/page/1",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-probiotic-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-sleep-well-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-vitamin-c-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-turmeric-vitamin-gummies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-mushroom-supplement-tincture",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liquid-probiotics-drops-digestive-health-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-reishi-tincture-reishi-mushroom-extract",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-st-johns-wort-tincture-mood-relaxation-stress",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-vitamin-d3-k2-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-liver-support-tincture-milk-thistle-dandelion-root-beetroot-ginger",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-mushroom-immune-blend-reishi-vitamin-c-elderberry",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-mushroom-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-turmeric-tincture-inflammation-muscle-and-joint-support",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/vegan-vitamin-d3-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-lable-vitamin-b12-drops-2500-mcg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-vitamin-k2-mk7-drops-cardiovascular-support-heart-health",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/04/09",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/06/15",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/03/28",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/how-to-make-it-in-the-vitamin-industry-with-the-help-of-usa-supplement-companies",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/contract-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/03/29",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/contract-manufacturing/nsf-certified-contract-manufacturer",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/03/06",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Chaga_Tincture_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7212-2oz-Chaga-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/CoQ10_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7007-2oz-CoQ10-Tincture-v2.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-co-q10-drops",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Codyceps_Mushroom_Tincture_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7214-2oz-Cordyceps-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/5-in-1_Immune_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7209-2oz-5-in-1-Immune-Support-Tincture-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-5-in-1-immune-support-drops-vitamin-c-quercetin-elderberry-zinc-echinacea",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Ionic_Zinc_Drops_Mockup-1-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Zinc_Sup-Facts.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Biotin_And_Collagen_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7211-2oz-Biotin-Collagen-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/04/19",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-ProductLabelK9AdvancedMobility.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-ProductLabelK9AdvancedMobility-11x5in-VP-08-May-2024-V01-up.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-MockupofK9HipandJointProduct-ppv-21mar2024-V01-02-updated.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/K9_Glucosamine_Original_PL_SupFacts_January2024-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-ProductLabelK9Hip-JointVegetarian.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-ProductLabelK9Hip-JointVegetarian-11x5in-VP-08-May-2024-V01-up.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-Mockup-of-Cat-Omega-3-Fish-Oil-8-oz-NS-27-01-2024-V1-10503-e1714997359124.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Cat-Omega-Fish-oil-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-Mockup-of-Dog-Omega-3-Fish-Oil-16-oz-NS-27-01-2024-V1-e1714995115329.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/K-9-Omega-Fish-Oil-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-ProductLabelK9Multivitamin.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-ProductLabelK9Multivitamin-11x5in-VP-08-May-2024-V01-up.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-CreatineMonohydratePowder-MN-11.5x3.125in-VP-15-Aug-2024-V01-Mockup-2.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-CreatineMonohydratePowder-MN-11.5x3.125in-VP-15-Aug-2024-V01-1-2.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-HydrationPowderMatrix-MN-11.5x3.125in-VP-21-Aug-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-HydrationPowderMatrix-MN-11.5x3.125in-VP-21-Aug-2024-V01-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-MagnesiumPowderMatrix-MN-11.5x3.125in-VP-26-Aug-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-MagnesiumPowderMatrix-MN-11.5x3.125in-VP-26-Aug-2024-V01-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Marketinglh-ProductLabelAdvancedGlucosamineMN-2000x2000px-VP-SHA-27-Jun-2024-V1-Mockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Complete_Multiple_Supplement_Facts.webp",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-EverydayFamilyMulti-30oz.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-EverydayFamilyMulti-30oz-11x5in-VR-06-JUNE-2024-V1-01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-Everyday-Family-Multi-15-oz-11x5in-MA-SA-27-Jun-2024-R1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-Everyday-Family-Multi-15-oz-2000x2000px-MA-SA-27-Jun-2024-Mockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelAttentionMN.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelAttentionMN-11x5in-VP-01-May-2024-V01-R01-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-BariatricMultivitamin30oz-Mockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-BariatricMultivitamin30oz-11x5in-VP-21-June-2024-V01-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelMentalBoostMN-2000x2000px-VP-SHA-27-Jun-2024-V1-Mockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelMentalBoostMN-11x5in-VP-30-Apr-2024-V01-R01-1-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Marketinglh-ProductLabelCalciumMagnesiumMN-2000x2000px-VP-28-June-2024-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/calcicum-06-Full-Ingredients.jpeg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelChildrensCompleteMultivitamin.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelChildrensCompleteMultivitamin-11x5in-VP-01-May-2024-V01-R01-1-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Marketinglh-ProductLabelAdvancedGlucosamineMN-2000x2000px-VP-SHA-27-Jun-2024-V1-Mockup-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-Men-sPremiumMulti-.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-Men-sPremiumMulti-30oz-11x5in-AN-06-June-2024-01-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelPrenatalDHAMN-2000x2000px-VP-DRK-SHA-27-Jun-2024-V1-Mockup-R1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-ProductLabelPrenatalDHAMN-11x5in-VP-01-May-2024-V01-1-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-Women-sPremiumMulti-.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/06/Marketinglh-Women-sPremiumMulti-11x5in-Gini-06-June-24-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Marketinglh-ProductLabelWholefoodMultimineralMN-2000x2000px-VP-SHA-27-Jun-2024-V1-Mockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Daily_Multi-Mineral-sup-Facts_2048x2048.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Focus_Shot_Matsun_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Libido_Shot_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7210-2oz-Libido-Boost-Shot.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Ashwaghandha_Ticnture_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7225-2oz-Ashwagandha-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Bacopa_Monnieri_Tincture_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7204-2oz-Bacopa-Monnieri-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-bacopa-monnieri-tincture-focus-memory-cognition",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/contact",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/08/Irish_Sea_Moss_Dropper_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/08/F9-6565-2oz-Sea-Moss-Bladderwrack-Burdock-Root-Tincture.webp",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-liquid-supplements/page/1",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Matsun-Mockup-Small-Dog-Hip-Joint.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Glucosamine-for-Small-Dogs_SupFacts_Dec2020-1-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/MN-Cat-Hip-Joint-Mockup-Bottle-scaled-e1714997752919.jpeg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Glucosamine-for-Cats_SupFacts_September2023-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-MNEarSolutionsLabelandMockup.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/K9-Ear-Solutions-PL-EAR_May-2024-1-2.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/05/Marketinglh-MNEarSolutionsLabelandMockup-5.75x4.1875in-VP-22-May-2024-V01-R02-1.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/07/Marketinglh-AnagainHairGrowthDrops-2oz-MN-4.5x2in-VP-10-July-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/07/Marketinglh-AnagainHairGrowthDrops-2oz-MN-4.5x2in-VP-10-July-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/07/Marketinglh-Organic-B-Complex-Drops-2-oz-4.5x2in-SC-02-07-2024-V1-R1-Mockup--scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/07/Marketinglh-OrganicB-ComplexDrops-2oz-4.5x2in-SC-01-07-2024-V1-Outlined-.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Lion_s_Mane_Tincture_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7202-2oz-Lions-Mane-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Liquid_Chlorophyll_Drops__Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Chlorophyll_Sup_Facts.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/09/Collagen_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/09/Supp-Facts-Collagen.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/about",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Melatonin_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/new-sleep-well-supplement-facts.jpg.webp",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Mullein_Leaf_Tincture_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7218-2oz-Mullein-Leaf-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/private-label-vitamin-drops/page/1",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-VeganProteinPowderMatrix-MN-11.5x3.125in-VP-27-Aug-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-VeganProteinPowderMatrix-MN-11.5x3.125in-VP-27-Aug-2024-V01-scaled.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-BCAAPowderMatrixMockup-MN-11.5x3.125in-VP-15-Aug-2024-V01-Mockup-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-BCAAPowderMatrixMockup-MN-11.5x3.125in-VP-15-Aug-2024-V01-1-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-BeetRootPowderMatrix-MN-11.5x3.125in-VP-22-Aug-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-BeetRootPowderMatrix-MN-11.5x3.125in-VP-22-Aug-2024-V01-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-ProteinPowderMatrixMockup-MN-11.5x3.125in-VP-15-Aug-2024-V01-R01-Mockup-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/08/Marketinglh-ProteinPowderMatrixMockup-MN-11.5x3.125in-VP-15-Aug-2024-V01-R01-1-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Organic_Iodine_Drops_Mokcup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Iodine_Sup-Facts_2048x2048.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Organic_Elderberry_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Elderberry_Sup-Facts_2048x2048.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Organic_B12_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Organic_B12_SupFacts.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-gummies-omega-3-69-vitamin",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/2026/05/01",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-choose-nutraceutical-manufacturing-company",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2026/03/15",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-vs-contract-manufacturing-difference",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2026/03/07",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-supplement-manufacturing-industry-guide",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/white-label-supplement-manufacturing-for-startups",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/why-you-should-choose-a-gmp-certified-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/low-moq-pet-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2026/02/13",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/california-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/contract-supplement-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/liquid-vitamin-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-check-white-label-nutritional-supplements-quality",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/choosing-contract-manufacturer-with-fast-lead-times",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2026/02/04",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/usa-liquid-vitamin-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/hidden-cost-of-low-quality-supplement-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/why-matsun-nutrition-is-on-the-best-vitamin-and-supplement-manufacturers-list",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/vitamin-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-liquid-vitamin-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2026/01/24",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/herbal-supplement-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-herbal-supplements-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/12/27",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-find-low-moq-supplement-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/sports-nutrition-manufacturing-opportunities-for-emerging-brands",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/herbal-supplement-manufacturer",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/11/28",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/manufacturing-joint-supplements-for-dogs-private-vs-white-label",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/pet-supplement-manufacturing-guide",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/10/24",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/10/23",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/foods-to-boost-your-metabolism",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/gummies-vs-liquids-vs-capsules-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/gmp-manufacturing-the-facts",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/best-practices-for-ingredients-sourcing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/09/23",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-start-private-label-gummy-vitamin-brand",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/why-gummy-supplements-dominate",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/usa-vs-global-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-fulfillment",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/pet-vitamins-supplements-wholesale",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/alabama",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/alaska",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/arizona",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/arkansas",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/california",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/colorado",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/connecticut",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/delaware",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/district-of-columbia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/florida",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/georgia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/hawaii",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/idaho",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/illinois",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/indiana",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/iowa",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/kansas",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/kentucky",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/louisiana",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/maine",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/maryland",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/massachusetts",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/michigan",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/minnesota",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/mississippi",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/missouri",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/montana",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/nebraska",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/nevada",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/new-hampshire",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/new-jersey",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/new-mexico",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/new-york",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/north-carolina",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/north-dakota",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/ohio",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/oklahoma",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/oregon",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/pennsylvania",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/rhode-island",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/south-carolina",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/south-dakota",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/tennessee",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/texas",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/utah",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/vermont",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/virginia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/washington",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/west-virginia",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/wisconsin",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/manufacturing-near-me/wyoming",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/private-label-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-contract-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/custom-formulation",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-AshwagandhaGummies-MN-7x3in-VP-20-Sept-2024-V01-01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-AshwagandhaGummies-MN-7x3in-VP-20-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-Omega3-6-9Gummies-MN-7x3in-VP-10-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-Omega3-6-9Gummies-MN-7x3in-VP-10-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-ProbioticGummies-MN-7x3in-VP-03-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-ProbioticGummies-MN-7x3in-VP-03-Sept-2024-V01-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-SleepWellGummies-MN-7x3in-VP-12-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-SleepWellGummies-MN-7x3in-VP-12-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-VitaminCGummies-MN-7x3in-VP-06-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-VitaminCGummies-MN-7x3in-VP-06-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-TurmericGummies-MN-7x3in-VP-17-Sept-2024-V01-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2024/09/Marketinglh-TurmericGummies-MN-7x3in-VP-17-Sept-2024-V01.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Mushroom_Complex_Tincture_Mockup-0.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7203-2oz-8-in-1-Mushroom-Complex-Tincture-v2-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-8-in-1-mushroom-complex-tincture-lions-mane-reishi-chaga-cordyceps-turkey-tail-shiitake-tremella-maitake",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Liquid_Probiotic_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7226-2oz-Probiotic-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Label-05-Mockup-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7220-2oz-Reishi-Mushroom-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/St._Johns_Wort_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7222-2oz-St.-Johns-Wort-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Vitamin_K2D3_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7008-2oz-Vitamin-K2D3-Tincture-2.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product/private-label-vitamin-k2d3-drops-immune-bone-energy-support-supplement",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Liver_Support_Tincture_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7216-2oz-Liver-Support.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Label-05-Mockup-2.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/F9-7227-2oz-Immune-Support-Blend-Tincture-1.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Mushroom_Brain_Blend_Tincture_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/11/Label-05-Mockup.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7223-2oz-Turmeric-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/VitaminD3.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Vegan_D3_Supplement_Facts.png",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Vitamin_B12_2500_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/vitamin-b12-06-Full-Ingredients.jpeg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Vitamin_K2_MK7_Drops_Mockup.jpeg.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/wp-content/uploads/2023/10/Supp-Facts-F9-7219-2oz-Vitamin-K2-Tincture.jpg",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2016/04/01",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/about-us",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/01/08",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/choosing-private-label-protein-powder-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/12/19",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/08/26",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/advantages-of-supplement-contract-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/03/20",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2019/06/19",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/05/02",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/contract-supplement-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/supplement-manufacturers-private-label-why",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/06/06",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2016/12/12",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/03/07",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2016/12/21",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/07/27",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/fda-cgmp-compliance",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/06/20",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/06/21",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/04/30",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-vitamins-low-minimum",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/custom-supplement-formulation-mistakes-to-avoid",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2016/02/23",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/07/26",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/03/21",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/01/31",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/07/24",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/07/03",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-create-a-unique-supplement-brand",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/06/23",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/starting-a-private-label-pet-supplements-brand-in-90days",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/tips-for-selecting-pet-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/how-to-choose-the-best-organic-pet-supplement-manufacturer",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/08/29",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-natural-cat-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2019/10/25",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/effects-of-dehydration-on-your-body",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/02/22",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/elevate-your-brand-with-premium-supplement-packaging-design",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2015/07/24",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/12/10",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/08/18",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/05/07",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/top-mistakes-to-avoid-in-private-labeling-liquid-vitamin-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/7-key-tips-for-supplement-manufacturer-contract-negotiations",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/things-to-avoid-when-looking-for-private-label-supplement-manufacturers",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/10/18",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/01/01",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/12/17",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2023/11/17",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/designing-content-for-your-supplement-business",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/2025/05/06",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2023/11/06",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/fda-cgmp-compliance",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://www.matsunnutrition.com/product-development-consulting",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/11/01",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2017/11/28",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2019/10/17",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/04/16",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/2024/08/20",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/liquid-supplements",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/product-category/usda-organic-certified",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/private-label-liquid-supplements",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/contract-manufacturing",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    },
+    {
+      "url": "https://matsunnutrition.com/sell-supplements-amazon",
+      "isBroken": true,
+      "detectedErrors": [
+        "page not found",
+        "http 404"
+      ],
+      "statusCode": 404
+    },
+    {
+      "url": "https://matsunnutrition.com/2016/11/03",
+      "isBroken": false,
+      "detectedErrors": [],
+      "statusCode": 200
+    }
+  ]
+}
