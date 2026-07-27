@@ -48,6 +48,151 @@ function tokenSet(text) {
     .filter((t) => t.length > 2);
 }
 
+/**
+ * Prepare a long page for full capture: lazy-load by scrolling, expand height clamps.
+ * Many marketing sites use height:100vh / overflow:hidden which breaks Playwright fullPage.
+ */
+async function preparePageForFullScreenshot(page) {
+  try {
+    // Scroll through the page so lazy images / sections load
+    await page.evaluate(async () => {
+      const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+      const height = () =>
+        Math.max(
+          document.body ? document.body.scrollHeight : 0,
+          document.documentElement ? document.documentElement.scrollHeight : 0
+        );
+      let y = 0;
+      let guard = 0;
+      const step = Math.max(400, Math.floor(window.innerHeight * 0.85));
+      while (y < height() && guard < 80) {
+        window.scrollTo(0, y);
+        await delay(120);
+        y += step;
+        guard += 1;
+      }
+      window.scrollTo(0, height());
+      await delay(200);
+      window.scrollTo(0, 0);
+      await delay(150);
+    });
+  } catch (_) {
+    /* non-fatal */
+  }
+
+  try {
+    await page.evaluate(() => {
+      // Relax common full-viewport clamps that make fullPage = viewport only
+      const style = document.createElement('style');
+      style.setAttribute('data-visual-twin-shot', '1');
+      style.textContent = `
+        html, body {
+          height: auto !important;
+          max-height: none !important;
+          overflow: visible !important;
+          overflow-x: hidden !important;
+        }
+      `;
+      document.documentElement.appendChild(style);
+      if (document.body) {
+        document.body.style.height = 'auto';
+        document.body.style.maxHeight = 'none';
+        document.body.style.overflow = 'visible';
+      }
+      document.documentElement.style.height = 'auto';
+      document.documentElement.style.maxHeight = 'none';
+      document.documentElement.style.overflow = 'visible';
+    });
+  } catch (_) {
+    /* non-fatal */
+  }
+}
+
+/**
+ * Capture full document screenshot with fallbacks when fullPage fails or is too short.
+ */
+async function captureFullPageScreenshot(page, filePath, label) {
+  await preparePageForFullScreenshot(page);
+
+  const metrics = await page
+    .evaluate(() => ({
+      scrollHeight: Math.max(
+        document.body ? document.body.scrollHeight : 0,
+        document.documentElement ? document.documentElement.scrollHeight : 0
+      ),
+      clientHeight: document.documentElement ? document.documentElement.clientHeight : 0,
+      innerHeight: window.innerHeight
+    }))
+    .catch(() => ({ scrollHeight: 0, clientHeight: 0, innerHeight: 0 }));
+
+  vtLog(
+    'SCREENSHOT',
+    `${label} page metrics`,
+    `scrollHeight=${metrics.scrollHeight} · viewport=${metrics.innerHeight || metrics.clientHeight}`
+  );
+
+  // Cap extreme pages to avoid huge PNGs / Playwright timeouts (still multi-viewport)
+  const MAX_FULL_HEIGHT = 16000;
+  let used = 'fullPage';
+
+  try {
+    if (metrics.scrollHeight > 0 && metrics.scrollHeight <= MAX_FULL_HEIGHT) {
+      await page.screenshot({
+        path: filePath,
+        fullPage: true,
+        animations: 'disabled',
+        caret: 'hide'
+      });
+    } else if (metrics.scrollHeight > MAX_FULL_HEIGHT) {
+      // Clip to a tall but bounded region from top
+      used = 'clip-tall';
+      const vp = page.viewportSize() || { width: 1440, height: 900 };
+      await page.screenshot({
+        path: filePath,
+        clip: {
+          x: 0,
+          y: 0,
+          width: vp.width,
+          height: Math.min(MAX_FULL_HEIGHT, metrics.scrollHeight)
+        },
+        animations: 'disabled',
+        caret: 'hide'
+      });
+    } else {
+      await page.screenshot({ path: filePath, fullPage: true, animations: 'disabled' });
+    }
+  } catch (err) {
+    vtLog('SCREENSHOT', `${label} fullPage failed, trying body element`, err?.message || err);
+    used = 'body-element';
+    try {
+      const body = await page.$('body');
+      if (body) {
+        await body.screenshot({ path: filePath, animations: 'disabled' });
+      } else {
+        await page.screenshot({ path: filePath, fullPage: false, animations: 'disabled' });
+        used = 'viewport-fallback';
+      }
+    } catch (err2) {
+      await page.screenshot({ path: filePath, fullPage: false, animations: 'disabled' });
+      used = 'viewport-fallback';
+      vtLog('SCREENSHOT', `${label} viewport fallback`, err2?.message || err2);
+    }
+  }
+
+  try {
+    const stat = await fs.stat(filePath);
+    vtLog(
+      'SCREENSHOT',
+      `${label} saved`,
+      `${path.basename(filePath)} · ${Math.round(stat.size / 1024)} KB · mode=${used}`
+    );
+  } catch (_) {
+    vtLog('SCREENSHOT', `${label} saved`, `${path.basename(filePath)} · mode=${used}`);
+  }
+
+  return used;
+}
+
 async function extractPageSnapshot(page) {
   return page.evaluate(() => {
     function visible(el) {
@@ -445,23 +590,29 @@ async function comparePagePair({
     result.refStats = comparison.refStats;
     result.candidateStats = comparison.candidateStats;
 
-    // Screenshots
+    // Screenshots — full document (scroll + expand height), not viewport-only
     if (screenshotDir) {
-      vtLog('SCREENSHOT', 'Capturing full-page screenshots', 'reference + candidate');
+      vtLog('SCREENSHOT', 'Capturing FULL PAGE screenshots', 'scroll + fullPage + fallbacks');
       await fs.ensureDir(screenshotDir);
       const refShot = `pair-${pairIndex}-ref.png`;
       const candShot = `pair-${pairIndex}-cand.png`;
       try {
-        await refPage.screenshot({ path: path.join(screenshotDir, refShot), fullPage: true });
+        await captureFullPageScreenshot(
+          refPage,
+          path.join(screenshotDir, refShot),
+          'Reference'
+        );
         result.screenshots.reference = refShot;
-        vtLog('SCREENSHOT', 'Reference saved', refShot);
       } catch (shotErr) {
         vtLog('SCREENSHOT', 'Reference failed', shotErr?.message || shotErr);
       }
       try {
-        await candPage.screenshot({ path: path.join(screenshotDir, candShot), fullPage: true });
+        await captureFullPageScreenshot(
+          candPage,
+          path.join(screenshotDir, candShot),
+          'Candidate'
+        );
         result.screenshots.candidate = candShot;
-        vtLog('SCREENSHOT', 'Candidate saved', candShot);
       } catch (shotErr) {
         vtLog('SCREENSHOT', 'Candidate failed', shotErr?.message || shotErr);
       }
@@ -603,6 +754,8 @@ module.exports = {
   comparePagePair,
   mapReferencePathToCandidate,
   discoverReferenceUrls,
+  captureFullPageScreenshot,
+  preparePageForFullScreenshot,
   normalizeText,
   jaccard,
   vtLog,

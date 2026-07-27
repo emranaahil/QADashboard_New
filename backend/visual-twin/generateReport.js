@@ -43,10 +43,16 @@ function generateReport({ result, outputHtmlPath, screenshotBaseUrl = '' }) {
         )
         .join('');
       const refShot = p.screenshots?.reference
-        ? `<img src="${escapeHtml(base + p.screenshots.reference)}" alt="Reference" />`
+        ? `<a class="shot-open" href="${escapeHtml(base + p.screenshots.reference)}" target="_blank" rel="noopener" title="Open full screenshot">
+            <img src="${escapeHtml(base + p.screenshots.reference)}" alt="Reference full page" loading="lazy" />
+           </a>
+           <div class="shot-hint">Scroll inside · click to open full size</div>`
         : '<div class="no-shot">No shot</div>';
       const candShot = p.screenshots?.candidate
-        ? `<img src="${escapeHtml(base + p.screenshots.candidate)}" alt="Candidate" />`
+        ? `<a class="shot-open" href="${escapeHtml(base + p.screenshots.candidate)}" target="_blank" rel="noopener" title="Open full screenshot">
+            <img src="${escapeHtml(base + p.screenshots.candidate)}" alt="Candidate full page" loading="lazy" />
+           </a>
+           <div class="shot-hint">Scroll inside · click to open full size</div>`
         : '<div class="no-shot">No shot</div>';
       const scores = p.scores || {};
       const scoreBits = Object.entries(scores)
@@ -109,7 +115,10 @@ function generateReport({ result, outputHtmlPath, screenshotBaseUrl = '' }) {
   @media (max-width: 720px) { .shots { grid-template-columns: 1fr; } }
   .shot { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #0b1220; }
   .shot-lbl { font-size: 0.7rem; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--border); }
-  .shot img { width: 100%; display: block; max-height: 360px; object-fit: cover; object-position: top; }
+  /* Scrollable full-page preview — do NOT crop with object-fit:cover */
+  .shot-open { display: block; max-height: min(70vh, 900px); overflow-y: auto; overflow-x: hidden; background: #0b1220; }
+  .shot-open img { width: 100%; height: auto; display: block; object-fit: contain; object-position: top; }
+  .shot-hint { font-size: 0.65rem; color: var(--muted); padding: 4px 8px 8px; border-top: 1px solid var(--border); }
   .no-shot { padding: 40px; text-align: center; color: var(--muted); font-size: 0.85rem; }
   .diffs h3 { margin: 0 0 8px; font-size: 0.95rem; }
   .diffs ul { margin: 0; padding-left: 18px; }
