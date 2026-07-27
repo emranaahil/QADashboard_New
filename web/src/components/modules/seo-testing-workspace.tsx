@@ -23,7 +23,7 @@ import {
 } from "@/lib/seo-report-export";
 import { canViewLogs } from "@/lib/logs";
 
-import { MAX_URL_LENGTH, validateUrl } from "@/lib/url-validation";
+import { MAX_URL_LENGTH } from "@/lib/url-validation";
 import { parseUrlListInput, validateUrlListInput } from "@/lib/parse-url-list";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -51,6 +51,70 @@ function StatCard({ value, label, highlight }: { value: number | string; label: 
   );
 }
 
+function AuditToggleRow({
+  title,
+  description,
+  checked,
+  disabled,
+  onChange,
+  ariaLabel,
+  compact,
+}: {
+  title: string;
+  description: string;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: (next: boolean) => void;
+  ariaLabel: string;
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 rounded-[14px] border border-border bg-background-elevated",
+        compact ? "px-3.5 py-2.5" : "px-4 py-3 gap-4"
+      )}
+    >
+      <div className="min-w-0">
+        <div className={cn("font-semibold text-foreground", compact ? "text-[0.8125rem]" : "text-sm")}>
+          {title}
+        </div>
+        <div className={cn("text-muted-foreground", compact ? "mt-0.5 text-[0.7rem] leading-snug" : "mt-0.5 text-xs")}>
+          {description}
+        </div>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={ariaLabel}
+        disabled={disabled}
+        onClick={() => onChange(!checked)}
+        className={cn(
+          "relative shrink-0 rounded-full border border-border transition-all duration-250",
+          compact ? "h-7 w-[46px]" : "h-8 w-[52px]",
+          checked
+            ? "bg-[rgba(29,191,115,0.2)] border-[rgba(29,191,115,0.35)]"
+            : "bg-[rgba(7,26,18,0.45)]",
+          disabled && "cursor-not-allowed opacity-50"
+        )}
+      >
+        <span
+          className={cn(
+            "absolute rounded-full bg-foreground shadow-sm transition-all duration-250",
+            compact ? "top-0.5 h-5 w-5" : "top-1 h-6 w-6",
+            checked
+              ? compact
+                ? "left-[calc(100%-1.35rem)] bg-[#1dbf73]"
+                : "left-[calc(100%-1.75rem)] bg-[#1dbf73]"
+              : "left-1 bg-muted-foreground"
+          )}
+        />
+      </button>
+    </div>
+  );
+}
+
 const UI_CHECK_CARD =
   "ui-check-card w-full min-h-[320px] rounded-[20px] border-border p-8";
 
@@ -63,6 +127,9 @@ export function SeoTestingWorkspace({
   onHistoryJobClear,
 }: Props) {
   const [url, setUrl] = useState("");
+  const [includeSeo, setIncludeSeo] = useState(true);
+  const [includeGeo, setIncludeGeo] = useState(true);
+  const [includeSecurityHeaders, setIncludeSecurityHeaders] = useState(true);
   const [includePageSpeed, setIncludePageSpeed] = useState(false);
   const [includeRichResults, setIncludeRichResults] = useState(false);
   const [summary, setSummary] = useState<SeoTestSummary | null>(null);
@@ -109,12 +176,15 @@ export function SeoTestingWorkspace({
 
   useEffect(() => {
     if (historyJob?.url) setUrl(historyJob.url);
-    if (historyJob?.options?.includePageSpeed === true) {
-      setIncludePageSpeed(true);
+    const opts = historyJob?.options;
+    if (!opts) return;
+    if (typeof opts.includeSeo === "boolean") setIncludeSeo(opts.includeSeo);
+    if (typeof opts.includeGeo === "boolean") setIncludeGeo(opts.includeGeo);
+    if (typeof opts.includeSecurityHeaders === "boolean") {
+      setIncludeSecurityHeaders(opts.includeSecurityHeaders);
     }
-    if (historyJob?.options?.includeRichResults === true) {
-      setIncludeRichResults(true);
-    }
+    if (opts.includePageSpeed === true) setIncludePageSpeed(true);
+    if (opts.includeRichResults === true) setIncludeRichResults(true);
   }, [historyJob]);
 
   useEffect(() => {
@@ -132,9 +202,17 @@ export function SeoTestingWorkspace({
       return;
     }
 
+    if (!includeSeo && !includeGeo && !includeSecurityHeaders && !includePageSpeed && !includeRichResults) {
+      toast.error("Enable at least one check: SEO, GEO, Security Headers, PageSpeed, or Rich Results.");
+      return;
+    }
+
     let startUrl = url.trim();
     const runOptions: Record<string, unknown> = {
       mode,
+      includeSeo,
+      includeGeo,
+      includeSecurityHeaders,
       includePageSpeed,
       includeRichResults,
     };
@@ -234,68 +312,71 @@ export function SeoTestingWorkspace({
           />
         )}
 
-        <div className="mt-5 flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-4 rounded-[14px] border border-border bg-background-elevated px-4 py-3">
-            <div className="min-w-0">
-              <div className="text-sm font-semibold text-foreground">Google PageSpeed</div>
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                Fetch mobile and desktop Lighthouse scores per page when enabled (slower runs).
-              </div>
+        <div className="mt-5 flex flex-col gap-4">
+          <div>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Core modules
+              </span>
+              <span className="text-[0.65rem] text-muted-foreground">Default on · toggle to focus</span>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={includePageSpeed}
-              aria-label="Toggle Google PageSpeed checks"
-              disabled={moduleBusy}
-              onClick={() => setIncludePageSpeed((prev) => !prev)}
-              className={cn(
-                "relative h-8 w-[52px] shrink-0 rounded-full border border-border transition-all duration-250",
-                includePageSpeed
-                  ? "bg-[rgba(29,191,115,0.2)] border-[rgba(29,191,115,0.35)]"
-                  : "bg-[rgba(7,26,18,0.45)]"
-              )}
-            >
-              <span
-                className={cn(
-                  "absolute top-1 h-6 w-6 rounded-full bg-foreground shadow-sm transition-all duration-250",
-                  includePageSpeed ? "left-[calc(100%-1.75rem)] bg-[#1dbf73]" : "left-1 bg-muted-foreground"
-                )}
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <AuditToggleRow
+                compact
+                title="SEO"
+                description="On-page titles, links, meta, hierarchy"
+                checked={includeSeo}
+                disabled={moduleBusy}
+                onChange={setIncludeSeo}
+                ariaLabel="Toggle SEO checks"
               />
-            </button>
+              <AuditToggleRow
+                compact
+                title="GEO"
+                description="Schema, semantics, AI readiness"
+                checked={includeGeo}
+                disabled={moduleBusy}
+                onChange={setIncludeGeo}
+                ariaLabel="Toggle GEO checks"
+              />
+              <AuditToggleRow
+                compact
+                title="Security headers"
+                description="HTTP response security headers"
+                checked={includeSecurityHeaders}
+                disabled={moduleBusy}
+                onChange={setIncludeSecurityHeaders}
+                ariaLabel="Toggle security header checks"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center justify-between gap-4 rounded-[14px] border border-border bg-background-elevated px-4 py-3">
-            <div className="min-w-0">
-              <div className="text-sm font-semibold text-foreground">Google Rich Results</div>
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                Capture Google&apos;s Rich Results Test screenshot for the main URL and show it in the report
-                (slower; soft-fails if Google blocks the tool).
-              </div>
+          <div>
+            <div className="mb-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Optional checks
+              </span>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={includeRichResults}
-              aria-label="Toggle Google Rich Results Test"
-              disabled={moduleBusy}
-              onClick={() => setIncludeRichResults((prev) => !prev)}
-              className={cn(
-                "relative h-8 w-[52px] shrink-0 rounded-full border border-border transition-all duration-250",
-                includeRichResults
-                  ? "bg-[rgba(29,191,115,0.2)] border-[rgba(29,191,115,0.35)]"
-                  : "bg-[rgba(7,26,18,0.45)]"
-              )}
-            >
-              <span
-                className={cn(
-                  "absolute top-1 h-6 w-6 rounded-full bg-foreground shadow-sm transition-all duration-250",
-                  includeRichResults
-                    ? "left-[calc(100%-1.75rem)] bg-[#1dbf73]"
-                    : "left-1 bg-muted-foreground"
-                )}
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <AuditToggleRow
+                compact
+                title="Google PageSpeed"
+                description="Mobile + desktop Lighthouse (slower)"
+                checked={includePageSpeed}
+                disabled={moduleBusy}
+                onChange={setIncludePageSpeed}
+                ariaLabel="Toggle Google PageSpeed checks"
               />
-            </button>
+              <AuditToggleRow
+                compact
+                title="Google Rich Results"
+                description="Screenshot of Google's tool (main URL)"
+                checked={includeRichResults}
+                disabled={moduleBusy}
+                onChange={setIncludeRichResults}
+                ariaLabel="Toggle Google Rich Results Test"
+              />
+            </div>
           </div>
         </div>
 

@@ -29,6 +29,9 @@ export type Job = {
     mode?: string;
     includePageSpeed?: boolean;
     includeRichResults?: boolean;
+    includeSeo?: boolean;
+    includeGeo?: boolean;
+    includeSecurityHeaders?: boolean;
     includeW3cValidator?: boolean;
     includeRobotsTxt?: boolean;
     includeRedirectTrace?: boolean;

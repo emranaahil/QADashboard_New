@@ -64,6 +64,10 @@ async function main() {
 
     const includePageSpeed = job.options?.includePageSpeed === true;
     const includeRichResults = job.options?.includeRichResults === true;
+    // Core modules default ON unless explicitly set to false
+    const includeSeo = job.options?.includeSeo !== false;
+    const includeGeo = job.options?.includeGeo !== false;
+    const includeSecurityHeaders = job.options?.includeSecurityHeaders !== false;
 
     const report = await runSeoAudit({
       mainUrl: job.url,
@@ -71,7 +75,10 @@ async function main() {
       urls: mode === 'single' ? urls : undefined,
       onProgress,
       includePageSpeed,
-      includeRichResults
+      includeRichResults,
+      includeSeo,
+      includeGeo,
+      includeSecurityHeaders
     });
 
     emitProgress(85, 'Generating QA report...');

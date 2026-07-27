@@ -1306,7 +1306,28 @@
     );
   }
 
+  function resolvePageAuditModules(page) {
+    var m = page && page.auditModules;
+    if (m && typeof m === 'object') {
+      return {
+        seo: m.seo !== false,
+        geo: m.geo !== false,
+        securityHeaders: m.securityHeaders !== false,
+        pageSpeed: m.pageSpeed === true || !!page.pageSpeed,
+        richResults: m.richResults === true || !!page.richResults
+      };
+    }
+    return {
+      seo: true,
+      geo: true,
+      securityHeaders: page && page.securityHeaders != null,
+      pageSpeed: !!(page && page.pageSpeed),
+      richResults: !!(page && page.richResults)
+    };
+  }
+
   function buildPageDetailHtml(page, index, totalPages) {
+    var modules = resolvePageAuditModules(page);
     var issues = page.issues || { critical: [], minor: [], geo: [], hidden: [] };
     var geoIssues = issues.geo || [];
     var criticalSplit = splitSecurityHeaderIssues(issues.critical || []);
@@ -1360,66 +1381,73 @@
         ? page.securityHeaders.label + ' headers passed'
         : 'HTTP response headers';
 
-    var seoCard = renderAuditCategoryCard({
-      modifier: 'seo',
-      title: 'SEO — On-Page Optimization',
-      subtitle: 'Titles, links, meta tags, and content issues',
-      percent: seoPassPercent,
-      critical: seoCrit,
-      minor: seoMin,
-      bodyHtml: [
-        renderUnifiedSeoIssueGroup({
-          critical: sortedPageCritical,
-          minor: sortedPageMinor
-        }),
-        renderAuditPieChartGroup({
-          title: 'SEO health',
+    var seoCard = modules.seo
+      ? renderAuditCategoryCard({
+          modifier: 'seo',
+          title: 'SEO — On-Page Optimization',
+          subtitle: 'Titles, links, meta tags, and content issues',
           percent: seoPassPercent,
           critical: seoCrit,
           minor: seoMin,
-          passed: 0
+          bodyHtml: [
+            renderUnifiedSeoIssueGroup({
+              critical: sortedPageCritical,
+              minor: sortedPageMinor
+            }),
+            renderAuditPieChartGroup({
+              title: 'SEO health',
+              percent: seoPassPercent,
+              critical: seoCrit,
+              minor: seoMin,
+              passed: 0
+            })
+          ].join('')
         })
-      ].join('')
-    });
+      : '';
 
-    var geoCard = renderAuditCategoryCard({
-      modifier: 'geo',
-      title: 'GEO — Generative Engine Optimization',
-      subtitle: 'Schema, semantics, freshness, and AI-readiness',
-      percent: geoPassPercent,
-      critical: geoSplit.critical.length,
-      minor: geoSplit.minor.length + geoSplit.warning.length,
-      bodyHtml: [
-        renderUnifiedGeoIssueGroup(geoIssues, page.geoIssueSeverities),
-        renderAuditPassGroup({ items: geoPassPoints }),
-        renderAuditPieChartGroup({
-          title: 'GEO health',
+    var geoCard = modules.geo
+      ? renderAuditCategoryCard({
+          modifier: 'geo',
+          title: 'GEO — Generative Engine Optimization',
+          subtitle: 'Schema, semantics, freshness, and AI-readiness',
           percent: geoPassPercent,
           critical: geoSplit.critical.length,
           minor: geoSplit.minor.length + geoSplit.warning.length,
-          passed: geoPassPoints.length
+          bodyHtml: [
+            renderUnifiedGeoIssueGroup(geoIssues, page.geoIssueSeverities),
+            renderAuditPassGroup({ items: geoPassPoints }),
+            renderAuditPieChartGroup({
+              title: 'GEO health',
+              percent: geoPassPercent,
+              critical: geoSplit.critical.length,
+              minor: geoSplit.minor.length + geoSplit.warning.length,
+              passed: geoPassPoints.length
+            })
+          ].join('')
         })
-      ].join('')
-    });
+      : '';
 
-    var securityCard = renderAuditCategoryCard({
-      modifier: 'security',
-      title: 'Security Headers — HTTP Response',
-      subtitle: securityScoreLabel,
-      percent: securityPassPercent,
-      critical: securityCriticalCount,
-      minor: securityMinorCount + securityWarningCount,
-      bodyHtml: renderSecurityHeaderGroups(page.securityHeaders, allSecurityIssues, {
-        percent: securityPassPercent,
-        passed: securityPassedCount,
-        critical: securityCriticalCount,
-        minor: securityMinorCount,
-        warning: securityWarningCount
-      })
-    });
+    var securityCard =
+      modules.securityHeaders && page.securityHeaders
+        ? renderAuditCategoryCard({
+            modifier: 'security',
+            title: 'Security Headers — HTTP Response',
+            subtitle: securityScoreLabel,
+            percent: securityPassPercent,
+            critical: securityCriticalCount,
+            minor: securityMinorCount + securityWarningCount,
+            bodyHtml: renderSecurityHeaderGroups(page.securityHeaders, allSecurityIssues, {
+              percent: securityPassPercent,
+              passed: securityPassedCount,
+              critical: securityCriticalCount,
+              minor: securityMinorCount,
+              warning: securityWarningCount
+            })
+          })
+        : '';
 
-    var pageSpeedCard = renderPageSpeedCategoryCard(page.pageSpeed);
-    var richResultsCard = renderRichResultsCategoryCard(page.richResults);
+    var pageSpeedCard = modules.pageSpeed ? renderPageSpeedCategoryCard(page.pageSpeed) : '';
+    var richResultsCard = modules.richResults ? renderRichResultsCategoryCard(page.richResults) : '';
 
     return (
       '<div class="page-detail-content">' +

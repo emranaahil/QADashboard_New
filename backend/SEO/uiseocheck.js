@@ -1744,6 +1744,9 @@ async function scanPage({
   url,
   timeoutMs = 15000,
   includePageSpeed = false,
+  includeSeo = true,
+  includeGeo = true,
+  includeSecurityHeaders = true,
   isolated = false
 }) {
   const ownsContext = isolated || !sharedContext;
@@ -1762,7 +1765,9 @@ async function scanPage({
   try {
     const response = await navigatePageWithRetry(page, url, timeoutMs);
     const responseHeaders = response ? response.headers() : {};
-    const securityHeaders = assertHttpSecurityHeaders(responseHeaders, { url });
+    const securityHeaders = includeSecurityHeaders
+      ? assertHttpSecurityHeaders(responseHeaders, { url })
+      : null;
     // Wait for load + DOM stability (node/html/anchor counts) so JS-injected links are captured
     // consistently across repeat scans — works site-agnostically without hard-coded selectors.
     try {
@@ -2015,113 +2020,119 @@ async function scanPage({
       });
     };
 
-    // Critical rules
-    if (h1CountAll === 0) addIssue('critical', 'Missing <h1>', 'No h1 tag found in source (visible/hidden/commented).');
-    if (h1CountAll > 1) {
-      addIssue(
-        'critical',
-        `h1 tags (${h1CountAll} found, expected 1)`,
-        'Each page should have one main H1. Count includes visible, hidden, and commented tags in source.'
-      );
-    }
-    if (emptyH1Count > 0) addIssue('critical', 'Empty <h1> tag', `Found ${emptyH1Count} empty h1 tags in source.`);
-    if (h1Dupes.length > 0) addIssue('critical', 'Duplicate <h1> text', `Duplicate H1 text detected: ${h1Dupes.slice(0, 5).join(' | ')}${h1Dupes.length > 5 ? '…' : ''}`);
-
-    if (titleCountAll === 0) addIssue('critical', 'Missing <title>', 'No <title> tag found in source.');
-    else if (titleEmptyCount > 0) addIssue('critical', 'Empty <title>', `Found ${titleEmptyCount} empty title tag(s) in source.`);
-    if (titleCountAll > 1) {
-      addIssue(
-        'critical',
-        `title tags (${titleCountAll} found, expected 1)`,
-        'Each page should have one title tag for browser tabs and search results.'
-      );
-    }
-
-    if (isEmptyValue(domExtract.title)) addIssue('critical', 'Empty/invalid title (DOM)', 'title text is empty in DOM.');
-
-    auditOpenGraphTags(domHtml, domExtract.openGraph || {}, addIssue);
-
-    if (bad.hrefHash > 0) addIssue('critical', 'Bad links — href="#"', `Found ${bad.hrefHash} link(s).`);
-    if (bad.jsVoid > 0) addIssue('critical', 'Bad links — javascript:void(0)', `Found ${bad.jsVoid} link(s).`);
-
-    if (missingAlt > 0) {
-      const altParts = [];
-      if (missingAltAttr > 0) {
-        altParts.push(`${missingAltAttr} missing alt attribute`);
+    if (includeSeo) {
+      // Critical rules
+      if (h1CountAll === 0) addIssue('critical', 'Missing <h1>', 'No h1 tag found in source (visible/hidden/commented).');
+      if (h1CountAll > 1) {
+        addIssue(
+          'critical',
+          `h1 tags (${h1CountAll} found, expected 1)`,
+          'Each page should have one main H1. Count includes visible, hidden, and commented tags in source.'
+        );
       }
-      if (emptyAlt > 0) {
-        altParts.push(`${emptyAlt} empty alt=""`);
+      if (emptyH1Count > 0) addIssue('critical', 'Empty <h1> tag', `Found ${emptyH1Count} empty h1 tags in source.`);
+      if (h1Dupes.length > 0) addIssue('critical', 'Duplicate <h1> text', `Duplicate H1 text detected: ${h1Dupes.slice(0, 5).join(' | ')}${h1Dupes.length > 5 ? '…' : ''}`);
+
+      if (titleCountAll === 0) addIssue('critical', 'Missing <title>', 'No <title> tag found in source.');
+      else if (titleEmptyCount > 0) addIssue('critical', 'Empty <title>', `Found ${titleEmptyCount} empty title tag(s) in source.`);
+      if (titleCountAll > 1) {
+        addIssue(
+          'critical',
+          `title tags (${titleCountAll} found, expected 1)`,
+          'Each page should have one title tag for browser tabs and search results.'
+        );
       }
-      if (missingSvgAccessibleName > 0) {
-        altParts.push(`${missingSvgAccessibleName} SVG role=img without accessible name`);
+
+      if (isEmptyValue(domExtract.title)) addIssue('critical', 'Empty/invalid title (DOM)', 'title text is empty in DOM.');
+
+      auditOpenGraphTags(domHtml, domExtract.openGraph || {}, addIssue);
+
+      if (bad.hrefHash > 0) addIssue('critical', 'Bad links — href="#"', `Found ${bad.hrefHash} link(s).`);
+      if (bad.jsVoid > 0) addIssue('critical', 'Bad links — javascript:void(0)', `Found ${bad.jsVoid} link(s).`);
+
+      if (missingAlt > 0) {
+        const altParts = [];
+        if (missingAltAttr > 0) {
+          altParts.push(`${missingAltAttr} missing alt attribute`);
+        }
+        if (emptyAlt > 0) {
+          altParts.push(`${emptyAlt} empty alt=""`);
+        }
+        if (missingSvgAccessibleName > 0) {
+          altParts.push(`${missingSvgAccessibleName} SVG role=img without accessible name`);
+        }
+        addIssue('critical', 'Images without ALT', altParts.join('; '));
       }
-      addIssue('critical', 'Images without ALT', altParts.join('; '));
+
+      // Hierarchy
+      if (!hierarchyStatus.ok) addIssue('critical', 'Broken heading hierarchy', hierarchyStatus.reason);
+
+      auditDescriptiveHeadings(domExtract.headingSequence || [], addIssue);
+      auditDuplicateNonH1Headings(domExtract.headingSequence || [], addIssue);
+
+      const duplicateParagraphCount = countDuplicateParagraphsOnPage(domExtract.paragraphs || []);
+      if (duplicateParagraphCount > 0) {
+        addIssue(
+          'minor',
+          'Duplicate paragraph text on page',
+          `Found ${duplicateParagraphCount} paragraph block(s) repeated on the same page.`
+        );
+      }
+
+      // Minor
+      auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue);
+
+      const hasCanonical = /<\s*link[^>]+rel\s*=\s*["']canonical["'][^>]*>/i.test(domHtml);
+      if (!hasCanonical) addIssue('minor', 'Missing canonical', 'No canonical link tag found in source.');
+
+      const hasHtmlLang = /<\s*html[^>]*\slang\s*=\s*["'][^"']+["']/i.test(domHtml);
+      if (!hasHtmlLang) addIssue('minor', 'Missing <html lang>', 'html element missing lang attribute.');
+
+      const hasViewport = /<\s*meta[^>]+name\s*=\s*["']viewport["'][^>]*>/i.test(domHtml);
+      if (!hasViewport) addIssue('minor', 'Missing viewport meta', 'meta[name="viewport"] missing.');
+
+      // Whole-token robots directives only (noindex ≠ substring match of "index")
+      const robotsMeta = analyzeRobotsMetaConflicts(domHtml);
+      if (robotsMeta.indexConflict) {
+        addIssue(
+          'minor',
+          'Robots meta conflict',
+          'robots meta contains both index and noindex (opposing directives).'
+        );
+      }
+      if (robotsMeta.followConflict) {
+        addIssue(
+          'minor',
+          'Robots meta conflict',
+          'robots meta contains both follow and nofollow (opposing directives).'
+        );
+      }
+
+      // P3: only SEO-relevant empty metas (not every tracker/pixel empty content)
+      const emptyMetaContentCount = countEmptySeoMetaContent(domHtml);
+      if (emptyMetaContentCount > 0) {
+        addIssue(
+          'minor',
+          'Empty SEO meta content',
+          `Found ${emptyMetaContentCount} SEO-related meta tag(s) (description/keywords/robots/viewport/OG/Twitter) with empty content.`
+        );
+      }
+
+      // Commented markup — surfaced as critical (not a separate hidden bucket)
+      if (commentedH1Count > 0) {
+        addIssue('critical', 'Commented h1 tags', `Found h1 tags inside HTML comments: ${commentedH1Count} occurrence(s).`);
+      }
+      if (commentedTitleCount > 0) {
+        addIssue('critical', 'Commented title tags', `Found title tags inside HTML comments: ${commentedTitleCount} occurrence(s).`);
+      }
     }
 
-    // Hierarchy
-    if (!hierarchyStatus.ok) addIssue('critical', 'Broken heading hierarchy', hierarchyStatus.reason);
-
-    applySecurityHeaderIssues(issues, securityHeaders, addIssue);
-
-    auditDescriptiveHeadings(domExtract.headingSequence || [], addIssue);
-    auditDuplicateNonH1Headings(domExtract.headingSequence || [], addIssue);
-
-    const duplicateParagraphCount = countDuplicateParagraphsOnPage(domExtract.paragraphs || []);
-    if (duplicateParagraphCount > 0) {
-      addIssue(
-        'minor',
-        'Duplicate paragraph text on page',
-        `Found ${duplicateParagraphCount} paragraph block(s) repeated on the same page.`
-      );
+    if (includeSecurityHeaders) {
+      applySecurityHeaderIssues(issues, securityHeaders, addIssue);
     }
 
-    auditGeoPage({ url, domHtml, domExtract, addGeoIssue });
-
-    // Minor
-    auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue);
-
-    const hasCanonical = /<\s*link[^>]+rel\s*=\s*["']canonical["'][^>]*>/i.test(domHtml);
-    if (!hasCanonical) addIssue('minor', 'Missing canonical', 'No canonical link tag found in source.');
-
-    const hasHtmlLang = /<\s*html[^>]*\slang\s*=\s*["'][^"']+["']/i.test(domHtml);
-    if (!hasHtmlLang) addIssue('minor', 'Missing <html lang>', 'html element missing lang attribute.');
-
-    const hasViewport = /<\s*meta[^>]+name\s*=\s*["']viewport["'][^>]*>/i.test(domHtml);
-    if (!hasViewport) addIssue('minor', 'Missing viewport meta', 'meta[name="viewport"] missing.');
-
-    // Whole-token robots directives only (noindex ≠ substring match of "index")
-    const robotsMeta = analyzeRobotsMetaConflicts(domHtml);
-    if (robotsMeta.indexConflict) {
-      addIssue(
-        'minor',
-        'Robots meta conflict',
-        'robots meta contains both index and noindex (opposing directives).'
-      );
-    }
-    if (robotsMeta.followConflict) {
-      addIssue(
-        'minor',
-        'Robots meta conflict',
-        'robots meta contains both follow and nofollow (opposing directives).'
-      );
-    }
-
-    // P3: only SEO-relevant empty metas (not every tracker/pixel empty content)
-    const emptyMetaContentCount = countEmptySeoMetaContent(domHtml);
-    if (emptyMetaContentCount > 0) {
-      addIssue(
-        'minor',
-        'Empty SEO meta content',
-        `Found ${emptyMetaContentCount} SEO-related meta tag(s) (description/keywords/robots/viewport/OG/Twitter) with empty content.`
-      );
-    }
-
-    // Commented markup — surfaced as critical (not a separate hidden bucket)
-    if (commentedH1Count > 0) {
-      addIssue('critical', 'Commented h1 tags', `Found h1 tags inside HTML comments: ${commentedH1Count} occurrence(s).`);
-    }
-    if (commentedTitleCount > 0) {
-      addIssue('critical', 'Commented title tags', `Found title tags inside HTML comments: ${commentedTitleCount} occurrence(s).`);
+    if (includeGeo) {
+      auditGeoPage({ url, domHtml, domExtract, addGeoIssue });
     }
 
     const geoScoreParts = countGeoForSeoScore(issues.geo);
@@ -2202,17 +2213,25 @@ async function scanPage({
         severity: x.severity || inferGeoSeverityFromText(x.text || formatGeoIssue(x.name, x.detail))
       })),
       seoScore,
-      securityHeaders: {
-        ok: securityHeaders.ok,
-        passed: securityHeaders.passed,
-        total: securityHeaders.total,
-        label: securityHeaders.label,
-        results: securityHeaders.results,
-        warnings: securityHeaders.warnings || [],
-        categories: securityHeaders.categories || {}
-      },
+      securityHeaders: securityHeaders
+        ? {
+            ok: securityHeaders.ok,
+            passed: securityHeaders.passed,
+            total: securityHeaders.total,
+            label: securityHeaders.label,
+            results: securityHeaders.results,
+            warnings: securityHeaders.warnings || [],
+            categories: securityHeaders.categories || {}
+          }
+        : null,
       pageSpeed,
-      contentBodyText: String(domExtract.bodyText || '').slice(0, 25000),
+      auditModules: {
+        seo: includeSeo,
+        geo: includeGeo,
+        securityHeaders: includeSecurityHeaders,
+        pageSpeed: includePageSpeed
+      },
+      contentBodyText: includeSeo ? String(domExtract.bodyText || '').slice(0, 25000) : '',
       _debug: { durationMs: Date.now() - started }
     };
   } finally {
@@ -3051,7 +3070,29 @@ function renderAuditCategoryCard({
           </article>`;
 }
 
+function resolvePageAuditModules(p) {
+  const m = p?.auditModules;
+  if (m && typeof m === 'object') {
+    return {
+      seo: m.seo !== false,
+      geo: m.geo !== false,
+      securityHeaders: m.securityHeaders !== false,
+      pageSpeed: m.pageSpeed === true || !!p.pageSpeed,
+      richResults: m.richResults === true || !!p.richResults
+    };
+  }
+  // Legacy reports (no flags): show core cards when data is present
+  return {
+    seo: true,
+    geo: true,
+    securityHeaders: p?.securityHeaders != null,
+    pageSpeed: !!p?.pageSpeed,
+    richResults: !!p?.richResults
+  };
+}
+
 function buildPageDetailHtml(p, index, totalPages) {
+  const modules = resolvePageAuditModules(p);
   const issues = p.issues || { critical: [], minor: [], geo: [], hidden: [] };
   const geoIssues = issues.geo || [];
   const geoSplit = splitGeoIssuesBySeverity(
@@ -3110,66 +3151,73 @@ function buildPageDetailHtml(p, index, totalPages) {
     ? `${p.securityHeaders.label} headers passed`
     : 'HTTP response headers';
 
-  const seoCard = renderAuditCategoryCard({
-    modifier: 'seo',
-    title: 'SEO — On-Page Optimization',
-    subtitle: 'Titles, links, meta tags, and content issues',
-    percent: seoPassPercent,
-    critical: seoCrit,
-    minor: seoMin,
-    bodyHtml: [
-      renderUnifiedSeoIssueGroup({
-        critical: sortedPageCritical,
-        minor: sortedPageMinor
-      }),
-      renderAuditPieChartGroup({
-        title: 'SEO health',
+  const seoCard = modules.seo
+    ? renderAuditCategoryCard({
+        modifier: 'seo',
+        title: 'SEO — On-Page Optimization',
+        subtitle: 'Titles, links, meta tags, and content issues',
         percent: seoPassPercent,
         critical: seoCrit,
         minor: seoMin,
-        passed: 0
+        bodyHtml: [
+          renderUnifiedSeoIssueGroup({
+            critical: sortedPageCritical,
+            minor: sortedPageMinor
+          }),
+          renderAuditPieChartGroup({
+            title: 'SEO health',
+            percent: seoPassPercent,
+            critical: seoCrit,
+            minor: seoMin,
+            passed: 0
+          })
+        ].join('')
       })
-    ].join('')
-  });
+    : '';
 
-  const geoCard = renderAuditCategoryCard({
-    modifier: 'geo',
-    title: 'GEO — Generative Engine Optimization',
-    subtitle: 'Schema, semantics, freshness, and AI-readiness',
-    percent: geoPassPercent,
-    critical: geoSplit.critical.length,
-    minor: geoSplit.minor.length + geoSplit.warning.length,
-    bodyHtml: [
-      renderUnifiedGeoIssueGroup(geoIssues, p.geoIssueSeverities),
-      renderAuditPassGroup({ items: geoPassPoints }),
-      renderAuditPieChartGroup({
-        title: 'GEO health',
+  const geoCard = modules.geo
+    ? renderAuditCategoryCard({
+        modifier: 'geo',
+        title: 'GEO — Generative Engine Optimization',
+        subtitle: 'Schema, semantics, freshness, and AI-readiness',
         percent: geoPassPercent,
         critical: geoSplit.critical.length,
         minor: geoSplit.minor.length + geoSplit.warning.length,
-        passed: geoPassPoints.length
+        bodyHtml: [
+          renderUnifiedGeoIssueGroup(geoIssues, p.geoIssueSeverities),
+          renderAuditPassGroup({ items: geoPassPoints }),
+          renderAuditPieChartGroup({
+            title: 'GEO health',
+            percent: geoPassPercent,
+            critical: geoSplit.critical.length,
+            minor: geoSplit.minor.length + geoSplit.warning.length,
+            passed: geoPassPoints.length
+          })
+        ].join('')
       })
-    ].join('')
-  });
+    : '';
 
-  const securityCard = renderAuditCategoryCard({
-    modifier: 'security',
-    title: 'Security Headers — HTTP Response',
-    subtitle: securityScoreLabel,
-    percent: securityPassPercent,
-    critical: securityCriticalCount,
-    minor: securityMinorCount + securityWarningCount,
-    bodyHtml: renderSecurityHeaderGroups(p.securityHeaders, allSecurityIssues, {
-      percent: securityPassPercent,
-      passed: securityPassedCount,
-      critical: securityCriticalCount,
-      minor: securityMinorCount,
-      warning: securityWarningCount
-    })
-  });
+  const securityCard =
+    modules.securityHeaders && p.securityHeaders
+      ? renderAuditCategoryCard({
+          modifier: 'security',
+          title: 'Security Headers — HTTP Response',
+          subtitle: securityScoreLabel,
+          percent: securityPassPercent,
+          critical: securityCriticalCount,
+          minor: securityMinorCount + securityWarningCount,
+          bodyHtml: renderSecurityHeaderGroups(p.securityHeaders, allSecurityIssues, {
+            percent: securityPassPercent,
+            passed: securityPassedCount,
+            critical: securityCriticalCount,
+            minor: securityMinorCount,
+            warning: securityWarningCount
+          })
+        })
+      : '';
 
-  const pageSpeedCard = renderPageSpeedCategoryCard(p.pageSpeed);
-  const richResultsCard = renderRichResultsCategoryCard(p.richResults);
+  const pageSpeedCard = modules.pageSpeed ? renderPageSpeedCategoryCard(p.pageSpeed) : '';
+  const richResultsCard = modules.richResults ? renderRichResultsCategoryCard(p.richResults) : '';
 
   return `
         <div class="page-detail-content">
@@ -3394,6 +3442,9 @@ function renderMetricChip(value, { zeroIsGood = true } = {}) {
 }
 
 function renderSecHeadersChip(sec) {
+  if (!sec || sec.skipped || (sec.label === '—' && !sec.results?.length && !(sec.total > 0))) {
+    return renderChip('N/A', 'muted', { title: 'Security headers not checked' });
+  }
   const label = sec.label || '—';
   if (sec.ok) return renderChip(label, 'success', { title: 'All security headers passed', mono: true });
   if ((sec.passed || 0) > 0) {
@@ -4242,9 +4293,20 @@ async function runSeoAudit({
   onProgress = null,
   maxCrawlUrls,
   includePageSpeed = false,
-  includeRichResults = false
+  includeRichResults = false,
+  includeSeo = true,
+  includeGeo = true,
+  includeSecurityHeaders = true
 }) {
+  // Explicit false disables a module; missing/undefined keeps legacy default (on).
+  const runSeo = includeSeo !== false;
+  const runGeo = includeGeo !== false;
+  const runSecurityHeaders = includeSecurityHeaders !== false;
+
   console.log('🧪 MODE RECEIVED IN ENGINE:', mode);
+  log(
+    `🧩 Modules: SEO=${runSeo ? 'on' : 'off'}, GEO=${runGeo ? 'on' : 'off'}, Security headers=${runSecurityHeaders ? 'on' : 'off'}`
+  );
   if (includePageSpeed) {
     log('📊 Google PageSpeed enabled — mobile + desktop Lighthouse per page');
   }
@@ -4252,12 +4314,29 @@ async function runSeoAudit({
     log('🔎 Google Rich Results Test enabled — screenshot for main URL (Playwright)');
   }
 
+  if (!runSeo && !runGeo && !runSecurityHeaders && !includePageSpeed && !includeRichResults) {
+    throw new Error('At least one audit module must be enabled (SEO, GEO, Security Headers, PageSpeed, or Rich Results).');
+  }
 
   const baseUrl = normalizeBaseUrl(mainUrl);
   const scanDate = new Date().toISOString();
 
-  const robotsStatus = await checkRobotsTxt(baseUrl);
-  const securityHeaderStatus = await checkHttpSecurityHeaders(baseUrl);
+  const robotsStatus = runSeo
+    ? await checkRobotsTxt(baseUrl)
+    : { ok: true, skipped: true, url: `${baseUrl}/robots.txt`, reason: 'SEO module disabled' };
+  const securityHeaderStatus = runSecurityHeaders
+    ? await checkHttpSecurityHeaders(baseUrl)
+    : {
+        ok: true,
+        skipped: true,
+        passed: 0,
+        total: 0,
+        label: '—',
+        failures: [],
+        minors: [],
+        warnings: [],
+        results: []
+      };
   // IndexNow — disabled for now
   // const indexNowKey = process.env.INDEXNOWKEY || '';
   // const indexNowStatus = await checkIndexNow(baseUrl, indexNowKey);
@@ -4265,23 +4344,32 @@ async function runSeoAudit({
     critical: [],
     geo: [],
     minor: [],
-    robotsTxt: robotsStatus.ok ? 'YES' : 'NO',
+    robotsTxt: runSeo ? (robotsStatus.ok ? 'YES' : 'NO') : '—',
     // indexNow: indexNowStatus.ok ? 'YES' : indexNowStatus.skipped ? '—' : 'NO',
-    httpSecurityHeaders: securityHeaderStatus.label,
-    securityHeaders: securityHeaderStatus
+    httpSecurityHeaders: runSecurityHeaders ? securityHeaderStatus.label : '—',
+    securityHeaders: runSecurityHeaders ? securityHeaderStatus : null,
+    auditModules: {
+      seo: runSeo,
+      geo: runGeo,
+      securityHeaders: runSecurityHeaders,
+      pageSpeed: includePageSpeed === true,
+      richResults: includeRichResults === true
+    }
     // indexNowStatus
   };
-  if (!robotsStatus.ok) {
+  if (runSeo && !robotsStatus.ok) {
     siteChecks.critical.push(`robots.txt: ${robotsStatus.reason} (${robotsStatus.url})`);
   }
-  for (const failure of securityHeaderStatus.failures || []) {
-    siteChecks.critical.push(`HTTP Security Header: ${failure}`);
-  }
-  for (const minor of securityHeaderStatus.minors || []) {
-    siteChecks.minor.push(`HTTP Security Header: ${minor}`);
-  }
-  for (const warning of securityHeaderStatus.warnings || []) {
-    siteChecks.minor.push(`HTTP Security Header: ${warning}`);
+  if (runSecurityHeaders) {
+    for (const failure of securityHeaderStatus.failures || []) {
+      siteChecks.critical.push(`HTTP Security Header: ${failure}`);
+    }
+    for (const minor of securityHeaderStatus.minors || []) {
+      siteChecks.minor.push(`HTTP Security Header: ${minor}`);
+    }
+    for (const warning of securityHeaderStatus.warnings || []) {
+      siteChecks.minor.push(`HTTP Security Header: ${warning}`);
+    }
   }
   // if (!indexNowStatus.ok && !indexNowStatus.skipped) {
   //   siteChecks.geo.push(`${indexNowStatus.reason} (${indexNowStatus.url})`);
@@ -4402,6 +4490,9 @@ async function runSeoAudit({
               url,
               timeoutMs,
               includePageSpeed,
+              includeSeo: runSeo,
+              includeGeo: runGeo,
+              includeSecurityHeaders: runSecurityHeaders,
               isolated: useIsolatedContext
             });
             completed++;
@@ -4447,13 +4538,21 @@ async function runSeoAudit({
             hidden: []
           },
           seoScore: 0,
-          securityHeaders: { ok: false, passed: 0, total: HEADER_CHECK_COUNT, label: '—', results: [], warnings: [] },
+          securityHeaders: runSecurityHeaders
+            ? { ok: false, passed: 0, total: HEADER_CHECK_COUNT, label: '—', results: [], warnings: [] }
+            : null,
           pageSpeed: includePageSpeed
             ? {
                 mobile: { error: failureMessage, strategy: 'MOBILE' },
                 desktop: { error: failureMessage, strategy: 'DESKTOP' }
               }
             : null,
+          auditModules: {
+            seo: runSeo,
+            geo: runGeo,
+            securityHeaders: runSecurityHeaders,
+            pageSpeed: includePageSpeed === true
+          },
           _debug: {
             error: lastErr?.message || String(lastErr),
             attempts: totalAttempts,
@@ -4476,32 +4575,34 @@ async function runSeoAudit({
       }
     }
 
-    // Cross-page duplicate validation
-    const titleToUrls = new Map();
-    const descToUrls = new Map();
+    // Cross-page duplicate validation (SEO module only)
+    if (runSeo) {
+      const titleToUrls = new Map();
+      const descToUrls = new Map();
 
-    for (const p of pages) {
-      const t = (p.title || '').trim().toLowerCase();
-      if (t) titleToUrls.set(t, [...(titleToUrls.get(t) || []), p.url]);
+      for (const p of pages) {
+        const t = (p.title || '').trim().toLowerCase();
+        if (t) titleToUrls.set(t, [...(titleToUrls.get(t) || []), p.url]);
 
-      const d = (p.description || '').trim().toLowerCase();
-      if (d) descToUrls.set(d, [...(descToUrls.get(d) || []), p.url]);
-    }
-
-    const dupTitleSet = new Set();
-    for (const [, us] of titleToUrls.entries()) if (us.length > 1) us.forEach((u) => dupTitleSet.add(u));
-
-    const dupDescSet = new Set();
-    for (const [, us] of descToUrls.entries()) if (us.length > 1) us.forEach((u) => dupDescSet.add(u));
-
-    for (const p of pages) {
-      if (dupTitleSet.has(p.url)) p.issues.critical.push('Duplicate title across pages (CRITICAL)');
-      if (dupDescSet.has(p.url)) {
-        p.issues.minor.push('Duplicate description across pages: same meta description used on multiple pages.');
+        const d = (p.description || '').trim().toLowerCase();
+        if (d) descToUrls.set(d, [...(descToUrls.get(d) || []), p.url]);
       }
-    }
 
-    applyCrossPageContentDuplicates(pages);
+      const dupTitleSet = new Set();
+      for (const [, us] of titleToUrls.entries()) if (us.length > 1) us.forEach((u) => dupTitleSet.add(u));
+
+      const dupDescSet = new Set();
+      for (const [, us] of descToUrls.entries()) if (us.length > 1) us.forEach((u) => dupDescSet.add(u));
+
+      for (const p of pages) {
+        if (dupTitleSet.has(p.url)) p.issues.critical.push('Duplicate title across pages (CRITICAL)');
+        if (dupDescSet.has(p.url)) {
+          p.issues.minor.push('Duplicate description across pages: same meta description used on multiple pages.');
+        }
+      }
+
+      applyCrossPageContentDuplicates(pages);
+    }
 
     for (const p of pages) {
       p.counts = p.counts || {};
@@ -4610,7 +4711,14 @@ async function runSeoAudit({
         urlsAttempted: urls.length,
         concurrency,
         timeoutMs,
-        crawlMaxUrls: mode === 'full' ? (maxCrawlUrls || CRAWL_MAX_URLS) : null
+        crawlMaxUrls: mode === 'full' ? (maxCrawlUrls || CRAWL_MAX_URLS) : null,
+        auditModules: {
+          seo: runSeo,
+          geo: runGeo,
+          securityHeaders: runSecurityHeaders,
+          pageSpeed: includePageSpeed === true,
+          richResults: includeRichResults === true
+        }
       },
       pages,
       siteChecks,

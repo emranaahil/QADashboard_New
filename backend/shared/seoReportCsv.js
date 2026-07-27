@@ -515,7 +515,8 @@ function buildSeoReportExportPayload(mainUrl, scanDate, pages) {
       geoIssueSeverities: page.geoIssueSeverities || null,
       securityHeaders: page.securityHeaders || null,
       pageSpeed: page.pageSpeed || null,
-      richResults: page.richResults || null
+      richResults: page.richResults || null,
+      auditModules: page.auditModules || null
     }))
   };
 }
