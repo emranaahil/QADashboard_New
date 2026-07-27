@@ -3,10 +3,27 @@
  *
  * Compares: title, H1–H6, paragraphs, header/footer/nav text, images (count/src/size),
  * basic layout signals. Optional contact-hyperlink scan on candidate.
+ *
+ * Logs are written to stdout so they appear in View Log for the job.
  */
 
 const path = require('path');
 const fs = require('fs-extra');
+
+/** Professional step logger — visible in job View Log */
+function vtLog(phase, message, detail) {
+  const ts = new Date().toISOString().slice(11, 23);
+  const p = String(phase || 'INFO').padEnd(18);
+  if (detail != null && detail !== '') {
+    console.log(`[Visual Twin] ${ts}  ${p}  ${message}  ·  ${detail}`);
+  } else {
+    console.log(`[Visual Twin] ${ts}  ${p}  ${message}`);
+  }
+}
+
+function vtSection(title) {
+  console.log(`[Visual Twin] ──────── ${title} ────────`);
+}
 
 function normalizeText(s) {
   return String(s || '')
@@ -135,19 +152,25 @@ function compareSnapshots(ref, cand) {
   const issues = [];
   const parts = [];
 
+  vtSection('Compare content fingerprints');
+
   // Title
+  vtLog('CHECK', 'Title', 'comparing document titles');
   const titleSame = normalizeText(ref.title) === normalizeText(cand.title);
   const titleScore = titleSame ? 100 : jaccard(tokenSet(ref.title), tokenSet(cand.title)) * 100;
   parts.push({ key: 'title', weight: 0.08, score: titleScore });
+  vtLog('CHECK', 'Title result', `${Math.round(titleScore)}% · ref="${(ref.title || '').slice(0, 60)}" cand="${(cand.title || '').slice(0, 60)}"`);
   if (!titleSame) {
     issues.push({
       type: 'Title mismatch',
       severity: 'major',
       details: `Reference: "${(ref.title || '').slice(0, 80)}" | Candidate: "${(cand.title || '').slice(0, 80)}"`
     });
+    vtLog('ISSUE', 'Title mismatch', 'titles differ');
   }
 
   // Headings H1–H6
+  vtLog('CHECK', 'Headings H1–H6', 'comparing heading text lists per level');
   const headingLevels = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
   const headingReports = [];
   let headingScoreSum = 0;
@@ -155,22 +178,35 @@ function compareSnapshots(ref, cand) {
     const rep = compareHeadingLevel(ref.headings?.[lvl], cand.headings?.[lvl], lvl);
     headingReports.push(rep);
     headingScoreSum += rep.score;
+    vtLog(
+      'CHECK',
+      `${lvl.toUpperCase()} headings`,
+      `score=${rep.score}% · ref=${rep.refCount} · cand=${rep.candidateCount} · diffs=${rep.diffs.length}`
+    );
     for (const d of rep.diffs.slice(0, 4)) {
       issues.push({
         type: d.kind === 'missing_on_candidate' ? `${lvl.toUpperCase()} missing on candidate` : `${lvl.toUpperCase()} extra on candidate`,
         severity: lvl === 'h1' ? 'critical' : lvl === 'h2' ? 'major' : 'minor',
         details: d.text
       });
+      vtLog(
+        'ISSUE',
+        d.kind === 'missing_on_candidate' ? `${lvl.toUpperCase()} missing on candidate` : `${lvl.toUpperCase()} extra on candidate`,
+        d.text.slice(0, 100)
+      );
     }
   }
   const headingScore = headingScoreSum / headingLevels.length;
   parts.push({ key: 'headings', weight: 0.28, score: headingScore });
+  vtLog('CHECK', 'Headings overall', `${Math.round(headingScore)}%`);
 
   // Paragraphs
+  vtLog('CHECK', 'Paragraphs', 'comparing paragraph text sets');
   const refP = (ref.paragraphs || []).map(normalizeText);
   const candP = (cand.paragraphs || []).map(normalizeText);
   const paraScore = jaccard(refP, candP) * 100;
   parts.push({ key: 'paragraphs', weight: 0.22, score: paraScore });
+  vtLog('CHECK', 'Paragraphs result', `${Math.round(paraScore)}% · ref=${refP.length} · cand=${candP.length}`);
   if (paraScore < 85) {
     const missing = refP.filter((p) => !candP.includes(p)).slice(0, 5);
     if (missing.length) {
@@ -179,16 +215,23 @@ function compareSnapshots(ref, cand) {
         severity: paraScore < 50 ? 'major' : 'minor',
         details: `${missing.length}+ paragraph(s) from reference not matched on candidate (sample: "${missing[0].slice(0, 120)}…")`
       });
+      vtLog('ISSUE', 'Paragraph content differs', `${missing.length} unmatched sample(s)`);
     }
   }
 
   // Header / footer / nav
+  vtLog('CHECK', 'Header / Footer / Nav', 'comparing chrome regions');
   const headerScore = jaccard(tokenSet(ref.headerText), tokenSet(cand.headerText)) * 100;
   const footerScore = jaccard(tokenSet(ref.footerText), tokenSet(cand.footerText)) * 100;
   const navScore = jaccard(tokenSet(ref.navText), tokenSet(cand.navText)) * 100;
   parts.push({ key: 'header', weight: 0.1, score: ref.hasHeader || cand.hasHeader ? headerScore : 100 });
   parts.push({ key: 'footer', weight: 0.08, score: ref.hasFooter || cand.hasFooter ? footerScore : 100 });
   parts.push({ key: 'nav', weight: 0.08, score: ref.hasNav || cand.hasNav ? navScore : 100 });
+  vtLog(
+    'CHECK',
+    'Chrome scores',
+    `header=${Math.round(headerScore)}% footer=${Math.round(footerScore)}% nav=${Math.round(navScore)}% · presence H/F/N ref=${ref.hasHeader}/${ref.hasFooter}/${ref.hasNav} cand=${cand.hasHeader}/${cand.hasFooter}/${cand.hasNav}`
+  );
 
   if (ref.hasHeader !== cand.hasHeader) {
     issues.push({
@@ -196,6 +239,7 @@ function compareSnapshots(ref, cand) {
       severity: 'major',
       details: `Reference hasHeader=${ref.hasHeader}, candidate hasHeader=${cand.hasHeader}`
     });
+    vtLog('ISSUE', 'Header presence mismatch', `ref=${ref.hasHeader} cand=${cand.hasHeader}`);
   }
   if (ref.hasFooter !== cand.hasFooter) {
     issues.push({
@@ -203,6 +247,7 @@ function compareSnapshots(ref, cand) {
       severity: 'major',
       details: `Reference hasFooter=${ref.hasFooter}, candidate hasFooter=${cand.hasFooter}`
     });
+    vtLog('ISSUE', 'Footer presence mismatch', `ref=${ref.hasFooter} cand=${cand.hasFooter}`);
   }
   if (headerScore < 70 && (ref.hasHeader || cand.hasHeader)) {
     issues.push({
@@ -210,6 +255,7 @@ function compareSnapshots(ref, cand) {
       severity: 'minor',
       details: `Header text similarity ${Math.round(headerScore)}%`
     });
+    vtLog('ISSUE', 'Header content differs', `${Math.round(headerScore)}%`);
   }
   if (footerScore < 70 && (ref.hasFooter || cand.hasFooter)) {
     issues.push({
@@ -217,9 +263,11 @@ function compareSnapshots(ref, cand) {
       severity: 'minor',
       details: `Footer text similarity ${Math.round(footerScore)}%`
     });
+    vtLog('ISSUE', 'Footer content differs', `${Math.round(footerScore)}%`);
   }
 
   // Images — by path basename + count
+  vtLog('CHECK', 'Images', 'comparing image counts and file names');
   const refImgs = ref.images || [];
   const candImgs = cand.images || [];
   const refPaths = refImgs.map((i) => i.srcPath.split('/').pop() || i.srcPath);
@@ -231,6 +279,11 @@ function compareSnapshots(ref, cand) {
       : Math.min(refImgs.length, candImgs.length) / Math.max(refImgs.length, candImgs.length || 1);
   const imgScore = imgPathScore * 0.7 + countRatio * 100 * 0.3;
   parts.push({ key: 'images', weight: 0.12, score: imgScore });
+  vtLog(
+    'CHECK',
+    'Images result',
+    `${Math.round(imgScore)}% · ref=${refImgs.length} · cand=${candImgs.length} · path overlap=${Math.round(imgPathScore)}%`
+  );
 
   if (Math.abs(refImgs.length - candImgs.length) >= 2) {
     issues.push({
@@ -238,6 +291,7 @@ function compareSnapshots(ref, cand) {
       severity: 'major',
       details: `Reference images=${refImgs.length}, candidate images=${candImgs.length}`
     });
+    vtLog('ISSUE', 'Image count differs', `ref=${refImgs.length} cand=${candImgs.length}`);
   }
   const missingImgs = refPaths.filter((p) => !candPaths.includes(p)).slice(0, 8);
   if (missingImgs.length) {
@@ -246,9 +300,11 @@ function compareSnapshots(ref, cand) {
       severity: 'major',
       details: missingImgs.join(', ').slice(0, 300)
     });
+    vtLog('ISSUE', 'Images missing on candidate', missingImgs.slice(0, 5).join(', '));
   }
 
   // Layout: horizontal scroll mismatch
+  vtLog('CHECK', 'Layout', 'horizontal scroll / width signals');
   const refHScroll = (ref.scrollWidth || 0) > (ref.clientWidth || 0) + 15;
   const candHScroll = (cand.scrollWidth || 0) > (cand.clientWidth || 0) + 15;
   if (refHScroll !== candHScroll) {
@@ -258,8 +314,10 @@ function compareSnapshots(ref, cand) {
       details: `Reference scroll=${refHScroll}, candidate scroll=${candHScroll}`
     });
     parts.push({ key: 'layout', weight: 0.04, score: 40 });
+    vtLog('ISSUE', 'Horizontal scroll mismatch', `ref=${refHScroll} cand=${candHScroll}`);
   } else {
     parts.push({ key: 'layout', weight: 0.04, score: 100 });
+    vtLog('CHECK', 'Layout result', 'OK (scroll signals match)');
   }
 
   // Weighted match score
@@ -270,6 +328,7 @@ function compareSnapshots(ref, cand) {
     acc += p.weight * p.score;
   }
   const matchScore = Math.round(acc / (totalW || 1));
+  vtLog('SCORE', 'Pair match score', `${matchScore}% · issues=${issues.length}`);
 
   return {
     matchScore,
@@ -311,11 +370,17 @@ async function comparePagePair({
   const navTimeout = getNavigationTimeout(45000, browserType || 'chrome');
   const vp = viewport || { width: 1440, height: 900, label: 'Desktop' };
 
+  vtSection(`Pair #${pairIndex} · ${vp.label || 'Desktop'}`);
+  vtLog('PAIR', 'Reference', referenceUrl);
+  vtLog('PAIR', 'Candidate', candidateUrl);
+  vtLog('PAIR', 'Viewport', `${vp.width}×${vp.height} (${vp.label || 'Desktop'}) · browser=${browserType || 'chrome'}`);
+
   const context = await browser.newContext(
     buildContextOptions(browserType || 'chrome', { width: vp.width, height: vp.height })
   );
   const refPage = await context.newPage();
   const candPage = await context.newPage();
+  vtLog('BROWSER', 'Contexts ready', 'two pages opened (reference + candidate)');
 
   const result = {
     referenceUrl,
@@ -329,6 +394,7 @@ async function comparePagePair({
   };
 
   try {
+    vtLog('NAVIGATE', 'Loading both URLs', 'waitUntil=domcontentloaded');
     const [refResp, candResp] = await Promise.all([
       refPage.goto(referenceUrl, { waitUntil: 'domcontentloaded', timeout: navTimeout }),
       candPage.goto(candidateUrl, { waitUntil: 'domcontentloaded', timeout: navTimeout })
@@ -338,6 +404,7 @@ async function comparePagePair({
     const candStatus = candResp ? candResp.status() : 0;
     result.referenceStatus = refStatus;
     result.candidateStatus = candStatus;
+    vtLog('NAVIGATE', 'HTTP status', `reference=${refStatus} · candidate=${candStatus}`);
 
     if (refStatus >= 400 || candStatus >= 400) {
       result.issues.push({
@@ -345,17 +412,30 @@ async function comparePagePair({
         severity: 'critical',
         details: `Reference HTTP ${refStatus}, candidate HTTP ${candStatus}`
       });
+      vtLog('ISSUE', 'HTTP status problem', `ref=${refStatus} cand=${candStatus}`);
     }
 
+    vtLog('SETTLE', 'Waiting for page settle', '1200ms');
     await Promise.all([
       refPage.waitForTimeout(1200).catch(() => {}),
       candPage.waitForTimeout(1200).catch(() => {})
     ]);
 
+    vtLog('EXTRACT', 'Capturing page fingerprints', 'title, H1–H6, paragraphs, header/footer/nav, images');
     const [refSnap, candSnap] = await Promise.all([
       extractPageSnapshot(refPage),
       extractPageSnapshot(candPage)
     ]);
+    vtLog(
+      'EXTRACT',
+      'Reference snapshot',
+      `title="${(refSnap.title || '').slice(0, 50)}" · imgs=${(refSnap.images || []).length} · bodyChars=${refSnap.bodyTextLength || 0}`
+    );
+    vtLog(
+      'EXTRACT',
+      'Candidate snapshot',
+      `title="${(candSnap.title || '').slice(0, 50)}" · imgs=${(candSnap.images || []).length} · bodyChars=${candSnap.bodyTextLength || 0}`
+    );
 
     const comparison = compareSnapshots(refSnap, candSnap);
     result.matchScore = comparison.matchScore;
@@ -367,21 +447,29 @@ async function comparePagePair({
 
     // Screenshots
     if (screenshotDir) {
+      vtLog('SCREENSHOT', 'Capturing full-page screenshots', 'reference + candidate');
       await fs.ensureDir(screenshotDir);
       const refShot = `pair-${pairIndex}-ref.png`;
       const candShot = `pair-${pairIndex}-cand.png`;
       try {
         await refPage.screenshot({ path: path.join(screenshotDir, refShot), fullPage: true });
         result.screenshots.reference = refShot;
-      } catch (_) {}
+        vtLog('SCREENSHOT', 'Reference saved', refShot);
+      } catch (shotErr) {
+        vtLog('SCREENSHOT', 'Reference failed', shotErr?.message || shotErr);
+      }
       try {
         await candPage.screenshot({ path: path.join(screenshotDir, candShot), fullPage: true });
         result.screenshots.candidate = candShot;
-      } catch (_) {}
+        vtLog('SCREENSHOT', 'Candidate saved', candShot);
+      } catch (shotErr) {
+        vtLog('SCREENSHOT', 'Candidate failed', shotErr?.message || shotErr);
+      }
     }
 
     // Optional contact hyperlinks on candidate (reuse UI Testing helper)
     if (checkContactHyperlinks) {
+      vtLog('CONTACT', 'Contact hyperlink check', `candidate page · phoneDigits=${phoneDigitLength || 10}`);
       try {
         process.env.QA_CHECK_CONTACT_HYPERLINKS = '1';
         process.env.QA_PHONE_DIGIT_LENGTH = String(phoneDigitLength || 10);
@@ -391,16 +479,30 @@ async function comparePagePair({
         } = require('../ui-check/contactHyperlinkCheck');
         const contact = await runContactHyperlinkCheck(candPage);
         const cIssues = contactFindingsToIssues(contact);
+        vtLog(
+          'CONTACT',
+          'Contact result',
+          `unlinked emails=${(contact.unlinkedEmails || []).length} · phones=${(contact.unlinkedPhones || []).length}`
+        );
         for (const ci of cIssues) {
           result.issues.push({
             ...ci,
             details: `${ci.details} (on candidate)`
           });
+          vtLog('ISSUE', ci.type, ci.details);
         }
       } catch (err) {
-        // non-fatal
+        vtLog('CONTACT', 'Contact check skipped', err?.message || err);
       }
+    } else {
+      vtLog('CONTACT', 'Contact hyperlink check', 'skipped (toggle off)');
     }
+
+    vtLog(
+      'PAIR DONE',
+      `Match ${result.matchScore}%`,
+      `issues=${result.issues.length} · scores=${JSON.stringify(result.scores || {})}`
+    );
   } catch (err) {
     result.error = err.message || String(err);
     result.issues.push({
@@ -409,10 +511,12 @@ async function comparePagePair({
       details: result.error
     });
     result.matchScore = 0;
+    vtLog('ERROR', 'Pair comparison failed', result.error);
   } finally {
     await refPage.close().catch(() => {});
     await candPage.close().catch(() => {});
     await context.close().catch(() => {});
+    vtLog('BROWSER', 'Pair contexts closed', `pair #${pairIndex}`);
   }
 
   return result;
@@ -438,6 +542,10 @@ async function discoverReferenceUrls(browser, startUrl, maxPages, browserType) {
   const queue = [startUrl];
   const urls = [];
 
+  vtSection('Discover reference URLs');
+  vtLog('CRAWL', 'Start URL', startUrl);
+  vtLog('CRAWL', 'Limits', `maxPages=${maxPages} · origin=${origin}`);
+
   const context = await browser.newContext(
     buildContextOptions(browserType || 'chrome', { width: 1280, height: 800 })
   );
@@ -450,6 +558,7 @@ async function discoverReferenceUrls(browser, startUrl, maxPages, browserType) {
       if (seen.has(key)) continue;
       seen.add(key);
       urls.push(key);
+      vtLog('CRAWL', `Page ${urls.length}/${maxPages}`, key);
 
       try {
         await page.goto(key, { waitUntil: 'domcontentloaded', timeout: navTimeout });
@@ -466,14 +575,17 @@ async function discoverReferenceUrls(browser, startUrl, maxPages, browserType) {
             });
         }, origin);
 
+        let added = 0;
         for (const h of hrefs) {
           const clean = h.split('#')[0];
           if (!seen.has(clean) && !queue.includes(clean)) {
             queue.push(clean);
+            added += 1;
           }
         }
-      } catch (_) {
-        // keep url in list even if secondary navigation fails later
+        vtLog('CRAWL', 'Links discovered', `+${added} queued · queue size=${queue.length}`);
+      } catch (crawlErr) {
+        vtLog('CRAWL', 'Navigation warning', crawlErr?.message || crawlErr);
       }
     }
   } finally {
@@ -481,6 +593,7 @@ async function discoverReferenceUrls(browser, startUrl, maxPages, browserType) {
     await context.close().catch(() => {});
   }
 
+  vtLog('CRAWL', 'Discovery complete', `${urls.length} URL(s)`);
   return urls.slice(0, maxPages);
 }
 
@@ -491,5 +604,7 @@ module.exports = {
   mapReferencePathToCandidate,
   discoverReferenceUrls,
   normalizeText,
-  jaccard
+  jaccard,
+  vtLog,
+  vtSection
 };

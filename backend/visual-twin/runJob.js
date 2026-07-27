@@ -17,6 +17,16 @@ function emitProgress(pct, msg, meta = {}) {
   fs.writeSync(1, line);
 }
 
+function jobLog(phase, message, detail) {
+  const ts = new Date().toISOString().slice(11, 23);
+  const p = String(phase || 'INFO').padEnd(18);
+  if (detail != null && detail !== '') {
+    console.log(`[Visual Twin] ${ts}  ${p}  ${message}  ·  ${detail}`);
+  } else {
+    console.log(`[Visual Twin] ${ts}  ${p}  ${message}`);
+  }
+}
+
 async function main() {
   const jobId = process.argv[2] || process.env.JOB_ID;
   if (!jobId) process.exit(1);
@@ -70,6 +80,20 @@ async function main() {
       throw new Error('candidateUrl is required in job options');
     }
 
+    console.log('');
+    console.log('[Visual Twin] ══════════════════════════════════════════════════════');
+    console.log('[Visual Twin]  Job started');
+    console.log('[Visual Twin] ══════════════════════════════════════════════════════');
+    jobLog('JOB', 'Job ID', jobId);
+    jobLog('JOB', 'Mode', mode);
+    jobLog('JOB', 'Reference base', referenceBase);
+    jobLog('JOB', 'Candidate base', candidateBase);
+    jobLog(
+      'JOB',
+      'Options',
+      `contactHyperlinks=${job.options?.includeContactHyperlinks === true} · phoneDigits=${job.options?.phoneDigitLength || '—'}`
+    );
+
     const browserType = job.options?.browser || process.env.QA_BROWSER_TYPE || 'chrome';
     let devices = [];
     if (Array.isArray(job.options?._resolvedDevices) && job.options._resolvedDevices.length) {
@@ -86,6 +110,11 @@ async function main() {
     if (!devices.length) {
       devices = [{ label: 'Desktop', width: 1440, height: 900 }];
     }
+    jobLog(
+      'JOB',
+      'Browser / devices',
+      `${browserType} · ${devices.map((d) => `${d.label} ${d.width}x${d.height}`).join(', ')}`
+    );
 
     const screenshotDir = path.join(jobDir, 'screenshots');
     await fs.ensureDir(screenshotDir);
@@ -96,8 +125,10 @@ async function main() {
       totalPages: 1,
       currentUrl: referenceBase
     });
+    jobLog('BROWSER', 'Launching Playwright', browserType);
 
     const browser = await launchBrowser();
+    jobLog('BROWSER', 'Browser ready', 'Chromium/engine launched');
     const pairs = [];
     let pairIndex = 0;
 
@@ -115,7 +146,9 @@ async function main() {
         });
         if (Array.isArray(job.options?.urls) && job.options.urls.length) {
           referenceUrls = job.options.urls.slice(0, maxPages);
+          jobLog('PLAN', 'URL list mode', `${referenceUrls.length} reference URL(s) provided`);
         } else {
+          jobLog('PLAN', 'Full-site crawl', `maxPages=${maxPages}`);
           referenceUrls = await discoverReferenceUrls(
             browser,
             referenceBase,
@@ -125,16 +158,18 @@ async function main() {
         }
         if (!referenceUrls.length) referenceUrls = [referenceBase];
       } else {
-        // Single: one pair (or list of reference paths mapped to candidate)
         if (Array.isArray(job.options?.urls) && job.options.urls.length > 1) {
           referenceUrls = job.options.urls.slice(0, 50);
+          jobLog('PLAN', 'Single multi-URL', `${referenceUrls.length} pair(s)`);
         } else {
           referenceUrls = [referenceBase];
+          jobLog('PLAN', 'Single pair', 'one reference → one candidate');
         }
       }
 
       const totalSteps = Math.max(1, referenceUrls.length * devices.length);
       let done = 0;
+      jobLog('PLAN', 'Work queue', `${totalSteps} comparison step(s)`);
 
       for (const device of devices) {
         for (const refUrl of referenceUrls) {
@@ -153,6 +188,7 @@ async function main() {
             totalPages: totalSteps,
             currentUrl: refUrl
           });
+          jobLog('QUEUE', `Step ${done}/${totalSteps}`, `${device.label}`);
 
           const pair = await comparePagePair({
             browser,
@@ -166,10 +202,16 @@ async function main() {
             phoneDigitLength: job.options?.phoneDigitLength
           });
           pairs.push(pair);
+          jobLog(
+            'QUEUE',
+            `Step ${done} finished`,
+            `match=${pair.matchScore}% · issues=${(pair.issues || []).length}${pair.error ? ` · error=${pair.error}` : ''}`
+          );
         }
       }
     } finally {
       await browser.close().catch(() => {});
+      jobLog('BROWSER', 'Browser closed', '');
     }
 
     emitProgress(90, 'Generating report...', {
@@ -177,6 +219,7 @@ async function main() {
       totalPages: pairs.length,
       currentUrl: candidateBase
     });
+    jobLog('REPORT', 'Building artifacts', 'qaReport.json + qa-report.html');
 
     const result = {
       moduleId: MODULE_ID,
@@ -199,6 +242,7 @@ async function main() {
     const reportJsonPath = path.join(jobDir, 'qaReport.json');
     const reportHtmlPath = path.join(jobDir, 'qa-report.html');
     await fs.writeJson(reportJsonPath, result, { spaces: 2 });
+    jobLog('REPORT', 'JSON written', reportJsonPath);
 
     generateReport({
       result,
@@ -207,15 +251,27 @@ async function main() {
         ? `${process.env.QA_SCREENSHOT_BASE_URL}/`
         : ''
     });
+    jobLog('REPORT', 'HTML written', reportHtmlPath);
 
     if (!(await fs.pathExists(reportHtmlPath))) {
       throw new Error('Report generation failed — qa-report.html not created');
     }
 
+    jobLog(
+      'SUMMARY',
+      'Run complete',
+      `pairs=${result.summary.pairCount} · avgMatch=${result.summary.averageMatch}% · issues=${result.summary.totalIssues} · weak=${result.summary.weakPairs}`
+    );
+    console.log('[Visual Twin] ══════════════════════════════════════════════════════');
+    console.log('[Visual Twin]  Job completed successfully');
+    console.log('[Visual Twin] ══════════════════════════════════════════════════════');
+    console.log('');
+
     emitProgress(100, 'Completed');
     process.exit(0);
   } catch (err) {
     if (cancelSignal.isCancelled(jobDir)) await handleCancel();
+    jobLog('ERROR', 'Job failed', err.message || String(err));
     process.stderr.write(err.stack || err.message || String(err));
     process.exit(1);
   }
