@@ -35,6 +35,9 @@ async function main() {
   const { applyJobRuntimeEnv } = require('../shared/services/executionService');
   await applyJobRuntimeEnv(job);
 
+  const { applyContactHyperlinkEnvFromJob } = require('../ui-check/contactHyperlinkCheck');
+  applyContactHyperlinkEnvFromJob(job);
+
   const { normalizeMaxPages } = require('../shared/fullUiCheckLimits');
   const maxPages = normalizeMaxPages(job.options?.maxPages);
   process.env.QA_MAX_PAGES = String(maxPages);

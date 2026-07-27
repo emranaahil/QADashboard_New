@@ -72,6 +72,8 @@ export function UiTestingWorkspace({
   const [devicesReady, setDevicesReady] = useState(false);
   const [maxPages, setMaxPages] = useState(String(DEFAULT_MAX_PAGES));
   const [selectedBrowser, setSelectedBrowser] = useState("chrome");
+  const [includeContactHyperlinks, setIncludeContactHyperlinks] = useState(false);
+  const [phoneDigitLength, setPhoneDigitLength] = useState("10");
   const moduleId = mode === "full" ? "full-ui-check" : "ui-check";
   const moduleBusy = useModuleWorkBusy(moduleId);
   const deviceSelectorRef = useRef<DeviceSelectorHandle>(null);
@@ -141,6 +143,14 @@ export function UiTestingWorkspace({
         process.env.NODE_ENV === "production" && historyBrowser !== "chrome";
       setSelectedBrowser(liveOnlyChrome ? "chrome" : historyBrowser);
     }
+    if (historyJob?.options?.includeContactHyperlinks === true) {
+      setIncludeContactHyperlinks(true);
+    }
+    if (typeof historyJob?.options?.phoneDigitLength === "number") {
+      setPhoneDigitLength(String(historyJob.options.phoneDigitLength));
+    } else if (typeof historyJob?.options?.phoneDigitLength === "string" && historyJob.options.phoneDigitLength) {
+      setPhoneDigitLength(historyJob.options.phoneDigitLength);
+    }
   }, [historyJob]);
 
   useEffect(() => {
@@ -175,12 +185,24 @@ export function UiTestingWorkspace({
     const devices = deviceSelectorRef.current?.getDevicesForRun();
     if (!devices?.length) return;
 
+    if (includeContactHyperlinks) {
+      const phoneLen = parseInt(phoneDigitLength, 10);
+      if (!Number.isFinite(phoneLen) || phoneLen < 7 || phoneLen > 15) {
+        toast.error("Phone digit length must be between 7 and 15 (including country code digits).");
+        return;
+      }
+    }
+
     let pages = DEFAULT_MAX_PAGES;
     let startUrl = url.trim();
     const runOptions: Record<string, unknown> = {
       devices,
       browser: selectedBrowser,
+      includeContactHyperlinks,
     };
+    if (includeContactHyperlinks) {
+      runOptions.phoneDigitLength = parseInt(phoneDigitLength, 10);
+    }
 
     if (mode === "full") {
       if (fullUrlListMode) {
@@ -335,6 +357,63 @@ export function UiTestingWorkspace({
             mode={mode}
             compact
           />
+
+          <div className="border-t border-border/60" />
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-foreground">Contact hyperlinks</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  Find email / phone text on each page, then check if it is a mailto: or tel: link.
+                  Same contact on many pages is listed once with all URLs.
+                </div>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={includeContactHyperlinks}
+                aria-label="Toggle contact hyperlink checks"
+                disabled={moduleBusy}
+                onClick={() => setIncludeContactHyperlinks((prev) => !prev)}
+                className={cn(
+                  "relative h-8 w-[52px] shrink-0 rounded-full border border-border transition-all duration-250",
+                  includeContactHyperlinks
+                    ? "bg-[rgba(29,191,115,0.2)] border-[rgba(29,191,115,0.35)]"
+                    : "bg-[rgba(7,26,18,0.45)]"
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute top-1 h-6 w-6 rounded-full bg-foreground shadow-sm transition-all duration-250",
+                    includeContactHyperlinks
+                      ? "left-[calc(100%-1.75rem)] bg-[#1dbf73]"
+                      : "left-1 bg-muted-foreground"
+                  )}
+                />
+              </button>
+            </div>
+            {includeContactHyperlinks ? (
+              <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-background px-3 py-2">
+                <label className="text-xs font-semibold text-muted-foreground" htmlFor="phone-digit-length">
+                  Phone digit length (incl. country code)
+                </label>
+                <Input
+                  id="phone-digit-length"
+                  type="number"
+                  min={7}
+                  max={15}
+                  value={phoneDigitLength}
+                  onChange={(e) => setPhoneDigitLength(e.target.value)}
+                  disabled={moduleBusy}
+                  className="mb-0 h-8 w-[4.5rem] rounded-lg px-2 text-center text-sm"
+                />
+                <span className="text-[0.68rem] text-muted-foreground">
+                  Example: India +91 + 10 digits → 12. Emails use a fixed pattern (no length needed).
+                </span>
+              </div>
+            ) : null}
+          </div>
 
           <div className="border-t border-border/60" />
 

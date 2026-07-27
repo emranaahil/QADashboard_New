@@ -229,7 +229,7 @@ module.exports = async (page, config) => {
   var viewport = config.viewport || { label: config.device || 'Desktop' };
 
   const pageUrl = scenario ? scenario.url : 'unknown';
-  console.log(`[QA] Started: ${pageUrl} (${viewport.label})`);
+  debugLog(`[QA] Started: ${pageUrl} (${viewport.label})`);
   debugLog('QA START:', scenario.label, '|', viewport.label);
 
   var issues = [];
@@ -312,6 +312,7 @@ module.exports = async (page, config) => {
         try {
           var url = req.url();
           if (ignoredRequestUrlRe.test(url)) return;
+          if (/favicon|fonts\.gstatic|fonts\.googleapis|cdn\.jsdelivr|cloudflareinsights|chrome-extension|sourcemap|webpack|browser-intake|scorecardresearch|adservice/i.test(url)) return;
           // Next.js / React flight prefetch — common false positive in headless crawls
           if (url.indexOf('_rsc=') !== -1) return;
           var failure = req.failure();
@@ -320,14 +321,17 @@ module.exports = async (page, config) => {
           if (/ERR_ABORTED|NS_BINDING_ABORTED/i.test(errText)) return;
           if (failedRequestUrls.has(url)) return;
           failedRequestUrls.add(url);
-          addIssue('Failed Request', { details: url, severity: 'minor' });
+          addIssue('Failed Request', { details: url.slice(0, 400), severity: 'minor' });
         } catch { /* ignore */ }
       });
       page.on('console', function(msg) {
         try {
-          if (msg.type() === 'error' && !msg.text().includes('CORS')) {
-            addIssue('Console Error', { details: msg.text().slice(0, 300), severity: 'minor' });
+          if (msg.type() !== 'error') return;
+          var text = msg.text() || '';
+          if (/CORS|favicon|Download the React DevTools|third-party|chrome-extension|Failed to load resource: net::ERR_BLOCKED|ResizeObserver loop/i.test(text)) {
+            return;
           }
+          addIssue('Console Error', { details: text.slice(0, 300), severity: 'minor' });
         } catch { /* ignore */ }
       });
       page.__qaListenersAdded = true;
@@ -735,7 +739,7 @@ for (const selector of closeSelectors) {
 
   return true;
 });
-debugLog('TOTAL IMAGES:', imgs.length, 'CANDIDATES:', candidates.length);
+
         var waits = candidates.map(function(img) {
          if (img.complete) {
   return Promise.resolve();
@@ -786,8 +790,8 @@ img.addEventListener('error', function done() {
   try {
     await clearHighlights();
     var hasHorizontalScroll = await page.evaluate(function() {
-
-      return document.documentElement.scrollWidth > document.documentElement.clientWidth + 5;
+      // +15px slack for sub-pixel / scrollbar noise (common false positive at +5)
+      return document.documentElement.scrollWidth > document.documentElement.clientWidth + 15;
     });
 
     if (hasHorizontalScroll) {
@@ -807,18 +811,19 @@ img.addEventListener('error', function done() {
       var isCarousel = window.__qa_isCarousel;
       var count = 0;
 
-      document.body.querySelectorAll('*').forEach(function(el) {
+      document.body.querySelectorAll('div,section,article,main,aside,li,p,img,table').forEach(function(el) {
         if (!isVis(el)) return;
         var r = el.getBoundingClientRect();
         var s = getComputedStyle(el);
 
-        // Skip elements that intentionally scroll or hide overflow
-        if (s.position === 'fixed' || s.position === 'sticky') return;
-        if (s.overflowX === 'auto' || s.overflowX === 'scroll' || s.overflow === 'hidden') return;
-        if (isCarousel(el)) return;
+        if (s.position === 'fixed' || s.position === 'sticky' || s.position === 'absolute') return;
+        if (s.overflowX === 'auto' || s.overflowX === 'scroll' || s.overflow === 'hidden' || s.overflowX === 'hidden') return;
+        if (isCarousel(el) || el.closest('[class*="carousel"],[class*="slider"],[class*="swiper"]')) return;
         if (s.transform && s.transform !== 'none') return;
+        if (el.tagName === 'SVG' || el.closest('svg')) return;
 
-        if (r.right > window.innerWidth + 20 && r.width > 120 && r.height > 40) {
+        // Stricter: must clearly bleed past the viewport
+        if (r.right > window.innerWidth + 40 && r.width > 160 && r.height > 50) {
           count++;
           try { window.__qa_highlight(r, 'orange'); } catch { /* ignore */ }
         }
@@ -826,7 +831,8 @@ img.addEventListener('error', function done() {
       return count;
     });
 
-    if (overflowCount > 0) {
+    // Ignore 1 isolated hit (often a decorative off-canvas element)
+    if (overflowCount >= 2) {
       var overflowShot = 'overflow-' + Date.now() + '.png';
       await safeShot(overflowShot);
       addIssue('Content Overflow', { count: overflowCount, screenshot: overflowShot, severity: 'major' });
@@ -843,31 +849,40 @@ img.addEventListener('error', function done() {
       var count = 0;
       var checked = {};
 
-      document.querySelectorAll('button,a,img,input,p,h1,h2,h3,span,[class*=card]').forEach(function(el) {
+      // Skip noisy span/card noise — focus on primary content/controls
+      document.querySelectorAll('button,a,img,input,p,h1,h2,h3').forEach(function(el) {
         var r = el.getBoundingClientRect();
-        if (r.width < 40 || r.height < 40) return;
+        if (r.width < 50 || r.height < 50) return;
         if (!isVis(el)) return;
         var s = getComputedStyle(el);
-        if (s.position === 'fixed' || s.position === 'sticky') return;
-        // Skip nav/header/footer (they commonly overlay)
-        if (el.closest('nav, header, footer, [class*=navbar], [class*=header], [class*=footer]')) return;
+        if (s.position === 'fixed' || s.position === 'sticky' || s.position === 'absolute') return;
+        if (parseFloat(s.opacity || '1') < 0.9) return;
+        if (s.pointerEvents === 'none') return;
+        if (el.closest('nav, header, footer, [class*=navbar], [class*=header], [class*=footer], [class*=menu], [aria-hidden="true"]')) return;
 
         var cx = Math.round(r.left + r.width / 2);
         var cy = Math.round(r.top + r.height / 2);
+        if (cx < 0 || cy < 0 || cx > window.innerWidth || cy > window.innerHeight) return;
         var key = cx + ',' + cy;
         if (checked[key]) return;
         checked[key] = true;
 
         var topEl = document.elementFromPoint(cx, cy);
-        if (topEl && topEl !== el && !el.contains(topEl) && !topEl.contains(el)) {
-          count++;
-          try { window.__qa_highlight(r, 'purple'); } catch { /* ignore */ }
-        }
+        if (!topEl || topEl === el || el.contains(topEl) || topEl.contains(el)) return;
+        if (topEl.getAttribute && topEl.getAttribute('data-qa-highlight')) return;
+        var ts = getComputedStyle(topEl);
+        if (ts.pointerEvents === 'none' || parseFloat(ts.opacity || '1') < 0.5) return;
+        // Labels wrapping controls / icon wrappers — not real overlaps
+        if (topEl.closest('label') && el.closest('label') === topEl.closest('label')) return;
+
+        count++;
+        try { window.__qa_highlight(r, 'purple'); } catch { /* ignore */ }
       });
       return count;
     });
 
-    if (overlapCount > 0) {
+    // Single hit is often a stacked marketing card / pseudo-overlay false positive
+    if (overlapCount >= 3) {
       var overlapShot = 'overlaps-' + Date.now() + '.png';
       await safeShot(overlapShot);
       addIssue('Visible Element Overlap', { count: overlapCount, screenshot: overlapShot, severity: 'major' });
@@ -883,26 +898,28 @@ img.addEventListener('error', function done() {
       var isVis = window.__qa_isVisible;
       var bad = 0;
 
-      document.querySelectorAll('p,h1,h2,h3,h4,h5,h6,span,button,a,label,li,td,th').forEach(function(el) {
+      document.querySelectorAll('p,h1,h2,h3,h4,h5,h6,button,a,label,li,td,th').forEach(function(el) {
         if (!isVis(el, { minWidth: 30, minHeight: 10 })) return;
         var r = el.getBoundingClientRect();
-        if (r.width < 50 || r.height < 10) return;
+        if (r.width < 60 || r.height < 12) return;
+        var text = (el.innerText || '').replace(/\s+/g, ' ').trim();
+        if (text.length < 3) return;
         var s = getComputedStyle(el);
 
-        // Horizontal clipping: text wider than container
-        if (el.scrollWidth > el.clientWidth + 10 && s.overflowX !== 'auto' && s.overflowX !== 'scroll') {
+        // Intentional truncation (design): ellipsis, line-clamp, nowrap titles
+        var lineClamp = s.webkitLineClamp || s.lineClamp;
+        if (lineClamp && lineClamp !== 'none' && parseInt(lineClamp, 10) > 0) return;
+        if (s.textOverflow === 'ellipsis' && (s.whiteSpace === 'nowrap' || s.overflow === 'hidden')) return;
+        if (el.closest('[class*="truncate"],[class*="ellipsis"],[class*="line-clamp"]')) return;
+
+        // Horizontal clipping only when clearly cut (not 1–2px font metrics noise)
+        if (el.scrollWidth > el.clientWidth + 24 && s.overflowX !== 'auto' && s.overflowX !== 'scroll' && s.whiteSpace !== 'normal') {
           bad++;
           try { window.__qa_highlight(r, 'red'); } catch { /* ignore */ }
           return;
         }
-        // Multiline clipping with ellipsis
-        if (el.scrollHeight > el.clientHeight + 5 && s.overflowY === 'hidden' && s.textOverflow === 'ellipsis') {
-          bad++;
-          try { window.__qa_highlight(r, 'red'); } catch { /* ignore */ }
-          return;
-        }
-        // Hidden overflow cutting off content (skip flex/grid which manage layout differently)
-        if (el.scrollHeight > el.clientHeight + 10 && s.overflow === 'hidden' && s.display !== 'flex' && s.display !== 'grid') {
+        // Hidden overflow cutting off multi-line content (skip flex/grid)
+        if (el.scrollHeight > el.clientHeight + 18 && s.overflow === 'hidden' && s.display !== 'flex' && s.display !== 'grid' && s.textOverflow !== 'ellipsis') {
           bad++;
           try { window.__qa_highlight(r, 'red'); } catch { /* ignore */ }
         }
@@ -910,7 +927,7 @@ img.addEventListener('error', function done() {
       return bad;
     });
 
-    if (clippedCount > 0) {
+    if (clippedCount >= 2) {
       var clippedShot = 'clipped-text-' + Date.now() + '.png';
       await safeShot(clippedShot);
       addIssue('Clipped / Truncated Text', { count: clippedCount, screenshot: clippedShot, severity: 'major' });
@@ -926,11 +943,16 @@ img.addEventListener('error', function done() {
       var isVis = window.__qa_isVisible;
       var bad = 0;
       document.querySelectorAll('img').forEach(function(img) {
-        if (!isVis(img, { minWidth: 10, minHeight: 10 })) return;
+        if (!isVis(img, { minWidth: 40, minHeight: 40 })) return;
+        if (img.clientWidth < 48 || img.clientHeight < 48) return;
+        var s = getComputedStyle(img);
+        // object-fit cover/contain intentionally crops — not distortion
+        if (s.objectFit === 'cover' || s.objectFit === 'contain' || s.objectFit === 'scale-down') return;
         if (img.naturalWidth && img.naturalHeight && img.clientWidth && img.clientHeight) {
           var nat = img.naturalWidth / img.naturalHeight;
           var ren = img.clientWidth / img.clientHeight;
-          if (Math.abs(nat - ren) > 0.4) {
+          // Only flag strong stretch (was 0.4 — many logos/CSS ratios FP)
+          if (Math.abs(nat - ren) > 0.55) {
             bad++;
             try { window.__qa_highlight(img.getBoundingClientRect(), 'red'); } catch { /* ignore */ }
           }
@@ -955,12 +977,19 @@ img.addEventListener('error', function done() {
       var isVis = window.__qa_isVisible;
       var bad = 0;
       var isMobile = window.innerWidth < 768;
-      var minTarget = isMobile ? 44 : 32;
+      // Desktop: WCAG 2.5.8 uses 24px; 32 was too strict for icon toolbars
+      var minTarget = isMobile ? 44 : 24;
 
       document.querySelectorAll('button,[role="button"],input[type="submit"],input[type="button"]').forEach(function(btn) {
         var r = btn.getBoundingClientRect();
-        if (!isVis(btn, { minWidth: 10, minHeight: 10 })) return;
+        if (!isVis(btn, { minWidth: 8, minHeight: 8 })) return;
         if (r.bottom < 0 || r.top > window.innerHeight) return;
+        if (btn.getAttribute('aria-hidden') === 'true' || btn.closest('[aria-hidden="true"]')) return;
+        // Icon-only close/menu controls often intentionally compact
+        var label = ((btn.getAttribute('aria-label') || '') + ' ' + (btn.innerText || '')).toLowerCase();
+        if (/close|menu|search|cart|toggle|expand|collapse|prev|next|×|x\b/.test(label) && r.width >= 20 && r.height >= 20) {
+          return;
+        }
         if (r.width < minTarget || r.height < minTarget) {
           bad++;
           try { window.__qa_highlight(r, 'orange'); } catch { /* ignore */ }
@@ -969,7 +998,7 @@ img.addEventListener('error', function done() {
       return bad;
     });
 
-    if (smallBtnCount > 0) {
+    if (smallBtnCount >= 3) {
       var smallBtnShot = 'small-buttons-' + Date.now() + '.png';
       await safeShot(smallBtnShot);
       addIssue('Small Touch Targets', { count: smallBtnCount, screenshot: smallBtnShot, severity: 'minor' });
@@ -987,25 +1016,28 @@ img.addEventListener('error', function done() {
 
       document.querySelectorAll('button,a,input[type="submit"],input[type="button"]').forEach(function(el) {
         var r = el.getBoundingClientRect();
-        if (r.width < 40 || r.height < 40) return;
+        if (r.width < 48 || r.height < 48) return;
         if (!isVis(el)) return;
         if (r.bottom < 0 || r.top > window.innerHeight) return;
         var s = getComputedStyle(el);
-        if (s.position === 'fixed' || s.position === 'sticky') return;
-        if (el.closest('nav, header, footer')) return;
+        if (s.position === 'fixed' || s.position === 'sticky' || s.position === 'absolute') return;
+        if (el.closest('nav, header, footer, [class*=menu], [class*=drawer]')) return;
 
         var cx = Math.round(r.left + r.width / 2);
         var cy = Math.round(r.top + r.height / 2);
         var topEl = document.elementFromPoint(cx, cy);
-        if (topEl && topEl !== el && !el.contains(topEl) && !topEl.contains(el)) {
-          bad++;
-          try { window.__qa_highlight(r, 'red'); } catch { /* ignore */ }
-        }
+        if (!topEl || topEl === el || el.contains(topEl) || topEl.contains(el)) return;
+        var ts = getComputedStyle(topEl);
+        if (ts.pointerEvents === 'none' || parseFloat(ts.opacity || '1') < 0.4) return;
+        if (topEl.getAttribute && topEl.getAttribute('data-qa-highlight')) return;
+
+        bad++;
+        try { window.__qa_highlight(r, 'red'); } catch { /* ignore */ }
       });
       return bad;
     });
 
-    if (coveredCount > 0) {
+    if (coveredCount >= 2) {
       var coveredShot = 'covered-elements-' + Date.now() + '.png';
       await safeShot(coveredShot);
       addIssue('Covered Interactive Elements', { count: coveredCount, screenshot: coveredShot, severity: 'major' });
@@ -1022,13 +1054,16 @@ img.addEventListener('error', function done() {
       var count = 0;
       var centerX = window.innerWidth / 2;
 
-      document.querySelectorAll('section,h1,h2,h3,.container,[class*=container]').forEach(function(el) {
+      document.querySelectorAll('h1,h2,h3').forEach(function(el) {
         var r = el.getBoundingClientRect();
         var s = getComputedStyle(el);
         if (!isVis(el, { minWidth: 100, minHeight: 30 })) return;
+        // Full-bleed sections are not "misaligned center"
+        if (r.width > window.innerWidth * 0.85) return;
         if (s.textAlign === 'center') {
           var elCenter = r.left + r.width / 2;
-          if (Math.abs(elCenter - centerX) > 30 && r.width > 200) {
+          // 80px slack — sidebars / multi-column layouts often look "off" at 30px
+          if (Math.abs(elCenter - centerX) > 80 && r.width > 200) {
             count++;
             try { window.__qa_highlight(r, 'blue'); } catch { /* ignore */ }
           }
@@ -1037,7 +1072,7 @@ img.addEventListener('error', function done() {
       return count;
     });
 
-    if (misalignedCount > 0) {
+    if (misalignedCount >= 2) {
       var misalignedShot = 'misaligned-' + Date.now() + '.png';
       await safeShot(misalignedShot);
       addIssue('Misaligned Layout', { count: misalignedCount, screenshot: misalignedShot, severity: 'minor' });
@@ -1056,6 +1091,7 @@ img.addEventListener('error', function done() {
         var kids = Array.from(parent.children).filter(function(k) {
           var r = k.getBoundingClientRect();
           var s = getComputedStyle(k);
+          if (s.position === 'absolute' || s.position === 'fixed') return false;
           return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
         });
         if (kids.length < 2) return;
@@ -1063,13 +1099,15 @@ img.addEventListener('error', function done() {
         for (var i = 1; i < kids.length; i++) {
           var a = kids[i - 1].getBoundingClientRect();
           var b = kids[i].getBoundingClientRect();
+          // Only compare roughly stacked vertical siblings
+          if (Math.abs(a.left - b.left) > 80) continue;
           var gap = b.top - a.bottom;
 
-          // Collapsed: elements overlapping when they shouldn't
-          if (gap < -5) { collapsed++; continue; }
+          // Real overlap of flow siblings (not -5px margin collapse noise)
+          if (gap < -20) { collapsed++; continue; }
 
-          // Excessive: large gap between similar-width siblings
-          if (gap > 200 && Math.abs(a.width - b.width) < 100) {
+          // Only flag very large empty stacks (hero/marketing spacing often ~200–300)
+          if (gap > 420 && Math.abs(a.width - b.width) < 80 && a.height > 40 && b.height > 40) {
             excessive++;
           }
         }
@@ -1078,10 +1116,10 @@ img.addEventListener('error', function done() {
       return { collapsed: collapsed, excessive: excessive };
     });
 
-    if (spacingResult.collapsed > 0) {
+    if (spacingResult.collapsed >= 2) {
       addIssue('Collapsed Spacing', { count: spacingResult.collapsed, severity: 'major' });
     }
-    if (spacingResult.excessive > 0) {
+    if (spacingResult.excessive >= 2) {
       addIssue('Excessive Spacing', { count: spacingResult.excessive, severity: 'minor' });
     }
   } catch { /* ignore */ }
@@ -1095,11 +1133,19 @@ img.addEventListener('error', function done() {
       var isVis = window.__qa_isVisible;
       var lowContrast = 0;
 
-      document.querySelectorAll('p,h1,h2,h3,h4,h5,h6,a,button,label,span,td,th,li').forEach(function(el) {
+      document.querySelectorAll('p,h1,h2,h3,h4,h5,h6,a,button,label,li,td,th').forEach(function(el) {
         if (!isVis(el, { minWidth: 20, minHeight: 10 })) return;
+        // Spans often inherit decorative/icon styles — high FP source; skip bare spans
+        var text = (el.innerText || '').replace(/\s+/g, ' ').trim();
+        if (text.length < 4) return;
+        if (el.closest('[aria-hidden="true"], svg, .sr-only, .visually-hidden')) return;
+
         var s = getComputedStyle(el);
+        if (parseFloat(s.opacity || '1') < 0.85) return;
         var fontSize = parseFloat(s.fontSize);
         var fontWeight = parseInt(s.fontWeight) || 400;
+        // Tiny icon fonts / badge chips
+        if (fontSize > 0 && fontSize < 11) return;
 
         var fg = window.__qa_parseColor(s.color);
         var bg = window.__qa_getEffectiveBg(el);
@@ -1107,7 +1153,9 @@ img.addEventListener('error', function done() {
 
         var cr = window.__qa_contrastRatio(fg, bg);
         var isLargeText = fontSize >= 24 || (fontSize >= 18.66 && fontWeight >= 700);
-        var threshold = isLargeText ? 3.0 : 4.5;
+        // Slightly looser than WCAG to reduce gradient/overlay false positives;
+        // still flags clearly unreadable text
+        var threshold = isLargeText ? 2.6 : 3.5;
 
         if (cr < threshold) {
           lowContrast++;
@@ -1121,7 +1169,8 @@ img.addEventListener('error', function done() {
       return lowContrast;
     });
 
-    if (contrastIssues > 0) {
+    // Ignore 1–2 weak hits (often placeholders / overlays)
+    if (contrastIssues >= 3) {
       var contrastShot = 'low-contrast-' + Date.now() + '.png';
       await safeShot(contrastShot);
       addIssue('Low Color Contrast', { count: contrastIssues, screenshot: contrastShot, severity: 'minor' });
@@ -1148,9 +1197,10 @@ img.addEventListener('error', function done() {
       return window.__qa_clsValue || 0;
     });
 
-    if (clsScore > 0.1) {
+    // 0.1 is Google "good" threshold; only flag clearer shifts to cut noise
+    if (clsScore > 0.15) {
       addIssue('Layout Shift (CLS)', {
-        severity: clsScore > 0.25 ? 'major' : 'minor',
+        severity: clsScore > 0.3 ? 'major' : 'minor',
         details: 'CLS Score: ' + clsScore.toFixed(4)
       });
     }
@@ -1247,6 +1297,37 @@ img.addEventListener('error', function done() {
   } catch { /* ignore */ }
 
   // ═════════════════════════════════════════════════════════════════════════
+  // CONTACT HYPERLINKS — text-first email / phone (optional via job options)
+  // ═════════════════════════════════════════════════════════════════════════
+  try {
+    const {
+      isContactHyperlinkEnabled,
+      runContactHyperlinkCheck,
+      contactFindingsToIssues
+    } = require('../../ui-check/contactHyperlinkCheck');
+    if (isContactHyperlinkEnabled()) {
+      debugLog('Contact hyperlink check...');
+      const contactResult = await runContactHyperlinkCheck(page);
+      const contactIssues = contactFindingsToIssues(contactResult);
+      for (let ci = 0; ci < contactIssues.length; ci++) {
+        const c = contactIssues[ci];
+        addIssue(c.type, {
+          severity: c.severity,
+          details: c.details,
+          count: c.count
+        });
+        const last = issues[issues.length - 1];
+        if (last) {
+          last.contactKind = c.contactKind;
+          last.contactValue = c.contactValue;
+        }
+      }
+    }
+  } catch (contactErr) {
+    debugLog('Contact hyperlink check skipped:', contactErr?.message || contactErr);
+  }
+
+  // ═════════════════════════════════════════════════════════════════════════
   // FINAL SCREENSHOT (only when issues found)
   // ═════════════════════════════════════════════════════════════════════════
   var finalScreenshot = null;
@@ -1277,8 +1358,7 @@ img.addEventListener('error', function done() {
   timestamp: new Date().toISOString()
 };
 
-    debugLog('ENTRY BEING SAVED:', JSON.stringify(reportEntry, null, 2));
-    debugLog('ISSUES BEFORE PUSH:', JSON.stringify(issues, null, 2));
+
     report.push(reportEntry);
     safeWriteReport(reportFile, report);
     debugLog('Report written:', reportFile);
@@ -1286,7 +1366,7 @@ img.addEventListener('error', function done() {
     console.error('[QA] Report write failed:', err.message);
   }
 
-  console.log(`[QA] Done: ${pageUrl} — ${issues.length} issue(s)`);
+  debugLog(`[QA] Done: ${pageUrl} — ${issues.length} issue(s)`);
 
   return {
     url: scenario ? scenario.url : null,

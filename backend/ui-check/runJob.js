@@ -57,6 +57,9 @@ async function main() {
   const { applyJobRuntimeEnv } = require('../shared/services/executionService');
   await applyJobRuntimeEnv(job);
 
+  const { applyContactHyperlinkEnvFromJob } = require('./contactHyperlinkCheck');
+  applyContactHyperlinkEnvFromJob(job);
+
   const handleCancel = async () => {
     cancelSignal.setCancelled(jobDir);
     process.exit(130);

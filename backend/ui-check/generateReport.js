@@ -22,6 +22,11 @@
 const fs = require('fs');
 const path = require('path');
 const { loadJson, ensureDir } = require('./utils/reportUtils');
+const {
+  isContactHyperlinkIssue,
+  aggregateContactHyperlinkIssues,
+  renderContactHyperlinkSectionHtml
+} = require('./contactHyperlinkCheck');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
@@ -386,10 +391,16 @@ if (fs.existsSync(resolvedScreenshotFolder)) {
   //   }
   // }
 
+  // Contact hyperlinks: aggregate once per email/phone with all page URLs
+  const contactAggregate = aggregateContactHyperlinkIssues(entries);
+  const contactSectionHtml = renderContactHyperlinkSectionHtml(contactAggregate, escapeHtml);
+
   // ── Issue Table Rows ───────────────────────────────────────────────────────
+  // Contact hyperlink issues appear only in the aggregated section (not repeated per page)
   let issueRowsHtml = '';
   for (const e of entries) {
     for (const issue of e.issues) {
+      if (isContactHyperlinkIssue(issue)) continue;
       const severity = classifySeverity(issue);
       const label = issueLabel(issue);
       const category = classifyCategory(issue);
@@ -867,6 +878,8 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
         <div class="exec-status">${healthStatus}</div>
       </div>
     </div>
+
+    ${contactSectionHtml}
 
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <!-- STATISTICS DASHBOARD                                               -->

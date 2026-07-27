@@ -22,6 +22,11 @@
 const fs = require('fs');
 const path = require('path');
 const { loadJson, ensureDir } = require('./utils/reportUtils');
+const {
+  isContactHyperlinkIssue,
+  aggregateContactHyperlinkIssues,
+  renderContactHyperlinkSectionHtml
+} = require('../../ui-check/contactHyperlinkCheck');
 
 const REPORT_DEBUG = process.env.QA_DEBUG === '1';
 function reportDebug(...args) {
@@ -423,10 +428,15 @@ module.exports = function generateReport({
   //   }
   // }
 
+  // Contact hyperlinks: one contact → all page URLs (not repeated per page in the main table)
+  const contactAggregate = aggregateContactHyperlinkIssues(entries);
+  const contactSectionHtml = renderContactHyperlinkSectionHtml(contactAggregate, escapeHtml);
+
   // ── Issue Table Rows ───────────────────────────────────────────────────────
   let issueRowsHtml = '';
   for (const e of entries) {
     for (const issue of e.issues) {
+      if (isContactHyperlinkIssue(issue)) continue;
       const severity = classifySeverity(issue);
       const label = issueLabel(issue);
       const category = classifyCategory(issue);
@@ -944,6 +954,8 @@ module.exports = function generateReport({
         <div class="exec-status">${healthStatus}</div>
       </div>
     </div>
+
+    ${contactSectionHtml}
 
     <!-- ════════════════════════════════════════════════════════════════════ -->
     <!-- STATISTICS DASHBOARD                                               -->
