@@ -46,6 +46,7 @@ type ErrorCheckReport = {
     url: string;
     statusCode?: number;
     detectedErrors?: string[];
+    isBroken?: boolean;
   }>;
 };
 
@@ -362,10 +363,12 @@ export default function LinkRadarPage() {
                     const ok = exportErrorCheckCsv(
                       reportData.brokenPages || [],
                       reportData.brokenLinks || [],
-                      reportData.allCheckedUrls || []
+                      reportData.allCheckedUrls || [],
+                      "link-radar",
+                      reportData.url || ""
                     );
-                    if (!ok) toast.error("No data to export");
-                    else toast.success("CSV downloaded");
+                    if (!ok) toast.error("No broken pages to export");
+                    else toast.success("CSV + Excel (formatted) downloaded");
                   }}
                   onCopyLinks={async () => {
                     const links = collectErrorCheckLinks(

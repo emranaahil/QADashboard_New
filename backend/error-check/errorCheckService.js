@@ -79,6 +79,7 @@ async function gotoWithRateLimitRetry(page, url, sleepFn) {
 const { moduleReportsDir } = require('../shared/storagePaths');
 const { normalizeErrorCheckOptions } = require('../shared/errorCheckLimits');
 const ephemeralLiveReports = require('../shared/ephemeralLiveReports');
+const { explainBrokenPage } = require('../shared/linkRadarIssueExplain');
 const REPORTS_DIR = moduleReportsDir('error-check');
 
 function saveReport(startUrl, result, sessionId = null) {
@@ -223,18 +224,70 @@ function beginProgress(maxUrls) {
   progress.lastUpdated = Date.now();
 }
 
-const ERROR_TEXT_PATTERNS = [
-  'page not found', '404', 'not found', 'error 404',
-  'sorry, this page', 'this page doesn\'t exist',
-  'page cannot be found', 'the page you requested',
-  'page you were looking for', 'oops! something went wrong',
-  'internal server error', 'page is unavailable',
-  'under construction', 'coming soon',
-  'temporarily unavailable', 'content not available',
-  'this content has been removed', 'access denied',
-  'you do not have permission', 'login required',
-  'the requested page could not be found'
+/**
+ * High-confidence error phrases — may match in page body.
+ * Avoid ultra-short tokens like bare "404" / "not found" alone (too many false positives).
+ */
+const ERROR_TEXT_PATTERNS_STRICT = [
+  'page not found',
+  'error 404',
+  'sorry, this page',
+  "this page doesn't exist",
+  'this page does not exist',
+  'page cannot be found',
+  'the page you requested',
+  'page you were looking for',
+  'the requested page could not be found',
+  'internal server error',
+  'this content has been removed',
+  'you do not have permission'
 ];
+
+/**
+ * Soft / common English phrases that often appear in normal marketing copy.
+ * Only treat as broken when the page looks like an error page (bad HTTP status,
+ * or phrase in title / main heading) — not merely anywhere in body text.
+ */
+const ERROR_TEXT_PATTERNS_SOFT = [
+  'temporarily unavailable',
+  'page is unavailable',
+  'content not available',
+  'under construction',
+  'coming soon',
+  'oops! something went wrong',
+  'access denied',
+  'login required'
+];
+
+/**
+ * @param {string} fullText lowercase title + body
+ * @param {string} title lowercase title
+ * @param {string} h1Text lowercase main heading
+ * @param {number} statusCode
+ * @returns {string[]} matched pattern labels
+ */
+function matchErrorContentPatterns(fullText, title, h1Text, statusCode) {
+  const matches = [];
+  const status = Number(statusCode) || 0;
+  // Soft phrases + HTTP only when the response itself looks like an error (not 429/503 rate-limit)
+  const softHttpGate = status >= 400 && !isRateLimitStatus(status);
+
+  for (const pat of ERROR_TEXT_PATTERNS_STRICT) {
+    if (fullText.includes(pat)) matches.push(pat);
+  }
+
+  for (const pat of ERROR_TEXT_PATTERNS_SOFT) {
+    if (!fullText.includes(pat)) continue;
+    // Soft phrase only if title/h1 contains it, or HTTP status is an error
+    const inTitleOrH1 =
+      (title && title.includes(pat)) || (h1Text && h1Text.includes(pat));
+    if (inTitleOrH1 || softHttpGate) {
+      matches.push(pat);
+    }
+  }
+
+  return matches;
+}
 
 async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
   const normalized = normalizeErrorCheckOptions(options);
@@ -360,6 +413,10 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       let outgoing = [];
       let statusCode = 0;
       let finalUrl = url;
+      let pageTitle = '';
+      let pageH1 = '';
+      let contentLength = 0;
+      let hasSubstantialContent = false;
 
       try {
         const nav = await gotoWithRateLimitRetry(page, url, sleep);
@@ -371,7 +428,7 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
             url,
             statusCode,
             finalUrl,
-            note: 'Rate limited by server (HTTP 429/503 or Cloudflare) — page not marked broken'
+            note: 'Rate limited by server (HTTP 429/503 or Cloudflare) — page not marked broken. Often opens fine in a normal browser.'
           });
           pageData.set(url, {
             isBroken: false,
@@ -397,22 +454,38 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
 
           const evalResult = await page.evaluate(() => {
             const text = document.body ? document.body.innerText.toLowerCase() : '';
-            return { text };
+            const h1 = document.querySelector('h1');
+            const h1Text = h1 ? (h1.innerText || h1.textContent || '').toLowerCase() : '';
+            const h1Raw = h1 ? (h1.innerText || h1.textContent || '').trim() : '';
+            return {
+              text,
+              h1Text,
+              h1Raw,
+              contentLength: text.length
+            };
           });
 
-          const title = await page.title();
-          const fullText = (title.toLowerCase() + ' ' + evalResult.text).toLowerCase();
+          const titleRaw = await page.title();
+          const title = String(titleRaw || '').toLowerCase();
+          pageTitle = String(titleRaw || '').trim();
+          pageH1 = String(evalResult.h1Raw || '').trim();
+          contentLength = Number(evalResult.contentLength) || 0;
+          hasSubstantialContent = contentLength > 800;
+          const bodyText = String(evalResult.text || '');
+          const h1Text = String(evalResult.h1Text || '');
+          const fullText = `${title} ${bodyText}`.toLowerCase();
 
-          for (const pat of ERROR_TEXT_PATTERNS) {
-            if (fullText.includes(pat)) detectedErrors.push(pat);
-          }
-
-          if (detectedErrors.length > 0) isBroken = true;
+          // Soft phrases (e.g. "temporarily unavailable") only when title/h1 or HTTP error —
+          // not when the words appear deep in normal page copy.
+          const contentHits = matchErrorContentPatterns(fullText, title, h1Text, statusCode);
+          for (const pat of contentHits) detectedErrors.push(pat);
 
           if (statusCode >= 400 && !isRateLimitStatus(statusCode)) {
             detectedErrors.push('http ' + statusCode);
             isBroken = true;
           }
+
+          if (detectedErrors.length > 0) isBroken = true;
 
           const hrefs = await page.evaluate(() =>
             Array.from(document.querySelectorAll('a[href]')).map(a => a.getAttribute('href')).filter(Boolean)
@@ -436,25 +509,50 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
         console.warn(`Failed to load ${url}: ${e.message}`);
       }
 
-      pageData.set(url, {
+      const errs = [...new Set(detectedErrors)];
+      const pageMeta = {
         isBroken,
-        detectedErrors: [...new Set(detectedErrors)],
+        detectedErrors: errs,
         outgoingLinks: outgoing,
         statusCode,
-        finalUrl
-      });
+        finalUrl,
+        pageTitle,
+        pageH1,
+        contentLength,
+        hasSubstantialContent
+      };
 
       if (isBroken) {
-        const errs = [...new Set(detectedErrors)];
+        pageMeta.explanation = explainBrokenPage({
+          url,
+          statusCode,
+          finalUrl,
+          detectedErrors: errs,
+          pageTitle,
+          pageH1,
+          hasSubstantialContent,
+          contentLength
+        });
+      }
+
+      pageData.set(url, pageMeta);
+
+      if (isBroken) {
         brokenPages.push({
           url,
           detectedErrors: errs,
           statusCode,
-          finalUrl
+          finalUrl,
+          pageTitle,
+          pageH1,
+          hasSubstantialContent,
+          contentLength,
+          explanation: pageMeta.explanation
         });
         progress.errorCount = (progress.errorCount || 0) + 1;
+        const plain = pageMeta.explanation?.summary || errs.join(', ') || 'error';
         appendLastRunLog(
-          `Broken page: ${url} (HTTP ${statusCode || '—'}) — ${errs.join(', ') || 'error'}`
+          `Broken page: ${url} (HTTP ${statusCode || '—'}) — ${plain}`
         );
       }
 
@@ -510,7 +608,10 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       url: u,
       isBroken: !!d.isBroken,
       detectedErrors: d.detectedErrors || [],
-      statusCode: d.statusCode || 0
+      statusCode: d.statusCode || 0,
+      finalUrl: d.finalUrl || u,
+      pageTitle: d.pageTitle || '',
+      explanation: d.explanation || null
     }));
 
     const result = {
@@ -518,7 +619,18 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
       brokenPages: brokenPages.sort((a,b) => a.url.localeCompare(b.url)),
       brokenLinks: uniqueBL.sort((a,b) => a.foundIn.localeCompare(b.foundIn)),
       rateLimitedPages: rateLimitedPages.sort((a, b) => a.url.localeCompare(b.url)),
-      allCheckedUrls: allChecked
+      allCheckedUrls: allChecked,
+      // Help readers understand what the report means (shown in HTML)
+      reportGuide: {
+        title: 'How to read this report (simple)',
+        bullets: [
+          'Broken page = we opened the URL and found a problem (bad server status and/or error text on the page).',
+          'Status column = the HTTP code for the main page. Healthy public pages should be 200.',
+          '“Looks fine, but flagged” = the page may open and look normal, but the server status is still wrong (common with 410).',
+          'How to double-check: Chrome → F12 → Network → first Doc/document row → Status. Images can be 200 while the page is 404/410.',
+          'Broken links = other pages still point to a broken URL. Rate limited = temporary block of our crawler (not counted as broken).'
+        ]
+      }
     };
 
     saveReport(startUrl, result, lastRun.sessionId);

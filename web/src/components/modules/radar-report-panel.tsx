@@ -61,7 +61,7 @@ export function RadarReportPanel({
           Open HTML Report
         </Button>
         <Button type="button" size="sm" variant="secondary" onClick={handleExport} disabled={!hasData}>
-          Export CSV
+          Download CSV
         </Button>
         <Button type="button" size="sm" variant="secondary" onClick={handleCopy} disabled={!hasData}>
           Copy All Links
@@ -86,7 +86,7 @@ export function RadarReportPanel({
             title="Report"
             src={htmlUrl}
             className="h-[min(70vh,720px)] w-full border-0 bg-background"
-            sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+            sandbox="allow-same-origin allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox"
             onLoad={(event) => {
               setIframeLoading(false);
               const iframe = event.currentTarget;
