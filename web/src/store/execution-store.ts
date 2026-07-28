@@ -412,11 +412,16 @@ export function useModuleJob(moduleId: string) {
 
 /** Running job count — primitive selector, safe for useSyncExternalStore. */
 export function useRunningModuleCount() {
-  return useExecutionStore((state) => {
+  const jobCount = useExecutionStore((state) => {
     let count = 0;
     for (const slice of Object.values(state.moduleJobs)) {
       if (slice.status === "running" || slice.isCancelling) count++;
     }
     return count;
   });
+  // Link Radar / Keyword Radar run via scan-store — include them in the tray badge total
+  const scanRunning = useScanStore(
+    (s) => s.status === "running" || s.isCancelling
+  );
+  return jobCount + (scanRunning ? 1 : 0);
 }

@@ -156,6 +156,10 @@ function failLastRun(error) {
   lastRun.status = 'failed';
   lastRun.error = error.message || String(error);
   lastRun.completedAt = new Date().toISOString();
+  // Keep progress in sync — otherwise status API keeps reporting "running"
+  progress.status = 'failed';
+  progress.currentUrl = '';
+  progress.lastUpdated = Date.now();
   appendLastRunLog(`[ERROR] ${lastRun.error}`);
   if (error.stack) appendLastRunLog(error.stack);
 }
@@ -163,6 +167,9 @@ function failLastRun(error) {
 function completeLastRun(summary) {
   lastRun.status = 'completed';
   lastRun.completedAt = new Date().toISOString();
+  progress.status = 'completed';
+  progress.currentUrl = '';
+  progress.lastUpdated = Date.now();
   appendLastRunLog(summary);
 }
 
@@ -171,13 +178,22 @@ function getLastRun() {
 }
 
 function renderLastRunLogsHtml() {
-  if (!lastRun.id && lastRun.status === 'idle') return null;
-
+  // Always return HTML so "View Log" never 404s — empty state is still useful
   const lines = [];
+  if (!lastRun.id && lastRun.status === 'idle' && !(lastRun.logs || []).length) {
+    lines.push('No Link Radar run yet. Start a check to see live logs here.');
+  }
   if (lastRun.error) lines.push(`[ERROR] ${lastRun.error}`);
   for (const entry of lastRun.logs || []) {
     const stamp = entry.at ? `[${entry.at}] ` : '';
     lines.push(`${stamp}${entry.message}`);
+  }
+
+  if (progress.status === 'running' && progress.currentUrl) {
+    lines.push(`[LIVE] Checking: ${progress.currentUrl}`);
+    lines.push(
+      `[LIVE] Progress: ${progress.checked || 0}/${progress.total || '?'} pages · errors=${progress.errorCount || 0}`
+    );
   }
 
   if (progress.recentUrls?.length) {
@@ -185,17 +201,23 @@ function renderLastRunLogsHtml() {
     for (const url of progress.recentUrls) lines.push(`  ${url}`);
   }
 
-  const isRunning = lastRun.status === 'running';
+  if (!lines.length) {
+    lines.push('Run started — waiting for first log lines…');
+  }
+
+  const isRunning = lastRun.status === 'running' || progress.status === 'running';
   return renderLogHtml({
-    title: 'Error Check Logs',
+    title: 'Link Radar Logs',
     subtitle: lastRun.url || '',
     meta: {
-      Status: lastRun.status,
+      Status: lastRun.status || progress.status || 'idle',
       'Started At': lastRun.startedAt,
-      'Completed At': lastRun.completedAt
+      'Completed At': lastRun.completedAt,
+      Checked: progress.checked,
+      Total: progress.total
     },
     lines,
-    autoRefreshSec: isRunning ? 5 : 0
+    autoRefreshSec: isRunning ? 3 : 0
   });
 }
 
@@ -650,7 +672,16 @@ async function checkForBrokenPages(startUrl, options = {}, runOpts = {}) {
     }
     console.error('Error in checkForBrokenPages:', error);
     failLastRun(error);
-    throw error;
+    // Do not rethrow — startCheck handles terminal state; rethrow caused unhandled rejections
+    // and left progress stuck on "running" for the UI poller.
+    return {
+      checked: progress.checked || 0,
+      failed: true,
+      error: error.message || String(error),
+      brokenPages: [],
+      brokenLinks: [],
+      allCheckedUrls: []
+    };
   } finally {
     if (activeBrowser) {
       await activeBrowser.close().catch(() => {});
@@ -680,15 +711,31 @@ function requestCancel() {
   return true;
 }
 
+function isActivelyRunning() {
+  // In-flight promise always means a run is active
+  if (activeRunPromise) return true;
+  if (lastRun.status === 'running') return true;
+  // Stale progress.running after fail must not block a new start
+  if (
+    progress.status === 'running' &&
+    lastRun.status !== 'failed' &&
+    lastRun.status !== 'cancelled' &&
+    lastRun.status !== 'completed'
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function isCheckRunning(sessionId = null) {
-  const running = Boolean(activeRunPromise) || progress.status === 'running' || lastRun.status === 'running';
+  const running = isActivelyRunning();
   if (!running) return false;
   if (!sessionId) return running;
   return lastRun.sessionId === sessionId;
 }
 
 function isCheckRunningGlobally() {
-  return Boolean(activeRunPromise) || progress.status === 'running' || lastRun.status === 'running';
+  return isActivelyRunning();
 }
 
 function startCheck(startUrl, options = {}, sessionId = null) {
@@ -707,8 +754,24 @@ function startCheck(startUrl, options = {}, sessionId = null) {
   const runId = lastRun.id;
   activeRunPromise = checkForBrokenPages(startUrl, normalized, { skipBegin: true, skipProgressInit: true })
     .catch((err) => {
-      if (!cancelRequested) throw err;
-      return { checked: progress.checked || 0, cancelled: true };
+      // Cancel path
+      if (cancelRequested || lastRun.status === 'cancelled') {
+        return { checked: progress.checked || 0, cancelled: true };
+      }
+      // Ensure failed state even if checkForBrokenPages did not call failLastRun
+      if (lastRun.status !== 'failed') {
+        failLastRun(err);
+      } else {
+        progress.status = 'failed';
+        progress.currentUrl = '';
+        progress.lastUpdated = Date.now();
+      }
+      console.error('Link Radar run failed:', err?.message || err);
+      return {
+        checked: progress.checked || 0,
+        failed: true,
+        error: err?.message || String(err)
+      };
     })
     .finally(() => {
       activeRunPromise = null;
@@ -717,6 +780,8 @@ function startCheck(startUrl, options = {}, sessionId = null) {
       if (wasCancelled) {
         resetProgress();
       }
+      // Leave progress as completed/failed so status API reports a terminal state
+      // until the next beginProgress() on a new run.
     });
   return { runId, promise: activeRunPromise };
 }

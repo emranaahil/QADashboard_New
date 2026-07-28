@@ -346,15 +346,13 @@ router.post('/check-broken-pages/cancel', (req, res) => {
     }
 });
 
-// View error-check logs (HTML page in new tab)
+// View error-check / Link Radar logs (HTML page in new tab)
 router.get('/check-broken-pages/logs', (req, res) => {
     try {
         const html = errorCheckService.renderLastRunLogsHtml();
-        if (!html) {
-            return res.status(404).json({ error: 'NOT_FOUND', message: 'No error check logs available' });
-        }
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.send(html);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.send(html || '<!DOCTYPE html><html><body><pre>No logs available.</pre></body></html>');
     } catch (error) {
         console.error('Error rendering error check logs:', error);
         res.status(500).json({ error: 'LOGS_FAILED', message: error.message });
@@ -390,10 +388,18 @@ router.get('/check-broken-pages/status', (req, res) => {
             });
         }
 
-        let status = prog.status;
-        if (status === 'running' && lastRun.status === 'cancelled') {
+        // Resolve status carefully: lastRun terminal states always win over a stale
+        // progress.status === 'running' (common after Playwright/browser failures).
+        let status = prog.status || 'idle';
+        if (lastRun.status === 'failed') {
+            status = 'failed';
+        } else if (lastRun.status === 'cancelled') {
             status = 'cancelled';
-        } else if (status === 'idle' && lastRun.status === 'running') {
+        } else if (lastRun.status === 'completed') {
+            status = 'completed';
+        } else if (lastRun.status === 'running' || prog.status === 'running') {
+            status = 'running';
+        } else if ((status === 'idle' || !status) && lastRun.status === 'running') {
             status = 'running';
         }
         res.json({

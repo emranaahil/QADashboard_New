@@ -102,15 +102,6 @@ export default function LinkRadarPage() {
       isCancelling ||
       statusLine === "Starting check…" ||
       statusLine === "Checking pages…");
-  const showViewLog =
-    isLinkActive &&
-    (scanStatus === "running" ||
-      scanStatus === "success" ||
-      scanStatus === "cancelled" ||
-      scanStatus === "failed" ||
-      isCancelling ||
-      Boolean(errorMessage));
-
   const loadReports = useCallback(async (selectFirst = false) => {
     try {
       const data = await fetchJson<{ reports: ReportMeta[] }>(`/api/modules/${MODULE_ID}/reports`);
@@ -237,9 +228,7 @@ export default function LinkRadarPage() {
                   {isCancelling ? "Cancelling…" : "Stop Check"}
                 </Button>
               ) : null}
-              {showViewLog ? (
-                <ViewLogButton kind="error-check" className="h-11 rounded-lg" />
-              ) : null}
+              <ViewLogButton kind="error-check" className="h-11 rounded-lg" />
             </RunTestActionsPanel>
             {statusLine ? <p className="text-xs text-muted-foreground">{statusLine}</p> : null}
           </CardContent>
@@ -264,11 +253,9 @@ export default function LinkRadarPage() {
               {currentUrl ? (
                 <p className="text-xs text-muted-foreground">Checking: {currentUrl}</p>
               ) : null}
-              {showViewLog ? (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <ViewLogButton kind="error-check" size="sm" />
-                </div>
-              ) : null}
+              <div className="flex flex-wrap gap-2 pt-1">
+                <ViewLogButton kind="error-check" size="sm" />
+              </div>
             </CardContent>
           </Card>
         ) : null}

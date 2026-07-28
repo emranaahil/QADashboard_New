@@ -296,10 +296,17 @@ function resolveErrorPollStatus(
   current: ScanStore
 ): ScanStatus {
   const mapped = mapErrorStatus(serverStatus);
+  // Terminal states from server always win
+  if (mapped === "success" || mapped === "failed" || mapped === "cancelled") {
+    return mapped;
+  }
+  // Brief race after start: server may still say idle while we already set running
   if (
     mapped === "idle" &&
     current.moduleId === "error-check" &&
-    (current.status === "running" || current.message === "Checking pages…" || current.message === "Starting check…")
+    current.status === "running" &&
+    !current.isCancelling &&
+    (current.message === "Checking pages…" || current.message === "Starting check…")
   ) {
     return "running";
   }
@@ -308,15 +315,39 @@ function resolveErrorPollStatus(
 
 function startErrorPolling(get: () => ScanStore, set: (p: Partial<ScanStore>) => void) {
   stopPolling();
+  let consecutivePollErrors = 0;
 
   const poll = async () => {
     try {
       const data = await api.getErrorCheckStatus();
+      consecutivePollErrors = 0;
       const current = get();
       const mapped = resolveErrorPollStatus(data.status, current);
       const processed = data.stats?.urlsProcessed || data.checked || 0;
       const total = data.total || data.stats?.urlsDiscovered || 0;
-      const pct = total ? Math.min(100, Math.round((processed / total) * 100)) : processed > 0 ? 5 : 0;
+      const pct =
+        total > 0
+          ? Math.min(100, Math.round((processed / total) * 100))
+          : processed > 0
+            ? Math.min(95, Math.max(5, processed * 2))
+            : mapped === "running"
+              ? Math.max(current.progress, 2)
+              : current.progress;
+
+      const message =
+        mapped === "running"
+          ? data.currentUrl
+            ? `Checking: ${data.currentUrl}`
+            : "Checking pages…"
+          : mapped === "success"
+            ? "Completed"
+            : mapped === "failed"
+              ? data.error || "Check failed"
+              : mapped === "cancelled"
+                ? "Cancelled"
+                : mapped === "idle"
+                  ? current.message
+                  : data.status || "";
 
       set({
         moduleId: "error-check",
@@ -325,7 +356,7 @@ function startErrorPolling(get: () => ScanStore, set: (p: Partial<ScanStore>) =>
         errorCount: data.stats?.errorCount || 0,
         currentUrl: data.currentUrl || "",
         progress: mapped === "running" ? pct : mapped === "success" ? 100 : current.progress,
-        message: mapped === "running" ? "Checking pages…" : mapped === "idle" ? current.message : data.status || "",
+        message,
         errorMessage: mapped === "failed" ? data.error || "Check failed" : "",
       });
 
@@ -337,7 +368,17 @@ function startErrorPolling(get: () => ScanStore, set: (p: Partial<ScanStore>) =>
         else if (mapped === "cancelled") toast.info("Check cancelled");
       }
     } catch {
-      /* ignore transient poll errors while running */
+      // Ignore a few transient errors; after many, mark failed so UI is not stuck on Running
+      consecutivePollErrors += 1;
+      if (consecutivePollErrors >= 8 && get().status === "running") {
+        stopPolling();
+        set({
+          status: "failed",
+          errorMessage: "Lost connection to server while Link Radar was running",
+          message: "Failed",
+        });
+        toast.error("Lost connection to server while Link Radar was running");
+      }
     }
   };
 

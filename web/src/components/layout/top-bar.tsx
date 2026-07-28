@@ -28,7 +28,7 @@ export function TopBar({
   subtitle?: string;
   onMenuClick?: () => void;
 }) {
-  const runningJobCount = useRunningModuleCount();
+  const runningTotalCount = useRunningModuleCount();
   const drawerModuleId = useExecutionStore((s) => s.drawerModuleId);
   const moduleJobs = useExecutionStore((s) => s.moduleJobs);
 
@@ -37,26 +37,40 @@ export function TopBar({
   const scanCancelling = useScanStore((s) => s.isCancelling);
   const scanModuleId = useScanStore((s) => s.moduleId);
 
+  // Real job-engine modules only (do NOT treat scan count as a job — that forced Idle badge)
+  const realJobRunning = Object.values(moduleJobs).some(
+    (slice) => slice.status === "running" || slice.isCancelling
+  );
+  // Show scan while running OR after finish until user dismisses tray (status !== idle)
+  const scanActive = Boolean(scanModuleId && scanStatus !== "idle");
   const scanRunning = scanStatus === "running" || scanCancelling;
   const parallel = isParallelExecutionEnabled();
-  const jobRunning = runningJobCount > 0;
 
   const focusModuleId =
     drawerModuleId ||
     Object.entries(moduleJobs).find(
       ([, slice]) => slice.status === "running" || slice.isCancelling
-    )?.[0];
+    )?.[0] ||
+    Object.entries(moduleJobs).find(([, slice]) => slice.status !== "idle")?.[0];
   const focusSlice = focusModuleId ? moduleJobs[focusModuleId] : null;
 
-  const activeKind = jobRunning ? "job" : scanRunning ? "scan" : null;
-  const status = activeKind === "job" ? focusSlice?.status ?? "idle" : activeKind === "scan" ? scanStatus : "idle";
-  const progress = activeKind === "job" ? focusSlice?.progress ?? 0 : scanProgress;
-  const isCancelling = activeKind === "job" ? focusSlice?.isCancelling ?? false : scanCancelling;
+  // Prefer an actively running job; otherwise show Link/Keyword Radar scan status
+  const activeKind = realJobRunning ? "job" : scanActive ? "scan" : focusSlice ? "job" : null;
+  const status =
+    activeKind === "job"
+      ? focusSlice?.status ?? "idle"
+      : activeKind === "scan"
+        ? scanStatus
+        : "idle";
+  const progress =
+    activeKind === "job" ? focusSlice?.progress ?? 0 : activeKind === "scan" ? scanProgress : 0;
+  const isCancelling =
+    activeKind === "job" ? focusSlice?.isCancelling ?? false : activeKind === "scan" ? scanCancelling : false;
 
   const activeModuleLabel =
     activeKind === "job"
-      ? parallel && runningJobCount > 1
-        ? `${runningJobCount} modules`
+      ? parallel && runningTotalCount > 1
+        ? `${runningTotalCount} modules`
         : moduleLabel(focusModuleId || "test")
       : activeKind === "scan"
         ? moduleLabel(scanModuleId || "scan")
