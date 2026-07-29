@@ -59,7 +59,27 @@ function serverExposesVersion(value) {
 function hasPermissionsPolicyRestrictions(value) {
   const policy = String(value || '').trim();
   if (!policy) return false;
-  return /(?:geolocation|camera|microphone|payment|usb)\s*=\s*\([^)]*\)/i.test(policy);
+  // Explicit device-API lockdown (recommended shape)
+  if (/(?:geolocation|camera|microphone|payment|usb)\s*=\s*\([^)]*\)/i.test(policy)) {
+    return true;
+  }
+  // Any non-empty Permissions-Policy is better than none (many valid site policies
+  // only list interest-cohort / browsing-topics / etc.)
+  return policy.length >= 3;
+}
+
+/** Weak Referrer-Policy values that leak full URLs too aggressively. */
+function isWeakReferrerPolicy(value) {
+  const v = String(value || '')
+    .trim()
+    .toLowerCase();
+  if (!v) return true;
+  return v === 'unsafe-url' || v === 'no-referrer-when-downgrade';
+}
+
+/** CSP frame-ancestors is the modern replacement for X-Frame-Options. */
+function cspHasFrameAncestors(cspValue) {
+  return /frame-ancestors\s+/i.test(String(cspValue || ''));
 }
 
 /**
@@ -239,19 +259,37 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
   );
   if (!hstsPass) recordIssue('critical', "Strict-Transport-Security: must contain 'max-age'");
 
+  // X-Frame-Options OR modern CSP frame-ancestors (either is enough for clickjacking baseline)
   const xfo = getHeaderValue(map, 'x-frame-options');
-  const xfoPass = /^(DENY|SAMEORIGIN)$/i.test(String(xfo).trim());
+  const xfoClassic = /^(DENY|SAMEORIGIN)$/i.test(String(xfo).trim());
+  const frameAncestorsOk = cspHasFrameAncestors(csp);
+  const xfoPass = xfoClassic || frameAncestorsOk;
+  let xfoMessage = 'OK';
+  if (xfoPass && xfoClassic) xfoMessage = 'OK';
+  else if (xfoPass && frameAncestorsOk) {
+    xfoMessage = "OK — framing protected via CSP frame-ancestors (X-Frame-Options not required)";
+  } else if (String(xfo).trim()) {
+    xfoMessage = "X-Frame-Options invalid (use DENY/SAMEORIGIN) and no CSP frame-ancestors";
+  } else {
+    xfoMessage =
+      "Missing framing protection — set X-Frame-Options DENY/SAMEORIGIN or CSP frame-ancestors";
+  }
   results.push(
     buildResult({
       header: 'X-Frame-Options',
       category: 'essential',
       severity: 'critical',
       pass: xfoPass,
-      value: xfo,
-      message: xfoPass ? 'OK' : "X-Frame-Options must be 'DENY' or 'SAMEORIGIN'"
+      value: xfo || (frameAncestorsOk ? '(via CSP frame-ancestors)' : xfo),
+      message: xfoMessage
     })
   );
-  if (!xfoPass) recordIssue('critical', "X-Frame-Options: must be 'DENY' or 'SAMEORIGIN'");
+  if (!xfoPass) {
+    recordIssue(
+      'critical',
+      "X-Frame-Options / CSP: set X-Frame-Options to 'DENY' or 'SAMEORIGIN', or CSP frame-ancestors"
+    );
+  }
 
   const xcto = getHeaderValue(map, 'x-content-type-options');
   const xctoPass = String(xcto).trim().toLowerCase() === 'nosniff';
@@ -269,7 +307,9 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
 
   // ——— Minor hygiene ———
   const referrer = getHeaderValue(map, 'referrer-policy');
-  const referrerPass = Boolean(String(referrer).trim());
+  const referrerPresent = Boolean(String(referrer).trim());
+  const referrerWeak = isWeakReferrerPolicy(referrer);
+  const referrerPass = referrerPresent && !referrerWeak;
   results.push(
     buildResult({
       header: 'Referrer-Policy',
@@ -277,10 +317,21 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
       severity: 'minor',
       pass: referrerPass,
       value: referrer,
-      message: referrerPass ? 'OK' : 'Referrer-Policy missing or empty'
+      message: !referrerPresent
+        ? 'Referrer-Policy missing or empty'
+        : referrerWeak
+          ? `Weak Referrer-Policy "${String(referrer).trim()}" (avoid unsafe-url / no-referrer-when-downgrade)`
+          : 'OK'
     })
   );
-  if (!referrerPass) recordIssue('minor', 'Referrer-Policy: must be present');
+  if (!referrerPass) {
+    recordIssue(
+      'minor',
+      referrerPresent
+        ? `Referrer-Policy: weak value "${String(referrer).trim()}" — use strict-origin-when-cross-origin or stricter`
+        : 'Referrer-Policy: must be present'
+    );
+  }
 
   const permissions = getHeaderValue(map, 'permissions-policy');
   const permissionsPass = hasPermissionsPolicyRestrictions(permissions);
@@ -292,36 +343,47 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
       pass: permissionsPass,
       value: permissions,
       message: permissionsPass
-        ? 'OK'
-        : 'Permissions-Policy missing or does not restrict device APIs (e.g. geolocation=())'
+        ? String(permissions).trim()
+          ? 'OK'
+          : 'OK'
+        : 'Permissions-Policy missing or empty (recommend restricting geolocation/camera/etc.)'
     })
   );
   if (!permissionsPass) {
-    recordIssue(
-      'minor',
-      'Permissions-Policy: must be present and restrict device APIs like geolocation'
-    );
+    recordIssue('minor', 'Permissions-Policy: must be present (non-empty)');
   }
 
+  // CORP: optional on HTML documents — only fail if present with a bad value
   const corp = getHeaderValue(map, 'cross-origin-resource-policy');
-  const corpPass = /^(same-origin|same-site)$/i.test(String(corp).trim());
+  const corpPresent = Boolean(String(corp).trim());
+  const corpValid = /^(same-origin|same-site|cross-origin)$/i.test(String(corp).trim());
+  const corpPass = !corpPresent || corpValid;
   results.push(
     buildResult({
       header: 'Cross-Origin-Resource-Policy',
       category: 'essential',
-      severity: 'minor',
+      severity: 'warning',
       pass: corpPass,
       value: corp,
-      message: corpPass ? 'OK' : "Cross-Origin-Resource-Policy must be 'same-origin' or 'same-site'"
+      message: !corpPresent
+        ? 'Not present (optional for HTML pages; recommended for APIs/static assets)'
+        : corpValid
+          ? 'OK'
+          : "Invalid Cross-Origin-Resource-Policy (use same-origin, same-site, or cross-origin)"
     })
   );
-  if (!corpPass) {
-    recordIssue('minor', "Cross-Origin-Resource-Policy: must be 'same-origin' or 'same-site'");
+  if (corpPresent && !corpValid) {
+    recordIssue(
+      'warning',
+      "Cross-Origin-Resource-Policy: invalid value (use same-origin, same-site, or cross-origin)"
+    );
   }
 
-  // ——— Warning: advanced isolation (common to omit) ———
+  // COEP / COOP: advanced isolation — optional; only fail if present but invalid
   const coep = getHeaderValue(map, 'cross-origin-embedder-policy');
-  const coepPass = /^(require-corp|credentialless)$/i.test(String(coep).trim());
+  const coepPresent = Boolean(String(coep).trim());
+  const coepValid = /^(require-corp|credentialless|unsafe-none)$/i.test(String(coep).trim());
+  const coepPass = !coepPresent || coepValid;
   results.push(
     buildResult({
       header: 'Cross-Origin-Embedder-Policy',
@@ -329,23 +391,27 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
       severity: 'warning',
       pass: coepPass,
       value: coep,
-      message: coepPass
-        ? 'OK'
-        : "Cross-Origin-Embedder-Policy must be 'require-corp' or 'credentialless'"
+      message: !coepPresent
+        ? 'Not present (optional — only needed for cross-origin isolation)'
+        : coepValid
+          ? 'OK'
+          : "Invalid Cross-Origin-Embedder-Policy (use require-corp or credentialless)"
     })
   );
-  if (!coepPass) {
+  if (coepPresent && !coepValid) {
     recordIssue(
       'warning',
-      "Cross-Origin-Embedder-Policy: must be 'require-corp' or 'credentialless'"
+      "Cross-Origin-Embedder-Policy: invalid value (use require-corp or credentialless)"
     );
   }
 
   const coop = getHeaderValue(map, 'cross-origin-opener-policy');
-  const coopPass =
-    /^(same-origin|same-origin-allow-popups|noopener-allow-popups)$/i.test(
+  const coopPresent = Boolean(String(coop).trim());
+  const coopValid =
+    /^(same-origin|same-origin-allow-popups|noopener-allow-popups|unsafe-none)$/i.test(
       String(coop).trim()
     );
+  const coopPass = !coopPresent || coopValid;
   results.push(
     buildResult({
       header: 'Cross-Origin-Opener-Policy',
@@ -353,15 +419,17 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
       severity: 'warning',
       pass: coopPass,
       value: coop,
-      message: coopPass
-        ? 'OK'
-        : "Cross-Origin-Opener-Policy must be 'same-origin', 'same-origin-allow-popups', or 'noopener-allow-popups'"
+      message: !coopPresent
+        ? 'Not present (optional — only needed for cross-origin isolation)'
+        : coopValid
+          ? 'OK'
+          : "Invalid Cross-Origin-Opener-Policy"
     })
   );
-  if (!coopPass) {
+  if (coopPresent && !coopValid) {
     recordIssue(
       'warning',
-      "Cross-Origin-Opener-Policy: must be 'same-origin', 'same-origin-allow-popups', or 'noopener-allow-popups'"
+      "Cross-Origin-Opener-Policy: invalid value"
     );
   }
 
@@ -520,6 +588,8 @@ module.exports = {
   isPrivateOrAuthenticatedRoute,
   serverExposesVersion,
   hasPermissionsPolicyRestrictions,
+  isWeakReferrerPolicy,
+  cspHasFrameAncestors,
   // Approximate scored critical/leak checks on a typical public page (dynamic total is authoritative).
   HEADER_CHECK_COUNT: 15
 };
