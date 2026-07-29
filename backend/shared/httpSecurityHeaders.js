@@ -68,6 +68,116 @@ function hasPermissionsPolicyRestrictions(value) {
   return policy.length >= 3;
 }
 
+/** Sensitive device / privacy features used for Permissions-Policy quality. */
+const PP_SENSITIVE_FEATURES = [
+  'geolocation',
+  'camera',
+  'microphone',
+  'payment',
+  'usb',
+  'display-capture',
+  'fullscreen'
+];
+
+/**
+ * feature=() | feature=(self) | feature=("self") | feature=(none)
+ * — treated as restricted for that API.
+ */
+function permissionsFeatureIsRestricted(policy, feature) {
+  const re = new RegExp(
+    `(?:^|[,;\\s])${feature}\\s*=\\s*(?:\\(\\s*\\)|\\(\\s*['"]?self['"]?\\s*\\)|\\(\\s*none\\s*\\))`,
+    'i'
+  );
+  return re.test(String(policy || ''));
+}
+
+/** feature=* — allow all origins (weak for sensitive APIs). */
+function permissionsFeatureIsAllowAll(policy, feature) {
+  const re = new RegExp(`(?:^|[,;\\s])${feature}\\s*=\\s*\\*(?:\\s|$|[,;])`, 'i');
+  return re.test(String(policy || ''));
+}
+
+/**
+ * Rate Permissions-Policy strictness without changing the presence check.
+ * Returns Strict | Moderate | Weak | N/A.
+ */
+function analyzePermissionsPolicyStrictness(value) {
+  const policy = String(value || '').trim();
+  if (!policy) {
+    return {
+      level: 'N/A',
+      pass: true,
+      applicable: false,
+      message: 'N/A — Permissions-Policy not present',
+      reasons: []
+    };
+  }
+
+  const weakReasons = [];
+  for (const feature of PP_SENSITIVE_FEATURES) {
+    if (permissionsFeatureIsAllowAll(policy, feature)) {
+      weakReasons.push(`${feature}=*`);
+    }
+  }
+
+  if (weakReasons.length) {
+    return {
+      level: 'Weak',
+      pass: false,
+      applicable: true,
+      message: `Weak — sensitive APIs allow all origins (${weakReasons.join('; ')})`,
+      reasons: weakReasons
+    };
+  }
+
+  const restrictedSensitive = PP_SENSITIVE_FEATURES.filter((f) =>
+    permissionsFeatureIsRestricted(policy, f)
+  );
+  const privacyTopics =
+    permissionsFeatureIsRestricted(policy, 'interest-cohort') ||
+    permissionsFeatureIsRestricted(policy, 'browsing-topics') ||
+    /interest-cohort\s*=\s*\(\s*\)/i.test(policy) ||
+    /browsing-topics\s*=\s*\(\s*\)/i.test(policy);
+
+  // Strict: most high-risk device APIs locked down
+  if (restrictedSensitive.length >= 4) {
+    return {
+      level: 'Strict',
+      pass: true,
+      applicable: true,
+      message: `Strict — ${restrictedSensitive.length} sensitive APIs restricted (${restrictedSensitive.slice(0, 5).join(', ')})`,
+      reasons: []
+    };
+  }
+
+  // Moderate: some real restrictions (device APIs, empty allowlists, or privacy topics)
+  if (restrictedSensitive.length >= 1 || privacyTopics || /=\s*\(\s*\)/.test(policy)) {
+    const note =
+      restrictedSensitive.length > 0
+        ? `${restrictedSensitive.join(', ')} restricted`
+        : privacyTopics
+          ? 'privacy / topics directives only'
+          : 'some features restricted';
+    return {
+      level: 'Moderate',
+      pass: true,
+      applicable: true,
+      message: `Moderate — ${note}`,
+      reasons: []
+    };
+  }
+
+  // Present but little/no sensitive-API lockdown — still better than missing; do not fail
+  return {
+    level: 'Moderate',
+    pass: true,
+    applicable: true,
+    message:
+      'Moderate — limited sensitive-API coverage (prefer geolocation/camera/microphone/payment/usb = () or (self))',
+    reasons: ['limited sensitive feature restrictions']
+  };
+}
+
 /** Weak Referrer-Policy values that leak full URLs too aggressively. */
 function isWeakReferrerPolicy(value) {
   const v = String(value || '')
@@ -353,6 +463,23 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
     recordIssue('minor', 'Permissions-Policy: must be present (non-empty)');
   }
 
+  // Permissions-Policy Strictness: Weak = minor; N/A when header missing (no double-count)
+  const ppStrict = analyzePermissionsPolicyStrictness(permissions);
+  results.push(
+    buildResult({
+      header: 'Permissions-Policy Strictness',
+      category: 'quality',
+      severity: 'minor',
+      pass: ppStrict.pass,
+      applicable: ppStrict.applicable,
+      value: ppStrict.level,
+      message: ppStrict.message
+    })
+  );
+  if (ppStrict.applicable && !ppStrict.pass) {
+    recordIssue('minor', `Permissions-Policy Strictness: ${ppStrict.message}`);
+  }
+
   // CORP: optional on HTML documents — only fail if present with a bad value
   const corp = getHeaderValue(map, 'cross-origin-resource-policy');
   const corpPresent = Boolean(String(corp).trim());
@@ -582,6 +709,7 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
 module.exports = {
   assertHttpSecurityHeaders,
   analyzeCspStrictness,
+  analyzePermissionsPolicyStrictness,
   normalizeHeaderMap,
   getHeaderValue,
   isProductionUrl,
@@ -591,5 +719,5 @@ module.exports = {
   isWeakReferrerPolicy,
   cspHasFrameAncestors,
   // Approximate scored critical/leak checks on a typical public page (dynamic total is authoritative).
-  HEADER_CHECK_COUNT: 15
+  HEADER_CHECK_COUNT: 16
 };

@@ -2626,8 +2626,13 @@ function renderUnifiedSecurityIssueGroup(criticalItems, minorItems, warningItems
 
 function renderSecurityPassGroup(passedResults) {
   const items = (passedResults || []).map((r) => {
-    // Keep CSP Strictness N/A out of "Pass points" so alignment stays clean.
-    if (r.header === 'CSP Strictness' && r.applicable === false) return null;
+    // Keep Strictness N/A out of "Pass points" so alignment stays clean.
+    if (
+      (r.header === 'CSP Strictness' || r.header === 'Permissions-Policy Strictness') &&
+      r.applicable === false
+    ) {
+      return null;
+    }
     return `${r.header}: ${r.message || 'OK'}`;
   }).filter(Boolean);
   return renderAuditPassGroup({ items, label: 'Pass points' });

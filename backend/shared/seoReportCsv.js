@@ -105,6 +105,7 @@ function parseIssueName(summary) {
     return rest.slice(0, 80);
   }
   if (/^CSP Strictness:/i.test(text)) return 'CSP Strictness';
+  if (/^Permissions-Policy Strictness:/i.test(text)) return 'Permissions-Policy Strictness';
   const colon = text.indexOf(':');
   if (colon > 0) return text.slice(0, colon).trim();
   return text;
@@ -162,6 +163,7 @@ function securityHeaderSeverityTag(issueSummary) {
   if (
     !/^HTTP Security Header:/i.test(s) &&
     !/^CSP Strictness:/i.test(s) &&
+    !/^Permissions-Policy Strictness:/i.test(s) &&
     !/security header/i.test(s)
   ) {
     return null;
@@ -175,7 +177,7 @@ function securityHeaderSeverityTag(issueSummary) {
   ) {
     return 'Warning';
   }
-  // Minor (hygiene / disclosure)
+  // Minor (hygiene / disclosure / PP quality)
   if (
     /referrer-policy|permissions-policy|cross-origin-resource-policy|x-powered-by|server:/.test(t)
   ) {
@@ -199,6 +201,7 @@ function issueModuleCategory(severity, issueSummary) {
   if (
     /^HTTP Security Header:/i.test(s) ||
     /^CSP Strictness:/i.test(s) ||
+    /^Permissions-Policy Strictness:/i.test(s) ||
     /security header/i.test(s)
   ) {
     return 'Security Headers';

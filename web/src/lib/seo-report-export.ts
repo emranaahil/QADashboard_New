@@ -152,6 +152,7 @@ function parseIssueName(summary: string): string {
     return rest.slice(0, 80);
   }
   if (/^CSP Strictness:/i.test(text)) return "CSP Strictness";
+  if (/^Permissions-Policy Strictness:/i.test(text)) return "Permissions-Policy Strictness";
   const colon = text.indexOf(":");
   if (colon > 0) return text.slice(0, colon).trim();
   return text;
@@ -162,6 +163,7 @@ function securityHeaderSeverityTag(issueSummary: string): string | null {
   if (
     !/^HTTP Security Header:/i.test(s) &&
     !/^CSP Strictness:/i.test(s) &&
+    !/^Permissions-Policy Strictness:/i.test(s) &&
     !/security header/i.test(s)
   ) {
     return null;
@@ -237,6 +239,7 @@ function issueModuleCategory(severity: string, issueSummary: string): string {
   if (
     /^HTTP Security Header:/i.test(s) ||
     /^CSP Strictness:/i.test(s) ||
+    /^Permissions-Policy Strictness:/i.test(s) ||
     /security header/i.test(s)
   ) {
     return "Security Headers";

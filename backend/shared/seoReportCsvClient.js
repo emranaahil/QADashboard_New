@@ -96,6 +96,7 @@
       return rest.slice(0, 80);
     }
     if (/^CSP Strictness:/i.test(text)) return 'CSP Strictness';
+    if (/^Permissions-Policy Strictness:/i.test(text)) return 'Permissions-Policy Strictness';
     var colon = text.indexOf(':');
     return colon > 0 ? text.slice(0, colon).trim() : text;
   }
@@ -105,6 +106,7 @@
     if (
       !/^HTTP Security Header:/i.test(s) &&
       !/^CSP Strictness:/i.test(s) &&
+      !/^Permissions-Policy Strictness:/i.test(s) &&
       !/security header/i.test(s)
     ) {
       return null;
@@ -176,7 +178,12 @@
   function issueModuleCategory(severity, issueSummary) {
     var s = String(issueSummary || '');
     if (severity === 'geo') return 'GEO';
-    if (/^HTTP Security Header:/i.test(s) || /^CSP Strictness:/i.test(s) || /security header/i.test(s)) {
+    if (
+      /^HTTP Security Header:/i.test(s) ||
+      /^CSP Strictness:/i.test(s) ||
+      /^Permissions-Policy Strictness:/i.test(s) ||
+      /security header/i.test(s)
+    ) {
       return 'Security Headers';
     }
     if (/^PageSpeed\b|^Page Speed\b/i.test(s) || severity === 'pagespeed') return 'Page Speed';
