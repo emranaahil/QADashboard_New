@@ -56,12 +56,11 @@ export function ApiBanner() {
 
   return (
     <div className="border-b border-amber-500/30 bg-amber-500/10 px-6 py-2 text-center text-xs text-amber-200">
-      API offline — from the project root run{" "}
-      <code className="rounded bg-black/30 px-1">npm run dev</code> (API :3000 + UI :3001). Open{" "}
-      <a href="http://localhost:3001" className="underline">
-        localhost:3001
-      </a>
-      , not port 3000 alone.
+      API offline — from the <strong>project root</strong> run{" "}
+      <code className="rounded bg-black/30 px-1">npm run dev</code> or{" "}
+      <code className="rounded bg-black/30 px-1">npm run dev:restart</code>
+      . This starts API + UI together (see root <code className="rounded bg-black/30 px-1">.env</code>{" "}
+      for ports; this worktree uses API :3010 and UI :3011). Do not run only the web folder.
     </div>
   );
 }

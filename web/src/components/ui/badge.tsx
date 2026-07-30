@@ -22,15 +22,18 @@ const badgeVariants = cva(
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
 
 export function Badge({ className, variant, ...props }: BadgeProps) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+  return (
+    <div className={cn(badgeVariants({ variant: variant ?? "default" }), className)} {...props} />
+  );
 }
 
 export function statusBadgeVariant(
-  status: string
+  status?: string | null
 ): "success" | "failed" | "running" | "warning" | "secondary" {
-  if (status === "completed") return "success";
-  if (status === "failed") return "failed";
-  if (status === "cancelled") return "warning";
-  if (status === "running" || status === "pending") return "running";
+  const s = String(status || "").toLowerCase();
+  if (s === "completed" || s === "done") return "success";
+  if (s === "failed") return "failed";
+  if (s === "cancelled") return "warning";
+  if (s === "running" || s === "pending" || s === "starting") return "running";
   return "secondary";
 }

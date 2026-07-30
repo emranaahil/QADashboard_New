@@ -22,7 +22,7 @@ export function RecentRunsTable({ stats, loading }: { stats: DashboardStats | nu
               <Skeleton key={i} className="h-12 w-full" />
             ))}
           </div>
-        ) : stats.recentRuns.length === 0 ? (
+        ) : !(stats.recentRuns && stats.recentRuns.length) ? (
           <p className="p-4 text-sm text-muted-foreground">No runs yet. Start a test from Quick Actions.</p>
         ) : (
           <table className="w-full table-fixed text-sm">
@@ -43,7 +43,7 @@ export function RecentRunsTable({ stats, loading }: { stats: DashboardStats | nu
               </tr>
             </thead>
             <tbody>
-              {stats.recentRuns.map((run) => {
+              {(stats.recentRuns || []).map((run) => {
                 const showReport =
                   canViewReport({ status: run.status, reportAvailable: run.reportAvailable }) &&
                   !!run.moduleId &&

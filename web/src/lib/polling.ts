@@ -4,10 +4,15 @@
  */
 export function startVisibleInterval(callback: () => void, ms: number): () => void {
   let id: ReturnType<typeof setInterval> | null = null;
+  const fn = typeof callback === "function" ? callback : () => {};
 
   const tick = () => {
     if (typeof document !== "undefined" && document.hidden) return;
-    callback();
+    try {
+      fn();
+    } catch (err) {
+      console.error("[poll]", err);
+    }
   };
 
   const start = () => {

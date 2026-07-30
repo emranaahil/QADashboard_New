@@ -25,6 +25,34 @@ function createRateLimiter({ windowMs = 60_000, max = 120, skip = () => false } 
   };
 }
 
+/** Allow both localhost and 127.0.0.1 for the same UI port (common local mismatch). */
+function expandDevOrigins(baseList) {
+  const set = new Set();
+  for (const raw of baseList) {
+    const o = String(raw || '').trim().replace(/\/$/, '');
+    if (!o) continue;
+    set.add(o);
+    try {
+      const u = new URL(o);
+      if (u.hostname === 'localhost') {
+        u.hostname = '127.0.0.1';
+        set.add(u.origin);
+      } else if (u.hostname === '127.0.0.1') {
+        u.hostname = 'localhost';
+        set.add(u.origin);
+      }
+    } catch {
+      /* ignore invalid */
+    }
+  }
+  // Worktree + default ports
+  for (const port of [3001, 3011, 3000, 3010]) {
+    set.add(`http://localhost:${port}`);
+    set.add(`http://127.0.0.1:${port}`);
+  }
+  return [...set];
+}
+
 function buildCorsOptions({ apiOnly, webAppUrl }) {
   if (apiOnly) {
     return {
@@ -33,10 +61,11 @@ function buildCorsOptions({ apiOnly, webAppUrl }) {
     };
   }
 
-  const origins = (process.env.ALLOWED_ORIGINS || webAppUrl || 'http://localhost:3001')
+  const configured = (process.env.ALLOWED_ORIGINS || webAppUrl || 'http://localhost:3001')
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
+  const origins = expandDevOrigins(configured);
 
   return {
     origin(origin, callback) {

@@ -15,14 +15,15 @@ export function KpiCards({ stats, loading }: { stats: DashboardStats | null; loa
     );
   }
 
+  const trends = stats.trends || { passed: "", failed: "", successRate: "" };
   const items = [
-    { label: "Total Tests", value: stats.totalTests, trend: null },
-    { label: "Passed", value: stats.passed, trend: stats.trends.passed },
-    { label: "Failed", value: stats.failed, trend: stats.trends.failed },
+    { label: "Total Tests", value: stats.totalTests ?? 0, trend: null as string | null },
+    { label: "Passed", value: stats.passed ?? 0, trend: trends.passed || null },
+    { label: "Failed", value: stats.failed ?? 0, trend: trends.failed || null },
     {
       label: "Success Rate",
-      value: `${stats.successRate}%`,
-      trend: stats.trends.successRate,
+      value: `${stats.successRate ?? 0}%`,
+      trend: trends.successRate || null,
     },
   ];
 

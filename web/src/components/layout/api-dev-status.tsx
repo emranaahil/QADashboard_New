@@ -67,8 +67,8 @@ export function ApiDevStatus() {
       )}
       title={
         reachable
-          ? `API connected · started ${health?.startedAt || "unknown"} · UI http://localhost:3001`
-          : "API not reachable. Run: npm run dev:restart"
+          ? `API connected · started ${health?.startedAt || "unknown"} · ${health?.ui || "UI"}`
+          : "API not reachable. From project root run: npm run dev:restart"
       }
     >
       <span className={cn("h-1.5 w-1.5 rounded-full", reachable ? "bg-emerald-400" : "bg-destructive")} />

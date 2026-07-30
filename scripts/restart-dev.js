@@ -53,7 +53,13 @@ for (const port of PORTS) killPort(port);
 const child = spawn(isWin ? 'npm.cmd' : 'npm', ['run', 'dev'], {
   cwd: ROOT,
   stdio: 'inherit',
-  env: process.env,
+  env: {
+    ...process.env,
+    PORT: String(API_PORT),
+    WEB_PORT: String(WEB_PORT),
+    WEB_APP_URL: process.env.WEB_APP_URL || `http://localhost:${WEB_PORT}`,
+    API_URL: process.env.API_URL || `http://127.0.0.1:${API_PORT}`,
+  },
   shell: isWin
 });
 

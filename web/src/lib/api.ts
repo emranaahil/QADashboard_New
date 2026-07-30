@@ -196,7 +196,7 @@ async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> 
   } catch {
     const devHint =
       process.env.NODE_ENV !== "production"
-        ? " Start the backend: npm run dev (port 3000)."
+        ? " From project root run: npm run dev (or npm run dev:restart). API must be up (see .env PORT)."
         : " Please refresh in a moment or try again.";
     throw new ApiError(`Cannot reach QA API.${devHint}`, "NETWORK_ERROR", 0);
   }
@@ -208,7 +208,9 @@ async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> 
     const snippet = (await res.text()).slice(0, 120);
     if (res.status === 404) {
       const devHint =
-        process.env.NODE_ENV !== "production" ? " Is the backend running on port 3000?" : "";
+        process.env.NODE_ENV !== "production"
+          ? " Is the backend running? Use npm run dev from project root."
+          : "";
       throw new ApiError(`API endpoint not found.${devHint}`, "NOT_FOUND", 404);
     }
     throw new ApiError(
