@@ -177,15 +177,17 @@ function securityHeaderSeverityTag(issueSummary) {
   ) {
     return 'Warning';
   }
-  // Minor (hygiene / disclosure / PP quality)
+  // Minor (hygiene / disclosure / PP quality / cookies)
   if (
-    /referrer-policy|permissions-policy|cross-origin-resource-policy|x-powered-by|server:/.test(t)
+    /referrer-policy|permissions-policy|cross-origin-resource-policy|x-powered-by|server:|httponly cookies|secure cookies|samesite cookies/.test(
+      t
+    )
   ) {
     return 'Minor';
   }
   // Critical baseline
   if (
-    /content-security-policy|csp strictness|strict-transport-security|x-frame-options|x-content-type-options|cache-control/.test(
+    /content-security-policy|csp strictness|xss\s*\/\s*csp|strict-transport-security|x-frame-options|clickjacking|x-content-type-options|mime sniffing|cache-control|\bhttps\b|ssl\s*\/\s*tls|mixed content/.test(
       t
     )
   ) {

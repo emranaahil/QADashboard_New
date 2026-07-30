@@ -6,6 +6,19 @@ COPY web/package.json web/package-lock.json ./
 RUN npm ci
 COPY web ./
 ENV API_URL=http://127.0.0.1:3000
+# Baked into Next.js client/metadata at build time (override via docker build --build-arg)
+ARG NEXT_PUBLIC_SITE_URL=https://qadashboard.onrender.com
+ARG NEXT_PUBLIC_BRAND_NAME=Md Imran
+ARG NEXT_PUBLIC_GEO_REGION=IN
+ARG NEXT_PUBLIC_GEO_PLACENAME=India
+ARG NEXT_PUBLIC_GEO_LAT=22.5726
+ARG NEXT_PUBLIC_GEO_LON=88.3639
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
+    NEXT_PUBLIC_BRAND_NAME=$NEXT_PUBLIC_BRAND_NAME \
+    NEXT_PUBLIC_GEO_REGION=$NEXT_PUBLIC_GEO_REGION \
+    NEXT_PUBLIC_GEO_PLACENAME=$NEXT_PUBLIC_GEO_PLACENAME \
+    NEXT_PUBLIC_GEO_LAT=$NEXT_PUBLIC_GEO_LAT \
+    NEXT_PUBLIC_GEO_LON=$NEXT_PUBLIC_GEO_LON
 RUN npm run build
 
 # Stage 2 — production image (Express API + Playwright + Next.js standalone)

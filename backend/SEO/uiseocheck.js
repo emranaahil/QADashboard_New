@@ -20,6 +20,8 @@ const {
 } = require('../shared/services/siteUrlCrawler');
 const {
   assertHttpSecurityHeaders,
+  isSecurityDisplayAdvisory,
+  summarizeSecurityHeaderResults,
   HEADER_CHECK_COUNT
 } = require('../shared/httpSecurityHeaders');
 const {
@@ -1765,9 +1767,19 @@ async function scanPage({
   try {
     const response = await navigatePageWithRetry(page, url, timeoutMs);
     const responseHeaders = response ? response.headers() : {};
-    const securityHeaders = includeSecurityHeaders
-      ? assertHttpSecurityHeaders(responseHeaders, { url })
-      : null;
+    // Prefer headersArray so multi Set-Cookie values are preserved for cookie flag checks
+    let setCookies = [];
+    try {
+      if (response && typeof response.headersArray === 'function') {
+        setCookies = response
+          .headersArray()
+          .filter((h) => String(h.name || '').toLowerCase() === 'set-cookie')
+          .map((h) => h.value)
+          .filter(Boolean);
+      }
+    } catch {
+      setCookies = [];
+    }
     // Wait for load + DOM stability (node/html/anchor counts) so JS-injected links are captured
     // consistently across repeat scans — works site-agnostically without hard-coded selectors.
     try {
@@ -1781,6 +1793,15 @@ async function scanPage({
     if (!domHtml || domHtml.length < 80) {
       throw new Error(`Page content empty or too small after navigation (${domHtml?.length || 0} bytes)`);
     }
+
+    // Security headers after HTML is available (mixed content + full check list)
+    const securityHeaders = includeSecurityHeaders
+      ? assertHttpSecurityHeaders(responseHeaders, {
+          url,
+          html: domHtml,
+          setCookies
+        })
+      : null;
 
     let domExtract = await page.evaluate(() => {
       const getMetaContentByName = (name) => {
@@ -2284,18 +2305,67 @@ function applicableSecurityHeaderResults(results) {
   return (results || []).filter((r) => r.applicable !== false);
 }
 
+/** Display order: critical baseline first, then minor, then advanced/warning, then leaks. */
+const SECURITY_HEADER_DISPLAY_ORDER = [
+  'HTTPS',
+  'SSL / TLS',
+  'TLS Version',
+  'Mixed Content',
+  'XSS / CSP Protection',
+  'Content-Security-Policy',
+  'CSP Strictness',
+  'Strict-Transport-Security',
+  'Clickjacking Protection',
+  'MIME Sniffing Protection',
+  'HttpOnly Cookies',
+  'Secure Cookies',
+  'SameSite Cookies',
+  'Cache-Control',
+  'Referrer-Policy',
+  'Permissions-Policy',
+  'Permissions-Policy Strictness',
+  'Cross-Origin-Resource-Policy',
+  'Cross-Origin-Embedder-Policy',
+  'Cross-Origin-Opener-Policy',
+  'Content-Security-Policy-Report-Only',
+  'Server',
+  'X-Powered-By',
+  'X-XSS-Protection',
+  'Expect-CT'
+];
+
+function securityHeaderDisplayRank(header) {
+  const i = SECURITY_HEADER_DISPLAY_ORDER.indexOf(String(header || ''));
+  return i === -1 ? 500 : i;
+}
+
+function sortSecurityResultsByImportance(list) {
+  return [...(list || [])].sort(
+    (a, b) => securityHeaderDisplayRank(a.header) - securityHeaderDisplayRank(b.header)
+  );
+}
+
 function splitSecurityResultsBySeverity(results) {
-  const failed = failedSecurityHeaderResults(results);
-  const critical = failed.filter((r) => r.severity === 'critical');
-  const minor = failed.filter((r) => r.severity === 'minor');
-  const warning = failed.filter(
+  const applicable = applicableSecurityHeaderResults(results);
+  const failed = applicable.filter((r) => !r.pass);
+  const critical = sortSecurityResultsByImportance(
+    failed.filter((r) => r.severity === 'critical')
+  );
+  const minor = sortSecurityResultsByImportance(failed.filter((r) => r.severity === 'minor'));
+  const failedWarning = failed.filter(
     (r) => r.severity === 'warning' || (r.severity !== 'critical' && r.severity !== 'minor')
+  );
+  const advisoryWarning = applicable.filter((r) => r.pass && isSecurityDisplayAdvisory(r));
+  const warning = sortSecurityResultsByImportance([...failedWarning, ...advisoryWarning]);
+  // True pass only — not advisories, not N/A
+  const passed = sortSecurityResultsByImportance(
+    applicable.filter((r) => r.pass && !isSecurityDisplayAdvisory(r))
   );
   return {
     critical,
     minor,
     warning,
-    passed: applicableSecurityHeaderResults(results).filter((r) => r.pass)
+    passed
   };
 }
 
@@ -2484,10 +2554,29 @@ function computeGeoPassPercent(geoIssueCount) {
 }
 
 function computeSecurityPassPercent(securityHeaders) {
+  const results = securityHeaders?.results || [];
+  if (results.length) {
+    const summary = summarizeSecurityHeaderResults(results);
+    if (!summary.total) return 0;
+    return Math.round((summary.passed / summary.total) * 100);
+  }
   const total = Number(securityHeaders?.total) || 0;
   const passed = Number(securityHeaders?.passed) || 0;
   if (!total) return 0;
   return Math.round((passed / total) * 100);
+}
+
+/** Subtitle "X/Y headers passed" — always derived from the same buckets as the lists. */
+function formatSecurityScoreLabel(securityHeaders) {
+  const results = securityHeaders?.results || [];
+  if (results.length) {
+    const summary = summarizeSecurityHeaderResults(results);
+    return `${summary.label} headers passed`;
+  }
+  if (securityHeaders?.label && securityHeaders.label !== '—') {
+    return `${securityHeaders.label} headers passed`;
+  }
+  return 'HTTP response headers';
 }
 
 function passPercentMeta(percent) {
@@ -2605,6 +2694,55 @@ function renderUnifiedGeoIssueGroup(geoIssues, geoIssueSeverities = null) {
       </div>`;
 }
 
+/** Pass | Fail | Warn badge for security header rows. */
+function renderSecurityResultStatus(status) {
+  const s = String(status || 'fail').toLowerCase();
+  const label = s === 'pass' ? 'Pass' : s === 'warn' ? 'Warn' : 'Fail';
+  return `<span class="security-header-status">${label}</span>`;
+}
+
+/**
+ * One security check line: clear Pass / Fail / Warn badge + header + detail.
+ * @param {{ header?: string, message?: string, value?: string }|string} item
+ * @param {'pass'|'fail'|'warn'|'na'} status
+ */
+function renderSecurityResultLine(item, status) {
+  let header = '';
+  let detail = '';
+  let level = '';
+  if (item && typeof item === 'object') {
+    header = String(item.header || '').trim();
+    detail = String(item.message || item.detail || 'OK').trim();
+    level = String(item.value || '').trim();
+  } else {
+    const formatted = formatIssueLineForDisplay(item);
+    header = formatted.label || '';
+    detail = formatted.detail || String(item || '');
+  }
+  // Prefer explicit grade status for CSP / PP Strictness rows
+  if (header === 'CSP Strictness' || header === 'Permissions-Policy Strictness') {
+    if (/^fail\b/i.test(detail) || level === 'Weak' || level === 'N/A') status = 'fail';
+    else if (/^pass\b/i.test(detail) || level === 'Strict' || level === 'Moderate') status = 'pass';
+  }
+  // Avoid "Fail — Fail — …" when message already starts with Pass/Fail
+  if (/^(pass|fail)\s*[—-]/i.test(detail) && header) {
+    // keep message as-is
+  } else if (status === 'fail' && detail && !/^(pass|fail)\b/i.test(detail)) {
+    detail = `Fail — ${detail}`;
+  } else if (status === 'pass' && detail && !/^(pass|fail)\b/i.test(detail)) {
+    if (!/^(ok|strict|moderate|weak)\b/i.test(detail)) {
+      detail = detail === 'OK' ? 'Pass' : `Pass — ${detail}`;
+    } else if (/^(strict|moderate|weak)\b/i.test(detail)) {
+      detail = `Pass — ${detail}`;
+    } else if (/^ok\b/i.test(detail)) {
+      detail = 'Pass';
+    }
+  }
+  const mod = status === 'pass' ? 'pass' : status === 'warn' ? 'warn' : 'fail';
+  const text = header ? `${header}: ${detail}` : detail;
+  return `<li class="security-header-item security-header-item--${mod}">${renderSecurityResultStatus(status)}<code>${escapeHtml(text)}</code></li>`;
+}
+
 function renderUnifiedSecurityIssueGroup(criticalItems, minorItems, warningItems = []) {
   const critical = criticalItems || [];
   const minor = minorItems || [];
@@ -2612,30 +2750,41 @@ function renderUnifiedSecurityIssueGroup(criticalItems, minorItems, warningItems
   const total = critical.length + minor.length + warning.length;
   const list = total
     ? [
-        ...critical.map((x) => renderTaggedIssueLineItem(x, 'critical')),
-        ...minor.map((x) => renderTaggedIssueLineItem(x, 'minor')),
-        ...warning.map((x) => renderTaggedIssueLineItem(x, 'warning'))
+        ...critical.map((x) => renderSecurityResultLine(x, 'fail')),
+        ...minor.map((x) => renderSecurityResultLine(x, 'fail')),
+        ...warning.map((x) => {
+          // Advisory optional headers → Warn; hard failures stay Fail
+          const msg =
+            typeof x === 'object' && x
+              ? String(x.message || '')
+              : String(x || '');
+          const advisory =
+            /not present/i.test(msg) && /optional/i.test(msg)
+              ? true
+              : /present\s*\(acceptable on non-production\)/i.test(msg);
+          return renderSecurityResultLine(x, advisory ? 'warn' : 'fail');
+        })
       ].join('')
-    : '<li>None detected</li>';
+    : '<li class="security-header-item security-header-item--pass"><span class="security-header-status">Pass</span><code>No failed header checks</code></li>';
   return `
       <div class="audit-issue-group audit-issue-group--unified audit-issue-group--security-issues">
-        <div class="audit-issue-group-head">Issues <span class="audit-issue-count">(${total})</span></div>
-        <ul>${list}</ul>
+        <div class="audit-issue-group-head">Failed checks <span class="audit-issue-count">(${total})</span></div>
+        <ul class="security-header-list">${list}</ul>
       </div>`;
 }
 
 function renderSecurityPassGroup(passedResults) {
-  const items = (passedResults || []).map((r) => {
-    // Keep Strictness N/A out of "Pass points" so alignment stays clean.
-    if (
-      (r.header === 'CSP Strictness' || r.header === 'Permissions-Policy Strictness') &&
-      r.applicable === false
-    ) {
-      return null;
-    }
-    return `${r.header}: ${r.message || 'OK'}`;
-  }).filter(Boolean);
-  return renderAuditPassGroup({ items, label: 'Pass points' });
+  const rows = sortSecurityResultsByImportance(passedResults || []).filter(
+    (r) => r && r.applicable !== false && r.pass && !isSecurityDisplayAdvisory(r)
+  );
+  const list = rows.length
+    ? rows.map((r) => renderSecurityResultLine(r, 'pass')).join('')
+    : '<li class="security-header-item security-header-item--na"><span class="security-header-status">—</span><code>No passed header checks yet</code></li>';
+  return `
+      <div class="audit-issue-group audit-issue-group--pass">
+        <div class="audit-issue-group-head">Passed checks <span class="audit-issue-count">(${rows.length})</span></div>
+        <ul class="security-header-list">${list}</ul>
+      </div>`;
 }
 
 function renderAuditIssueGroup({ label, count, items, modifier, emptyLabel = 'None detected', renderItems }) {
@@ -3124,9 +3273,22 @@ function buildPageDetailHtml(p, index, totalPages) {
   const securityWarningCount = securityResults.length
     ? (securitySplit.warning || []).length
     : 0;
-  const securityPassedCount = securityResults.length
-    ? securitySplit.passed.length
-    : Math.max(0, (p.securityHeaders?.passed || 0));
+  const securityDisplaySummary = securityResults.length
+    ? summarizeSecurityHeaderResults(securityResults)
+    : null;
+  const securityPassedCount = securityDisplaySummary
+    ? securityDisplaySummary.passed
+    : securityResults.length
+      ? securitySplit.passed.length
+      : Math.max(0, (p.securityHeaders?.passed || 0));
+  const securityTotalCount = securityDisplaySummary
+    ? securityDisplaySummary.total
+    : securityResults.length && securitySplit
+      ? securitySplit.passed.length +
+        securitySplit.critical.length +
+        securitySplit.minor.length +
+        (securitySplit.warning || []).length
+      : Math.max(0, Number(p.securityHeaders?.total) || 0);
   const seoCrit = sortedPageCritical.length;
   const seoMin = sortedPageMinor.length;
   const seoPassPercent = computeSeoPassPercent(seoCrit, seoMin);
@@ -3141,20 +3303,10 @@ function buildPageDetailHtml(p, index, totalPages) {
         )
       : 100;
   const securityPassPercent =
-    securityResults.length && securitySplit
-      ? (() => {
-          const total =
-            securitySplit.passed.length +
-            securitySplit.critical.length +
-            securitySplit.minor.length +
-            (securitySplit.warning || []).length;
-          if (!total) return computeSecurityPassPercent(p.securityHeaders);
-          return Math.round((securitySplit.passed.length / total) * 100);
-        })()
+    securityTotalCount > 0
+      ? Math.round((securityPassedCount / securityTotalCount) * 100)
       : computeSecurityPassPercent(p.securityHeaders);
-  const securityScoreLabel = p.securityHeaders?.label
-    ? `${p.securityHeaders.label} headers passed`
-    : 'HTTP response headers';
+  const securityScoreLabel = formatSecurityScoreLabel(p.securityHeaders);
 
   const seoCard = modules.seo
     ? renderAuditCategoryCard({
@@ -3301,12 +3453,17 @@ function renderSecurityHeaderGroups(securityHeaders, fallbackIssues = [], chartO
     fallbackIssues.forEach((item) => {
       if (!isSecurityHeaderIssueLine(item)) return;
       const line = formatSecurityHeaderIssueLine(item);
+      const formatted = formatIssueLineForDisplay(line);
+      const row = {
+        header: formatted.label || 'Security header',
+        message: formatted.detail || line
+      };
       if (/deprecated|expect-ct|xss-protection|embedder-policy|opener-policy|report-only/i.test(line)) {
-        warningItems.push(line);
+        warningItems.push(row);
       } else if (/referrer-policy|permissions-policy|resource-policy|x-powered-by|^server:/i.test(line)) {
-        minorItems.push(line);
+        minorItems.push(row);
       } else {
-        criticalItems.push(line);
+        criticalItems.push(row);
       }
     });
     criticalCount = criticalItems.length;
@@ -3314,9 +3471,10 @@ function renderSecurityHeaderGroups(securityHeaders, fallbackIssues = [], chartO
     warningCount = warningItems.length;
   } else {
     const split = splitSecurityResultsBySeverity(results);
-    criticalItems = split.critical.map((r) => `${r.header}: ${r.message || 'Failed'}`);
-    minorItems = split.minor.map((r) => `${r.header}: ${r.message || 'Failed'}`);
-    warningItems = (split.warning || []).map((r) => `${r.header}: ${r.message || 'Warning'}`);
+    // Keep full result objects so UI can show clear Pass / Fail badges
+    criticalItems = split.critical;
+    minorItems = split.minor;
+    warningItems = split.warning || [];
     criticalCount = split.critical.length;
     minorCount = split.minor.length;
     warningCount = (split.warning || []).length;
@@ -3450,10 +3608,14 @@ function renderSecHeadersChip(sec) {
   if (!sec || sec.skipped || (sec.label === '—' && !sec.results?.length && !(sec.total > 0))) {
     return renderChip('N/A', 'muted', { title: 'Security headers not checked' });
   }
-  const label = sec.label || '—';
-  if (sec.ok) return renderChip(label, 'success', { title: 'All security headers passed', mono: true });
-  if ((sec.passed || 0) > 0) {
-    return renderChip(label, 'warning', { title: 'Some security headers failed', mono: true });
+  const summary =
+    sec.results && sec.results.length ? summarizeSecurityHeaderResults(sec.results) : null;
+  const label = summary ? summary.label : sec.label || '—';
+  const ok = summary ? summary.ok : !!sec.ok;
+  const passed = summary ? summary.passed : Number(sec.passed) || 0;
+  if (ok) return renderChip(label, 'success', { title: 'All security headers passed', mono: true });
+  if (passed > 0) {
+    return renderChip(label, 'warning', { title: 'Some security headers need attention', mono: true });
   }
   return renderChip(label, 'danger', { title: 'Security headers failed', mono: true });
 }
@@ -4080,11 +4242,11 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
     justify-self:start;min-width:52px;padding:3px 8px;border-radius:999px;
     font-size:.625rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-align:center;line-height:1.2
   }
-  .security-header-item--pass .security-header-status{color:var(--text-tertiary);background:var(--muted-bg);border:1px solid var(--muted-border)}
+  .security-header-item--pass .security-header-status{color:var(--good);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.28)}
   .security-header-item--fail .security-header-status{color:var(--critical);background:var(--danger-bg);border:1px solid var(--danger-border)}
-  .security-header-item--warn .security-header-status{color:var(--minor);background:var(--warning-bg);border:1px solid var(--warning-border)}
+  .security-header-item--warn .security-header-status{color:#fdba74;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.35)}
   .security-header-item--na .security-header-status{color:var(--text-tertiary);background:transparent;border:1px solid var(--border)}
-  .security-header-item--pass code{color:#94a3b8}
+  .security-header-item--pass code{color:#86efac}
   .security-header-item--fail code{color:#fecaca}
   .security-header-item--warn code{color:#fde68a}
   .detail-section{margin-top:clamp(24px,4vw,40px)}

@@ -6,6 +6,9 @@
 #
 # NOTE: Playwright requires at least Starter plan (512MB+ RAM).
 # Free tier is insufficient for browser automation workloads.
+#
+# Headers below are applied by Render on matching paths for this service.
+# Next.js also sets the same security headers in web/next.config.ts (defense in depth).
 
 services:
   - type: web
@@ -27,6 +30,19 @@ services:
         value: 3000
       - key: API_URL
         value: http://127.0.0.1:3000
+      # Public site URL for SEO canonical/OG (baked at Docker build; defaults in Dockerfile)
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://qadashboard.onrender.com
+      - key: NEXT_PUBLIC_BRAND_NAME
+        value: Md Imran
+      - key: NEXT_PUBLIC_GEO_REGION
+        value: IN
+      - key: NEXT_PUBLIC_GEO_PLACENAME
+        value: India
+      - key: NEXT_PUBLIC_GEO_LAT
+        value: "22.5726"
+      - key: NEXT_PUBLIC_GEO_LON
+        value: "88.3639"
       - key: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
         value: "true"
       - key: PLAYWRIGHT_CHROMIUM_SANDBOX
@@ -51,3 +67,64 @@ services:
       name: qa-data
       mountPath: /app/data
       sizeGB: 5
+
+    # ── Security + cache headers (Render native routing) ─────────────────────
+    # path: path pattern; name/value: response header
+    # Apply broadly so HTML, static assets, and API proxy paths get protection.
+    headers:
+      # Content-Security-Policy (Next-compatible; mirrors web/next.config.ts)
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: wss: ws:; worker-src 'self' blob:; upgrade-insecure-requests"
+
+      # Clickjacking
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+
+      # MIME sniffing
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+
+      # Referrer leakage control
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+      # Browser feature lockdown
+      - path: /*
+        name: Permissions-Policy
+        value: "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()"
+
+      # Force HTTPS awareness (Render already terminates TLS)
+      - path: /*
+        name: Strict-Transport-Security
+        value: "max-age=63072000; includeSubDomains; preload"
+
+      - path: /*
+        name: Cross-Origin-Opener-Policy
+        value: same-origin
+
+      # HTML / app shell: short cache so deploys show up quickly
+      - path: /
+        name: Cache-Control
+        value: "public, max-age=0, must-revalidate"
+
+      - path: /dashboard
+        name: Cache-Control
+        value: "public, max-age=0, must-revalidate"
+
+      # Next.js hashed static assets: long-lived cache
+      - path: /_next/static/*
+        name: Cache-Control
+        value: "public, max-age=31536000, immutable"
+
+      # Public robots / sitemap
+      - path: /robots.txt
+        name: Cache-Control
+        value: "public, max-age=3600"
+
+      - path: /sitemap.xml
+        name: Cache-Control
+        value: "public, max-age=3600"

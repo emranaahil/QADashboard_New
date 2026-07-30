@@ -65,24 +65,121 @@
     });
   }
 
+  var SECURITY_HEADER_DISPLAY_ORDER = [
+    'HTTPS',
+    'SSL / TLS',
+    'TLS Version',
+    'Mixed Content',
+    'XSS / CSP Protection',
+    'Content-Security-Policy',
+    'CSP Strictness',
+    'Strict-Transport-Security',
+    'Clickjacking Protection',
+    'MIME Sniffing Protection',
+    'HttpOnly Cookies',
+    'Secure Cookies',
+    'SameSite Cookies',
+    'Cache-Control',
+    'Referrer-Policy',
+    'Permissions-Policy',
+    'Permissions-Policy Strictness',
+    'Cross-Origin-Resource-Policy',
+    'Cross-Origin-Embedder-Policy',
+    'Cross-Origin-Opener-Policy',
+    'Content-Security-Policy-Report-Only',
+    'Server',
+    'X-Powered-By',
+    'X-XSS-Protection',
+    'Expect-CT'
+  ];
+
+  function securityHeaderDisplayRank(header) {
+    var i = SECURITY_HEADER_DISPLAY_ORDER.indexOf(String(header || ''));
+    return i === -1 ? 500 : i;
+  }
+
+  function sortSecurityResultsByImportance(list) {
+    return (list || []).slice().sort(function (a, b) {
+      return securityHeaderDisplayRank(a.header) - securityHeaderDisplayRank(b.header);
+    });
+  }
+
+  /** Warning-tier optional/absent rows — show under Warning, not Pass. */
+  function isSecurityDisplayAdvisory(r) {
+    if (!r || r.applicable === false) return false;
+    if (r.severity !== 'warning') return false;
+    if (!r.pass) return false;
+    var msg = String(r.message || '');
+    if (/not present/i.test(msg) && /optional/i.test(msg)) return true;
+    if (/present\s*\(acceptable on non-production\)/i.test(msg)) return true;
+    return false;
+  }
+
+  /** X/Y score aligned with Pass + Issues lists (same as httpSecurityHeaders.summarize). */
+  function summarizeSecurityHeaderResults(results) {
+    var list = results || [];
+    var applicable = list.filter(function (r) {
+      return r && r.applicable !== false;
+    });
+    var passedList = applicable.filter(function (r) {
+      return r.pass && !isSecurityDisplayAdvisory(r);
+    });
+    var notPassedList = applicable.filter(function (r) {
+      return !r.pass || isSecurityDisplayAdvisory(r);
+    });
+    var passed = passedList.length;
+    var total = applicable.length;
+    return {
+      passed: passed,
+      total: total,
+      label: total ? passed + '/' + total : '0/0',
+      ok: total > 0 && notPassedList.length === 0
+    };
+  }
+
+  function formatSecurityScoreLabel(securityHeaders) {
+    var results = (securityHeaders && securityHeaders.results) || [];
+    if (results.length) {
+      return summarizeSecurityHeaderResults(results).label + ' headers passed';
+    }
+    if (securityHeaders && securityHeaders.label && securityHeaders.label !== '—') {
+      return securityHeaders.label + ' headers passed';
+    }
+    return 'HTTP response headers';
+  }
+
   function splitSecurityResultsBySeverity(results) {
-    var failed = failedSecurityHeaderResults(results);
-    var critical = failed.filter(function (r) {
-      return r.severity === 'critical';
+    var applicable = applicableSecurityHeaderResults(results);
+    var failed = applicable.filter(function (r) {
+      return !r.pass;
     });
-    var minor = failed.filter(function (r) {
-      return r.severity === 'minor';
-    });
-    var warning = failed.filter(function (r) {
+    var critical = sortSecurityResultsByImportance(
+      failed.filter(function (r) {
+        return r.severity === 'critical';
+      })
+    );
+    var minor = sortSecurityResultsByImportance(
+      failed.filter(function (r) {
+        return r.severity === 'minor';
+      })
+    );
+    var failedWarning = failed.filter(function (r) {
       return r.severity === 'warning' || (r.severity !== 'critical' && r.severity !== 'minor');
     });
+    var advisoryWarning = applicable.filter(function (r) {
+      return r.pass && isSecurityDisplayAdvisory(r);
+    });
+    var warning = sortSecurityResultsByImportance(failedWarning.concat(advisoryWarning));
+    var passed = sortSecurityResultsByImportance(
+      applicable.filter(function (r) {
+        return r.pass && !isSecurityDisplayAdvisory(r);
+      })
+    );
     return {
       critical: critical,
       minor: minor,
       warning: warning,
-      passed: applicableSecurityHeaderResults(results).filter(function (r) {
-        return r.pass;
-      })
+      passed: passed
     };
   }
 
@@ -335,6 +432,12 @@
   }
 
   function computeSecurityPassPercent(securityHeaders) {
+    var results = (securityHeaders && securityHeaders.results) || [];
+    if (results.length) {
+      var summary = summarizeSecurityHeaderResults(results);
+      if (!summary.total) return 0;
+      return Math.round((summary.passed / summary.total) * 100);
+    }
     var total = Number(securityHeaders && securityHeaders.total) || 0;
     var passed = Number(securityHeaders && securityHeaders.passed) || 0;
     if (!total) return 0;
@@ -578,6 +681,51 @@
     );
   }
 
+  function renderSecurityResultStatus(status) {
+    var s = String(status || 'fail').toLowerCase();
+    var label = s === 'pass' ? 'Pass' : s === 'warn' ? 'Warn' : 'Fail';
+    return '<span class="security-header-status">' + label + '</span>';
+  }
+
+  function renderSecurityResultLine(item, status) {
+    var header = '';
+    var detail = '';
+    var level = '';
+    if (item && typeof item === 'object') {
+      header = String(item.header || '').trim();
+      detail = String(item.message || item.detail || 'OK').trim();
+      level = String(item.value || '').trim();
+    } else {
+      var formatted = formatIssueLineForDisplay(item);
+      header = formatted.label || '';
+      detail = formatted.detail || String(item || '');
+    }
+    if (header === 'CSP Strictness' || header === 'Permissions-Policy Strictness') {
+      if (/^fail\b/i.test(detail) || level === 'Weak' || level === 'N/A') status = 'fail';
+      else if (/^pass\b/i.test(detail) || level === 'Strict' || level === 'Moderate') status = 'pass';
+    }
+    if (!(detail && /^(pass|fail)\s*[—-]/i.test(detail))) {
+      if (status === 'fail' && detail && !/^(pass|fail)\b/i.test(detail)) {
+        detail = 'Fail — ' + detail;
+      } else if (status === 'pass' && detail) {
+        if (/^ok\b/i.test(detail)) detail = 'Pass';
+        else if (/^(strict|moderate|weak)\b/i.test(detail)) detail = 'Pass — ' + detail;
+        else if (!/^(pass|fail)\b/i.test(detail)) detail = detail === 'OK' ? 'Pass' : 'Pass — ' + detail;
+      }
+    }
+    var mod = status === 'pass' ? 'pass' : status === 'warn' ? 'warn' : 'fail';
+    var text = header ? header + ': ' + detail : detail;
+    return (
+      '<li class="security-header-item security-header-item--' +
+      mod +
+      '">' +
+      renderSecurityResultStatus(status) +
+      '<code>' +
+      escapeHtml(text) +
+      '</code></li>'
+    );
+  }
+
   function renderUnifiedSecurityIssueGroup(criticalItems, minorItems, warningItems) {
     var critical = criticalItems || [];
     var minor = minorItems || [];
@@ -586,35 +734,54 @@
     var list = total
       ? critical
           .map(function (x) {
-            return renderTaggedIssueLineItem(x, 'critical');
+            return renderSecurityResultLine(x, 'fail');
           })
           .concat(
             minor.map(function (x) {
-              return renderTaggedIssueLineItem(x, 'minor');
+              return renderSecurityResultLine(x, 'fail');
             })
           )
           .concat(
             warning.map(function (x) {
-              return renderTaggedIssueLineItem(x, 'warning');
+              var msg =
+                x && typeof x === 'object' ? String(x.message || '') : String(x || '');
+              var advisory =
+                (/not present/i.test(msg) && /optional/i.test(msg)) ||
+                /present\s*\(acceptable on non-production\)/i.test(msg);
+              return renderSecurityResultLine(x, advisory ? 'warn' : 'fail');
             })
           )
           .join('')
-      : '<li>None detected</li>';
+      : '<li class="security-header-item security-header-item--pass"><span class="security-header-status">Pass</span><code>No failed header checks</code></li>';
     return (
       '<div class="audit-issue-group audit-issue-group--unified audit-issue-group--security-issues">' +
-      '<div class="audit-issue-group-head">Issues <span class="audit-issue-count">(' +
+      '<div class="audit-issue-group-head">Failed checks <span class="audit-issue-count">(' +
       total +
-      ')</span></div><ul>' +
+      ')</span></div><ul class="security-header-list">' +
       list +
       '</ul></div>'
     );
   }
 
   function renderSecurityPassGroup(passedResults) {
-    var items = (passedResults || []).map(function (r) {
-      return r.header + ': ' + (r.message || 'OK');
+    var rows = sortSecurityResultsByImportance(passedResults || []).filter(function (r) {
+      return r && r.applicable !== false && r.pass && !isSecurityDisplayAdvisory(r);
     });
-    return renderAuditPassGroup({ items: items, label: 'Pass points' });
+    var list = rows.length
+      ? rows
+          .map(function (r) {
+            return renderSecurityResultLine(r, 'pass');
+          })
+          .join('')
+      : '<li class="security-header-item security-header-item--na"><span class="security-header-status">—</span><code>No passed header checks yet</code></li>';
+    return (
+      '<div class="audit-issue-group audit-issue-group--pass">' +
+      '<div class="audit-issue-group-head">Passed checks <span class="audit-issue-count">(' +
+      rows.length +
+      ')</span></div><ul class="security-header-list">' +
+      list +
+      '</ul></div>'
+    );
   }
 
   function renderAuditIssueGroup(opts) {
@@ -1238,12 +1405,17 @@
       fallbackIssues.forEach(function (item) {
         if (!isSecurityHeaderIssueLine(item)) return;
         var line = formatSecurityHeaderIssueLine(item);
+        var formatted = formatIssueLineForDisplay(line);
+        var row = {
+          header: formatted.label || 'Security header',
+          message: formatted.detail || line
+        };
         if (/deprecated|expect-ct|xss-protection|embedder-policy|opener-policy|report-only/i.test(line)) {
-          warningItems.push(line);
+          warningItems.push(row);
         } else if (/referrer-policy|permissions-policy|resource-policy|x-powered-by|^server:/i.test(line)) {
-          minorItems.push(line);
+          minorItems.push(row);
         } else {
-          criticalItems.push(line);
+          criticalItems.push(row);
         }
       });
       criticalCount = criticalItems.length;
@@ -1251,15 +1423,9 @@
       warningCount = warningItems.length;
     } else {
       var groups = splitSecurityResultsBySeverity(results);
-      criticalItems = groups.critical.map(function (r) {
-        return r.header + ': ' + (r.message || 'Failed');
-      });
-      minorItems = groups.minor.map(function (r) {
-        return r.header + ': ' + (r.message || 'Failed');
-      });
-      warningItems = (groups.warning || []).map(function (r) {
-        return r.header + ': ' + (r.message || 'Warning');
-      });
+      criticalItems = groups.critical;
+      minorItems = groups.minor;
+      warningItems = groups.warning || [];
       criticalCount = groups.critical.length;
       minorCount = groups.minor.length;
       warningCount = (groups.warning || []).length;
@@ -1344,9 +1510,22 @@
       ? securitySplit.critical.length
       : criticalSplit.security.length;
     var securityMinorCount = securitySplit ? securitySplit.minor.length : minorSplit.security.length;
-    var securityPassedCount = securitySplit
-      ? securitySplit.passed.length
-      : Math.max(0, (page.securityHeaders && page.securityHeaders.passed) || 0);
+    var securityDisplaySummary = securityResults.length
+      ? summarizeSecurityHeaderResults(securityResults)
+      : null;
+    var securityPassedCount = securityDisplaySummary
+      ? securityDisplaySummary.passed
+      : securitySplit
+        ? securitySplit.passed.length
+        : Math.max(0, (page.securityHeaders && page.securityHeaders.passed) || 0);
+    var securityTotalCount = securityDisplaySummary
+      ? securityDisplaySummary.total
+      : securitySplit
+        ? securitySplit.passed.length +
+          securitySplit.critical.length +
+          securitySplit.minor.length +
+          (securitySplit.warning || []).length
+        : Math.max(0, Number(page.securityHeaders && page.securityHeaders.total) || 0);
     var seoCrit = sortedPageCritical.length;
     var seoMin = sortedPageMinor.length;
     var seoPassPercent = computeSeoPassPercent(seoCrit, seoMin);
@@ -1365,21 +1544,10 @@
       ? (securitySplit.warning || []).length
       : 0;
     var securityPassPercent =
-      securityResults.length && securitySplit
-        ? (function () {
-            var total =
-              securitySplit.passed.length +
-              securitySplit.critical.length +
-              securitySplit.minor.length +
-              (securitySplit.warning || []).length;
-            if (!total) return computeSecurityPassPercent(page.securityHeaders);
-            return Math.round((securitySplit.passed.length / total) * 100);
-          })()
+      securityTotalCount > 0
+        ? Math.round((securityPassedCount / securityTotalCount) * 100)
         : computeSecurityPassPercent(page.securityHeaders);
-    var securityScoreLabel =
-      page.securityHeaders && page.securityHeaders.label
-        ? page.securityHeaders.label + ' headers passed'
-        : 'HTTP response headers';
+    var securityScoreLabel = formatSecurityScoreLabel(page.securityHeaders);
 
     var seoCard = modules.seo
       ? renderAuditCategoryCard({

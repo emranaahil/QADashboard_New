@@ -125,7 +125,7 @@ function analyzePermissionsPolicyStrictness(value) {
       level: 'Weak',
       pass: false,
       applicable: true,
-      message: `Weak — sensitive APIs allow all origins (${weakReasons.join('; ')})`,
+      message: `Fail — Weak — sensitive APIs allow all origins (${weakReasons.join('; ')})`,
       reasons: weakReasons
     };
   }
@@ -145,7 +145,7 @@ function analyzePermissionsPolicyStrictness(value) {
       level: 'Strict',
       pass: true,
       applicable: true,
-      message: `Strict — ${restrictedSensitive.length} sensitive APIs restricted (${restrictedSensitive.slice(0, 5).join(', ')})`,
+      message: `Pass — Strict — ${restrictedSensitive.length} sensitive APIs restricted (${restrictedSensitive.slice(0, 5).join(', ')})`,
       reasons: []
     };
   }
@@ -162,7 +162,7 @@ function analyzePermissionsPolicyStrictness(value) {
       level: 'Moderate',
       pass: true,
       applicable: true,
-      message: `Moderate — ${note}`,
+      message: `Pass — Moderate — ${note}`,
       reasons: []
     };
   }
@@ -173,7 +173,7 @@ function analyzePermissionsPolicyStrictness(value) {
     pass: true,
     applicable: true,
     message:
-      'Moderate — limited sensitive-API coverage (prefer geolocation/camera/microphone/payment/usb = () or (self))',
+      'Pass — Moderate — limited sensitive-API coverage (prefer geolocation/camera/microphone/payment/usb = () or (self))',
     reasons: ['limited sensitive feature restrictions']
   };
 }
@@ -193,43 +193,218 @@ function cspHasFrameAncestors(cspValue) {
 }
 
 /**
- * Rate CSP strictness without changing the CSP presence check.
- * Returns Strict | Moderate | Weak | N/A.
+ * Parse CSP header into directive → source-list map (case-insensitive names).
+ * Multiple policies in one header (comma-separated) are merged directive-wise.
+ */
+function parseCspDirectives(cspValue) {
+  const map = Object.create(null);
+  let raw = String(cspValue || '').trim();
+  if (!raw) return map;
+
+  // Multiple CSP policies may be comma-joined; treat ", directive-name " as a separator.
+  raw = raw.replace(/,\s*(?=[a-zA-Z][a-zA-Z0-9-]*\s)/g, '; ');
+
+  for (const part of raw.split(';')) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+    const space = trimmed.search(/\s/);
+    let name;
+    let rest = '';
+    if (space === -1) {
+      name = trimmed.toLowerCase();
+    } else {
+      name = trimmed.slice(0, space).toLowerCase();
+      rest = trimmed.slice(space + 1).trim();
+    }
+    if (!name) continue;
+    const sources = rest ? rest.split(/\s+/).filter(Boolean) : [];
+    if (!map[name]) map[name] = [];
+    if (sources.length) map[name] = map[name].concat(sources);
+  }
+  return map;
+}
+
+function cspSourcesMatch(sources, predicate) {
+  if (!sources || !sources.length) return false;
+  return sources.some((s) => predicate(String(s)));
+}
+
+function cspHasToken(sources, token) {
+  const t = String(token).toLowerCase();
+  return cspSourcesMatch(sources, (s) => s.toLowerCase() === t);
+}
+
+function cspHasNonceOrHash(sources) {
+  return cspSourcesMatch(
+    sources,
+    (s) => /^'nonce-/i.test(s) || /^'sha(256|384|512)-/i.test(s)
+  );
+}
+
+function cspHasBareWildcard(sources) {
+  return cspSourcesMatch(sources, (s) => s === '*');
+}
+
+function cspHasDataScheme(sources) {
+  return cspSourcesMatch(sources, (s) => /^data:/i.test(s));
+}
+
+function cspHasSchemeSource(sources) {
+  // e.g. https: or http: (scheme-only allow-all for that scheme)
+  return cspSourcesMatch(sources, (s) => /^https?:$/i.test(s));
+}
+
+function cspHasHostWildcard(sources) {
+  return cspSourcesMatch(sources, (s) => s.includes('*') && s !== '*');
+}
+
+function cspIsNoneOnly(sources) {
+  return (
+    !!sources &&
+    sources.length > 0 &&
+    sources.every((s) => /^'none'$/i.test(s) || /^none$/i.test(s))
+  );
+}
+
+function cspIsSelfOrNone(sources) {
+  return (
+    !!sources &&
+    sources.length > 0 &&
+    sources.every(
+      (s) =>
+        /^'none'$/i.test(s) ||
+        /^none$/i.test(s) ||
+        /^'self'$/i.test(s)
+    )
+  );
+}
+
+function cspHasSelfOrNone(sources) {
+  return (
+    cspHasToken(sources, "'self'") ||
+    cspHasToken(sources, "'none'") ||
+    cspHasToken(sources, 'none')
+  );
+}
+
+/** Explicit script directives if any; else default-src (CSP fallback). */
+function getEffectiveScriptSources(map) {
+  const hasExplicit =
+    Object.prototype.hasOwnProperty.call(map, 'script-src') ||
+    Object.prototype.hasOwnProperty.call(map, 'script-src-elem') ||
+    Object.prototype.hasOwnProperty.call(map, 'script-src-attr');
+  if (hasExplicit) {
+    const sources = []
+      .concat(map['script-src'] || [])
+      .concat(map['script-src-elem'] || [])
+      .concat(map['script-src-attr'] || []);
+    return { sources, fromDefault: false, present: true };
+  }
+  if (Object.prototype.hasOwnProperty.call(map, 'default-src')) {
+    return { sources: map['default-src'] || [], fromDefault: true, present: true };
+  }
+  return { sources: null, fromDefault: false, present: false };
+}
+
+function getEffectiveObjectSources(map) {
+  if (map['object-src']) return map['object-src'];
+  if (map['default-src']) return map['default-src'];
+  return null;
+}
+
+/**
+ * Rate CSP strictness. Always applicable so the report always lists this check.
+ * Directive-aware: Weak targets script XSS risks; style-only unsafe-inline is Moderate.
+ * Returns Strict | Moderate | Weak | N/A (N/A = CSP missing → Fail in report).
  */
 function analyzeCspStrictness(cspValue) {
   const csp = String(cspValue || '').trim();
   if (!csp) {
     return {
       level: 'N/A',
-      pass: true,
-      applicable: false,
-      message: "N/A — Content-Security-Policy not present",
-      reasons: []
+      pass: false,
+      applicable: true,
+      message: 'Fail — N/A — Content-Security-Policy not present (cannot rate strictness)',
+      reasons: ['Content-Security-Policy not present']
     };
   }
 
-  const lower = csp.toLowerCase();
+  const map = parseCspDirectives(csp);
   const weakReasons = [];
   const moderateReasons = [];
 
-  if (/['"]unsafe-inline['"]/i.test(csp)) {
-    weakReasons.push("'unsafe-inline'");
+  const script = getEffectiveScriptSources(map);
+  const scriptSrc = script.sources;
+  const objectSrc = getEffectiveObjectSources(map);
+  const styleSrc = map['style-src'] || map['style-src-elem'] || null;
+  const defaultSrc = map['default-src'] || null;
+  const baseUri = map['base-uri'] || null;
+  const frameAncestors = map['frame-ancestors'] || null;
+
+  const scriptNonceOrHash = cspHasNonceOrHash(scriptSrc);
+  // Browsers ignore 'unsafe-inline' for scripts when a nonce or hash is present.
+  const scriptUnsafeInlineActive =
+    cspHasToken(scriptSrc, "'unsafe-inline'") && !scriptNonceOrHash;
+
+  // ——— Weak: script XSS / open script execution ———
+  if (script.present && scriptUnsafeInlineActive) {
+    weakReasons.push(
+      script.fromDefault
+        ? "default-src allows 'unsafe-inline' (applies to scripts)"
+        : "script-src allows 'unsafe-inline'"
+    );
   }
-  if (/['"]unsafe-eval['"]/i.test(csp)) {
-    weakReasons.push("'unsafe-eval'");
+  if (script.present && cspHasToken(scriptSrc, "'unsafe-eval'")) {
+    weakReasons.push(
+      script.fromDefault
+        ? "default-src allows 'unsafe-eval' (applies to scripts)"
+        : "script-src allows 'unsafe-eval'"
+    );
   }
-  if (/\*\s*(?:;|$)/.test(lower) || /(?:default-src|script-src|object-src)\s+[^;]*\*/i.test(csp)) {
-    weakReasons.push('wildcard * source');
+  if (script.present && cspHasBareWildcard(scriptSrc)) {
+    weakReasons.push(
+      script.fromDefault ? 'default-src allows * (applies to scripts)' : 'script-src allows *'
+    );
   }
-  if (/(?:script-src)[^;]*\bdata:/i.test(lower)) {
-    weakReasons.push('script-src allows data:');
+  if (script.present && cspHasDataScheme(scriptSrc)) {
+    weakReasons.push(
+      script.fromDefault ? 'default-src allows data: (scripts)' : 'script-src allows data:'
+    );
+  }
+  if (objectSrc && cspHasBareWildcard(objectSrc)) {
+    weakReasons.push('object-src allows *');
+  }
+  if (defaultSrc && cspHasBareWildcard(defaultSrc) && !map['script-src'] && !map['script-src-elem']) {
+    // already covered when script falls back; keep if no script path
+    if (!script.present) weakReasons.push('default-src allows *');
   }
 
-  if (!/(?:default-src|script-src)\s+/i.test(csp)) {
+  // ——— Moderate signals (do not fail score) ———
+  if (!script.present) {
     moderateReasons.push('no default-src or script-src');
   }
-  if (/(?:script-src)[^;]*\bhttps?:/i.test(lower) && !/['"]nonce-/i.test(csp) && !/['"]sha(256|384|512)-/i.test(csp)) {
+
+  // Style-only unsafe-inline is common and not script XSS — moderate note only
+  if (
+    styleSrc &&
+    cspHasToken(styleSrc, "'unsafe-inline'") &&
+    !cspHasNonceOrHash(styleSrc)
+  ) {
+    moderateReasons.push("style-src allows 'unsafe-inline'");
+  }
+
+  // Broad script allowlist without nonce/hash/strict-dynamic
+  if (
+    script.present &&
+    !scriptNonceOrHash &&
+    !cspHasToken(scriptSrc, "'strict-dynamic'") &&
+    (cspHasSchemeSource(scriptSrc) || cspHasHostWildcard(scriptSrc))
+  ) {
     moderateReasons.push('broad script hosts without nonce/hash');
+  }
+
+  if (script.present && cspHasToken(scriptSrc, "'wasm-unsafe-eval'")) {
+    moderateReasons.push("script allows 'wasm-unsafe-eval'");
   }
 
   if (weakReasons.length) {
@@ -237,54 +412,57 @@ function analyzeCspStrictness(cspValue) {
       level: 'Weak',
       pass: false,
       applicable: true,
-      message: `Weak — ${weakReasons.join('; ')}`,
+      message: `Fail — Weak — ${weakReasons.join('; ')}`,
       reasons: weakReasons
     };
   }
 
-  const hasStrongDefault =
-    /default-src\s+[^;]*['"]self['"]/i.test(csp) || /default-src\s+[^;]*['"]none['"]/i.test(csp);
-  const hasObjectNone = /object-src\s+[^;]*['"]none['"]/i.test(csp);
-  const hasBaseUri =
-    /base-uri\s+[^;]*['"](?:self|none)['"]/i.test(csp);
-  const hasFrameAncestors =
-    /frame-ancestors\s+[^;]*['"](?:self|none)['"]/i.test(csp) ||
-    /frame-ancestors\s+[^;]*\bnone\b/i.test(csp);
-  const hasNonceOrHash = /['"]nonce-/i.test(csp) || /['"]sha(256|384|512)-/i.test(csp);
+  // Hardening signals (directive-aware)
+  const hasStrongDefault = cspHasSelfOrNone(defaultSrc);
+  const hasObjectNone =
+    cspIsNoneOnly(map['object-src']) ||
+    (!map['object-src'] && cspIsNoneOnly(defaultSrc));
+  const hasBaseUriLocked = cspIsSelfOrNone(baseUri);
+  const hasFrameAncestorsLocked =
+    cspIsSelfOrNone(frameAncestors) ||
+    (frameAncestors && frameAncestors.some((s) => /^none$/i.test(s)));
+  const hasScriptNonceOrHash = scriptNonceOrHash;
+  const hasStrictDynamic = cspHasToken(scriptSrc, "'strict-dynamic'");
 
-  const strictSignals = [hasStrongDefault, hasObjectNone, hasBaseUri, hasFrameAncestors, hasNonceOrHash].filter(
-    Boolean
-  ).length;
+  // Strict = no weak + real script integrity + plugin lockdown + baseline policy shape.
+  // style-src 'unsafe-inline' alone does not block Strict (common and not script XSS).
+  const blockingModerate = moderateReasons.filter((r) => !/^style-src allows/.test(r));
+  const strictReady =
+    hasScriptNonceOrHash &&
+    hasObjectNone &&
+    (hasStrongDefault || script.present) &&
+    (hasBaseUriLocked || hasFrameAncestorsLocked || hasStrictDynamic) &&
+    blockingModerate.length === 0;
 
-  if (moderateReasons.length === 0 && strictSignals >= 2 && !weakReasons.length) {
+  if (strictReady) {
     return {
       level: 'Strict',
       pass: true,
       applicable: true,
-      message: 'Strict — solid directives without unsafe-inline/eval',
+      message:
+        'Pass — Strict — script nonce/hash, object-src locked, no script unsafe-inline/eval',
       reasons: []
     };
   }
 
-  if (moderateReasons.length || strictSignals < 2) {
-    const note = moderateReasons.length
-      ? moderateReasons.join('; ')
-      : 'present with limited hardening directives';
-    return {
-      level: 'Moderate',
-      pass: true,
-      applicable: true,
-      message: `Moderate — ${note}`,
-      reasons: moderateReasons
-    };
-  }
+  const noteParts = [];
+  if (moderateReasons.length) noteParts.push(...moderateReasons);
+  if (!hasScriptNonceOrHash) noteParts.push('no script nonce/hash');
+  if (!hasObjectNone) noteParts.push("object-src not 'none'");
+  if (!hasStrongDefault && !script.present) noteParts.push('weak default-src');
+  const note = [...new Set(noteParts)].join('; ') || 'present with limited hardening';
 
   return {
     level: 'Moderate',
     pass: true,
     applicable: true,
-    message: 'Moderate — CSP present',
-    reasons: []
+    message: `Pass — Moderate — ${note}`,
+    reasons: moderateReasons
   };
 }
 
@@ -301,13 +479,170 @@ function buildResult({ header, category, severity, pass, value, message, applica
 }
 
 /**
- * Assert HTTP security headers against detection rules
- * (CSP, HSTS, frame/options, CORP/COEP/COOP, leaks, deprecated, etc.).
+ * Warning-tier rows that only "pass" because the header is optional/absent.
+ * Displayed under Warning (not Pass) and count as not-passed in X/Y.
+ */
+function isSecurityDisplayAdvisory(r) {
+  if (!r || r.applicable === false) return false;
+  if (r.severity !== 'warning') return false;
+  if (!r.pass) return false;
+  const msg = String(r.message || '');
+  if (/not present/i.test(msg) && /optional/i.test(msg)) return true;
+  if (/present\s*\(acceptable on non-production\)/i.test(msg)) return true;
+  return false;
+}
+
+/**
+ * X/Y score aligned with UI buckets (Pass points vs Issues Critical/Minor/Warning).
+ * N/A (applicable:false) rows are excluded. Advisories count toward total but not passed.
+ */
+function summarizeSecurityHeaderResults(results) {
+  const list = Array.isArray(results) ? results : [];
+  const applicable = list.filter((r) => r && r.applicable !== false);
+  const passedList = applicable.filter((r) => r.pass && !isSecurityDisplayAdvisory(r));
+  const notPassedList = applicable.filter((r) => !r.pass || isSecurityDisplayAdvisory(r));
+  const passed = passedList.length;
+  const total = applicable.length;
+  return {
+    passed,
+    total,
+    label: total ? `${passed}/${total}` : '0/0',
+    // Green only when every applicable check is a true pass (no fails, no advisories)
+    ok: total > 0 && notPassedList.length === 0,
+    requiredOk:
+      applicable
+        .filter((r) => r.severity === 'critical' || r.severity === 'minor')
+        .every((r) => r.pass)
+  };
+}
+
+/** Collect Set-Cookie header values (supports multi-header arrays). */
+function collectSetCookieValues(map, options = {}) {
+  if (Array.isArray(options.setCookies) && options.setCookies.length) {
+    return options.setCookies.map((c) => String(c || '').trim()).filter(Boolean);
+  }
+  const raw = map['set-cookie'];
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.map((c) => String(c || '').trim()).filter(Boolean);
+  // Some stacks join cookies with newlines
+  return String(raw)
+    .split(/\n/)
+    .map((c) => c.trim())
+    .filter(Boolean);
+}
+
+function parseSetCookieFlags(setCookieLine) {
+  const parts = String(setCookieLine || '')
+    .split(';')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const nameValue = parts[0] || '';
+  const name = nameValue.split('=')[0] || '(cookie)';
+  let sameSite = null;
+  for (const p of parts.slice(1)) {
+    const m = p.match(/^SameSite\s*=\s*(.+)$/i);
+    if (m) sameSite = m[1].trim();
+  }
+  return {
+    name,
+    httpOnly: parts.some((p) => /^HttpOnly$/i.test(p)),
+    secure: parts.some((p) => /^Secure$/i.test(p)),
+    sameSite
+  };
+}
+
+/**
+ * Detect active/passive mixed content (http:// assets on https pages).
+ */
+function analyzeMixedContent(html, pageUrl) {
+  let isHttps = false;
+  try {
+    isHttps = new URL(pageUrl).protocol === 'https:';
+  } catch {
+    isHttps = /^https:/i.test(String(pageUrl || ''));
+  }
+  if (!isHttps) {
+    return {
+      pass: true,
+      applicable: true,
+      severity: 'warning',
+      message: 'N/A — page is not served over HTTPS',
+      activeCount: 0,
+      passiveCount: 0
+    };
+  }
+  const body = String(html || '');
+  if (!body.trim()) {
+    return {
+      pass: true,
+      applicable: true,
+      severity: 'warning',
+      message: 'Not scanned — page HTML not available in this check path',
+      activeCount: 0,
+      passiveCount: 0
+    };
+  }
+
+  const countMatches = (re) => {
+    const flags = re.flags.includes('g') ? re.flags : `${re.flags}g`;
+    const r = new RegExp(re.source, flags);
+    const found = body.match(r);
+    return found ? found.length : 0;
+  };
+
+  // Active mixed content (can break pages / XSS risk)
+  const activeCount =
+    countMatches(/<script\b[^>]*\bsrc\s*=\s*["']http:\/\//i) +
+    countMatches(/<iframe\b[^>]*\bsrc\s*=\s*["']http:\/\//i) +
+    countMatches(/<link\b[^>]*\bhref\s*=\s*["']http:\/\/[^"']*\.css/i) +
+    countMatches(/<object\b[^>]*\bdata\s*=\s*["']http:\/\//i) +
+    countMatches(/<embed\b[^>]*\bsrc\s*=\s*["']http:\/\//i);
+
+  // Passive mixed content (images/media)
+  const passiveCount =
+    countMatches(/<img\b[^>]*\bsrc\s*=\s*["']http:\/\//i) +
+    countMatches(/<audio\b[^>]*\bsrc\s*=\s*["']http:\/\//i) +
+    countMatches(/<video\b[^>]*\bsrc\s*=\s*["']http:\/\//i) +
+    countMatches(/<source\b[^>]*\bsrc\s*=\s*["']http:\/\//i) +
+    countMatches(/url\(\s*['"]?http:\/\//i);
+
+  if (activeCount > 0) {
+    return {
+      pass: false,
+      applicable: true,
+      severity: 'critical',
+      message: `Fail — ${activeCount} active mixed-content resource(s) (script/iframe/css over http:)`,
+      activeCount,
+      passiveCount
+    };
+  }
+  if (passiveCount > 0) {
+    return {
+      pass: false,
+      applicable: true,
+      severity: 'minor',
+      message: `Fail — ${passiveCount} passive mixed-content resource(s) (img/media over http:)`,
+      activeCount,
+      passiveCount
+    };
+  }
+  return {
+    pass: true,
+    applicable: true,
+    severity: 'critical',
+    message: 'Pass — no http: assets found on this HTTPS page',
+    activeCount: 0,
+    passiveCount: 0
+  };
+}
+
+/**
+ * Assert HTTP security headers / transport / cookie / mixed-content rules.
  * @param {object} rawHeaders - Response headers (fetch or Playwright)
- * @param {{ url?: string }} options
+ * @param {{ url?: string, html?: string, setCookies?: string[] }} options
  */
 function assertHttpSecurityHeaders(rawHeaders, options = {}) {
-  const { url = '' } = options;
+  const { url = '', html = '' } = options;
   const map = normalizeHeaderMap(rawHeaders);
   const results = [];
   /** @type {string[]} Critical failures (score-heavy) */
@@ -323,7 +658,81 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
     else warnings.push(message);
   }
 
-  // ——— Critical baseline ———
+  // ——— Transport: HTTPS / SSL / TLS ———
+  let pageProtocol = '';
+  try {
+    pageProtocol = new URL(url).protocol.replace(':', '').toLowerCase();
+  } catch {
+    pageProtocol = '';
+  }
+  const isHttps = pageProtocol === 'https';
+
+  results.push(
+    buildResult({
+      header: 'HTTPS',
+      category: 'essential',
+      severity: 'critical',
+      pass: isHttps,
+      value: pageProtocol || null,
+      message: isHttps
+        ? 'Pass — page URL uses HTTPS'
+        : 'Fail — page URL is not HTTPS (use https://)'
+    })
+  );
+  if (!isHttps) recordIssue('critical', 'HTTPS: page URL is not HTTPS');
+
+  results.push(
+    buildResult({
+      header: 'SSL / TLS',
+      category: 'essential',
+      severity: 'critical',
+      pass: isHttps,
+      value: isHttps ? 'TLS (HTTPS connection)' : 'none',
+      message: isHttps
+        ? 'Pass — traffic is encrypted via HTTPS/TLS'
+        : 'Fail — no TLS (page not loaded over HTTPS)'
+    })
+  );
+  if (!isHttps) recordIssue('critical', 'SSL / TLS: no TLS — page not loaded over HTTPS');
+
+  // Exact TLS version needs platform/socket inspection; document clearly in report
+  results.push(
+    buildResult({
+      header: 'TLS Version',
+      category: 'quality',
+      severity: 'warning',
+      pass: true,
+      applicable: true,
+      value: isHttps ? 'negotiated' : 'n/a',
+      message: isHttps
+        ? 'Pass — TLS version is negotiated by the platform; exact version not verified here'
+        : 'N/A — not applicable without HTTPS'
+    })
+  );
+
+  // Mixed content (needs HTML when available)
+  const mixed = analyzeMixedContent(html, url);
+  results.push(
+    buildResult({
+      header: 'Mixed Content',
+      category: 'essential',
+      severity: mixed.severity || 'critical',
+      pass: mixed.pass,
+      value:
+        mixed.activeCount || mixed.passiveCount
+          ? `active=${mixed.activeCount}, passive=${mixed.passiveCount}`
+          : null,
+      message: mixed.message
+    })
+  );
+  if (!mixed.pass) {
+    recordIssue(
+      mixed.severity === 'minor' ? 'minor' : 'critical',
+      `Mixed Content: ${mixed.message}`
+    );
+  }
+
+  // ——— Critical baseline (headers) ———
   const csp = getHeaderValue(map, 'content-security-policy');
   const cspPass = Boolean(String(csp).trim());
   results.push(
@@ -338,7 +747,7 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
   );
   if (!cspPass) recordIssue('critical', 'Content-Security-Policy: missing or empty');
 
-  // CSP Strictness: Weak = critical; N/A when CSP missing (no double-count)
+  // CSP Strictness: always listed — Fail when missing/weak; Pass when Moderate/Strict
   const cspStrict = analyzeCspStrictness(csp);
   results.push(
     buildResult({
@@ -346,13 +755,38 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
       category: 'quality',
       severity: 'critical',
       pass: cspStrict.pass,
-      applicable: cspStrict.applicable,
+      applicable: true,
       value: cspStrict.level,
       message: cspStrict.message
     })
   );
-  if (cspStrict.applicable && !cspStrict.pass) {
+  if (!cspStrict.pass) {
     recordIssue('critical', `CSP Strictness: ${cspStrict.message}`);
+  }
+
+  // XSS / CSP Protection — always-visible composite (CSP present + not Weak/N/A fail)
+  const xssCspPass = cspPass && cspStrict.pass;
+  let xssCspMessage;
+  if (!cspPass) {
+    xssCspMessage =
+      'Fail — no Content-Security-Policy (primary XSS mitigation header missing)';
+  } else if (!cspStrict.pass) {
+    xssCspMessage = `Fail — CSP present but weak (${cspStrict.level}): ${cspStrict.message.replace(/^Fail — /i, '')}`;
+  } else {
+    xssCspMessage = `Pass — CSP present (${cspStrict.level}) without script-unsafe weaknesses`;
+  }
+  results.push(
+    buildResult({
+      header: 'XSS / CSP Protection',
+      category: 'essential',
+      severity: 'critical',
+      pass: xssCspPass,
+      value: cspStrict.level || (cspPass ? 'present' : 'missing'),
+      message: xssCspMessage
+    })
+  );
+  if (!xssCspPass) {
+    recordIssue('critical', `XSS / CSP Protection: ${xssCspMessage}`);
   }
 
   const hsts = getHeaderValue(map, 'strict-transport-security');
@@ -369,51 +803,134 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
   );
   if (!hstsPass) recordIssue('critical', "Strict-Transport-Security: must contain 'max-age'");
 
-  // X-Frame-Options OR modern CSP frame-ancestors (either is enough for clickjacking baseline)
+  // Clickjacking = X-Frame-Options OR CSP frame-ancestors
   const xfo = getHeaderValue(map, 'x-frame-options');
   const xfoClassic = /^(DENY|SAMEORIGIN)$/i.test(String(xfo).trim());
   const frameAncestorsOk = cspHasFrameAncestors(csp);
-  const xfoPass = xfoClassic || frameAncestorsOk;
-  let xfoMessage = 'OK';
-  if (xfoPass && xfoClassic) xfoMessage = 'OK';
-  else if (xfoPass && frameAncestorsOk) {
-    xfoMessage = "OK — framing protected via CSP frame-ancestors (X-Frame-Options not required)";
+  const clickjackPass = xfoClassic || frameAncestorsOk;
+  let clickjackMessage = 'Pass';
+  if (clickjackPass && xfoClassic) {
+    clickjackMessage = `Pass — X-Frame-Options ${String(xfo).trim()}`;
+  } else if (clickjackPass && frameAncestorsOk) {
+    clickjackMessage =
+      'Pass — framing protected via CSP frame-ancestors (X-Frame-Options not required)';
   } else if (String(xfo).trim()) {
-    xfoMessage = "X-Frame-Options invalid (use DENY/SAMEORIGIN) and no CSP frame-ancestors";
+    clickjackMessage =
+      'Fail — X-Frame-Options invalid (use DENY/SAMEORIGIN) and no CSP frame-ancestors';
   } else {
-    xfoMessage =
-      "Missing framing protection — set X-Frame-Options DENY/SAMEORIGIN or CSP frame-ancestors";
+    clickjackMessage =
+      'Fail — missing framing protection (set X-Frame-Options DENY/SAMEORIGIN or CSP frame-ancestors)';
   }
   results.push(
     buildResult({
-      header: 'X-Frame-Options',
+      header: 'Clickjacking Protection',
       category: 'essential',
       severity: 'critical',
-      pass: xfoPass,
+      pass: clickjackPass,
       value: xfo || (frameAncestorsOk ? '(via CSP frame-ancestors)' : xfo),
-      message: xfoMessage
+      message: clickjackMessage
     })
   );
-  if (!xfoPass) {
+  if (!clickjackPass) {
     recordIssue(
       'critical',
-      "X-Frame-Options / CSP: set X-Frame-Options to 'DENY' or 'SAMEORIGIN', or CSP frame-ancestors"
+      'Clickjacking Protection: set X-Frame-Options to DENY/SAMEORIGIN or CSP frame-ancestors'
     );
   }
 
+  // MIME sniffing = X-Content-Type-Options: nosniff
   const xcto = getHeaderValue(map, 'x-content-type-options');
-  const xctoPass = String(xcto).trim().toLowerCase() === 'nosniff';
+  const mimePass = String(xcto).trim().toLowerCase() === 'nosniff';
   results.push(
     buildResult({
-      header: 'X-Content-Type-Options',
+      header: 'MIME Sniffing Protection',
       category: 'essential',
       severity: 'critical',
-      pass: xctoPass,
+      pass: mimePass,
       value: xcto,
-      message: xctoPass ? 'OK' : "X-Content-Type-Options must be 'nosniff'"
+      message: mimePass
+        ? "Pass — X-Content-Type-Options: nosniff"
+        : "Fail — X-Content-Type-Options must be 'nosniff'"
     })
   );
-  if (!xctoPass) recordIssue('critical', "X-Content-Type-Options: must be 'nosniff'");
+  if (!mimePass) {
+    recordIssue('critical', "MIME Sniffing Protection: X-Content-Type-Options must be 'nosniff'");
+  }
+
+  // ——— Cookies (Set-Cookie flags) ———
+  const setCookies = collectSetCookieValues(map, options);
+  const cookieFlags = setCookies.map(parseSetCookieFlags);
+  const hasCookies = cookieFlags.length > 0;
+
+  const missingHttpOnly = cookieFlags.filter((c) => !c.httpOnly);
+  const httpOnlyPass = !hasCookies || missingHttpOnly.length === 0;
+  results.push(
+    buildResult({
+      header: 'HttpOnly Cookies',
+      category: 'essential',
+      severity: 'minor',
+      pass: httpOnlyPass,
+      value: hasCookies ? `${cookieFlags.length} cookie(s)` : 'none',
+      message: !hasCookies
+        ? 'Pass — no Set-Cookie headers on this response'
+        : httpOnlyPass
+          ? `Pass — all ${cookieFlags.length} Set-Cookie value(s) include HttpOnly`
+          : `Fail — ${missingHttpOnly.length} cookie(s) missing HttpOnly (${missingHttpOnly
+              .slice(0, 3)
+              .map((c) => c.name)
+              .join(', ')})`
+    })
+  );
+  if (!httpOnlyPass) {
+    recordIssue('minor', 'HttpOnly Cookies: one or more Set-Cookie values lack HttpOnly');
+  }
+
+  const missingSecure = cookieFlags.filter((c) => !c.secure);
+  // Secure required when site is HTTPS; if HTTP, Secure cookies are still recommended for future HTTPS
+  const securePass = !hasCookies || missingSecure.length === 0;
+  results.push(
+    buildResult({
+      header: 'Secure Cookies',
+      category: 'essential',
+      severity: 'minor',
+      pass: securePass,
+      value: hasCookies ? `${cookieFlags.length} cookie(s)` : 'none',
+      message: !hasCookies
+        ? 'Pass — no Set-Cookie headers on this response'
+        : securePass
+          ? `Pass — all ${cookieFlags.length} Set-Cookie value(s) include Secure`
+          : `Fail — ${missingSecure.length} cookie(s) missing Secure (${missingSecure
+              .slice(0, 3)
+              .map((c) => c.name)
+              .join(', ')})`
+    })
+  );
+  if (!securePass) {
+    recordIssue('minor', 'Secure Cookies: one or more Set-Cookie values lack Secure');
+  }
+
+  const missingSameSite = cookieFlags.filter((c) => !c.sameSite);
+  const sameSitePass = !hasCookies || missingSameSite.length === 0;
+  results.push(
+    buildResult({
+      header: 'SameSite Cookies',
+      category: 'essential',
+      severity: 'minor',
+      pass: sameSitePass,
+      value: hasCookies ? `${cookieFlags.length} cookie(s)` : 'none',
+      message: !hasCookies
+        ? 'Pass — no Set-Cookie headers on this response'
+        : sameSitePass
+          ? `Pass — all ${cookieFlags.length} Set-Cookie value(s) set SameSite`
+          : `Fail — ${missingSameSite.length} cookie(s) missing SameSite (${missingSameSite
+              .slice(0, 3)
+              .map((c) => c.name)
+              .join(', ')})`
+    })
+  );
+  if (!sameSitePass) {
+    recordIssue('minor', 'SameSite Cookies: one or more Set-Cookie values lack SameSite');
+  }
 
   // ——— Minor hygiene ———
   const referrer = getHeaderValue(map, 'referrer-policy');
@@ -679,19 +1196,17 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
     recordIssue('warning', 'Expect-CT: deprecated header should be removed');
   }
 
-  // Score X/Y on critical + minor only (warnings visible but don't dominate pass rate)
-  const applicableRequired = results.filter(
-    (r) =>
-      r.applicable !== false && (r.severity === 'critical' || r.severity === 'minor')
-  );
-  const passed = applicableRequired.filter((r) => r.pass).length;
-  const total = applicableRequired.length;
+  // X/Y matches UI: every applicable row is Pass, Critical, Minor, or Warning (incl. advisories)
+  const summary = summarizeSecurityHeaderResults(results);
 
   return {
-    ok: failures.length === 0,
-    passed,
-    total,
-    label: `${passed}/${total}`,
+    ok: summary.ok,
+    // No critical failures (minors/warnings still reflected in X/Y and chip color via ok)
+    criticalOk: failures.length === 0,
+    requiredOk: summary.requiredOk,
+    passed: summary.passed,
+    total: summary.total,
+    label: summary.label,
     results,
     failures,
     minors,
@@ -709,7 +1224,11 @@ function assertHttpSecurityHeaders(rawHeaders, options = {}) {
 module.exports = {
   assertHttpSecurityHeaders,
   analyzeCspStrictness,
+  analyzeMixedContent,
+  parseCspDirectives,
   analyzePermissionsPolicyStrictness,
+  summarizeSecurityHeaderResults,
+  isSecurityDisplayAdvisory,
   normalizeHeaderMap,
   getHeaderValue,
   isProductionUrl,
@@ -718,6 +1237,6 @@ module.exports = {
   hasPermissionsPolicyRestrictions,
   isWeakReferrerPolicy,
   cspHasFrameAncestors,
-  // Approximate scored critical/leak checks on a typical public page (dynamic total is authoritative).
-  HEADER_CHECK_COUNT: 16
+  // Typical public page: all applicable rows (dynamic total from summarize is authoritative).
+  HEADER_CHECK_COUNT: 26
 };

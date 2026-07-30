@@ -38,11 +38,43 @@ ensureStorageDirs();
 
 app.set('trust proxy', 1);
 
-// Middleware
+// Middleware — security headers (API responses; UI also sets headers via Next + render.yaml)
+const apiCspDirectives = {
+  defaultSrc: ["'self'"],
+  baseUri: ["'self'"],
+  objectSrc: ["'none'"],
+  frameAncestors: ["'none'"],
+  formAction: ["'self'"],
+  scriptSrc: ["'self'"],
+  styleSrc: ["'self'", "'unsafe-inline'"],
+  imgSrc: ["'self'", 'data:', 'https:'],
+  fontSrc: ["'self'", 'data:'],
+  connectSrc: ["'self'", 'https:']
+};
+if (IS_PRODUCTION) {
+  apiCspDirectives.upgradeInsecureRequests = [];
+}
 app.use(helmet({
-    contentSecurityPolicy: false,
-    crossOriginEmbedderPolicy: false
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: apiCspDirectives
+    },
+    crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    frameguard: { action: 'deny' },
+    noSniff: true,
+    hsts: IS_PRODUCTION
+      ? { maxAge: 63072000, includeSubDomains: true, preload: true }
+      : false
 }));
+// Feature lockdown for API JSON responses
+app.use((req, res, next) => {
+  res.setHeader(
+    'Permissions-Policy',
+    'geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()'
+  );
+  next();
+});
 app.use(cors(buildCorsOptions({ apiOnly: IS_PRODUCTION, webAppUrl: WEB_APP_URL })));
 app.use(compression({
   filter: (req, res) => {

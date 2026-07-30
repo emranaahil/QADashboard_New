@@ -1,0 +1,12 @@
+# QA Dashboard — allow crawlers on public app routes
+# Primary:  https://qadashboard.onrender.com
+# Alternate: https://qadashboard-nb1q.onrender.com
+
+User-agent: *
+Allow: /
+
+# Prefer not to waste crawl budget on API noise
+Disallow: /api/
+
+Sitemap: https://qadashboard.onrender.com/sitemap.xml
+Sitemap: https://qadashboard-nb1q.onrender.com/sitemap.xml
