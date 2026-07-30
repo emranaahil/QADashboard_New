@@ -14,10 +14,16 @@ type Health = {
 };
 
 export function ApiDevStatus() {
+  const [mounted, setMounted] = useState(false);
   const [health, setHealth] = useState<Health | null>(null);
   const [reachable, setReachable] = useState(true);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || process.env.NODE_ENV === "production") return;
     let cancelled = false;
     const retryDelays = [0, 2000, 4000, 8000];
 
@@ -51,9 +57,10 @@ export function ApiDevStatus() {
       cancelled = true;
       clearInterval(id);
     };
-  }, []);
+  }, [mounted]);
 
-  if (process.env.NODE_ENV === "production") return null;
+  // Avoid SSR/client mismatch — render nothing until after mount
+  if (!mounted || process.env.NODE_ENV === "production") return null;
 
   const startedLabel = health?.startedAt ? formatDateTime(health.startedAt) : null;
 

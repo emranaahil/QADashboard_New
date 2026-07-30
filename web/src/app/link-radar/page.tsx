@@ -178,7 +178,7 @@ export default function LinkRadarPage() {
                 <label className="text-xs font-medium text-muted-foreground">
                   Max Pages
                   {crawlLimits.bulk ? (
-                    <span className="ml-1 text-[0.65rem] font-normal text-emerald-500">(local · up to {crawlLimits.maxUrls.toLocaleString()})</span>
+                    <span className="ml-1 text-[0.65rem] font-normal text-emerald-500">(local · up to {crawlLimits.maxUrls.toLocaleString("en-US")})</span>
                   ) : null}
                 </label>
                 <Input

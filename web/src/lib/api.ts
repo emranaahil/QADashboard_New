@@ -1,7 +1,16 @@
+/**
+ * Browser: always same-origin `/api/*` (Next rewrites to Express).
+ * Avoids CORS + CSP connect-src issues with absolute localhost URLs.
+ * Server components / route handlers: use API_URL to reach Express directly.
+ */
 const API_BASE =
   typeof window !== "undefined"
-    ? (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "")
-    : process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    ? ""
+    : (
+        process.env.API_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        "http://localhost:3000"
+      ).replace(/\/$/, "");
 
 export type Job = {
   id: string;

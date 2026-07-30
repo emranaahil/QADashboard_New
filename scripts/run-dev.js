@@ -84,10 +84,11 @@ start('api', isWin ? 'npx.cmd' : 'npx', ['nodemon', '--config', 'nodemon.json', 
 start('web', isWin ? 'npx.cmd' : 'npx', ['next', 'dev', '-p', WEB_PORT], {
   cwd: WEB,
   env: {
-    // Do not pass API PORT as Next's PORT
+    // Next listens on WEB_PORT; rewrites use API_URL (server-side only)
     PORT: WEB_PORT,
     API_URL,
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || API_URL,
+    // Keep browser on same-origin /api (empty public base) for CSP + CORS
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
   },
 });
 

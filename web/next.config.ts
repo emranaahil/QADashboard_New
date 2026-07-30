@@ -2,48 +2,66 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const API_URL = process.env.API_URL || "http://127.0.0.1:3000";
+const IS_PROD = process.env.NODE_ENV === "production";
 
 /**
- * Security headers for the Next.js UI (served on the public Render port).
- * Aligns with render.yaml headers; app-level headers still apply if the
- * Blueprint header map is not used.
- *
- * CSP is intentionally compatible with Next.js (inline scripts/styles).
- * Tighten further once you verify the production build under CSP.
+ * Security headers for the Next.js UI (public Render port).
+ * Production CSP is strict enough for same-origin /api rewrites.
+ * Dev CSP also allows local http API (localhost / 127.0.0.1) if absolute URLs are used.
  */
-const securityHeaders = [
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "base-uri 'self'",
-      "object-src 'none'",
-      "frame-ancestors 'none'",
-      "form-action 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' https: wss: ws:",
-      "worker-src 'self' blob:",
-      "upgrade-insecure-requests",
-    ].join("; "),
-  },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  {
-    key: "Permissions-Policy",
-    value:
-      "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()",
-  },
-  { key: "X-DNS-Prefetch-Control", value: "on" },
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
-  },
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-];
+function buildSecurityHeaders() {
+  const connectSrc = IS_PROD
+    ? ["'self'", "https:", "wss:", "ws:"].join(" ")
+    : [
+        "'self'",
+        "http://127.0.0.1:*",
+        "http://localhost:*",
+        "https:",
+        "wss:",
+        "ws:",
+      ].join(" ");
+
+  const csp = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    // Next.js requires inline scripts/styles in App Router
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    `connect-src ${connectSrc}`,
+    "worker-src 'self' blob:",
+  ];
+  if (IS_PROD) {
+    csp.push("upgrade-insecure-requests");
+  }
+
+  const headers = [
+    { key: "Content-Security-Policy", value: csp.join("; ") },
+    { key: "X-Frame-Options", value: "DENY" },
+    { key: "X-Content-Type-Options", value: "nosniff" },
+    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+    {
+      key: "Permissions-Policy",
+      value:
+        "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()",
+    },
+    { key: "X-DNS-Prefetch-Control", value: "on" },
+    { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  ];
+
+  if (IS_PROD) {
+    headers.push({
+      key: "Strict-Transport-Security",
+      value: "max-age=63072000; includeSubDomains; preload",
+    });
+  }
+
+  return headers;
+}
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -53,10 +71,9 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: securityHeaders,
+        headers: buildSecurityHeaders(),
       },
       {
-        // Static assets can be cached longer at the edge / browser
         source: "/_next/static/:path*",
         headers: [
           {

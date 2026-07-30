@@ -1,7 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Menu } from "lucide-react";
-import { ApiDevStatus } from "@/components/layout/api-dev-status";
 import { AuthorTopBarCredit } from "@/components/layout/author-top-bar-credit";
 import { GlobalSearch } from "@/components/layout/global-search";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,11 @@ import { moduleLabel } from "@/lib/modules";
 import { isParallelExecutionEnabled } from "@/lib/parallel-execution";
 import { useExecutionStore, useRunningModuleCount } from "@/store/execution-store";
 import { useScanStore } from "@/store/scan-store";
+
+const ApiDevStatus = dynamic(
+  () => import("@/components/layout/api-dev-status").then((m) => m.ApiDevStatus),
+  { ssr: false }
+);
 
 const statusLabels = {
   idle: "Idle",

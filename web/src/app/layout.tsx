@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { Toaster } from "sonner";
+import { ClientProviders } from "@/components/providers/client-providers";
 import {
   ALTERNATE_SITE_URL,
   BRAND_NAME,
@@ -22,8 +22,7 @@ const inter = Inter({
 });
 
 /**
- * SEO, Geo-SEO, Open Graph, and Twitter metadata for the public app shell.
- * Placeholders live in `web/src/lib/site-seo.ts` (or env NEXT_PUBLIC_*).
+ * SEO, Geo-SEO, Open Graph, and Twitter metadata (server-only head; safe for production).
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -49,14 +48,12 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    // Canonical = primary production host (avoids duplicate ranking of two Render URLs)
     canonical: SITE_URL,
     languages: {
-      "en": SITE_URL,
+      en: SITE_URL,
       "x-default": SITE_URL,
     },
   },
-  // Geographic targeting + secondary production host (documentation meta)
   other: {
     "geo.region": GEO_REGION,
     "geo.placename": GEO_PLACENAME,
@@ -73,8 +70,6 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [
       {
-        // Prefer a 1200×630 PNG at /og-image.png for best LinkedIn/X support;
-        // SVG placeholder ships until you add a branded PNG.
         url: "/og-image.svg",
         width: 1200,
         height: 630,
@@ -106,23 +101,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
-        {children}
-        <Toaster
-          position="top-right"
-          closeButton
-          toastOptions={{
-            duration: 4000,
-            classNames: {
-              toast: "glass-panel border-border text-foreground",
-              success: "border-[rgba(34,197,94,0.4)] bg-[rgba(34,197,94,0.14)] text-[#86efac]",
-              error: "border-[rgba(239,68,68,0.4)] bg-[rgba(239,68,68,0.14)] text-[#fca5a5]",
-              warning: "border-[rgba(245,158,11,0.4)] bg-[rgba(245,158,11,0.14)] text-[#fcd34d]",
-              info: "border-[rgba(59,130,246,0.4)] bg-[rgba(59,130,246,0.14)] text-[#93c5fd]",
-            },
-          }}
-        />
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
