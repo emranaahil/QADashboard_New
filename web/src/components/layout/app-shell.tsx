@@ -1,28 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
+import { ApiBanner } from "./api-banner";
+import { ExecutionDrawer } from "./execution-drawer";
+import { ScanResumeBootstrap } from "./scan-resume-bootstrap";
+import { JobResumeBootstrap } from "./job-resume-bootstrap";
+import { SessionBootstrap } from "./session-bootstrap";
 
-const ApiBanner = dynamic(() => import("./api-banner").then((m) => m.ApiBanner), { ssr: false });
-const ExecutionDrawer = dynamic(
-  () => import("./execution-drawer").then((m) => m.ExecutionDrawer),
-  { ssr: false }
-);
-const ScanResumeBootstrap = dynamic(
-  () => import("./scan-resume-bootstrap").then((m) => m.ScanResumeBootstrap),
-  { ssr: false }
-);
-const JobResumeBootstrap = dynamic(
-  () => import("./job-resume-bootstrap").then((m) => m.JobResumeBootstrap),
-  { ssr: false }
-);
-const SessionBootstrap = dynamic(
-  () => import("./session-bootstrap").then((m) => m.SessionBootstrap),
-  { ssr: false }
-);
-
+/**
+ * Static client imports only — next/dynamic factories were throwing
+ * "Cannot read properties of undefined (reading 'call')" in the browser.
+ */
 export function AppShell({
   title,
   subtitle,

@@ -1,22 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { AppShell } from "@/components/layout/app-shell";
 import { AboutPlatformCard } from "@/components/dashboard/about-platform-card";
 import { KpiCards } from "@/components/dashboard/kpi-cards";
+import { RecentRunsTable } from "@/components/dashboard/recent-runs-table";
+import { QuickActions } from "@/components/dashboard/quick-actions";
 import { api } from "@/lib/api";
 import { useDashboardStore } from "@/store/dashboard-store";
-
-const RecentRunsTable = dynamic(
-  () => import("@/components/dashboard/recent-runs-table").then((m) => m.RecentRunsTable),
-  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> }
-);
-
-const QuickActions = dynamic(
-  () => import("@/components/dashboard/quick-actions").then((m) => m.QuickActions),
-  { loading: () => <div className="h-80 w-full animate-pulse rounded-lg bg-muted lg:w-80" /> }
-);
 
 export default function DashboardPage() {
   const { stats, loading, setStats, setLoading, refreshKey } = useDashboardStore();

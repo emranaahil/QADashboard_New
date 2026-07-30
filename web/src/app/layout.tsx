@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { ClientProviders } from "@/components/providers/client-providers";
+import { AppToaster } from "@/components/providers/app-toaster";
 import {
   ALTERNATE_SITE_URL,
   BRAND_NAME,
@@ -22,7 +22,9 @@ const inter = Inter({
 });
 
 /**
- * SEO, Geo-SEO, Open Graph, and Twitter metadata (server-only head; safe for production).
+ * SEO / Geo / OG metadata is server-only (document head).
+ * Body uses a plain client Toaster — no next/dynamic in this server layout
+ * (dynamic+ssr:false here previously broke webpack module factories).
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -49,10 +51,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_URL,
-    languages: {
-      en: SITE_URL,
-      "x-default": SITE_URL,
-    },
   },
   other: {
     "geo.region": GEO_REGION,
@@ -89,10 +87,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0b1220" },
-    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
-  ],
+  themeColor: "#0b1220",
 };
 
 export default function RootLayout({
@@ -103,7 +98,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
-        <ClientProviders>{children}</ClientProviders>
+        {children}
+        <AppToaster />
       </body>
     </html>
   );
