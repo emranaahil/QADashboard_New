@@ -153,11 +153,23 @@ function wrapReport({ title, subtitle, metaHtml, bodyHtml, extraActionsHtml = ''
       ${metaHtml || ''}
       <div class="actions">
         ${extraActionsHtml || ''}
-        <button type="button" onclick="window.print()">Print / Save PDF</button>
+        <button type="button" data-report-action="print">Print / Save PDF</button>
       </div>
     </header>
     ${bodyHtml}
   </div>
+  <script>
+  (function () {
+    if (window.__qaReportActionsBound) return;
+    window.__qaReportActionsBound = true;
+    document.addEventListener('click', function (event) {
+      var btn = event.target && event.target.closest && event.target.closest('[data-report-action="print"]');
+      if (!btn) return;
+      event.preventDefault();
+      window.print();
+    });
+  })();
+  </script>
 </body>
 </html>`;
 }
@@ -416,6 +428,18 @@ function renderErrorCheckHtml(data) {
       + '</tr></thead><tbody>'+body+'</tbody></table></body></html>';
     downloadBlob('Link-Radar-Issues-${stamp}.xls', html, 'application/vnd.ms-excel;charset=utf-8');
   };
+  function bindLinkRadarActions() {
+    document.addEventListener('click', function (event) {
+      var btn = event.target && event.target.closest && event.target.closest('[data-report-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-report-action');
+      if (action === 'export-csv') { event.preventDefault(); window.exportLinkRadarCsv(); }
+      else if (action === 'export-excel') { event.preventDefault(); window.exportLinkRadarExcel(); }
+      else if (action === 'print') { event.preventDefault(); window.print(); }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindLinkRadarActions);
+  else bindLinkRadarActions();
 })();
 </script>
 <script>window.LINK_RADAR_EXPORT = ${exportJson};</script>`;
@@ -427,8 +451,8 @@ function renderErrorCheckHtml(data) {
     bodyHtml,
     extraHeadHtml: exportScript,
     extraActionsHtml: `
-      <button type="button" onclick="exportLinkRadarCsv()">Download CSV</button>
-      <button type="button" onclick="exportLinkRadarExcel()">Download Excel (formatted)</button>
+      <button type="button" data-report-action="export-csv">Download CSV</button>
+      <button type="button" data-report-action="export-excel">Download Excel (formatted)</button>
     `
   });
 }
@@ -638,6 +662,18 @@ function renderSitemapCheckHtml(data) {
     var bom = String.fromCharCode(0xFEFF);
     download('Sitemap-Audit-Files-'+reportDate()+'.csv', bom + lines.join('\\n') + '\\n');
   };
+  function bindSitemapActions() {
+    document.addEventListener('click', function (event) {
+      var btn = event.target && event.target.closest && event.target.closest('[data-report-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-report-action');
+      if (action === 'export-pages-csv') { event.preventDefault(); window.exportSitemapPagesCsv(); }
+      else if (action === 'export-files-csv') { event.preventDefault(); window.exportSitemapFilesCsv(); }
+      else if (action === 'print') { event.preventDefault(); window.print(); }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindSitemapActions);
+  else bindSitemapActions();
 })();
 </script>
 <script>window.SITEMAP_REPORT = ${exportPayload};</script>`;
@@ -649,8 +685,8 @@ function renderSitemapCheckHtml(data) {
     bodyHtml,
     extraHeadHtml: exportScript,
     extraActionsHtml: `
-      <button type="button" onclick="exportSitemapPagesCsv()">Export CSV · Pages</button>
-      ${sitemaps.length ? '<button type="button" onclick="exportSitemapFilesCsv()">Export CSV · Sitemaps</button>' : ''}
+      <button type="button" data-report-action="export-pages-csv">Export CSV · Pages</button>
+      ${sitemaps.length ? '<button type="button" data-report-action="export-files-csv">Export CSV · Sitemaps</button>' : ''}
     `
   });
 }

@@ -445,7 +445,7 @@ if (fs.existsSync(resolvedScreenshotFolder)) {
     let shotPreviewHtml = '';
     if (shotThumbs.length > 0) {
       shotPreviewHtml = `<div class="thumbs">${shotThumbs.slice(0, 4).map(s => `
-        <div class="thumb" onclick="openViewer('${escapeHtml(s.fullSrc)}')">
+        <div class="thumb" data-ui-action="open-viewer" data-src="${escapeHtml(s.fullSrc)}" role="button" tabindex="0">
           <img src="${escapeHtml(s.thumbSrc)}" alt="${escapeHtml(s.file)}" loading="lazy" />
           <div class="t">${escapeHtml(s.file)}</div>
         </div>`).join('')}
@@ -490,7 +490,7 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
   const galleryHtml = galleryItems.length > 0
     ? galleryItems.map((s, idx) => `
         <div class="thumb gallery-item" data-device="${escapeHtml(s.device)}" data-page="${escapeHtml(s.page)}" data-url="${escapeHtml(s.url)}"
-             onclick="openGalleryViewer(${idx})" data-index="${idx}">
+             data-ui-action="open-gallery" data-index="${idx}" role="button" tabindex="0">
           <img src="${escapeHtml(s.thumbSrc)}" alt="${escapeHtml(s.file)}" loading="lazy" />
           <div class="t">${escapeHtml(s.file)}<br><small style="color:var(--text);">${escapeHtml(s.device)} • ${escapeHtml(s.url || s.page)}</small></div>
         </div>`).join('')
@@ -941,7 +941,7 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
       <input type="text" id="searchInput" placeholder="🔍 Search Issues..." oninput="applyFilters()" />
       <div class="filter-actions">
        
-        <button class="btn" onclick="window.print()">🖨️ Print Report /📥 Download PDF </button>
+        <button class="btn" type="button" data-ui-action="print">🖨️ Print Report /📥 Download PDF </button>
       </div>
     </div>
 
@@ -1016,14 +1016,14 @@ console.log(JSON.stringify(ssMetaMap, null, 2));
   <!-- ══════════════════════════════════════════════════════════════════════ -->
   <div class="viewer" id="viewer" aria-hidden="true">
     <div class="viewer-controls">
-  <button class="btn" onclick="zoomIn()">➕ Zoom In</button>
-  <button class="btn" onclick="zoomOut()">➖ Zoom Out</button>
-  <button class="btn" onclick="resetZoom()">🔄 Reset</button>
-  <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+  <button class="btn" type="button" data-ui-action="zoom-in">➕ Zoom In</button>
+  <button class="btn" type="button" data-ui-action="zoom-out">➖ Zoom Out</button>
+  <button class="btn" type="button" data-ui-action="zoom-reset">🔄 Reset</button>
+  <button class="btn" type="button" data-ui-action="fullscreen">⛶ Fullscreen</button>
 </div>
-    <div class="viewer-close" onclick="closeViewer()" title="Close (Esc)">✕</div>
-    <button class="viewer-nav prev" onclick="navigateViewer(-1)" title="Previous">‹</button>
-    <button class="viewer-nav next" onclick="navigateViewer(1)" title="Next">›</button>
+    <div class="viewer-close" data-ui-action="close-viewer" title="Close (Esc)" role="button" tabindex="0">✕</div>
+    <button class="viewer-nav prev" type="button" data-ui-action="nav-prev" title="Previous">‹</button>
+    <button class="viewer-nav next" type="button" data-ui-action="nav-next" title="Next">›</button>
     <div class="viewerInner" id="viewerInner">
       <img id="viewerImg" src="" alt="screenshot" />
     </div>
@@ -1503,6 +1503,26 @@ function scheduleUpdate() {
       else if (e.key === '+' || e.key === '=') { zoomTo(viewerState.zoom + ZOOM_STEP); }
       else if (e.key === '-') { zoomTo(viewerState.zoom - ZOOM_STEP); }
       else if (e.key === '0') { resetZoom(); }
+    });
+
+    // CSP-safe actions (no inline onclick) — print/PDF + gallery controls
+    document.addEventListener('click', function(e) {
+      var el = e.target && e.target.closest && e.target.closest('[data-ui-action]');
+      if (!el) return;
+      var action = el.getAttribute('data-ui-action');
+      if (action === 'print') { e.preventDefault(); window.print(); }
+      else if (action === 'open-viewer') { e.preventDefault(); openViewer(el.getAttribute('data-src') || ''); }
+      else if (action === 'open-gallery') {
+        e.preventDefault();
+        openGalleryViewer(parseInt(el.getAttribute('data-index'), 10) || 0);
+      }
+      else if (action === 'zoom-in') { e.preventDefault(); zoomIn(); }
+      else if (action === 'zoom-out') { e.preventDefault(); zoomOut(); }
+      else if (action === 'zoom-reset') { e.preventDefault(); resetZoom(); }
+      else if (action === 'fullscreen') { e.preventDefault(); toggleFullscreen(); }
+      else if (action === 'close-viewer') { e.preventDefault(); closeViewer(); }
+      else if (action === 'nav-prev') { e.preventDefault(); navigateViewer(-1); }
+      else if (action === 'nav-next') { e.preventDefault(); navigateViewer(1); }
     });
 
     // ── PDF Generation ──────────────────────────────────────────────────

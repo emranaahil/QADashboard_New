@@ -3935,7 +3935,7 @@ function renderPageDetailSummary(p, index, totalPages, { prebuiltBody = null, la
           </span>
           <span class="page-detail-index">#${index + 1}</span>
           <div class="page-detail-main">
-            <a class="page-detail-url" href="${escapeHtml(p.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(p.url)}</a>
+            <a class="page-detail-url" href="${escapeHtml(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.url)}</a>
             <div class="page-detail-title">${escapeHtml(p.title || 'No title')}</div>
           </div>
           <div class="page-detail-badges">
@@ -4905,10 +4905,10 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
         <div class="meta-target">Scanned <strong class="mono">${escapeHtml(scanDate)}</strong></div>
       </div>
       <div class="controls">
-        <button class="btn" type="button" onclick="copySeoScannedUrls(event)">Copy URLs</button>
-        <button class="btn" type="button" onclick="exportSeoPagesCsv()">Export CSV · Pages</button>
-        <button class="btn btn-primary" type="button" onclick="exportSeoIssuesCsv()">Export CSV · Issues</button>
-        <button class="btn" type="button" onclick="window.print()">Print / PDF</button>
+        <button class="btn" type="button" data-seo-action="copy-urls">Copy URLs</button>
+        <button class="btn" type="button" data-seo-action="export-pages-csv">Export CSV · Pages</button>
+        <button class="btn btn-primary" type="button" data-seo-action="export-issues-csv">Export CSV · Issues</button>
+        <button class="btn" type="button" data-seo-action="print">Print / PDF</button>
       </div>
     </header>
 

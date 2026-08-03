@@ -177,4 +177,25 @@
     var csv = CSV_BOM + lines.join('\r\n') + '\r\n';
     downloadCsv(csvFilename(report.domain), csv);
   };
+
+  function bindImageAuditActions() {
+    document.addEventListener('click', function (event) {
+      var btn = event.target && event.target.closest && event.target.closest('[data-image-audit-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-image-audit-action');
+      if (action === 'export-csv') {
+        event.preventDefault();
+        window.exportImageAuditCsv();
+      } else if (action === 'print') {
+        event.preventDefault();
+        window.print();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindImageAuditActions);
+  } else {
+    bindImageAuditActions();
+  }
 })();

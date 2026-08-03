@@ -601,4 +601,41 @@
     }
     downloadCsv('SeoGeo-Audit-Issues-' + reportDate(report) + '.csv', csv);
   };
+
+  // CSP-safe: no inline onclick handlers (script-src blocks them without unsafe-inline/unsafe-hashes)
+  function bindSeoReportActions() {
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+
+      var link = target.closest('a.page-detail-url');
+      if (link) {
+        event.stopPropagation();
+        return;
+      }
+
+      var btn = target.closest('[data-seo-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-seo-action');
+      if (action === 'copy-urls') {
+        event.preventDefault();
+        window.copySeoScannedUrls({ currentTarget: btn });
+      } else if (action === 'export-pages-csv') {
+        event.preventDefault();
+        window.exportSeoPagesCsv();
+      } else if (action === 'export-issues-csv') {
+        event.preventDefault();
+        window.exportSeoIssuesCsv();
+      } else if (action === 'print') {
+        event.preventDefault();
+        window.print();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindSeoReportActions);
+  } else {
+    bindSeoReportActions();
+  }
 })();

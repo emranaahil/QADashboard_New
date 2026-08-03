@@ -229,8 +229,8 @@ function generateHtmlReport(report) {
       <p class="sub">Viewports: ${escapeHtml(viewportLine)}</p>
       <p class="sub">Generated: ${escapeHtml(generatedAt)}</p>
       <div class="actions">
-        <button class="btn" type="button" onclick="exportImageAuditCsv()">Export CSV</button>
-        <button class="btn" type="button" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn" type="button" data-image-audit-action="export-csv">Export CSV</button>
+        <button class="btn" type="button" data-image-audit-action="print">Print / Save PDF</button>
       </div>
     </header>
     ${bodyHtml}

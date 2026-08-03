@@ -72,15 +72,16 @@ services:
     # path: path pattern; name/value: response header
     # Apply broadly so HTML, static assets, and API proxy paths get protection.
     headers:
-      # Content-Security-Policy (Next-compatible; mirrors web/next.config.ts)
+      # Content-Security-Policy (mirrors web/next.config.ts + backend Helmet)
+      # script-src unsafe-inline: HTML report CSV/print scripts; frame-ancestors self: dashboard iframes
       - path: /*
         name: Content-Security-Policy
-        value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: wss: ws:; worker-src 'self' blob:; upgrade-insecure-requests"
+        value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: wss: ws:; worker-src 'self' blob:; upgrade-insecure-requests"
 
-      # Clickjacking
+      # Clickjacking — SAMEORIGIN so same-host report iframes work; third parties still blocked
       - path: /*
         name: X-Frame-Options
-        value: DENY
+        value: SAMEORIGIN
 
       # MIME sniffing
       - path: /*

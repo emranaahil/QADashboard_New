@@ -38,18 +38,23 @@ ensureStorageDirs();
 
 app.set('trust proxy', 1);
 
-// Middleware — security headers (API responses; UI also sets headers via Next + render.yaml)
+// Middleware — security headers (API responses; UI also sets headers via Next + render.yaml).
+// Browsers enforce EVERY CSP header present. Live stacks Render + Next + Helmet on /api
+// report HTML, so this policy MUST match web/next.config.ts + render.yaml (especially
+// script-src 'unsafe-inline' for CSV export scripts and inline event handlers).
+// frame-ancestors 'self' + SAMEORIGIN: dashboard may iframe same-origin HTML reports.
 const apiCspDirectives = {
   defaultSrc: ["'self'"],
   baseUri: ["'self'"],
   objectSrc: ["'none'"],
-  frameAncestors: ["'none'"],
+  frameAncestors: ["'self'"],
   formAction: ["'self'"],
-  scriptSrc: ["'self'"],
+  scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
   styleSrc: ["'self'", "'unsafe-inline'"],
-  imgSrc: ["'self'", 'data:', 'https:'],
+  imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
   fontSrc: ["'self'", 'data:'],
-  connectSrc: ["'self'", 'https:']
+  connectSrc: ["'self'", 'https:', 'wss:', 'ws:'],
+  workerSrc: ["'self'", 'blob:']
 };
 if (IS_PRODUCTION) {
   apiCspDirectives.upgradeInsecureRequests = [];
@@ -61,7 +66,7 @@ app.use(helmet({
     },
     crossOriginEmbedderPolicy: false,
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    frameguard: { action: 'deny' },
+    frameguard: { action: 'sameorigin' },
     noSniff: true,
     hsts: IS_PRODUCTION
       ? { maxAge: 63072000, includeSubDomains: true, preload: true }

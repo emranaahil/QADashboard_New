@@ -685,8 +685,8 @@ function generateHtmlReport(report) {
         <div class="chip-row" aria-label="Enabled checks">${checkBadges(checks)}</div>
       </div>
       <div class="actions">
-        <button class="btn" type="button" onclick="window.print()" title="Opens print dialog — choose Save as PDF">Print</button>
-        <button class="btn btn-primary" type="button" onclick="window.print()" title="Opens print dialog — choose Save as PDF">Save as PDF</button>
+        <button class="btn" type="button" data-security-action="print" title="Opens print dialog — choose Save as PDF">Print</button>
+        <button class="btn btn-primary" type="button" data-security-action="print" title="Opens print dialog — choose Save as PDF">Save as PDF</button>
       </div>
     </header>
 
@@ -756,6 +756,16 @@ function generateHtmlReport(report) {
       Security Audit · ${escapeHtml(report.domain || report.url || '')} · Generated ${escapeHtml(generatedAt)}
     </footer>
   </div>
+  <script>
+  (function () {
+    document.addEventListener('click', function (event) {
+      var btn = event.target && event.target.closest && event.target.closest('[data-security-action="print"]');
+      if (!btn) return;
+      event.preventDefault();
+      window.print();
+    });
+  })();
+  </script>
 </body>
 </html>`;
 }

@@ -25,9 +25,10 @@ function buildSecurityHeaders() {
     "default-src 'self'",
     "base-uri 'self'",
     "object-src 'none'",
-    "frame-ancestors 'none'",
+    // Allow same-origin iframe previews of HTML reports on the dashboard
+    "frame-ancestors 'self'",
     "form-action 'self'",
-    // Next.js requires inline scripts/styles in App Router
+    // Next.js App Router + HTML report export scripts need inline script
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
@@ -41,7 +42,8 @@ function buildSecurityHeaders() {
 
   const headers = [
     { key: "Content-Security-Policy", value: csp.join("; ") },
-    { key: "X-Frame-Options", value: "DENY" },
+    // SAMEORIGIN so dashboard can iframe /api/... HTML reports; blocks third-party framing
+    { key: "X-Frame-Options", value: "SAMEORIGIN" },
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     {
