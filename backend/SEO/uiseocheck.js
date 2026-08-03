@@ -472,6 +472,8 @@ function auditDuplicateNonH1Headings(headings, addIssue) {
 
 const META_DESC_MIN_LEN = 50;
 const META_DESC_MAX_LEN = 160;
+const TITLE_MIN_LEN = 30;
+const TITLE_MAX_LEN = 60;
 
 function countMetaTagsInSource(domHtml, name) {
   const safe = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -491,11 +493,258 @@ function extractMetaContentFromSourceHtml(domHtml, name) {
   return '';
 }
 
+function extractCanonicalHref(domHtml) {
+  const src = String(domHtml || '');
+  const patterns = [
+    /<\s*link\b[^>]*\brel\s*=\s*["']canonical["'][^>]*\bhref\s*=\s*["']([^"']+)["']/i,
+    /<\s*link\b[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*\brel\s*=\s*["']canonical["']/i
+  ];
+  for (const re of patterns) {
+    const m = src.match(re);
+    if (m) return (m[1] || '').trim();
+  }
+  return '';
+}
+
+function countCanonicalLinks(domHtml) {
+  return countOccurrencesFromPattern(
+    '<\\s*link\\b[^>]*\\brel\\s*=\\s*["\']canonical["\']',
+    domHtml
+  );
+}
+
+function extractHreflangEntries(domHtml) {
+  const src = String(domHtml || '');
+  const out = [];
+  const re =
+    /<\s*link\b[^>]*\brel\s*=\s*["']alternate["'][^>]*>/gi;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    const tag = m[0];
+    const lang = (tag.match(/\bhreflang\s*=\s*["']([^"']+)["']/i) || [])[1];
+    const href = (tag.match(/\bhref\s*=\s*["']([^"']+)["']/i) || [])[1];
+    if (lang || href) out.push({ hreflang: (lang || '').trim(), href: (href || '').trim() });
+  }
+  // href before rel
+  const re2 =
+    /<\s*link\b[^>]*\bhreflang\s*=\s*["']([^"']+)["'][^>]*\brel\s*=\s*["']alternate["'][^>]*>/gi;
+  while ((m = re2.exec(src)) !== null) {
+    const tag = m[0];
+    const lang = (m[1] || '').trim();
+    const href = (tag.match(/\bhref\s*=\s*["']([^"']+)["']/i) || [])[1] || '';
+    if (lang && !out.some((e) => e.hreflang === lang && e.href === href)) {
+      out.push({ hreflang: lang, href: href.trim() });
+    }
+  }
+  return out;
+}
+
+function hasCharsetMeta(domHtml) {
+  const src = String(domHtml || '');
+  return (
+    /<\s*meta\b[^>]*\bcharset\s*=\s*["']?[^"'>\s]+/i.test(src) ||
+    /<\s*meta\b[^>]*\bhttp-equiv\s*=\s*["']content-type["'][^>]*charset\s*=/i.test(src)
+  );
+}
+
+function hasFaviconLink(domHtml) {
+  return /<\s*link\b[^>]*\brel\s*=\s*["'](?:shortcut\s+)?icon["']/i.test(String(domHtml || ''));
+}
+
+/**
+ * Title quality (length). Presence/empty handled as critical elsewhere.
+ * @returns {{ status, message, length }}
+ */
+function auditTitleQuality(title, addIssue) {
+  const t = String(title || '').trim();
+  const length = t.length;
+  if (!t) {
+    return { status: 'fail', message: 'Empty or missing', length: 0, value: '' };
+  }
+  if (length < TITLE_MIN_LEN) {
+    addIssue(
+      'minor',
+      'Page title length',
+      `Short (${length} chars, recommended ${TITLE_MIN_LEN}–${TITLE_MAX_LEN}). Title: "${t.slice(0, 80)}${t.length > 80 ? '…' : ''}"`
+    );
+    return {
+      status: 'warn',
+      message: `Short (${length} chars; aim ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
+      length,
+      value: t
+    };
+  }
+  if (length > TITLE_MAX_LEN) {
+    addIssue(
+      'minor',
+      'Page title length',
+      `Long (${length} chars, recommended ${TITLE_MIN_LEN}–${TITLE_MAX_LEN}). Title may truncate in SERPs. Title: "${t.slice(0, 80)}${t.length > 80 ? '…' : ''}"`
+    );
+    return {
+      status: 'warn',
+      message: `Long (${length} chars; aim ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
+      length,
+      value: t
+    };
+  }
+  return {
+    status: 'pass',
+    message: `OK (${length} chars)`,
+    length,
+    value: t
+  };
+}
+
+/**
+ * Canonical quality: present, single, absolute URL preferred.
+ */
+function auditCanonicalQuality(domHtml, pageUrl, addIssue) {
+  const count = countCanonicalLinks(domHtml);
+  const href = extractCanonicalHref(domHtml);
+  if (count === 0) {
+    addIssue('minor', 'Missing canonical', 'No canonical link tag found in source.');
+    return { status: 'fail', message: 'Not set', value: '' };
+  }
+  if (count > 1) {
+    addIssue(
+      'minor',
+      'Multiple canonical tags',
+      `Found ${count} rel=canonical link tags (expected 1).`
+    );
+    return {
+      status: 'warn',
+      message: `${count} tags (expected 1)`,
+      value: href
+    };
+  }
+  if (!href) {
+    addIssue('minor', 'Empty canonical', 'canonical link exists but href is empty.');
+    return { status: 'fail', message: 'Empty href', value: '' };
+  }
+  const isAbsolute = /^https?:\/\//i.test(href);
+  if (!isAbsolute) {
+    addIssue(
+      'minor',
+      'Canonical not absolute',
+      `Canonical should be an absolute URL (https://…). Found: "${href}"`
+    );
+    return {
+      status: 'warn',
+      message: 'Relative URL (prefer absolute https://)',
+      value: href
+    };
+  }
+  try {
+    const pageHost = new URL(pageUrl).hostname.replace(/^www\./i, '').toLowerCase();
+    const canHost = new URL(href).hostname.replace(/^www\./i, '').toLowerCase();
+    if (pageHost && canHost && pageHost !== canHost) {
+      addIssue(
+        'minor',
+        'Canonical points to other host',
+        `Canonical host (${canHost}) differs from page host (${pageHost}). Confirm this is intentional.`
+      );
+      return {
+        status: 'warn',
+        message: `Points to other host (${canHost})`,
+        value: href
+      };
+    }
+  } catch {
+    addIssue('minor', 'Invalid canonical URL', `Could not parse canonical href: "${href}"`);
+    return { status: 'fail', message: 'Invalid URL', value: href };
+  }
+  return { status: 'pass', message: 'OK — absolute self-host canonical', value: href };
+}
+
+function auditRobotsIndexability(domHtml, addIssue) {
+  const robotsMeta = analyzeRobotsMetaConflicts(domHtml);
+  if (robotsMeta.indexConflict) {
+    addIssue(
+      'minor',
+      'Robots meta conflict',
+      'robots meta contains both index and noindex (opposing directives).'
+    );
+  }
+  if (robotsMeta.followConflict) {
+    addIssue(
+      'minor',
+      'Robots meta conflict',
+      'robots meta contains both follow and nofollow (opposing directives).'
+    );
+  }
+  if (robotsMeta.hasNoindex && !robotsMeta.indexConflict) {
+    addIssue(
+      'minor',
+      'Page marked noindex',
+      'robots meta includes noindex — page should not appear in Google search results. Confirm this is intentional.'
+    );
+  }
+  const raw = (robotsMeta.contents || []).join(', ') || '';
+  if (robotsMeta.hasNoindex) {
+    return {
+      status: robotsMeta.indexConflict ? 'fail' : 'warn',
+      message: robotsMeta.indexConflict
+        ? 'Conflict: index + noindex'
+        : 'noindex present (will not rank)',
+      value: raw || 'noindex'
+    };
+  }
+  if (raw) {
+    return { status: 'pass', message: raw, value: raw };
+  }
+  return {
+    status: 'pass',
+    message: 'Not set (defaults to index,follow)',
+    value: ''
+  };
+}
+
+function auditHreflangBasic(domHtml, addIssue) {
+  const entries = extractHreflangEntries(domHtml);
+  if (!entries.length) {
+    return {
+      status: 'na',
+      message: 'Not set (optional unless multi-language)',
+      value: '',
+      count: 0
+    };
+  }
+  const missingHref = entries.filter((e) => !e.href);
+  const missingLang = entries.filter((e) => !e.hreflang);
+  if (missingHref.length || missingLang.length) {
+    addIssue(
+      'minor',
+      'Hreflang incomplete',
+      `Found ${entries.length} hreflang alternate(s) with missing lang and/or href.`
+    );
+    return {
+      status: 'warn',
+      message: 'Present but incomplete',
+      value: `${entries.length} link(s)`,
+      count: entries.length
+    };
+  }
+  return {
+    status: 'pass',
+    message: `${entries.length} alternate link(s)`,
+    value: entries.map((e) => e.hreflang).slice(0, 8).join(', '),
+    count: entries.length
+  };
+}
+
 function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
   const description = String(domExtract.description || '').trim();
   const keywords = String(domExtract.keywords || '').trim();
   const metaDescCount = countMetaTagsInSource(domHtml, 'description');
   const metaKeywordsCount = countMetaTagsInSource(domHtml, 'keywords');
+
+  /** @type {{ status: string, message: string, value: string, length: number }} */
+  let descStatus = {
+    status: 'pass',
+    message: 'OK',
+    value: description,
+    length: description.length
+  };
 
   // P2: only emit description issues when something is actually wrong (not when healthy).
   if (metaDescCount === 0) {
@@ -504,12 +753,24 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
       'Page meta description',
       'Not set — no meta[name="description"] tag found in source.'
     );
+    descStatus = {
+      status: 'fail',
+      message: 'Not set',
+      value: '',
+      length: 0
+    };
   } else if (isEmptyValue(description)) {
     addIssue(
       'minor',
       'Page meta description',
       'Empty — meta[name="description"] tag exists but content is blank.'
     );
+    descStatus = {
+      status: 'fail',
+      message: 'Empty content',
+      value: '',
+      length: 0
+    };
   } else {
     const notes = [];
     if (description.length < META_DESC_MIN_LEN) {
@@ -524,6 +785,19 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
         'Page meta description',
         `${description} — ${notes.join('; ')}`
       );
+      descStatus = {
+        status: 'warn',
+        message: notes.join('; '),
+        value: description,
+        length: description.length
+      };
+    } else {
+      descStatus = {
+        status: 'pass',
+        message: `OK (${description.length} chars)`,
+        value: description,
+        length: description.length
+      };
     }
   }
 
@@ -533,7 +807,21 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
       `meta description tags (${metaDescCount} found, expected 1)`,
       'Each page should have one meta[name="description"] tag.'
     );
+    if (descStatus.status === 'pass') {
+      descStatus = {
+        ...descStatus,
+        status: 'warn',
+        message: `${metaDescCount} tags (expected 1)`
+      };
+    }
   }
+
+  /** @type {{ status: string, message: string, value: string }} */
+  let kwStatus = {
+    status: 'na',
+    message: 'Not set (optional for modern SEO)',
+    value: ''
+  };
 
   // Keywords are optional for modern SEO — only flag empty present tag or duplicates.
   if (metaKeywordsCount > 0 && isEmptyValue(keywords)) {
@@ -542,6 +830,13 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
       'Page meta keywords',
       'Empty — meta[name="keywords"] tag exists but content is blank.'
     );
+    kwStatus = { status: 'warn', message: 'Tag present but empty', value: '' };
+  } else if (metaKeywordsCount > 0) {
+    kwStatus = {
+      status: 'pass',
+      message: 'Present (optional)',
+      value: keywords
+    };
   }
 
   if (metaKeywordsCount > 1) {
@@ -550,7 +845,76 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
       `meta keywords tags (${metaKeywordsCount} found, expected 1)`,
       'Each page should have at most one meta[name="keywords"] tag.'
     );
+    kwStatus = {
+      status: 'warn',
+      message: `${metaKeywordsCount} tags (expected 1)`,
+      value: keywords
+    };
   }
+
+  return { description: descStatus, keywords: kwStatus };
+}
+
+/**
+ * Build structured meta summary for the report "Meta tags" panel.
+ */
+function buildMetaTagsSummary({
+  titleInfo,
+  descInfo,
+  keywordsInfo,
+  canonicalInfo,
+  robotsInfo,
+  viewportPresent,
+  charsetPresent,
+  faviconPresent,
+  hreflangInfo,
+  openGraph,
+  twitter
+}) {
+  const ogLabels = OPEN_GRAPH_META.map((t) => t.label);
+  const twLabels = TWITTER_CARD_META.map((t) => t.label);
+  const ogPresent = ogLabels.filter((l) => openGraph && !isEmptyValue(openGraph[l]));
+  const twPresent = twLabels.filter((l) => twitter && !isEmptyValue(twitter[l]));
+
+  return {
+    title: titleInfo,
+    description: descInfo,
+    keywords: keywordsInfo,
+    canonical: canonicalInfo,
+    robots: robotsInfo,
+    viewport: viewportPresent
+      ? { status: 'pass', message: 'Present', value: 'viewport' }
+      : { status: 'fail', message: 'Missing meta viewport', value: '' },
+    charset: charsetPresent
+      ? { status: 'pass', message: 'Present', value: 'charset' }
+      : { status: 'warn', message: 'No charset meta detected', value: '' },
+    favicon: faviconPresent
+      ? { status: 'pass', message: 'Present', value: 'icon' }
+      : { status: 'warn', message: 'No favicon link detected', value: '' },
+    hreflang: hreflangInfo,
+    openGraph: {
+      status:
+        ogPresent.length === ogLabels.length
+          ? 'pass'
+          : ogPresent.length === 0
+            ? 'fail'
+            : 'warn',
+      message: `${ogPresent.length}/${ogLabels.length} tags set`,
+      value: ogPresent.join(', ') || '',
+      missing: ogLabels.filter((l) => !ogPresent.includes(l))
+    },
+    twitter: {
+      status:
+        twPresent.length === twLabels.length
+          ? 'pass'
+          : twPresent.length === 0
+            ? 'warn'
+            : 'warn',
+      message: `${twPresent.length}/${twLabels.length} tags set`,
+      value: twPresent.join(', ') || '',
+      missing: twLabels.filter((l) => !twPresent.includes(l))
+    }
+  };
 }
 
 /** Count empty content only on SEO-relevant meta tags (reduces noise from trackers). */
@@ -573,9 +937,15 @@ function sortMinorIssuesForDisplay(issues) {
   const list = [...(issues || [])];
   const priority = (line) => {
     const text = String(line || '');
-    if (text.startsWith('Page meta description:')) return 0;
-    if (text.startsWith('Page meta keywords:')) return 1;
-    return 2;
+    if (text.startsWith('Page title length:')) return 0;
+    if (text.startsWith('Page meta description:')) return 1;
+    if (text.startsWith('Page meta keywords:')) return 2;
+    if (text.startsWith('Missing canonical:') || text.startsWith('Canonical ')) return 3;
+    if (text.startsWith('Page marked noindex:') || text.startsWith('Robots meta')) return 4;
+    if (text.startsWith('Missing viewport') || text.startsWith('Missing charset') || text.startsWith('Missing favicon')) return 5;
+    if (text.startsWith('Hreflang')) return 6;
+    if (text.startsWith('Duplicate description')) return 7;
+    return 10;
   };
   return list.sort((a, b) => priority(a) - priority(b));
 }
@@ -2040,6 +2410,8 @@ async function scanPage({
         severity: severity || inferGeoSeverityFromText(text)
       });
     };
+    /** @type {object|null} Structured meta panel for the HTML report */
+    let pageMetaTagsSnapshot = null;
 
     if (includeSeo) {
       // Critical rules
@@ -2065,6 +2437,17 @@ async function scanPage({
       }
 
       if (isEmptyValue(domExtract.title)) addIssue('critical', 'Empty/invalid title (DOM)', 'title text is empty in DOM.');
+
+      // Title length quality (minor) — presence already critical above
+      const titleInfo =
+        titleCountAll > 0 && !isEmptyValue(domExtract.title)
+          ? auditTitleQuality(domExtract.title, addIssue)
+          : {
+              status: titleCountAll === 0 ? 'fail' : 'fail',
+              message: titleCountAll === 0 ? 'Missing <title>' : 'Empty title',
+              length: String(domExtract.title || '').trim().length,
+              value: String(domExtract.title || '').trim()
+            };
 
       auditOpenGraphTags(domHtml, domExtract.openGraph || {}, addIssue);
 
@@ -2100,11 +2483,11 @@ async function scanPage({
         );
       }
 
-      // Minor
-      auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue);
+      // Meta description + keywords (+ status for report panel)
+      const descKw = auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue);
 
-      const hasCanonical = /<\s*link[^>]+rel\s*=\s*["']canonical["'][^>]*>/i.test(domHtml);
-      if (!hasCanonical) addIssue('minor', 'Missing canonical', 'No canonical link tag found in source.');
+      // Canonical quality (presence + absolute URL + host)
+      const canonicalInfo = auditCanonicalQuality(domHtml, url, addIssue);
 
       const hasHtmlLang = /<\s*html[^>]*\slang\s*=\s*["'][^"']+["']/i.test(domHtml);
       if (!hasHtmlLang) addIssue('minor', 'Missing <html lang>', 'html element missing lang attribute.');
@@ -2112,22 +2495,29 @@ async function scanPage({
       const hasViewport = /<\s*meta[^>]+name\s*=\s*["']viewport["'][^>]*>/i.test(domHtml);
       if (!hasViewport) addIssue('minor', 'Missing viewport meta', 'meta[name="viewport"] missing.');
 
-      // Whole-token robots directives only (noindex ≠ substring match of "index")
-      const robotsMeta = analyzeRobotsMetaConflicts(domHtml);
-      if (robotsMeta.indexConflict) {
+      const charsetPresent = hasCharsetMeta(domHtml);
+      if (!charsetPresent) {
         addIssue(
           'minor',
-          'Robots meta conflict',
-          'robots meta contains both index and noindex (opposing directives).'
+          'Missing charset',
+          'No charset meta (or Content-Type charset) found — declare UTF-8 in the document head.'
         );
       }
-      if (robotsMeta.followConflict) {
+
+      const faviconPresent = hasFaviconLink(domHtml);
+      if (!faviconPresent) {
         addIssue(
           'minor',
-          'Robots meta conflict',
-          'robots meta contains both follow and nofollow (opposing directives).'
+          'Missing favicon',
+          'No rel=icon / shortcut icon link found in the document head.'
         );
       }
+
+      // Robots: conflicts + explicit noindex warning
+      const robotsInfo = auditRobotsIndexability(domHtml, addIssue);
+
+      // Hreflang: optional; validate if present
+      const hreflangInfo = auditHreflangBasic(domHtml, addIssue);
 
       // P3: only SEO-relevant empty metas (not every tracker/pixel empty content)
       const emptyMetaContentCount = countEmptySeoMetaContent(domHtml);
@@ -2146,6 +2536,27 @@ async function scanPage({
       if (commentedTitleCount > 0) {
         addIssue('critical', 'Commented title tags', `Found title tags inside HTML comments: ${commentedTitleCount} occurrence(s).`);
       }
+
+      // Structured meta panel data (clear Pass/Fail/Warn in report)
+      const ogMap = domExtract.openGraph || {};
+      pageMetaTagsSnapshot = buildMetaTagsSummary({
+        titleInfo,
+        descInfo: descKw.description,
+        keywordsInfo: descKw.keywords,
+        canonicalInfo,
+        robotsInfo,
+        viewportPresent: hasViewport,
+        charsetPresent,
+        faviconPresent,
+        hreflangInfo,
+        openGraph: ogMap,
+        twitter: {
+          'twitter:card': ogMap['twitter:card'] || '',
+          'twitter:title': ogMap['twitter:title'] || '',
+          'twitter:description': ogMap['twitter:description'] || '',
+          'twitter:image': ogMap['twitter:image'] || ''
+        }
+      });
     }
 
     if (includeSecurityHeaders) {
@@ -2207,6 +2618,7 @@ async function scanPage({
       title: domExtract.title,
       description: domExtract.description,
       keywords: domExtract.keywords,
+      metaTags: pageMetaTagsSnapshot,
       h1Count: h1CountAll,
       h2Count: h2CountAll,
       h3Count: h3CountAll,
@@ -2589,7 +3001,16 @@ function renderSeoMinorListItems(items) {
   return (items || [])
     .map((x) => {
       const isMetaLine =
-        x.startsWith('Page meta description:') || x.startsWith('Page meta keywords:');
+        x.startsWith('Page meta description:') ||
+        x.startsWith('Page meta keywords:') ||
+        x.startsWith('Page title length:') ||
+        x.startsWith('Page marked noindex:') ||
+        x.startsWith('Canonical ') ||
+        x.startsWith('Missing canonical:') ||
+        x.startsWith('Multiple canonical') ||
+        x.startsWith('Hreflang') ||
+        x.startsWith('Missing charset:') ||
+        x.startsWith('Missing favicon:');
       if (isMetaLine) {
         const formatted = formatIssueLineForDisplay(x);
         return `<li class="issue-line minor-meta-line"><span class="issue-line-label">${escapeHtml(formatted.label || '')}</span><span class="issue-line-detail"><code>${escapeHtml(formatted.detail)}</code></span></li>`;
@@ -2597,6 +3018,94 @@ function renderSeoMinorListItems(items) {
       return renderIssueLineItem(x);
     })
     .join('');
+}
+
+function metaStatusBadge(status) {
+  const s = String(status || 'na').toLowerCase();
+  if (s === 'pass') return '<span class="meta-tag-badge meta-tag-badge--pass">Pass</span>';
+  if (s === 'fail') return '<span class="meta-tag-badge meta-tag-badge--fail">Fail</span>';
+  if (s === 'warn') return '<span class="meta-tag-badge meta-tag-badge--warn">Warn</span>';
+  return '<span class="meta-tag-badge meta-tag-badge--na">N/A</span>';
+}
+
+/**
+ * Clear meta tags panel for SEO report (title, description, canonical, robots, OG, …).
+ */
+function renderMetaTagsPanel(metaTags, page) {
+  const rows = [];
+  const push = (label, info, fallbackValue) => {
+    if (!info && fallbackValue === undefined) return;
+    const status = info?.status || (fallbackValue ? 'pass' : 'fail');
+    const message = info?.message || (fallbackValue ? 'Present' : 'Not set');
+    const value = info?.value != null && info.value !== ''
+      ? info.value
+      : fallbackValue != null && fallbackValue !== ''
+        ? fallbackValue
+        : '—';
+    rows.push({ label, status, message, value: String(value) });
+  };
+
+  if (metaTags && typeof metaTags === 'object') {
+    push('Title (document)', metaTags.title, page?.title);
+    push('Meta description', metaTags.description, page?.description);
+    push('Meta keywords', metaTags.keywords, page?.keywords);
+    push('Canonical', metaTags.canonical);
+    push('Robots meta', metaTags.robots);
+    push('Viewport', metaTags.viewport);
+    push('Charset', metaTags.charset);
+    push('Favicon', metaTags.favicon);
+    push('Hreflang', metaTags.hreflang);
+    push('Open Graph', metaTags.openGraph);
+    push('Twitter Card', metaTags.twitter);
+  } else {
+    // Legacy reports without metaTags snapshot
+    const t = String(page?.title || '').trim();
+    const d = String(page?.description || '').trim();
+    const k = String(page?.keywords || '').trim();
+    push(
+      'Title (document)',
+      t
+        ? { status: 'pass', message: `${t.length} chars`, value: t }
+        : { status: 'fail', message: 'Not set', value: '' }
+    );
+    push(
+      'Meta description',
+      d
+        ? { status: 'pass', message: `${d.length} chars`, value: d }
+        : { status: 'fail', message: 'Not set', value: '' }
+    );
+    push(
+      'Meta keywords',
+      k
+        ? { status: 'pass', message: 'Present', value: k }
+        : { status: 'na', message: 'Not set (optional)', value: '' }
+    );
+  }
+
+  if (!rows.length) return '';
+
+  const list = rows
+    .map(
+      (r) => `
+      <li class="meta-tag-row meta-tag-row--${escapeHtml(r.status)}">
+        ${metaStatusBadge(r.status)}
+        <span class="meta-tag-label">${escapeHtml(r.label)}</span>
+        <span class="meta-tag-msg">${escapeHtml(r.message)}</span>
+        <code class="meta-tag-value" title="${escapeHtml(r.value)}">${escapeHtml(
+          r.value.length > 160 ? `${r.value.slice(0, 160)}…` : r.value
+        )}</code>
+      </li>`
+    )
+    .join('');
+
+  return `
+    <div class="meta-tags-panel" aria-label="Meta tags audit">
+      <div class="meta-tags-panel-head">
+        <span class="meta-tags-panel-title">Meta tags</span>
+        <span class="meta-tags-panel-sub">Title, description, canonical, robots, social tags</span>
+      </div>
+      <ul class="meta-tags-list">${list}</ul>
+    </div>`;
 }
 
 function renderIssueSeverityTag(severity) {
@@ -3379,11 +3888,14 @@ function buildPageDetailHtml(p, index, totalPages) {
   return `
         <div class="page-detail-content">
           <div class="page-detail-meta">
+            <div class="page-detail-meta-score">${renderScoreChip(p.seoScore)}</div>
+          </div>
+          ${modules.seo ? renderMetaTagsPanel(p.metaTags, p) : `
+          <div class="page-detail-meta-legacy">
             <div class="pageMeta">Title: <b>${escapeHtml(p.title || '—')}</b></div>
             <div class="pageMeta">Description: <b>${escapeHtml(p.description || '—')}</b></div>
             <div class="pageMeta">Keywords: <b>${escapeHtml(p.keywords || '—')}</b></div>
-            <div class="page-detail-score">${renderScoreChip(p.seoScore)}</div>
-          </div>
+          </div>`}
           <div class="audit-cards">
             ${seoCard}
             ${geoCard}
@@ -3863,6 +4375,34 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
   .mono{font-family:var(--font-mono);font-size:.75rem;word-break:break-all;overflow-wrap:anywhere}
   .pageMeta{color:var(--text-secondary);font-size:.875rem;margin-top:6px;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}
   .pageMeta b{color:#f1f5f9;font-weight:600}
+  .meta-tags-panel{
+    background:rgba(0,0,0,.14);border:1px solid rgba(96,165,250,.28);border-radius:var(--radius-sm);
+    padding:clamp(12px,2vw,16px);min-width:0
+  }
+  .meta-tags-panel-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin-bottom:10px}
+  .meta-tags-panel-title{font-size:.875rem;font-weight:700;color:#f8fafc;letter-spacing:.02em;text-transform:uppercase}
+  .meta-tags-panel-sub{font-size:.75rem;color:var(--text-tertiary)}
+  .meta-tags-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .meta-tag-row{
+    display:grid;grid-template-columns:minmax(52px,64px) minmax(100px,140px) minmax(0,1fr) minmax(0,1.4fr);
+    gap:8px 12px;align-items:start;font-size:.8125rem;line-height:1.4;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)
+  }
+  .meta-tag-row:last-child{border-bottom:0}
+  .meta-tag-badge{
+    justify-self:start;min-width:48px;padding:2px 8px;border-radius:999px;font-size:.625rem;font-weight:700;
+    letter-spacing:.03em;text-transform:uppercase;text-align:center
+  }
+  .meta-tag-badge--pass{color:var(--good);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.28)}
+  .meta-tag-badge--fail{color:var(--critical);background:var(--danger-bg);border:1px solid var(--danger-border)}
+  .meta-tag-badge--warn{color:#fdba74;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.35)}
+  .meta-tag-badge--na{color:var(--text-tertiary);background:transparent;border:1px solid var(--border)}
+  .meta-tag-label{font-weight:700;color:#e2e8f0}
+  .meta-tag-msg{color:var(--text-secondary);min-width:0;word-break:break-word}
+  .meta-tag-value{display:block;min-width:0;color:#94a3b8;font-family:var(--font-mono);font-size:.75rem;word-break:break-word;overflow-wrap:anywhere}
+  @media (max-width:720px){
+    .meta-tag-row{grid-template-columns:minmax(48px,56px) 1fr;grid-template-rows:auto auto auto}
+    .meta-tag-msg,.meta-tag-value{grid-column:2}
+  }
   .minor-meta-line code{color:#f1f5f9;font-weight:500}
   .page-detail-list{display:flex;flex-direction:column;gap:10px}
   .page-detail{
@@ -3918,9 +4458,11 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
   @keyframes page-detail-spin{to{transform:rotate(360deg)}}
   .page-detail-content{display:flex;flex-direction:column;gap:14px}
   .page-detail-meta{
-    display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px 16px;
-    padding-bottom:12px;border-bottom:1px solid var(--border)
+    display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:flex-end;gap:12px 16px;
+    padding-bottom:4px
   }
+  .page-detail-meta-score{flex:0 0 auto}
+  .page-detail-meta-legacy{padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:4px}
   .page-detail-score{flex:0 0 auto}
   .audit-cards{display:flex;flex-direction:column;gap:14px;margin-top:16px}
   .audit-card{
@@ -4762,9 +5304,15 @@ async function runSeoAudit({
       for (const [, us] of descToUrls.entries()) if (us.length > 1) us.forEach((u) => dupDescSet.add(u));
 
       for (const p of pages) {
-        if (dupTitleSet.has(p.url)) p.issues.critical.push('Duplicate title across pages (CRITICAL)');
+        if (dupTitleSet.has(p.url)) {
+          p.issues.critical.push(
+            'Duplicate title across pages: same <title> text is used on multiple URLs in this crawl.'
+          );
+        }
         if (dupDescSet.has(p.url)) {
-          p.issues.minor.push('Duplicate description across pages: same meta description used on multiple pages.');
+          p.issues.minor.push(
+            'Duplicate description across pages: same meta description is used on multiple URLs in this crawl.'
+          );
         }
       }
 

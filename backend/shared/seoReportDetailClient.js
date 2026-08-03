@@ -1492,6 +1492,100 @@
     };
   }
 
+  function metaStatusBadge(status) {
+    var s = String(status || 'na').toLowerCase();
+    if (s === 'pass') return '<span class="meta-tag-badge meta-tag-badge--pass">Pass</span>';
+    if (s === 'fail') return '<span class="meta-tag-badge meta-tag-badge--fail">Fail</span>';
+    if (s === 'warn') return '<span class="meta-tag-badge meta-tag-badge--warn">Warn</span>';
+    return '<span class="meta-tag-badge meta-tag-badge--na">N/A</span>';
+  }
+
+  function renderMetaTagsPanel(metaTags, page) {
+    var rows = [];
+    function push(label, info, fallbackValue) {
+      if (!info && fallbackValue === undefined) return;
+      var status = (info && info.status) || (fallbackValue ? 'pass' : 'fail');
+      var message = (info && info.message) || (fallbackValue ? 'Present' : 'Not set');
+      var value =
+        info && info.value != null && info.value !== ''
+          ? info.value
+          : fallbackValue != null && fallbackValue !== ''
+            ? fallbackValue
+            : '—';
+      rows.push({ label: label, status: status, message: message, value: String(value) });
+    }
+
+    if (metaTags && typeof metaTags === 'object') {
+      push('Title (document)', metaTags.title, page && page.title);
+      push('Meta description', metaTags.description, page && page.description);
+      push('Meta keywords', metaTags.keywords, page && page.keywords);
+      push('Canonical', metaTags.canonical);
+      push('Robots meta', metaTags.robots);
+      push('Viewport', metaTags.viewport);
+      push('Charset', metaTags.charset);
+      push('Favicon', metaTags.favicon);
+      push('Hreflang', metaTags.hreflang);
+      push('Open Graph', metaTags.openGraph);
+      push('Twitter Card', metaTags.twitter);
+    } else {
+      var t = String((page && page.title) || '').trim();
+      var d = String((page && page.description) || '').trim();
+      var k = String((page && page.keywords) || '').trim();
+      push(
+        'Title (document)',
+        t
+          ? { status: 'pass', message: t.length + ' chars', value: t }
+          : { status: 'fail', message: 'Not set', value: '' }
+      );
+      push(
+        'Meta description',
+        d
+          ? { status: 'pass', message: d.length + ' chars', value: d }
+          : { status: 'fail', message: 'Not set', value: '' }
+      );
+      push(
+        'Meta keywords',
+        k
+          ? { status: 'pass', message: 'Present', value: k }
+          : { status: 'na', message: 'Not set (optional)', value: '' }
+      );
+    }
+
+    if (!rows.length) return '';
+
+    var list = rows
+      .map(function (r) {
+        var display =
+          r.value.length > 160 ? r.value.slice(0, 160) + '…' : r.value;
+        return (
+          '<li class="meta-tag-row meta-tag-row--' +
+          escapeHtml(r.status) +
+          '">' +
+          metaStatusBadge(r.status) +
+          '<span class="meta-tag-label">' +
+          escapeHtml(r.label) +
+          '</span><span class="meta-tag-msg">' +
+          escapeHtml(r.message) +
+          '</span><code class="meta-tag-value" title="' +
+          escapeHtml(r.value) +
+          '">' +
+          escapeHtml(display) +
+          '</code></li>'
+        );
+      })
+      .join('');
+
+    return (
+      '<div class="meta-tags-panel" aria-label="Meta tags audit">' +
+      '<div class="meta-tags-panel-head">' +
+      '<span class="meta-tags-panel-title">Meta tags</span>' +
+      '<span class="meta-tags-panel-sub">Title, description, canonical, robots, social tags</span>' +
+      '</div><ul class="meta-tags-list">' +
+      list +
+      '</ul></div>'
+    );
+  }
+
   function buildPageDetailHtml(page, index, totalPages) {
     var modules = resolvePageAuditModules(page);
     var issues = page.issues || { critical: [], minor: [], geo: [], hidden: [] };
@@ -1617,21 +1711,26 @@
     var pageSpeedCard = modules.pageSpeed ? renderPageSpeedCategoryCard(page.pageSpeed) : '';
     var richResultsCard = modules.richResults ? renderRichResultsCategoryCard(page.richResults) : '';
 
+    var metaPanel = modules.seo
+      ? renderMetaTagsPanel(page.metaTags, page)
+      : '<div class="page-detail-meta-legacy">' +
+        '<div class="pageMeta">Title: <b>' +
+        escapeHtml(page.title || '—') +
+        '</b></div>' +
+        '<div class="pageMeta">Description: <b>' +
+        escapeHtml(page.description || '—') +
+        '</b></div>' +
+        '<div class="pageMeta">Keywords: <b>' +
+        escapeHtml(page.keywords || '—') +
+        '</b></div></div>';
+
     return (
       '<div class="page-detail-content">' +
       '<div class="page-detail-meta">' +
-      '<div class="pageMeta">Title: <b>' +
-      escapeHtml(page.title || '—') +
-      '</b></div>' +
-      '<div class="pageMeta">Description: <b>' +
-      escapeHtml(page.description || '—') +
-      '</b></div>' +
-      '<div class="pageMeta">Keywords: <b>' +
-      escapeHtml(page.keywords || '—') +
-      '</b></div>' +
-      '<div class="page-detail-score">' +
+      '<div class="page-detail-meta-score">' +
       renderScoreChip(page.seoScore) +
       '</div></div>' +
+      metaPanel +
       '<div class="audit-cards">' +
       seoCard +
       geoCard +
