@@ -25,7 +25,8 @@ const { loadJson, ensureDir } = require('./utils/reportUtils');
 const {
   isContactHyperlinkIssue,
   aggregateContactHyperlinkIssues,
-  renderContactHyperlinkSectionHtml
+  renderContactHyperlinkSectionHtml,
+  getLockedPhoneFormat
 } = require('./contactHyperlinkCheck');
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -393,7 +394,11 @@ if (fs.existsSync(resolvedScreenshotFolder)) {
 
   // Contact hyperlinks: aggregate once per email/phone with all page URLs
   const contactAggregate = aggregateContactHyperlinkIssues(entries);
-  const contactSectionHtml = renderContactHyperlinkSectionHtml(contactAggregate, escapeHtml);
+  const contactSectionHtml = renderContactHyperlinkSectionHtml(
+    contactAggregate,
+    escapeHtml,
+    getLockedPhoneFormat()
+  );
 
   // ── Issue Table Rows ───────────────────────────────────────────────────────
   // Contact hyperlink issues appear only in the aggregated section (not repeated per page)

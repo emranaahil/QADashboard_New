@@ -25,7 +25,8 @@ const { loadJson, ensureDir } = require('./utils/reportUtils');
 const {
   isContactHyperlinkIssue,
   aggregateContactHyperlinkIssues,
-  renderContactHyperlinkSectionHtml
+  renderContactHyperlinkSectionHtml,
+  getLockedPhoneFormat
 } = require('../../ui-check/contactHyperlinkCheck');
 
 const REPORT_DEBUG = process.env.QA_DEBUG === '1';
@@ -430,7 +431,11 @@ module.exports = function generateReport({
 
   // Contact hyperlinks: one contact → all page URLs (not repeated per page in the main table)
   const contactAggregate = aggregateContactHyperlinkIssues(entries);
-  const contactSectionHtml = renderContactHyperlinkSectionHtml(contactAggregate, escapeHtml);
+  const contactSectionHtml = renderContactHyperlinkSectionHtml(
+    contactAggregate,
+    escapeHtml,
+    getLockedPhoneFormat()
+  );
 
   // ── Issue Table Rows ───────────────────────────────────────────────────────
   let issueRowsHtml = '';

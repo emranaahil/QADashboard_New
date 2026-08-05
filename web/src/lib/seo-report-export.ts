@@ -218,9 +218,44 @@ function geoIssueSeverityTag(issueSummary: string): string | null {
   return null;
 }
 
+function metaIssueSeverityTag(issueSummary: string): string | null {
+  const t = String(issueSummary || "");
+  if (/^Page title length:/i.test(t)) return "Warning";
+  if (/^Page meta description:/i.test(t) && /\b(short|long)\s*\(/i.test(t)) return "Warning";
+  if (/^Page marked noindex:/i.test(t)) return "Warning";
+  return null;
+}
+
+function isMetaTagCsvIssue(summary: string): boolean {
+  const t = String(summary || "").trim();
+  if (!t) return false;
+  const lower = t.toLowerCase();
+  if (
+    /^missing <title>|^empty <title>|^title tags\s*\(|^empty\/invalid title|^page title length:|^commented title|^duplicate title\b/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (
+    /^page meta description:|^page meta keywords:|^meta description tags|^meta keywords tags/i.test(t)
+  ) {
+    return true;
+  }
+  if (/^missing canonical|^multiple canonical|^empty canonical|^canonical /i.test(t)) return true;
+  if (/^page marked noindex:|^robots meta/i.test(t)) return true;
+  if (/^missing viewport|^missing charset|^missing favicon|^hreflang/i.test(t)) return true;
+  if (/^missing open graph|^missing twitter card|^empty og:|^empty twitter:/i.test(t)) return true;
+  if (/^empty seo meta content|^empty meta content|^duplicate description/i.test(t)) return true;
+  if (lower.startsWith("og:") || lower.startsWith("twitter:")) return true;
+  return false;
+}
+
 function severityLabel(severity: IssueSeverity | string, issueSummary = ""): string {
   const sec = securityHeaderSeverityTag(issueSummary);
   if (sec) return sec;
+  const meta = metaIssueSeverityTag(issueSummary);
+  if (meta) return meta;
   if (severity === "geo") {
     return geoIssueSeverityTag(issueSummary) || "Critical";
   }
@@ -246,6 +281,7 @@ function issueModuleCategory(severity: string, issueSummary: string): string {
   ) {
     return "Security Headers";
   }
+  if (isMetaTagCsvIssue(s)) return "SEO · Meta tags";
   if (/^PageSpeed\b|^Page Speed\b/i.test(s) || severity === "pagespeed") {
     return "Page Speed";
   }

@@ -569,7 +569,7 @@ function auditTitleQuality(title, addIssue) {
     );
     return {
       status: 'warn',
-      message: `Short (${length} chars; aim ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
+      message: `Warning — short (${length} chars; recommended ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
       length,
       value: t
     };
@@ -582,14 +582,14 @@ function auditTitleQuality(title, addIssue) {
     );
     return {
       status: 'warn',
-      message: `Long (${length} chars; aim ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
+      message: `Warning — long (${length} chars; recommended ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
       length,
       value: t
     };
   }
   return {
     status: 'pass',
-    message: `OK (${length} chars)`,
+    message: `OK (${length} chars; recommended ${TITLE_MIN_LEN}–${TITLE_MAX_LEN})`,
     length,
     value: t
   };
@@ -774,10 +774,14 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
   } else {
     const notes = [];
     if (description.length < META_DESC_MIN_LEN) {
-      notes.push(`short (${description.length} chars, recommended ≥ ${META_DESC_MIN_LEN})`);
+      notes.push(
+        `short (${description.length} chars, recommended ${META_DESC_MIN_LEN}–${META_DESC_MAX_LEN})`
+      );
     }
     if (description.length > META_DESC_MAX_LEN) {
-      notes.push(`long (${description.length} chars, recommended ≤ ${META_DESC_MAX_LEN})`);
+      notes.push(
+        `long (${description.length} chars, recommended ${META_DESC_MIN_LEN}–${META_DESC_MAX_LEN})`
+      );
     }
     if (notes.length) {
       addIssue(
@@ -787,14 +791,14 @@ function auditDescriptionAndKeywordsMinor(domHtml, domExtract, addIssue) {
       );
       descStatus = {
         status: 'warn',
-        message: notes.join('; '),
+        message: `Warning — ${notes.join('; ')}`,
         value: description,
         length: description.length
       };
     } else {
       descStatus = {
         status: 'pass',
-        message: `OK (${description.length} chars)`,
+        message: `OK (${description.length} chars; recommended ${META_DESC_MIN_LEN}–${META_DESC_MAX_LEN})`,
         value: description,
         length: description.length
       };
@@ -3020,92 +3024,467 @@ function renderSeoMinorListItems(items) {
     .join('');
 }
 
-function metaStatusBadge(status) {
+/**
+ * Meta-tag related SEO issues (shown only in Meta tags section — not again under Issues).
+ */
+function isMetaTagSeoIssue(text) {
+  const t = String(text || '').trim();
+  if (!t) return false;
+  const lower = t.toLowerCase();
+  if (/^missing <title>|^empty <title>|^title tags\s*\(|^empty\/invalid title|^page title length:|^commented title|^duplicate title\b/i.test(t)) {
+    return true;
+  }
+  if (/^page meta description:|^page meta keywords:|^meta description tags|^meta keywords tags/i.test(t)) {
+    return true;
+  }
+  if (/^missing canonical|^multiple canonical|^empty canonical|^canonical /i.test(t)) return true;
+  if (/^page marked noindex:|^robots meta/i.test(t)) return true;
+  if (/^missing viewport|^missing charset|^missing favicon|^hreflang/i.test(t)) return true;
+  if (/^missing open graph|^missing twitter card|^empty og:|^empty twitter:/i.test(t)) return true;
+  if (/^empty seo meta content|^empty meta content|^duplicate description/i.test(t)) return true;
+  if (lower.startsWith('og:') || lower.startsWith('twitter:')) return true;
+  return false;
+}
+
+function splitSeoIssuesByMeta(critical, minor) {
+  const metaCritical = [];
+  const metaMinor = [];
+  const otherCritical = [];
+  const otherMinor = [];
+  for (const x of critical || []) {
+    (isMetaTagSeoIssue(x) ? metaCritical : otherCritical).push(x);
+  }
+  for (const x of minor || []) {
+    (isMetaTagSeoIssue(x) ? metaMinor : otherMinor).push(x);
+  }
+  return { metaCritical, metaMinor, otherCritical, otherMinor };
+}
+
+function mapMetaIssueToRowKey(text) {
+  const t = String(text || '');
+  const lower = t.toLowerCase();
+  if (
+    /^missing <title>|^empty <title>|^title tags\s*\(|^empty\/invalid title|^page title length:|^commented title|^duplicate title\b/i.test(
+      t
+    )
+  ) {
+    return 'title';
+  }
+  if (/^page meta description:|^meta description tags|^duplicate description/i.test(t)) {
+    return 'description';
+  }
+  if (/^page meta keywords:|^meta keywords tags/i.test(t)) return 'keywords';
+  if (/canonical/i.test(t)) return 'canonical';
+  if (/^page marked noindex:|^robots meta/i.test(t)) return 'robots';
+  if (/viewport/i.test(t)) return 'viewport';
+  if (/charset/i.test(t)) return 'charset';
+  if (/favicon/i.test(t)) return 'favicon';
+  if (/hreflang/i.test(t)) return 'hreflang';
+  if (/open graph|^empty og:|missing og/i.test(t) || lower.startsWith('og:')) return 'openGraph';
+  if (/twitter|^empty twitter:/i.test(t) || lower.startsWith('twitter:')) return 'twitter';
+  if (/empty seo meta content|empty meta content/i.test(t)) return 'emptyMeta';
+  return 'other';
+}
+
+function worstMetaStatus(a, b) {
+  // fail (critical) > minor > warn > pass > na
+  const rank = { fail: 4, minor: 3, warn: 2, warning: 2, pass: 1, na: 0 };
+  const ra = rank[String(a || 'na').toLowerCase()] || 0;
+  const rb = rank[String(b || 'na').toLowerCase()] || 0;
+  return ra >= rb ? a : b;
+}
+
+function seoRowSortRank(status) {
   const s = String(status || 'na').toLowerCase();
-  if (s === 'pass') return '<span class="meta-tag-badge meta-tag-badge--pass">Pass</span>';
-  if (s === 'fail') return '<span class="meta-tag-badge meta-tag-badge--fail">Fail</span>';
-  if (s === 'warn') return '<span class="meta-tag-badge meta-tag-badge--warn">Warn</span>';
-  return '<span class="meta-tag-badge meta-tag-badge--na">N/A</span>';
+  if (s === 'fail') return 0;
+  if (s === 'minor') return 1;
+  if (s === 'warn' || s === 'warning') return 2;
+  if (s === 'pass') return 3;
+  return 4;
 }
 
 /**
- * Clear meta tags panel for SEO report (title, description, canonical, robots, OG, …).
+ * Title/description: Pass if in recommended range, Warning if short/long, Fail if missing.
+ * Message is neutral (no "OK" / "Short" / "Long" words) — badge carries severity.
  */
-function renderMetaTagsPanel(metaTags, page) {
-  const rows = [];
-  const push = (label, info, fallbackValue) => {
-    if (!info && fallbackValue === undefined) return;
-    const status = info?.status || (fallbackValue ? 'pass' : 'fail');
-    const message = info?.message || (fallbackValue ? 'Present' : 'Not set');
-    const value = info?.value != null && info.value !== ''
-      ? info.value
-      : fallbackValue != null && fallbackValue !== ''
-        ? fallbackValue
-        : '—';
-    rows.push({ label, status, message, value: String(value) });
+function resolveLengthAwareMetaInfo(kind, info, fallbackValue) {
+  const raw =
+    info?.value != null && String(info.value).trim() !== ''
+      ? String(info.value).trim()
+      : String(fallbackValue || '').trim();
+  const length =
+    info?.length != null && Number.isFinite(Number(info.length))
+      ? Number(info.length)
+      : raw.length;
+  const min = kind === 'title' ? TITLE_MIN_LEN : META_DESC_MIN_LEN;
+  const max = kind === 'title' ? TITLE_MAX_LEN : META_DESC_MAX_LEN;
+  const range = `${min}–${max}`;
+  const lengthNote = `${length} chars (recommended ${range})`;
+
+  // Presence from audit snapshot takes priority only when truly missing/empty
+  if (!raw) {
+    const msg =
+      info?.status === 'fail'
+        ? String(info.message || 'Not set').replace(/^(ok|short|long)\b[\s—:-]*/i, '').trim() ||
+          'Not set'
+        : 'Not set';
+    return { status: 'fail', message: msg, value: '', length: 0 };
+  }
+
+  // Prefer recomputed length status over a stale snapshot status (e.g. fail + good value)
+  if (length < min || length > max) {
+    return {
+      status: 'warn',
+      message: lengthNote,
+      value: raw,
+      length
+    };
+  }
+
+  // In range → Pass (ignore outdated warn/fail on snapshot when value is valid)
+  if (info?.status === 'fail' && /not set|missing|empty/i.test(String(info.message || ''))) {
+    // Value present now; treat as pass for length, hard fails handled via related issues
+  }
+
+  return {
+    status: 'pass',
+    message: lengthNote,
+    value: raw,
+    length
+  };
+}
+
+/**
+ * Classify a meta-related issue line for row status (fail / minor / warn).
+ * Length issues use live char count when provided so a valid title never stays Fail/Warning.
+ */
+function metaIssueLineStatus(line, metaCritical, lengthCtx = null) {
+  const t = String(line || '');
+  // Length-only lines: re-check against current value (ignore stale short/long issues)
+  if (/^page title length:/i.test(t)) {
+    const len = lengthCtx && lengthCtx.kind === 'title' ? lengthCtx.length : null;
+    if (len != null && len >= TITLE_MIN_LEN && len <= TITLE_MAX_LEN) return 'pass';
+    if (len != null && len > 0) return 'warn';
+    return 'warn';
+  }
+  if (/^page meta description:/i.test(t) && /\b(short|long)\s*\(/i.test(t)) {
+    const len = lengthCtx && lengthCtx.kind === 'description' ? lengthCtx.length : null;
+    if (len != null && len >= META_DESC_MIN_LEN && len <= META_DESC_MAX_LEN) return 'pass';
+    if (len != null && len > 0) return 'warn';
+    return 'warn';
+  }
+  // Critical missing/empty title only when value is actually empty
+  if ((metaCritical || []).includes(line)) {
+    if (
+      lengthCtx &&
+      (lengthCtx.kind === 'title' || lengthCtx.kind === 'description') &&
+      lengthCtx.length > 0 &&
+      /empty\/invalid title|empty <title>|missing <title>|empty title/i.test(t)
+    ) {
+      // Value present — do not keep Fail from stale empty-title critical
+      return 'pass';
+    }
+    return 'fail';
+  }
+  if (/^page marked noindex:/i.test(t)) return 'warn';
+  return 'minor';
+}
+
+function formatMetaIssueDetail(line) {
+  const formatted = formatIssueLineForDisplay(line);
+  if (formatted.label && formatted.detail) {
+    return `${formatted.label}: ${formatted.detail}`;
+  }
+  return String(line || '').trim();
+}
+
+/**
+ * Build meta-tag check rows (Pass / Fail / Warning) with issues merged in once.
+ */
+function buildMetaTagCheckRows(metaTags, page, metaCritical = [], metaMinor = []) {
+  const related = {};
+  const pushRelated = (key, line) => {
+    if (!related[key]) related[key] = [];
+    related[key].push(line);
+  };
+  for (const line of [...(metaCritical || []), ...(metaMinor || [])]) {
+    pushRelated(mapMetaIssueToRowKey(line), line);
+  }
+
+  const baseRows = [];
+  const addRow = (key, label, info) => {
+    if (!info) return;
+    baseRows.push({
+      key,
+      label,
+      status: info.status || 'na',
+      message: info.message || '—',
+      value:
+        info.value != null && String(info.value).trim() !== ''
+          ? String(info.value)
+          : ''
+    });
   };
 
   if (metaTags && typeof metaTags === 'object') {
-    push('Title (document)', metaTags.title, page?.title);
-    push('Meta description', metaTags.description, page?.description);
-    push('Meta keywords', metaTags.keywords, page?.keywords);
-    push('Canonical', metaTags.canonical);
-    push('Robots meta', metaTags.robots);
-    push('Viewport', metaTags.viewport);
-    push('Charset', metaTags.charset);
-    push('Favicon', metaTags.favicon);
-    push('Hreflang', metaTags.hreflang);
-    push('Open Graph', metaTags.openGraph);
-    push('Twitter Card', metaTags.twitter);
+    addRow('title', 'Title', resolveLengthAwareMetaInfo('title', metaTags.title, page?.title));
+    addRow(
+      'description',
+      'Description',
+      resolveLengthAwareMetaInfo('description', metaTags.description, page?.description)
+    );
+    if (metaTags.keywords && metaTags.keywords.status !== 'na') {
+      addRow('keywords', 'Keywords', metaTags.keywords);
+    } else if ((related.keywords || []).length) {
+      addRow('keywords', 'Keywords', metaTags.keywords || { status: 'warn', message: 'See details', value: page?.keywords || '' });
+    }
+    addRow('canonical', 'Canonical', metaTags.canonical || { status: 'fail', message: 'Not set', value: '' });
+    addRow(
+      'robots',
+      'Robots',
+      metaTags.robots || { status: 'na', message: 'Not set (browser defaults apply)', value: '' }
+    );
+    if (metaTags.viewport) addRow('viewport', 'Viewport', metaTags.viewport);
+    if (metaTags.charset) addRow('charset', 'Charset', metaTags.charset);
+    if (metaTags.favicon) addRow('favicon', 'Favicon', metaTags.favicon);
+    if (metaTags.hreflang && metaTags.hreflang.status !== 'na') {
+      addRow('hreflang', 'Hreflang', metaTags.hreflang);
+    }
+    addRow(
+      'openGraph',
+      'Social · Open Graph',
+      metaTags.openGraph || { status: 'fail', message: 'Not set', value: '' }
+    );
+    addRow(
+      'twitter',
+      'Social · Twitter Card',
+      metaTags.twitter || { status: 'warn', message: 'Not set', value: '' }
+    );
   } else {
-    // Legacy reports without metaTags snapshot
-    const t = String(page?.title || '').trim();
-    const d = String(page?.description || '').trim();
-    const k = String(page?.keywords || '').trim();
-    push(
-      'Title (document)',
-      t
-        ? { status: 'pass', message: `${t.length} chars`, value: t }
-        : { status: 'fail', message: 'Not set', value: '' }
+    addRow('title', 'Title', resolveLengthAwareMetaInfo('title', null, page?.title));
+    addRow(
+      'description',
+      'Description',
+      resolveLengthAwareMetaInfo('description', null, page?.description)
     );
-    push(
-      'Meta description',
-      d
-        ? { status: 'pass', message: `${d.length} chars`, value: d }
-        : { status: 'fail', message: 'Not set', value: '' }
-    );
-    push(
-      'Meta keywords',
-      k
-        ? { status: 'pass', message: 'Present', value: k }
-        : { status: 'na', message: 'Not set (optional)', value: '' }
-    );
+    addRow('canonical', 'Canonical', { status: 'na', message: 'Not available in this report', value: '' });
+    addRow('robots', 'Robots', { status: 'na', message: 'Not available in this report', value: '' });
+    addRow('openGraph', 'Social · Open Graph', {
+      status: 'na',
+      message: 'Not available in this report',
+      value: ''
+    });
+    addRow('twitter', 'Social · Twitter Card', {
+      status: 'na',
+      message: 'Not available in this report',
+      value: ''
+    });
   }
 
-  if (!rows.length) return '';
+  for (const row of baseRows) {
+    const lines = related[row.key] || [];
+    if (!lines.length) continue;
 
-  const list = rows
-    .map(
-      (r) => `
-      <li class="meta-tag-row meta-tag-row--${escapeHtml(r.status)}">
-        ${metaStatusBadge(r.status)}
-        <span class="meta-tag-label">${escapeHtml(r.label)}</span>
-        <span class="meta-tag-msg">${escapeHtml(r.message)}</span>
-        <code class="meta-tag-value" title="${escapeHtml(r.value)}">${escapeHtml(
-          r.value.length > 160 ? `${r.value.slice(0, 160)}…` : r.value
-        )}</code>
-      </li>`
-    )
-    .join('');
+    const isLengthRow = row.key === 'title' || row.key === 'description';
+    const lengthCtx = isLengthRow
+      ? {
+          kind: row.key,
+          length:
+            row.value && String(row.value).trim()
+              ? String(row.value).trim().length
+              : 0
+        }
+      : null;
+
+    // Length issues → Warning only; critical presence → Fail; ignore stale empty/length vs live value
+    let escalated = row.status;
+    for (const line of lines) {
+      const lineStatus = metaIssueLineStatus(line, metaCritical, lengthCtx);
+      if (lineStatus === 'pass') continue; // stale length/empty issue — do not escalate
+      escalated = worstMetaStatus(escalated, lineStatus);
+    }
+    row.status = escalated;
+
+    const details = [];
+    const seen = new Set();
+    for (const line of lines) {
+      const lineStatus = metaIssueLineStatus(line, metaCritical, lengthCtx);
+      // Skip stale length/empty issues and never repeat length issue text
+      if (lineStatus === 'pass') continue;
+      if (isLengthRow && /^page title length:|^page meta description:/i.test(String(line))) {
+        continue;
+      }
+      const d = formatMetaIssueDetail(line);
+      const key = d.toLowerCase();
+      if (!d || seen.has(key)) continue;
+      if (row.message && key.includes(String(row.message).toLowerCase().slice(0, 20))) continue;
+      if (row.value && key.includes(String(row.value).toLowerCase().slice(0, 24))) continue;
+      seen.add(key);
+      details.push(d);
+    }
+    if (details.length) {
+      if (row.status === 'fail' && isLengthRow) {
+        row.message = details.join(' · ');
+      } else if (row.message && row.message !== '—') {
+        row.message = `${row.message} · ${details.join(' · ')}`;
+      } else {
+        row.message = details.join(' · ');
+      }
+    }
+  }
+
+  const covered = new Set(baseRows.map((r) => r.key));
+  for (const [key, lines] of Object.entries(related)) {
+    if (covered.has(key) || key === 'other') continue;
+    if (!lines.length) continue;
+    let status = 'minor';
+    for (const line of lines) {
+      status = worstMetaStatus(status, metaIssueLineStatus(line, metaCritical));
+    }
+    baseRows.push({
+      key,
+      label: key === 'emptyMeta' ? 'SEO meta content' : key,
+      status,
+      message: lines.map(formatMetaIssueDetail).join(' · '),
+      value: ''
+    });
+  }
+  if ((related.other || []).length) {
+    for (const line of related.other) {
+      const formatted = formatIssueLineForDisplay(line);
+      baseRows.push({
+        key: 'other',
+        label: formatted.label || 'Meta',
+        status: metaIssueLineStatus(line, metaCritical),
+        message: formatted.detail || String(line),
+        value: ''
+      });
+    }
+  }
+
+  return baseRows;
+}
+
+function renderSeoStatusListItem(row) {
+  const st = String(row.status || 'na').toLowerCase();
+  const mod =
+    st === 'pass'
+      ? 'pass'
+      : st === 'warn' || st === 'warning'
+        ? 'warn'
+        : st === 'minor'
+          ? 'minor'
+          : st === 'na'
+            ? 'na'
+            : 'fail';
+  const badge =
+    st === 'pass'
+      ? 'Pass'
+      : st === 'warn' || st === 'warning'
+        ? 'Warning'
+        : st === 'minor'
+          ? 'Minor'
+          : st === 'na'
+            ? 'N/A'
+            : 'Fail';
+  const msg = String(row.message || '').trim();
+  const val = row.value && row.value !== '—' ? String(row.value) : '';
+  let text;
+  if (val && msg && msg !== '—') {
+    const shortVal = val.length > 140 ? `${val.slice(0, 140)}…` : val;
+    text = msg.includes(val.slice(0, Math.min(16, val.length)))
+      ? `${row.label}: ${msg}`
+      : `${row.label}: ${msg} · ${shortVal}`;
+  } else if (val) {
+    text = `${row.label}: ${val.length > 140 ? `${val.slice(0, 140)}…` : val}`;
+  } else {
+    text = `${row.label}: ${msg || '—'}`;
+  }
+  return `<li class="security-header-item security-header-item--${mod}"><span class="security-header-status">${badge}</span><code title="${escapeHtml(val || msg)}">${escapeHtml(text)}</code></li>`;
+}
+
+/**
+ * Single section under SEO card: Meta tags + other on-page issues + SEO health · N%.
+ * Order: Fail → Minor → Warning → Pass. No duplicate points; neutral title/description text.
+ */
+function renderSeoOnPageSection({
+  metaTags,
+  page,
+  metaCritical = [],
+  metaMinor = [],
+  otherCritical = [],
+  otherMinor = [],
+  percent = 0,
+  criticalCount = 0,
+  minorCount = 0
+}) {
+  const metaRows = buildMetaTagCheckRows(metaTags, page, metaCritical, metaMinor);
+  const otherRows = [];
+  for (const line of otherCritical || []) {
+    const formatted = formatIssueLineForDisplay(line);
+    otherRows.push({
+      status: 'fail',
+      label: formatted.label || 'Issue',
+      message: formatted.detail || String(line),
+      value: ''
+    });
+  }
+  for (const line of otherMinor || []) {
+    const displaySev = seoIssueDisplaySeverity(line, 'minor');
+    const formatted = formatIssueLineForDisplay(line);
+    otherRows.push({
+      status: displaySev === 'warning' ? 'warn' : 'minor',
+      label: formatted.label || 'Issue',
+      message: formatted.detail || String(line),
+      value: ''
+    });
+  }
+
+  const allRows = [...metaRows, ...otherRows].sort(
+    (a, b) => seoRowSortRank(a.status) - seoRowSortRank(b.status)
+  );
+  const failN = allRows.filter((r) => r.status === 'fail').length;
+  const minorN = allRows.filter((r) => r.status === 'minor').length;
+  const warnN = allRows.filter((r) => r.status === 'warn' || r.status === 'warning').length;
+  const passN = allRows.filter((r) => r.status === 'pass').length;
+  const pct = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+
+  const listItems = allRows.length
+    ? allRows.map(renderSeoStatusListItem).join('')
+    : '<li class="security-header-item security-header-item--pass"><span class="security-header-status">Pass</span><code>No SEO issues detected</code></li>';
+
+  const chartHtml = renderAuditPieChart({
+    percent: pct,
+    critical: criticalCount,
+    minor: minorCount,
+    passed: Math.max(0, passN),
+    title: 'SEO health'
+  });
 
   return `
-    <div class="meta-tags-panel" aria-label="Meta tags audit">
-      <div class="meta-tags-panel-head">
-        <span class="meta-tags-panel-title">Meta tags</span>
-        <span class="meta-tags-panel-sub">Title, description, canonical, robots, social tags</span>
-      </div>
-      <ul class="meta-tags-list">${list}</ul>
-    </div>`;
+      <div class="audit-issue-group audit-issue-group--seo-unified" aria-label="SEO on-page results">
+        <div class="audit-issue-group-head">SEO health · ${pct}% <span class="audit-issue-count">(${allRows.length} checks · ${failN} fail · ${minorN} minor · ${warnN} warning · ${passN} pass)</span></div>
+        <p class="meta-tags-inline-hint">Title, description, canonical, robots, social tags and other on-page checks — one list, no duplicates. Sorted Fail → Minor → Warning → Pass. Title/description use recommended lengths (${TITLE_MIN_LEN}–${TITLE_MAX_LEN} / ${META_DESC_MIN_LEN}–${META_DESC_MAX_LEN} chars) without OK/Short labels.</p>
+        <div class="seo-unified-body">
+          <ul class="security-header-list seo-unified-list">${listItems}</ul>
+          <div class="seo-unified-chart" aria-hidden="false">${chartHtml}</div>
+        </div>
+      </div>`;
+}
+
+/** @deprecated use renderSeoOnPageSection — kept for any external callers */
+function renderMetaTagsPanel(metaTags, page, metaCritical = [], metaMinor = []) {
+  return renderSeoOnPageSection({
+    metaTags,
+    page,
+    metaCritical,
+    metaMinor,
+    otherCritical: [],
+    otherMinor: [],
+    percent: 0,
+    criticalCount: 0,
+    minorCount: 0
+  });
 }
 
 function renderIssueSeverityTag(severity) {
@@ -3127,19 +3506,29 @@ function renderTaggedIssueLineItem(text, severity) {
   return `<li class="issue-line issue-line--tagged"><span class="issue-line-tags">${tag}</span><code class="issue-line-code">${escapeHtml(formatted.detail)}</code></li>`;
 }
 
-function renderTaggedSeoIssueLineItem(text, severity) {
-  const isMetaLine =
-    severity === 'minor' &&
-    (text.startsWith('Page meta description:') || text.startsWith('Page meta keywords:'));
-  if (isMetaLine) {
-    const formatted = formatIssueLineForDisplay(text);
-    const tag = renderIssueSeverityTag('minor');
-    return `<li class="issue-line issue-line--tagged minor-meta-line"><span class="issue-line-tags">${tag}</span><span class="issue-line-label">${escapeHtml(formatted.label || '')}</span><span class="issue-line-detail"><code>${escapeHtml(formatted.detail)}</code></span></li>`;
-  }
-  return renderTaggedIssueLineItem(text, severity);
+/** Length-related meta issues show as Warning in the SEO card (not only Minor). */
+function seoIssueDisplaySeverity(text, fallback) {
+  const t = String(text || '');
+  if (t.startsWith('Page title length:')) return 'warning';
+  if (t.startsWith('Page meta description:') && /\b(short|long)\s*\(/i.test(t)) return 'warning';
+  return fallback || 'minor';
 }
 
-function renderUnifiedSeoIssueGroup({ critical, minor }) {
+function renderTaggedSeoIssueLineItem(text, severity) {
+  const displaySev = seoIssueDisplaySeverity(text, severity);
+  const isMetaLine =
+    text.startsWith('Page meta description:') ||
+    text.startsWith('Page meta keywords:') ||
+    text.startsWith('Page title length:');
+  if (isMetaLine) {
+    const formatted = formatIssueLineForDisplay(text);
+    const tag = renderIssueSeverityTag(displaySev);
+    return `<li class="issue-line issue-line--tagged minor-meta-line"><span class="issue-line-tags">${tag}</span><span class="issue-line-label">${escapeHtml(formatted.label || '')}</span><span class="issue-line-detail"><code>${escapeHtml(formatted.detail)}</code></span></li>`;
+  }
+  return renderTaggedIssueLineItem(text, displaySev);
+}
+
+function renderUnifiedSeoIssueGroup({ critical, minor, title = 'Other SEO issues' }) {
   const total = critical.length + minor.length;
   const items = [
     ...critical.map((x) => renderTaggedSeoIssueLineItem(x, 'critical')),
@@ -3148,7 +3537,7 @@ function renderUnifiedSeoIssueGroup({ critical, minor }) {
   const list = items || '<li>None detected</li>';
   return `
       <div class="audit-issue-group audit-issue-group--unified">
-        <div class="audit-issue-group-head">Issues <span class="audit-issue-count">(${total})</span></div>
+        <div class="audit-issue-group-head">${escapeHtml(title)} <span class="audit-issue-count">(${total})</span></div>
         <ul>${list}</ul>
       </div>`;
 }
@@ -3817,27 +4206,26 @@ function buildPageDetailHtml(p, index, totalPages) {
       : computeSecurityPassPercent(p.securityHeaders);
   const securityScoreLabel = formatSecurityScoreLabel(p.securityHeaders);
 
+  const seoSplit = splitSeoIssuesByMeta(sortedPageCritical, sortedPageMinor);
   const seoCard = modules.seo
     ? renderAuditCategoryCard({
         modifier: 'seo',
         title: 'SEO — On-Page Optimization',
-        subtitle: 'Titles, links, meta tags, and content issues',
+        subtitle: 'Meta tags, titles, links, and content issues',
         percent: seoPassPercent,
         critical: seoCrit,
         minor: seoMin,
-        bodyHtml: [
-          renderUnifiedSeoIssueGroup({
-            critical: sortedPageCritical,
-            minor: sortedPageMinor
-          }),
-          renderAuditPieChartGroup({
-            title: 'SEO health',
-            percent: seoPassPercent,
-            critical: seoCrit,
-            minor: seoMin,
-            passed: 0
-          })
-        ].join('')
+        bodyHtml: renderSeoOnPageSection({
+          metaTags: p.metaTags,
+          page: p,
+          metaCritical: seoSplit.metaCritical,
+          metaMinor: seoSplit.metaMinor,
+          otherCritical: seoSplit.otherCritical,
+          otherMinor: seoSplit.otherMinor,
+          percent: seoPassPercent,
+          criticalCount: seoCrit,
+          minorCount: seoMin
+        })
       })
     : '';
 
@@ -3890,12 +4278,6 @@ function buildPageDetailHtml(p, index, totalPages) {
           <div class="page-detail-meta">
             <div class="page-detail-meta-score">${renderScoreChip(p.seoScore)}</div>
           </div>
-          ${modules.seo ? renderMetaTagsPanel(p.metaTags, p) : `
-          <div class="page-detail-meta-legacy">
-            <div class="pageMeta">Title: <b>${escapeHtml(p.title || '—')}</b></div>
-            <div class="pageMeta">Description: <b>${escapeHtml(p.description || '—')}</b></div>
-            <div class="pageMeta">Keywords: <b>${escapeHtml(p.keywords || '—')}</b></div>
-          </div>`}
           <div class="audit-cards">
             ${seoCard}
             ${geoCard}
@@ -4375,35 +4757,29 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
   .mono{font-family:var(--font-mono);font-size:.75rem;word-break:break-all;overflow-wrap:anywhere}
   .pageMeta{color:var(--text-secondary);font-size:.875rem;margin-top:6px;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}
   .pageMeta b{color:#f1f5f9;font-weight:600}
-  .meta-tags-panel{
-    background:rgba(0,0,0,.14);border:1px solid rgba(96,165,250,.28);border-radius:var(--radius-sm);
-    padding:clamp(12px,2vw,16px);min-width:0
+  .audit-issue-group--seo-unified{grid-column:1 / -1}
+  .meta-tags-inline-hint{
+    margin:0 0 12px;font-size:.75rem;line-height:1.45;color:var(--text-tertiary);max-width:80ch
   }
-  .meta-tags-panel-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin-bottom:10px}
-  .meta-tags-panel-title{font-size:.875rem;font-weight:700;color:#f8fafc;letter-spacing:.02em;text-transform:uppercase}
-  .meta-tags-panel-sub{font-size:.75rem;color:var(--text-tertiary)}
-  .meta-tags-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-  .meta-tag-row{
-    display:grid;grid-template-columns:minmax(52px,64px) minmax(100px,140px) minmax(0,1fr) minmax(0,1.4fr);
-    gap:8px 12px;align-items:start;font-size:.8125rem;line-height:1.4;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)
+  .seo-unified-body{
+    display:grid;grid-template-columns:1fr;gap:16px;align-items:start
   }
-  .meta-tag-row:last-child{border-bottom:0}
-  .meta-tag-badge{
-    justify-self:start;min-width:48px;padding:2px 8px;border-radius:999px;font-size:.625rem;font-weight:700;
-    letter-spacing:.03em;text-transform:uppercase;text-align:center
+  @media(min-width:900px){
+    .seo-unified-body{grid-template-columns:minmax(0,1.6fr) minmax(140px,220px);gap:18px}
   }
-  .meta-tag-badge--pass{color:var(--good);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.28)}
-  .meta-tag-badge--fail{color:var(--critical);background:var(--danger-bg);border:1px solid var(--danger-border)}
-  .meta-tag-badge--warn{color:#fdba74;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.35)}
-  .meta-tag-badge--na{color:var(--text-tertiary);background:transparent;border:1px solid var(--border)}
-  .meta-tag-label{font-weight:700;color:#e2e8f0}
-  .meta-tag-msg{color:var(--text-secondary);min-width:0;word-break:break-word}
-  .meta-tag-value{display:block;min-width:0;color:#94a3b8;font-family:var(--font-mono);font-size:.75rem;word-break:break-word;overflow-wrap:anywhere}
-  @media (max-width:720px){
-    .meta-tag-row{grid-template-columns:minmax(48px,56px) 1fr;grid-template-rows:auto auto auto}
-    .meta-tag-msg,.meta-tag-value{grid-column:2}
+  .seo-unified-list{margin:0;min-width:0}
+  .seo-unified-chart{
+    display:flex;justify-content:center;align-items:flex-start;min-width:0
+  }
+  .seo-unified-chart .audit-pie-chart{width:100%;max-width:180px}
+  .audit-issue-group--seo-unified .security-header-item--warn .security-header-status,
+  .audit-issue-group--seo-unified .security-header-status{
+    min-width:4.5rem
   }
   .minor-meta-line code{color:#f1f5f9;font-weight:500}
+  @media(min-width:900px){
+    .audit-card--seo .audit-card-body{grid-template-columns:1fr}
+  }
   .page-detail-list{display:flex;flex-direction:column;gap:10px}
   .page-detail{
     background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);
@@ -4658,7 +5034,7 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
     display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px
   }
   @media(min-width:900px){.audit-card-body{grid-template-columns:repeat(3,minmax(0,1fr))}}
-  @media(min-width:900px){.audit-card--seo .audit-card-body{grid-template-columns:2fr 1fr}}
+  @media(min-width:900px){.audit-card--seo .audit-card-body{grid-template-columns:1fr}}
   @media(min-width:900px){.audit-card--geo .audit-card-body,.audit-card--security .audit-card-body{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media(min-width:900px){.audit-card-body--richresults{grid-template-columns:1fr 1.2fr}}
   .audit-card--richresults{border-color:rgba(96,165,250,.22)}
@@ -4787,10 +5163,12 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
   .security-header-item--pass .security-header-status{color:var(--good);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.28)}
   .security-header-item--fail .security-header-status{color:var(--critical);background:var(--danger-bg);border:1px solid var(--danger-border)}
   .security-header-item--warn .security-header-status{color:#fdba74;background:rgba(251,146,60,.14);border:1px solid rgba(251,146,60,.35)}
+  .security-header-item--minor .security-header-status{color:var(--minor);background:var(--warning-bg);border:1px solid var(--warning-border)}
   .security-header-item--na .security-header-status{color:var(--text-tertiary);background:transparent;border:1px solid var(--border)}
   .security-header-item--pass code{color:#86efac}
   .security-header-item--fail code{color:#fecaca}
   .security-header-item--warn code{color:#fde68a}
+  .security-header-item--minor code{color:#fde68a}
   .detail-section{margin-top:clamp(24px,4vw,40px)}
   .detail-section-head{
     display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 20px;
@@ -4870,7 +5248,7 @@ function generateHtmlReport({ mainUrl, scanDate, pages, siteChecks = null, repor
     .audit-card-subtitle{color:#52525b !important}
     .audit-card-score{background:#fff !important}
     .audit-card-body{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-    .audit-card--seo .audit-card-body{grid-template-columns:2fr 1fr}
+    .audit-card--seo .audit-card-body{grid-template-columns:1fr}
     .audit-card--geo .audit-card-body,.audit-card--security .audit-card-body{grid-template-columns:repeat(3,minmax(0,1fr))}
     .audit-issue-group{background:#fff !important;border:1px solid #e4e4e7}
     .audit-pass-status{color:#166534 !important;background:#dcfce7 !important;border:1px solid #86efac !important}

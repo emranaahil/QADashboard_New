@@ -14,8 +14,6 @@ function emitProgress(pct, msg) {
   process.stdout.write(`PROGRESS:${pct} ${msg}\n`);
 }
 
-const { countUrlsInQueue } = require('./queueManager');
-
 async function main() {
   const jobId = process.argv[2] || process.env.JOB_ID;
   if (!jobId) process.exit(1);
@@ -26,9 +24,11 @@ async function main() {
   const jobDir = jobStore.getJobDir(MODULE_ID, jobId);
   cancelSignal.clearCancelled(jobDir);
 
+  // Set job paths BEFORE requiring queueManager / config consumers
   process.env.QA_JOB_DIR = jobDir;
   process.env.QA_JOB_MODULE_ID = MODULE_ID;
   process.env.QA_REPORT_HTML_PATH = path.join(jobDir, 'qa-report.html');
+  process.env.QA_REPORT_PDF_PATH = path.join(jobDir, 'report.pdf');
   process.env.QA_SCREENSHOT_BASE_URL = `/api/modules/${MODULE_ID}/jobs/${jobId}/screenshots`;
   process.env.SKIP_PDF = '1';
 
@@ -62,7 +62,8 @@ async function main() {
 
     const { ensureDir } = require('./uichecksfull/utils/reportUtils');
     const { discoverURL, seedUrlQueueFromList } = require('./discoverURL');
-    const { processUrlQueue } = require('./queueManager');
+    // Require after env is set (config uses getters; still safer for other side effects)
+    const { processUrlQueue, countUrlsInQueue } = require('./queueManager');
     const { updateTracker } = require('./tracker');
     const crawlConfig = require('./crawlConfig');
     const crawlOverrides = {};

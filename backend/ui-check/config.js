@@ -2,24 +2,41 @@ const path = require('path');
 const { loadRuntimeDevices } = require('../shared/deviceRuntimeConfig');
 
 const projectRoot = path.resolve(__dirname);
-const jobDir = process.env.QA_JOB_DIR ? path.resolve(process.env.QA_JOB_DIR) : null;
 
+function resolveJobDir() {
+  return process.env.QA_JOB_DIR ? path.resolve(process.env.QA_JOB_DIR) : null;
+}
+
+/**
+ * Path/skip flags resolved at access time so job runners can set QA_JOB_DIR /
+ * QA_REPORT_HTML_PATH before report generation even if this module was required early.
+ */
 module.exports = {
   projectRoot,
   timeout: 60000,
-  reportsRoot: jobDir || path.join(projectRoot, 'reports'),
-  reportHtmlPath: process.env.QA_REPORT_HTML_PATH
-    ? path.resolve(process.env.QA_REPORT_HTML_PATH)
-    : jobDir
+  get reportsRoot() {
+    const jobDir = resolveJobDir();
+    return jobDir || path.join(projectRoot, 'reports');
+  },
+  get reportHtmlPath() {
+    if (process.env.QA_REPORT_HTML_PATH) {
+      return path.resolve(process.env.QA_REPORT_HTML_PATH);
+    }
+    const jobDir = resolveJobDir();
+    return jobDir
       ? path.join(jobDir, 'qa-report.html')
-      : path.join(projectRoot, 'reports', 'qa-report.html'),
-  reportPdfPath: process.env.QA_REPORT_PDF_PATH
-    ? path.resolve(process.env.QA_REPORT_PDF_PATH)
-    : path.join(projectRoot, 'reports', 'report.pdf'),
-  skipPdf:
-    process.env.SKIP_PDF === '0'
-      ? false
-      : process.env.SKIP_PDF === '1' || process.env.NODE_ENV === 'production',
+      : path.join(projectRoot, 'reports', 'qa-report.html');
+  },
+  get reportPdfPath() {
+    if (process.env.QA_REPORT_PDF_PATH) {
+      return path.resolve(process.env.QA_REPORT_PDF_PATH);
+    }
+    return path.join(projectRoot, 'reports', 'report.pdf');
+  },
+  get skipPdf() {
+    if (process.env.SKIP_PDF === '0') return false;
+    return process.env.SKIP_PDF === '1' || process.env.NODE_ENV === 'production';
+  },
   browserLaunch: {
     headless: true,
     args: [
@@ -37,5 +54,3 @@ module.exports = {
     ]);
   }
 };
-
-

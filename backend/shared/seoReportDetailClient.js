@@ -25,6 +25,10 @@
   var LAZY_PAGE_THRESHOLD = 80;
   var EXPAND_ALL_WARN_THRESHOLD = 100;
   var EXPAND_ALL_BATCH = 20;
+  var META_DESC_MIN_LEN = 50;
+  var META_DESC_MAX_LEN = 160;
+  var TITLE_MIN_LEN = 30;
+  var TITLE_MAX_LEN = 60;
 
   function escapeHtml(s) {
     return String(s == null ? '' : s)
@@ -561,12 +565,14 @@
   }
 
   function renderTaggedSeoIssueLineItem(text, severity) {
+    var displaySev = seoIssueDisplaySeverity(text, severity);
     var isMetaLine =
-      severity === 'minor' &&
-      (text.indexOf('Page meta description:') === 0 || text.indexOf('Page meta keywords:') === 0);
+      text.indexOf('Page meta description:') === 0 ||
+      text.indexOf('Page meta keywords:') === 0 ||
+      text.indexOf('Page title length:') === 0;
     if (isMetaLine) {
       var formatted = formatIssueLineForDisplay(text);
-      var tag = renderIssueSeverityTag('minor');
+      var tag = renderIssueSeverityTag(displaySev);
       return (
         '<li class="issue-line issue-line--tagged minor-meta-line"><span class="issue-line-tags">' +
         tag +
@@ -577,12 +583,13 @@
         '</code></span></li>'
       );
     }
-    return renderTaggedIssueLineItem(text, severity);
+    return renderTaggedIssueLineItem(text, displaySev);
   }
 
   function renderUnifiedSeoIssueGroup(opts) {
     var critical = opts.critical || [];
     var minor = opts.minor || [];
+    var title = opts.title || 'Other SEO issues';
     var total = critical.length + minor.length;
     var items = critical
       .map(function (x) {
@@ -597,7 +604,9 @@
     var list = items || '<li>None detected</li>';
     return (
       '<div class="audit-issue-group audit-issue-group--unified">' +
-      '<div class="audit-issue-group-head">Issues <span class="audit-issue-count">(' +
+      '<div class="audit-issue-group-head">' +
+      escapeHtml(title) +
+      ' <span class="audit-issue-count">(' +
       total +
       ')</span></div>' +
       '<ul>' +
@@ -1492,97 +1501,485 @@
     };
   }
 
-  function metaStatusBadge(status) {
-    var s = String(status || 'na').toLowerCase();
-    if (s === 'pass') return '<span class="meta-tag-badge meta-tag-badge--pass">Pass</span>';
-    if (s === 'fail') return '<span class="meta-tag-badge meta-tag-badge--fail">Fail</span>';
-    if (s === 'warn') return '<span class="meta-tag-badge meta-tag-badge--warn">Warn</span>';
-    return '<span class="meta-tag-badge meta-tag-badge--na">N/A</span>';
+  function isMetaTagSeoIssue(text) {
+    var t = String(text || '').trim();
+    if (!t) return false;
+    var lower = t.toLowerCase();
+    if (
+      /^missing <title>|^empty <title>|^title tags\s*\(|^empty\/invalid title|^page title length:|^commented title|^duplicate title\b/i.test(
+        t
+      )
+    ) {
+      return true;
+    }
+    if (
+      /^page meta description:|^page meta keywords:|^meta description tags|^meta keywords tags/i.test(t)
+    ) {
+      return true;
+    }
+    if (/^missing canonical|^multiple canonical|^empty canonical|^canonical /i.test(t)) return true;
+    if (/^page marked noindex:|^robots meta/i.test(t)) return true;
+    if (/^missing viewport|^missing charset|^missing favicon|^hreflang/i.test(t)) return true;
+    if (/^missing open graph|^missing twitter card|^empty og:|^empty twitter:/i.test(t)) return true;
+    if (/^empty seo meta content|^empty meta content|^duplicate description/i.test(t)) return true;
+    if (lower.indexOf('og:') === 0 || lower.indexOf('twitter:') === 0) return true;
+    return false;
   }
 
-  function renderMetaTagsPanel(metaTags, page) {
-    var rows = [];
-    function push(label, info, fallbackValue) {
-      if (!info && fallbackValue === undefined) return;
-      var status = (info && info.status) || (fallbackValue ? 'pass' : 'fail');
-      var message = (info && info.message) || (fallbackValue ? 'Present' : 'Not set');
-      var value =
-        info && info.value != null && info.value !== ''
-          ? info.value
-          : fallbackValue != null && fallbackValue !== ''
-            ? fallbackValue
-            : '—';
-      rows.push({ label: label, status: status, message: message, value: String(value) });
+  function splitSeoIssuesByMeta(critical, minor) {
+    var metaCritical = [];
+    var metaMinor = [];
+    var otherCritical = [];
+    var otherMinor = [];
+    (critical || []).forEach(function (x) {
+      (isMetaTagSeoIssue(x) ? metaCritical : otherCritical).push(x);
+    });
+    (minor || []).forEach(function (x) {
+      (isMetaTagSeoIssue(x) ? metaMinor : otherMinor).push(x);
+    });
+    return {
+      metaCritical: metaCritical,
+      metaMinor: metaMinor,
+      otherCritical: otherCritical,
+      otherMinor: otherMinor
+    };
+  }
+
+  function mapMetaIssueToRowKey(text) {
+    var t = String(text || '');
+    var lower = t.toLowerCase();
+    if (
+      /^missing <title>|^empty <title>|^title tags\s*\(|^empty\/invalid title|^page title length:|^commented title|^duplicate title\b/i.test(
+        t
+      )
+    ) {
+      return 'title';
+    }
+    if (/^page meta description:|^meta description tags|^duplicate description/i.test(t)) {
+      return 'description';
+    }
+    if (/^page meta keywords:|^meta keywords tags/i.test(t)) return 'keywords';
+    if (/canonical/i.test(t)) return 'canonical';
+    if (/^page marked noindex:|^robots meta/i.test(t)) return 'robots';
+    if (/viewport/i.test(t)) return 'viewport';
+    if (/charset/i.test(t)) return 'charset';
+    if (/favicon/i.test(t)) return 'favicon';
+    if (/hreflang/i.test(t)) return 'hreflang';
+    if (/open graph|^empty og:|missing og/i.test(t) || lower.indexOf('og:') === 0) return 'openGraph';
+    if (/twitter|^empty twitter:/i.test(t) || lower.indexOf('twitter:') === 0) return 'twitter';
+    if (/empty seo meta content|empty meta content/i.test(t)) return 'emptyMeta';
+    return 'other';
+  }
+
+  function worstMetaStatus(a, b) {
+    var rank = { fail: 4, minor: 3, warn: 2, warning: 2, pass: 1, na: 0 };
+    var ra = rank[String(a || 'na').toLowerCase()] || 0;
+    var rb = rank[String(b || 'na').toLowerCase()] || 0;
+    return ra >= rb ? a : b;
+  }
+
+  function seoRowSortRank(status) {
+    var s = String(status || 'na').toLowerCase();
+    if (s === 'fail') return 0;
+    if (s === 'minor') return 1;
+    if (s === 'warn' || s === 'warning') return 2;
+    if (s === 'pass') return 3;
+    return 4;
+  }
+
+  function resolveLengthAwareMetaInfo(kind, info, fallbackValue) {
+    var raw =
+      info && info.value != null && String(info.value).trim() !== ''
+        ? String(info.value).trim()
+        : String(fallbackValue || '').trim();
+    var length =
+      info && info.length != null && isFinite(Number(info.length))
+        ? Number(info.length)
+        : raw.length;
+    var min = kind === 'title' ? TITLE_MIN_LEN : META_DESC_MIN_LEN;
+    var max = kind === 'title' ? TITLE_MAX_LEN : META_DESC_MAX_LEN;
+    var range = min + '–' + max;
+    var lengthNote = length + ' chars (recommended ' + range + ')';
+
+    if (!raw) {
+      return { status: 'fail', message: 'Not set', value: '', length: 0 };
+    }
+    if (length < min || length > max) {
+      return { status: 'warn', message: lengthNote, value: raw, length: length };
+    }
+    return { status: 'pass', message: lengthNote, value: raw, length: length };
+  }
+
+  function metaIssueLineStatus(line, metaCritical, lengthCtx) {
+    var t = String(line || '');
+    if (/^page title length:/i.test(t)) {
+      var tLen = lengthCtx && lengthCtx.kind === 'title' ? lengthCtx.length : null;
+      if (tLen != null && tLen >= TITLE_MIN_LEN && tLen <= TITLE_MAX_LEN) return 'pass';
+      if (tLen != null && tLen > 0) return 'warn';
+      return 'warn';
+    }
+    if (/^page meta description:/i.test(t) && /\b(short|long)\s*\(/i.test(t)) {
+      var dLen = lengthCtx && lengthCtx.kind === 'description' ? lengthCtx.length : null;
+      if (dLen != null && dLen >= META_DESC_MIN_LEN && dLen <= META_DESC_MAX_LEN) return 'pass';
+      if (dLen != null && dLen > 0) return 'warn';
+      return 'warn';
+    }
+    if ((metaCritical || []).indexOf(line) >= 0) {
+      if (
+        lengthCtx &&
+        (lengthCtx.kind === 'title' || lengthCtx.kind === 'description') &&
+        lengthCtx.length > 0 &&
+        /empty\/invalid title|empty <title>|missing <title>|empty title/i.test(t)
+      ) {
+        return 'pass';
+      }
+      return 'fail';
+    }
+    if (/^page marked noindex:/i.test(t)) return 'warn';
+    return 'minor';
+  }
+
+  function formatMetaIssueDetail(line) {
+    var formatted = formatIssueLineForDisplay(line);
+    if (formatted.label && formatted.detail) {
+      return formatted.label + ': ' + formatted.detail;
+    }
+    return String(line || '').trim();
+  }
+
+  function seoIssueDisplaySeverity(text, fallback) {
+    var t = String(text || '');
+    if (t.indexOf('Page title length:') === 0) return 'warning';
+    if (t.indexOf('Page meta description:') === 0 && /\b(short|long)\s*\(/i.test(t)) {
+      return 'warning';
+    }
+    return fallback || 'minor';
+  }
+
+  function buildMetaTagCheckRows(metaTags, page, metaCritical, metaMinor) {
+    metaCritical = metaCritical || [];
+    metaMinor = metaMinor || [];
+    var related = {};
+    function pushRelated(key, line) {
+      if (!related[key]) related[key] = [];
+      related[key].push(line);
+    }
+    metaCritical.concat(metaMinor).forEach(function (line) {
+      pushRelated(mapMetaIssueToRowKey(line), line);
+    });
+
+    var baseRows = [];
+    function addRow(key, label, info) {
+      if (!info) return;
+      baseRows.push({
+        key: key,
+        label: label,
+        status: info.status || 'na',
+        message: info.message || '—',
+        value:
+          info.value != null && String(info.value).trim() !== ''
+            ? String(info.value)
+            : ''
+      });
     }
 
     if (metaTags && typeof metaTags === 'object') {
-      push('Title (document)', metaTags.title, page && page.title);
-      push('Meta description', metaTags.description, page && page.description);
-      push('Meta keywords', metaTags.keywords, page && page.keywords);
-      push('Canonical', metaTags.canonical);
-      push('Robots meta', metaTags.robots);
-      push('Viewport', metaTags.viewport);
-      push('Charset', metaTags.charset);
-      push('Favicon', metaTags.favicon);
-      push('Hreflang', metaTags.hreflang);
-      push('Open Graph', metaTags.openGraph);
-      push('Twitter Card', metaTags.twitter);
+      addRow('title', 'Title', resolveLengthAwareMetaInfo('title', metaTags.title, page && page.title));
+      addRow(
+        'description',
+        'Description',
+        resolveLengthAwareMetaInfo(
+          'description',
+          metaTags.description,
+          page && page.description
+        )
+      );
+      if (metaTags.keywords && metaTags.keywords.status !== 'na') {
+        addRow('keywords', 'Keywords', metaTags.keywords);
+      } else if ((related.keywords || []).length) {
+        addRow(
+          'keywords',
+          'Keywords',
+          metaTags.keywords || {
+            status: 'warn',
+            message: 'See details',
+            value: (page && page.keywords) || ''
+          }
+        );
+      }
+      addRow(
+        'canonical',
+        'Canonical',
+        metaTags.canonical || { status: 'fail', message: 'Not set', value: '' }
+      );
+      addRow(
+        'robots',
+        'Robots',
+        metaTags.robots || {
+          status: 'na',
+          message: 'Not set (browser defaults apply)',
+          value: ''
+        }
+      );
+      if (metaTags.viewport) addRow('viewport', 'Viewport', metaTags.viewport);
+      if (metaTags.charset) addRow('charset', 'Charset', metaTags.charset);
+      if (metaTags.favicon) addRow('favicon', 'Favicon', metaTags.favicon);
+      if (metaTags.hreflang && metaTags.hreflang.status !== 'na') {
+        addRow('hreflang', 'Hreflang', metaTags.hreflang);
+      }
+      addRow(
+        'openGraph',
+        'Social · Open Graph',
+        metaTags.openGraph || { status: 'fail', message: 'Not set', value: '' }
+      );
+      addRow(
+        'twitter',
+        'Social · Twitter Card',
+        metaTags.twitter || { status: 'warn', message: 'Not set', value: '' }
+      );
     } else {
-      var t = String((page && page.title) || '').trim();
-      var d = String((page && page.description) || '').trim();
-      var k = String((page && page.keywords) || '').trim();
-      push(
-        'Title (document)',
-        t
-          ? { status: 'pass', message: t.length + ' chars', value: t }
-          : { status: 'fail', message: 'Not set', value: '' }
+      addRow('title', 'Title', resolveLengthAwareMetaInfo('title', null, page && page.title));
+      addRow(
+        'description',
+        'Description',
+        resolveLengthAwareMetaInfo('description', null, page && page.description)
       );
-      push(
-        'Meta description',
-        d
-          ? { status: 'pass', message: d.length + ' chars', value: d }
-          : { status: 'fail', message: 'Not set', value: '' }
-      );
-      push(
-        'Meta keywords',
-        k
-          ? { status: 'pass', message: 'Present', value: k }
-          : { status: 'na', message: 'Not set (optional)', value: '' }
-      );
+      addRow('canonical', 'Canonical', {
+        status: 'na',
+        message: 'Not available in this report',
+        value: ''
+      });
+      addRow('robots', 'Robots', {
+        status: 'na',
+        message: 'Not available in this report',
+        value: ''
+      });
+      addRow('openGraph', 'Social · Open Graph', {
+        status: 'na',
+        message: 'Not available in this report',
+        value: ''
+      });
+      addRow('twitter', 'Social · Twitter Card', {
+        status: 'na',
+        message: 'Not available in this report',
+        value: ''
+      });
     }
 
-    if (!rows.length) return '';
+    baseRows.forEach(function (row) {
+      var lines = related[row.key] || [];
+      if (!lines.length) return;
+      var isLengthRow = row.key === 'title' || row.key === 'description';
+      var lengthCtx = isLengthRow
+        ? {
+            kind: row.key,
+            length:
+              row.value && String(row.value).trim()
+                ? String(row.value).trim().length
+                : 0
+          }
+        : null;
+      var escalated = row.status;
+      lines.forEach(function (line) {
+        var lineStatus = metaIssueLineStatus(line, metaCritical, lengthCtx);
+        if (lineStatus === 'pass') return;
+        escalated = worstMetaStatus(escalated, lineStatus);
+      });
+      row.status = escalated;
 
-    var list = rows
-      .map(function (r) {
-        var display =
-          r.value.length > 160 ? r.value.slice(0, 160) + '…' : r.value;
-        return (
-          '<li class="meta-tag-row meta-tag-row--' +
-          escapeHtml(r.status) +
-          '">' +
-          metaStatusBadge(r.status) +
-          '<span class="meta-tag-label">' +
-          escapeHtml(r.label) +
-          '</span><span class="meta-tag-msg">' +
-          escapeHtml(r.message) +
-          '</span><code class="meta-tag-value" title="' +
-          escapeHtml(r.value) +
-          '">' +
-          escapeHtml(display) +
-          '</code></li>'
-        );
-      })
-      .join('');
+      var details = [];
+      var seen = {};
+      lines.forEach(function (line) {
+        var lineStatus = metaIssueLineStatus(line, metaCritical, lengthCtx);
+        if (lineStatus === 'pass') return;
+        if (isLengthRow && /^page title length:|^page meta description:/i.test(String(line))) {
+          return;
+        }
+        var d = formatMetaIssueDetail(line);
+        var key = d.toLowerCase();
+        if (!d || seen[key]) return;
+        if (row.message && key.indexOf(String(row.message).toLowerCase().slice(0, 20)) >= 0) {
+          return;
+        }
+        if (row.value && key.indexOf(String(row.value).toLowerCase().slice(0, 24)) >= 0) return;
+        seen[key] = true;
+        details.push(d);
+      });
+      if (details.length) {
+        if (row.status === 'fail' && isLengthRow) {
+          row.message = details.join(' · ');
+        } else if (row.message && row.message !== '—') {
+          row.message = row.message + ' · ' + details.join(' · ');
+        } else {
+          row.message = details.join(' · ');
+        }
+      }
+    });
+
+    var covered = {};
+    baseRows.forEach(function (r) {
+      covered[r.key] = true;
+    });
+    Object.keys(related).forEach(function (key) {
+      if (covered[key] || key === 'other') return;
+      var lines = related[key] || [];
+      if (!lines.length) return;
+      var status = 'minor';
+      lines.forEach(function (line) {
+        status = worstMetaStatus(status, metaIssueLineStatus(line, metaCritical, null));
+      });
+      baseRows.push({
+        key: key,
+        label: key === 'emptyMeta' ? 'SEO meta content' : key,
+        status: status,
+        message: lines.map(formatMetaIssueDetail).join(' · '),
+        value: ''
+      });
+    });
+    (related.other || []).forEach(function (line) {
+      var formatted = formatIssueLineForDisplay(line);
+      baseRows.push({
+        key: 'other',
+        label: formatted.label || 'Meta',
+        status: metaIssueLineStatus(line, metaCritical, null),
+        message: formatted.detail || String(line),
+        value: ''
+      });
+    });
+
+    return baseRows;
+  }
+
+  function renderSeoStatusListItem(row) {
+    var st = String(row.status || 'na').toLowerCase();
+    var mod =
+      st === 'pass'
+        ? 'pass'
+        : st === 'warn' || st === 'warning'
+          ? 'warn'
+          : st === 'minor'
+            ? 'minor'
+            : st === 'na'
+              ? 'na'
+              : 'fail';
+    var badge =
+      st === 'pass'
+        ? 'Pass'
+        : st === 'warn' || st === 'warning'
+          ? 'Warning'
+          : st === 'minor'
+            ? 'Minor'
+            : st === 'na'
+              ? 'N/A'
+              : 'Fail';
+    var msg = String(row.message || '').trim();
+    var val = row.value && row.value !== '—' ? String(row.value) : '';
+    var text;
+    if (val && msg && msg !== '—') {
+      var shortVal = val.length > 140 ? val.slice(0, 140) + '…' : val;
+      text =
+        msg.indexOf(val.slice(0, Math.min(16, val.length))) >= 0
+          ? row.label + ': ' + msg
+          : row.label + ': ' + msg + ' · ' + shortVal;
+    } else if (val) {
+      text = row.label + ': ' + (val.length > 140 ? val.slice(0, 140) + '…' : val);
+    } else {
+      text = row.label + ': ' + (msg || '—');
+    }
+    return (
+      '<li class="security-header-item security-header-item--' +
+      mod +
+      '"><span class="security-header-status">' +
+      badge +
+      '</span><code title="' +
+      escapeHtml(val || msg) +
+      '">' +
+      escapeHtml(text) +
+      '</code></li>'
+    );
+  }
+
+  function renderSeoOnPageSection(opts) {
+    opts = opts || {};
+    var metaRows = buildMetaTagCheckRows(
+      opts.metaTags,
+      opts.page,
+      opts.metaCritical || [],
+      opts.metaMinor || []
+    );
+    var otherRows = [];
+    (opts.otherCritical || []).forEach(function (line) {
+      var formatted = formatIssueLineForDisplay(line);
+      otherRows.push({
+        status: 'fail',
+        label: formatted.label || 'Issue',
+        message: formatted.detail || String(line),
+        value: ''
+      });
+    });
+    (opts.otherMinor || []).forEach(function (line) {
+      var displaySev = seoIssueDisplaySeverity(line, 'minor');
+      var formatted = formatIssueLineForDisplay(line);
+      otherRows.push({
+        status: displaySev === 'warning' ? 'warn' : 'minor',
+        label: formatted.label || 'Issue',
+        message: formatted.detail || String(line),
+        value: ''
+      });
+    });
+
+    var allRows = metaRows.concat(otherRows).sort(function (a, b) {
+      return seoRowSortRank(a.status) - seoRowSortRank(b.status);
+    });
+    var failN = 0;
+    var minorN = 0;
+    var warnN = 0;
+    var passN = 0;
+    allRows.forEach(function (r) {
+      if (r.status === 'fail') failN += 1;
+      else if (r.status === 'minor') minorN += 1;
+      else if (r.status === 'warn' || r.status === 'warning') warnN += 1;
+      else if (r.status === 'pass') passN += 1;
+    });
+    var pct = Math.max(0, Math.min(100, Math.round(Number(opts.percent) || 0)));
+    var criticalCount = opts.criticalCount || 0;
+    var minorCount = opts.minorCount || 0;
+
+    var listItems = allRows.length
+      ? allRows.map(renderSeoStatusListItem).join('')
+      : '<li class="security-header-item security-header-item--pass"><span class="security-header-status">Pass</span><code>No SEO issues detected</code></li>';
+
+    var chartHtml = renderAuditPieChart({
+      percent: pct,
+      critical: criticalCount,
+      minor: minorCount,
+      passed: Math.max(0, passN),
+      title: 'SEO health'
+    });
 
     return (
-      '<div class="meta-tags-panel" aria-label="Meta tags audit">' +
-      '<div class="meta-tags-panel-head">' +
-      '<span class="meta-tags-panel-title">Meta tags</span>' +
-      '<span class="meta-tags-panel-sub">Title, description, canonical, robots, social tags</span>' +
-      '</div><ul class="meta-tags-list">' +
-      list +
-      '</ul></div>'
+      '<div class="audit-issue-group audit-issue-group--seo-unified" aria-label="SEO on-page results">' +
+      '<div class="audit-issue-group-head">SEO health · ' +
+      pct +
+      '% <span class="audit-issue-count">(' +
+      allRows.length +
+      ' checks · ' +
+      failN +
+      ' fail · ' +
+      minorN +
+      ' minor · ' +
+      warnN +
+      ' warning · ' +
+      passN +
+      ' pass)</span></div>' +
+      '<p class="meta-tags-inline-hint">Title, description, canonical, robots, social and other on-page checks — one list, no duplicates. Sorted Fail → Minor → Warning → Pass. Title/description show char counts only (no OK/Short labels).</p>' +
+      '<div class="seo-unified-body">' +
+      '<ul class="security-header-list seo-unified-list">' +
+      listItems +
+      '</ul>' +
+      '<div class="seo-unified-chart">' +
+      chartHtml +
+      '</div></div></div>'
     );
   }
 
@@ -1643,27 +2040,26 @@
         : computeSecurityPassPercent(page.securityHeaders);
     var securityScoreLabel = formatSecurityScoreLabel(page.securityHeaders);
 
+    var seoSplit = splitSeoIssuesByMeta(sortedPageCritical, sortedPageMinor);
     var seoCard = modules.seo
       ? renderAuditCategoryCard({
           modifier: 'seo',
           title: 'SEO — On-Page Optimization',
-          subtitle: 'Titles, links, meta tags, and content issues',
+          subtitle: 'Meta tags, titles, links, and content issues',
           percent: seoPassPercent,
           critical: seoCrit,
           minor: seoMin,
-          bodyHtml: [
-            renderUnifiedSeoIssueGroup({
-              critical: sortedPageCritical,
-              minor: sortedPageMinor
-            }),
-            renderAuditPieChartGroup({
-              title: 'SEO health',
-              percent: seoPassPercent,
-              critical: seoCrit,
-              minor: seoMin,
-              passed: 0
-            })
-          ].join('')
+          bodyHtml: renderSeoOnPageSection({
+            metaTags: page.metaTags,
+            page: page,
+            metaCritical: seoSplit.metaCritical,
+            metaMinor: seoSplit.metaMinor,
+            otherCritical: seoSplit.otherCritical,
+            otherMinor: seoSplit.otherMinor,
+            percent: seoPassPercent,
+            criticalCount: seoCrit,
+            minorCount: seoMin
+          })
         })
       : '';
 
@@ -1711,26 +2107,12 @@
     var pageSpeedCard = modules.pageSpeed ? renderPageSpeedCategoryCard(page.pageSpeed) : '';
     var richResultsCard = modules.richResults ? renderRichResultsCategoryCard(page.richResults) : '';
 
-    var metaPanel = modules.seo
-      ? renderMetaTagsPanel(page.metaTags, page)
-      : '<div class="page-detail-meta-legacy">' +
-        '<div class="pageMeta">Title: <b>' +
-        escapeHtml(page.title || '—') +
-        '</b></div>' +
-        '<div class="pageMeta">Description: <b>' +
-        escapeHtml(page.description || '—') +
-        '</b></div>' +
-        '<div class="pageMeta">Keywords: <b>' +
-        escapeHtml(page.keywords || '—') +
-        '</b></div></div>';
-
     return (
       '<div class="page-detail-content">' +
       '<div class="page-detail-meta">' +
       '<div class="page-detail-meta-score">' +
       renderScoreChip(page.seoScore) +
       '</div></div>' +
-      metaPanel +
       '<div class="audit-cards">' +
       seoCard +
       geoCard +

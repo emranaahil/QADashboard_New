@@ -160,9 +160,19 @@
     return null;
   }
 
+  function metaIssueSeverityTag(issueSummary) {
+    var t = String(issueSummary || '');
+    if (/^Page title length:/i.test(t)) return 'Warning';
+    if (/^Page meta description:/i.test(t) && /\b(short|long)\s*\(/i.test(t)) return 'Warning';
+    if (/^Page marked noindex:/i.test(t)) return 'Warning';
+    return null;
+  }
+
   function severityLabel(severity, issueSummary) {
     var sec = securityHeaderSeverityTag(issueSummary || '');
     if (sec) return sec;
+    var meta = metaIssueSeverityTag(issueSummary || '');
+    if (meta) return meta;
     if (severity === 'geo') {
       return geoIssueSeverityTag(issueSummary || '') || 'Critical';
     }
@@ -177,6 +187,21 @@
     return map[severity] || severity;
   }
 
+  function isMetaTagCsvIssue(summary) {
+    var t = String(summary || '').trim();
+    if (!t) return false;
+    var lower = t.toLowerCase();
+    if (/^missing <title>|^empty <title>|^title tags\s*\(|^empty\/invalid title|^page title length:|^commented title|^duplicate title\b/i.test(t)) return true;
+    if (/^page meta description:|^page meta keywords:|^meta description tags|^meta keywords tags/i.test(t)) return true;
+    if (/^missing canonical|^multiple canonical|^empty canonical|^canonical /i.test(t)) return true;
+    if (/^page marked noindex:|^robots meta/i.test(t)) return true;
+    if (/^missing viewport|^missing charset|^missing favicon|^hreflang/i.test(t)) return true;
+    if (/^missing open graph|^missing twitter card|^empty og:|^empty twitter:/i.test(t)) return true;
+    if (/^empty seo meta content|^empty meta content|^duplicate description/i.test(t)) return true;
+    if (lower.indexOf('og:') === 0 || lower.indexOf('twitter:') === 0) return true;
+    return false;
+  }
+
   function issueModuleCategory(severity, issueSummary) {
     var s = String(issueSummary || '');
     if (severity === 'geo') return 'GEO';
@@ -189,6 +214,7 @@
       return 'Security Headers';
     }
     if (/^PageSpeed\b|^Page Speed\b/i.test(s) || severity === 'pagespeed') return 'Page Speed';
+    if (isMetaTagCsvIssue(s)) return 'SEO · Meta tags';
     return 'SEO';
   }
 

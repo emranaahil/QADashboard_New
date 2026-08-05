@@ -146,16 +146,23 @@ async function runSingleUrl({ browser, url, runId, runFolder, screenshotFolder }
   return { ok: true };
 }
 
-async function generateFinalArtifacts({ runId, runFolder, screenshotFolder }) {
+async function generateFinalArtifacts({ runId, runFolder, screenshotFolder, moduleId = 'full-ui-check' }) {
   const reportFile = path.join(runFolder, 'qaReport.json');
-  const reportHtmlPath = config.reportHtmlPath;
-  const reportPdfPath = config.reportPdfPath;
+  // Prefer explicit env, else always co-locate report with this run's folder
+  // (jobDir for dashboard jobs). Avoid frozen config defaults pointing at reports/.
+  const reportHtmlPath = process.env.QA_REPORT_HTML_PATH
+    ? path.resolve(process.env.QA_REPORT_HTML_PATH)
+    : path.join(runFolder, 'qa-report.html');
+  const reportPdfPath = process.env.QA_REPORT_PDF_PATH
+    ? path.resolve(process.env.QA_REPORT_PDF_PATH)
+    : path.join(runFolder, 'report.pdf');
 
   generateReport({
     qaReportPath: reportFile,
     outputHtmlPath: reportHtmlPath,
     screenshotFolder,
-    runId
+    runId,
+    moduleId
   });
 
   if (config.skipPdf) {
@@ -380,7 +387,7 @@ async function processUrlQueue({
 
   console.log('[TEST] Generating HTML report...\n');
 
-  await generateFinalArtifacts({ runId, runFolder, screenshotFolder });
+  await generateFinalArtifacts({ runId, runFolder, screenshotFolder, moduleId });
 }
 
 module.exports = {
